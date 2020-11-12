@@ -17,7 +17,9 @@ FIPS_code['county_name'] = FIPS_code['county_name'].map(lambda x: x.lstrip('+-')
 FIPS_code['County'] = FIPS_code['county_name']
 
 result_2 = pd.merge(Counties_States, FIPS_code, on='County')
+result_3 = pd.concat([Counties_States, FIPS_code], axis=0)
 
+result_4 = pd.merge(left=Counties_States, right=FIPS_code, left_on='County', right_on='County')
 import numpy as np
 Counties_States['County_FIPS'] = FIPS_code['county_name'] #add the Price2 column from df2 to df1
 merge(Counties_States, FIPS_code, by.x = 2, by.y = 0, all.x = TRUE)
