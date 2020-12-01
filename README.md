@@ -5,9 +5,10 @@ The TELL model will generate predictions of hourly total electricity load for ev
 ## How to Run TELL
 1. Download the input data from PNNL's Institutional Computing (PIC) to your local machine<sup>*</sup>:
 >
-    a. sftp username@constance.pnl.gov
-    b. cd /projects/im3/tell
-    c. mget *
+    sftp username@constance.pnl.gov
+    cd /projects/im3/tell
+    get -r inputs
+    get -r raw_data
 >
 2. Set 'input_data_directory' to point to the directory where you downloaded the data.
 >
