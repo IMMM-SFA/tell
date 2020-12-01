@@ -8,6 +8,9 @@ The TELL model will generate predictions of hourly total electricity load for ev
     a. sftp username@constance.pnl.gov
     b. cd /projects/im3/tell
     c. mget *
+>
+2. Set the data input path to the directory where you downloaded the data:
+    input_data_directory = /path
 
 
 <sup>* </sup>Note that this step will eventually be replaced with instructions for downloading the input dataset from a data repository once the data packaged is finalized.
