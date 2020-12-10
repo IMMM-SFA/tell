@@ -143,7 +143,7 @@ def prepare_data(fips_file, service_area_file):
 
     # read in data
     df_fips = pd.read_excel(fips_file)
-    df_states = pd.read_excel(service_area_file, sheet_name='Counties')
+    df_states = pd.read_excel(service_area_file, sheet_name='Counties_States')
 
     # strip county name from full reference and make lower case for known trailing words replace apostrophes
     df_fips['county_lower'] = df_fips['county_name'].apply(lambda x: x.lower().split(' county')[0])
@@ -230,11 +230,11 @@ def filter_two(df_fips, df_nan, df_valid):
     return df_valid, df_nan_bad
 
 data_dir = 'C:\\Users\\mcgr323\\projects\\TELL\\inputs\\'
-data_dir_2 = 'C:\\Users\\mcgr323\\projects\\TELL\\inputs\\EIA_861\\Raw_Data\\2013\\'
+data_dir_2 = 'C:\\Users\\mcgr323\\projects\\TELL\\inputs\\EIA_861\\Raw_Data\\2019\\'
 
 # paths to files
 fips_file = os.path.join(data_dir, 'state_and_county_fips_codes.xlsx')
-service_area_file = os.path.join(data_dir_2, 'Service_Territory_2013.xlsx')
+service_area_file = os.path.join(data_dir_2, 'Service_Territory_2019.xlsx')
 
 # prepare data
 df_fips, df_states = prepare_data(fips_file, service_area_file)
@@ -262,4 +262,4 @@ df_fips.loc[~df_fips['fips_key'].isin(df_valid['fips_key'])]
 
 df_valid.head()
 
-df_valid.to_csv('FIPS_Service_match_2013.csv', sep='\t')
+df_valid.to_csv('FIPS_Service_match_2019.csv', sep=',')
