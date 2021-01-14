@@ -15,10 +15,12 @@ def prepare_data(ferc_hourly_file, ferc_resp_eia_code, eia_operators_nerc_region
     :param eia_operators_nerc_region_mapping:     Mapping file of EIA codes and their asscioated NERC region mapping
     :type eia_operators_nerc_region_mapping:      str
 
-    :return:                                    df_ferc_hrly: Dataframe respondent_id, date and generation sum
-    :return:                                    df_ferc_resp: Dataframe of cleaned FERC respondent IDs and EIA code
-    :return:                                    df_eia_mapping: Cleaned mapping file
+    :return:                                    [0] df_ferc_hrly: Dataframe respondent_id, date and generation sum
+                                                [1] df_ferc_resp: Dataframe of cleaned FERC respondent IDs and EIA code
+                                                [2] df_eia_mapping: Cleaned mapping file
+
     """
+    
     # read in data
     df_ferc_hrly = pd.read_csv(ferc_hourly_file)
     df_ferc_resp = pd.read_csv(ferc_resp_eia_code)
@@ -64,7 +66,9 @@ def merge_and_subset(df_ferc_hrly, df_ferc_resp, df_eia_mapping, year):
     :type year:                       str
 
     :return:                          Dataframe of FERC hourly loads for yearly subset
+
     """
+
     # merge hourly data with
     df_ferc_hrly = df_ferc_hrly.merge(df_ferc_resp, on='respondent_id', how='left', indicator=True)
     df_ferc_hrly = df_ferc_hrly.drop('_merge', axis=1)
