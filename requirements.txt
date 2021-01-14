@@ -1,2 +1,4 @@
 numpy>=1.19.2
 pandas>=1.1.2
+klib~=0.0.89
+setuptools~=46.3.0

@@ -1,3 +1,7 @@
+import pandas as pd
+import klib
+
+
 def prepare_data(ferc_hourly_file, ferc_resp_eia_code, eia_operators_nerc_region_mapping):
     """Load and prepare data.  Reduce complexity by making column names lower case and agree through data sets,
     deleting duplicates, splitting out commonly known trailing words that do not exist in all data sets.
@@ -35,10 +39,10 @@ def prepare_data(ferc_hourly_file, ferc_resp_eia_code, eia_operators_nerc_region
     # exclude hour 25
     df_ferc_hrly = df_ferc_hrly[df_ferc_hrly['hour'] != 25]
 
-    #change the datetime structure
+    # change the datetime structure
     df_ferc_hrly['date'] = pd.to_datetime(df_ferc_hrly['plan_date'], format='%d%b%Y:%H:%M:%S.%f')
 
-    #subset for only respondent_id, date and generation columns
+    # subset for only respondent_id, date and generation columns
     df_ferc_hrly = df_ferc_hrly[["respondent_id", "date", "generation"]]
 
     return df_ferc_hrly, df_ferc_resp, df_eia_mapping
@@ -61,21 +65,21 @@ def merge_and_subset(df_ferc_hrly, df_ferc_resp, df_eia_mapping, year):
 
     :return:                          Dataframe of FERC hourly loads for yearly subset
     """
-    #merge hourly data with
+    # merge hourly data with
     df_ferc_hrly = df_ferc_hrly.merge(df_ferc_resp, on='respondent_id', how='left', indicator=True)
     df_ferc_hrly = df_ferc_hrly.drop('_merge', axis=1)
 
     # create a unified key to merge by changing Operator_ID to eia_code
     df_eia_mapping.columns = ["eia_code", 'NERC_region']
 
-    #merge the hourly data with the mapping file
+    # merge the hourly data with the mapping file
     df_ferc_hrly = df_ferc_hrly.merge(df_eia_mapping, on='eia_code', how='left', indicator=True)
     df_ferc_hrly = df_ferc_hrly.drop('_merge', axis=1)
 
     # subset by year
     df_ferc_hrly = df_ferc_hrly[df_ferc_hrly['report_yr'] == year]
 
-    #group by the NERC_region and date
+    # group by the NERC_region and date
     df_ferc_hrly = df_ferc_hrly.groupby(['NERC_region', 'date']).agg({'generation':['sum']})
 
     return df_ferc_hrly
