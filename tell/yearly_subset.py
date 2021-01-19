@@ -1,10 +1,8 @@
+#import klib
 import pandas as pd
-import klib
-
-from tell.match import *
 
 
-def prepare_data(ferc_hourly_file, ferc_resp_eia_code, eia_operators_nerc_region_mapping):
+def prepare_data_yearly(ferc_hourly_file, ferc_resp_eia_code, eia_operators_nerc_region_mapping):
     """Load and prepare data.  Reduce complexity by making column names lower case and agree through data sets,
     deleting duplicates, splitting out commonly known trailing words that do not exist in all data sets.
 
