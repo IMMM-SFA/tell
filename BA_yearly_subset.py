@@ -13,6 +13,20 @@ eia_operators_nerc_region_mapping = os.path.join(data_dir, 'eia_operators_nerc_r
 def prepare_data(ferc_hourly_file, ferc_resp_eia_code, eia_operators_nerc_region_mapping):
     """Load and prepare data.  Reduce complexity by making column names lower case and agree through data sets,
     deleting duplicates, splitting out commonly known trailing words that do not exist in all data sets.
+
+    :param ferc_hourly_file:                      Dataframe of hourly FERC load data
+    :type ferc_hourly_file:                       str
+
+    :param ferc_resp_eia_code:                    Dataframe of FERC respondents with EIA code
+    :type ferc_resp_eia_code:                     str
+
+    :param eia_operators_nerc_region_mapping:     Mapping file of EIA codes and their asscioated NERC region mapping
+    :type eia_operators_nerc_region_mapping:      str
+
+    :return:                                    [0] df_ferc_hrly: Dataframe respondent_id, date and generation sum
+                                                [1] df_ferc_resp: Dataframe of cleaned FERC respondent IDs and EIA code
+                                                [2] df_eia_mapping: Cleaned mapping file
+
     """
     # read in data
     df_ferc_hrly = pd.read_csv(ferc_hourly_file)
@@ -55,7 +69,23 @@ def prepare_data(ferc_hourly_file, ferc_resp_eia_code, eia_operators_nerc_region
 
 
 def merge_and_subset(df_ferc_hrly, df_ferc_resp, df_eia_mapping, year):
-    """Merge cleaned and prepared datasets subset by year and write to csv"""
+    """Merge cleaned and prepared datasets subset by year and write to csv
+
+    :param df_ferc_hrly:              Dataframe respondent_id, date and generation sum from prepare_data
+    :type df_ferc_hrly:               str
+
+    :param df_ferc_resp:              Dataframe of cleaned FERC respondent IDs and EIA code from prepare_data
+    :type df_ferc_resp:               str
+
+    :param df_eia_mapping:            Cleaned mapping file from prepare_data
+    :type df_eia_mapping:             str
+
+    :param year:                      Year to subset data for
+    :type year:                       str
+
+    :return:                          Dataframe of FERC hourly loads for yearly subset
+
+    """
 
     #merge hourly data with
     df_ferc_hrly = df_ferc_hrly.merge(df_ferc_resp, on='respondent_id', how='left', indicator=True)
@@ -80,7 +110,8 @@ def merge_and_subset(df_ferc_hrly, df_ferc_resp, df_eia_mapping, year):
 #run the prepare data function
 df_ferc_hrly, df_ferc_resp, df_eia_mapping = prepare_data(ferc_hourly_file, ferc_resp_eia_code,
                                                           eia_operators_nerc_region_mapping)
-#run the merge and subset by year function
-ferc_hrly_year = merge_and_subset(df_ferc_hrly, df_ferc_resp, df_eia_mapping, year)
+#run the merge and subset by year function for 2010
+ferc_hrly_year = merge_and_subset(df_ferc_hrly, df_ferc_resp, df_eia_mapping, year = 2010)
 
+#write to csv
 ferc_hrly_year.to_csv('FERC_hrly_2010.csv', sep=',')
