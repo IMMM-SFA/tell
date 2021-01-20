@@ -336,17 +336,21 @@ def data_format(df):
              'Balancing Authority Name']].copy()
 
     # rename columns
-    df.rename(columns={"Date Year": "Year",
-                       "Utility Number": "Utility_Number",
-                       "Utility Name_x": "Utility_Name",
-                       "state_abbreviation": "State_Abbreviation",
-                       "state_name": "State_Name",
-                       "state_FIPS": "State_FIPS",
-                       "county_name": "County_Name",
-                       "county_FIPS": "County_FIPS",
-                       "BA ID": "BA_Number",
-                       "BA Code": "BA_Abbreviation",
-                       "Balancing Authority Name": "BA_Name"}, inplace=True)
+    df.rename(columns={"Data Year": "year",
+                       "Utility Number": "utility_number",
+                       "Utility Name_x": "utility_name",
+                       "state_abbreviation": "state_abbreviation",
+                       "state_name": "state_name",
+                       "state_FIPS": "state_fips",
+                       "county_name": "county_name",
+                       "county_FIPS": "county_fips",
+                       "BA ID": "ba_number",
+                       "BA Code": "ba_abbreviation",
+                       "Balancing Authority Name": "ba_name"}, inplace=True)
+
+    #remove comma from ba_name
+    df['ba_name'] = df['ba_name'].str.replace(",", "")
+
     return df
 
 
