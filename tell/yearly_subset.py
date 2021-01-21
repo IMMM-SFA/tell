@@ -1,6 +1,11 @@
-#import klib
+import os
+import logging
+import time
+
+import klib
 import pandas as pd
 
+from tell.logger import Logger
 
 def prepare_data_yearly(ferc_hourly_file, ferc_resp_eia_code, eia_operators_nerc_region_mapping):
     """Load and prepare data.  Reduce complexity by making column names lower case and agree through data sets,
@@ -87,3 +92,55 @@ def merge_and_subset(df_ferc_hrly, df_ferc_resp, df_eia_mapping, year):
     df_ferc_hrly = df_ferc_hrly.groupby(['NERC_region', 'date']).agg({'generation':['sum']})
 
     return df_ferc_hrly
+
+def process_ferc_data(target_year, ferc_hourly_file, ferc_resp_eia_code, eia_operators_nerc_region_mapping, output_dir):
+    """Workflow function to join files and clean up erroneous and missing data.  Suggest possible solutions from the
+    FIPS records for unmatched counties.
+
+    :param target_year:                           Year to process; four digit year (e.g., 1990)
+    :type target_year:                            int
+
+    :param ferc_hourly_file:                      Dataframe of hourly FERC load data
+    :type ferc_hourly_file:                       str
+
+    :param ferc_resp_eia_code:                    Dataframe of FERC respondents with EIA code
+    :type ferc_resp_eia_code:                     str
+
+    :param eia_operators_nerc_region_mapping:     Mapping file of EIA codes and their asscioated NERC region mapping
+    :type eia_operators_nerc_region_mapping:      str
+
+    :param output_dir:                            Directory to store FIPS BA subset output
+    :type output_dir:                             dir
+
+    :return:                                      Dataframe of valid FIPS matched data merged with BA code
+
+    """
+
+    # initialize logger
+    logger = Logger(output_directory=output_dir)
+    logger.initialize_logger()
+
+    # report start time
+    logging.info("Start time:  {}".format(time.strftime("%Y-%m-%d %H:%M:%S")))
+
+    # prepare data
+    logging.info("Preparing data...")
+    df_ferc_hrly, df_ferc_resp, df_eia_mapping = prepare_data_yearly(ferc_hourly_file, ferc_resp_eia_code,
+                                                                     eia_operators_nerc_region_mapping)
+
+    # apply merge and subset by year
+    logging.info("Merging and subsetting by year...")
+    ferc_hrly_year = merge_and_subset(df_ferc_hrly, df_ferc_resp, df_eia_mapping, year=target_year)
+
+    # write to CSV
+    output_file = os.path.join(output_dir, f'ferc_hrly_{target_year}.csv')
+    logging.info(f"Writing output file to:  {output_file}")
+    ferc_hrly_year.to_csv(output_file, sep=',', index=False)
+
+    # report close time
+    logging.info("End time:  {}".format(time.strftime("%Y-%m-%d %H:%M:%S")))
+
+    # close logger and clean up
+    logger.close_logger()
+
+    return ferc_hrly_year
