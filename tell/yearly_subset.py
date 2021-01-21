@@ -7,6 +7,7 @@ import pandas as pd
 
 from tell.logger import Logger
 
+
 def prepare_data_yearly(ferc_hourly_file, ferc_resp_eia_code, eia_operators_nerc_region_mapping):
     """Load and prepare data.  Reduce complexity by making column names lower case and agree through data sets,
     deleting duplicates, splitting out commonly known trailing words that do not exist in all data sets.
@@ -38,7 +39,8 @@ def prepare_data_yearly(ferc_hourly_file, ferc_resp_eia_code, eia_operators_nerc
     df_eia_mapping = klib.data_cleaning(df_eia_mapping)
 
     # change wide format to long format
-    df_ferc_hrly = pd.melt(df_ferc_hrly, id_vars=df_ferc_hrly.filter(like='hour').columns, var_name='hour', value_name='generation')
+    df_ferc_hrly = pd.melt(df_ferc_hrly, id_vars=df_ferc_hrly.filter(like='hour').columns, var_name='hour',
+                           value_name='generation')
 
     # filter for generation values over 0
     df_ferc_hrly = df_ferc_hrly[df_ferc_hrly['generation'] > 0]
@@ -59,16 +61,16 @@ def merge_and_subset(df_ferc_hrly, df_ferc_resp, df_eia_mapping, year):
     """Merge cleaned and prepared datasets subset by year and write to csv
 
     :param df_ferc_hrly:              Dataframe respondent_id, date and generation sum from prepare_data
-    :type df_ferc_hrly:               str
+    :type df_ferc_hrly:               pd.DataFrame
 
     :param df_ferc_resp:              Dataframe of cleaned FERC respondent IDs and EIA code from prepare_data
-    :type df_ferc_resp:               str
+    :type df_ferc_resp:               pd.DataFrame
 
-    :param df_eia_mapping:            Cleaned mapping file from prepare_data
-    :type df_eia_mapping:             str
+    :param df_eia_mapping:            Cleaned mapping DataFrame from prepare_data
+    :type df_eia_mapping:             pd.DataFrame
 
     :param year:                      Year to subset data for
-    :type year:                       str
+    :type year:                       int
 
     :return:                          Dataframe of FERC hourly loads for yearly subset
 
@@ -89,9 +91,10 @@ def merge_and_subset(df_ferc_hrly, df_ferc_resp, df_eia_mapping, year):
     df_ferc_hrly = df_ferc_hrly[df_ferc_hrly['report_yr'] == year]
 
     # group by the NERC_region and date
-    df_ferc_hrly = df_ferc_hrly.groupby(['NERC_region', 'date']).agg({'generation':['sum']})
+    df_ferc_hrly = df_ferc_hrly.groupby(['NERC_region', 'date']).agg({'generation': ['sum']})
 
     return df_ferc_hrly
+
 
 def process_ferc_data(target_year, ferc_hourly_file, ferc_resp_eia_code, eia_operators_nerc_region_mapping, output_dir):
     """Workflow function to join files and clean up erroneous and missing data.  Suggest possible solutions from the

@@ -8,7 +8,7 @@ import pandas as pd
 from tell.logger import Logger
 
 
-def count_matches(states_key, fips_key, ignore=['and', 'if', 'on', 'an', 'a', 'the']):
+def count_matches(states_key, fips_key, ignore=('and', 'if', 'on', 'an', 'a', 'the')):
     """Count the number of word matches between two primary keys.
 
     :param states_key:                 The key representing the <state_abbrev>_<county_name> in the
@@ -70,7 +70,7 @@ def count_matches(states_key, fips_key, ignore=['and', 'if', 'on', 'an', 'a', 't
 
 
 def combine_elements(part, part_list):
-    """check for any "de" suffix and join to second position (e.g., "de witt" to "dewitt")
+    """Check for any "de" suffix and join to second position (e.g., "de witt" to "dewitt")
 
         :param part:                 The suffix of interest to be searched for in the parts_list
         :type part:                  str
@@ -80,8 +80,7 @@ def combine_elements(part, part_list):
 
         :return:                    Joined part list with combined to suffix
 
-        """
-
+    """
 
     if part in part_list:
         one_idx = part_list.index(part)
@@ -97,11 +96,12 @@ def keep_valid(x):
     """Keep only dictionaries that have a count for a county name present.
 
         :param x:                Dictionary with matches from filter_two
-        :type x:                  str
+        :type x:                 dict
 
         :return:                  Dictionary with count with county name
 
-        """
+    """
+
     d = {}
     for value in x:
         if type(value) is dict:
@@ -116,7 +116,7 @@ def find_county(d):
       of 1 has been identified.
 
       :param d:              Dictionary with count with county name from keep_valid
-      :type d:               str
+      :type d:               dict
 
       :return:               FIPS key combined to county dictionary with a count of 1 or more
 
@@ -146,7 +146,7 @@ def get_max_count(d):
      ideally this is 1, if a different number investigate futher
 
      :param d:              Dictionary with FIPS key from find_county
-     :type d:               str
+     :type d:               dict
 
      :return:               Dataframe of FIPS matches with column count of optimal county name
 
@@ -191,7 +191,6 @@ def prepare_data(fips_file, service_area_file, sales_ult_file, bal_auth_file):
                                                 [1] df_states:: Dataframe of prepared and cleaned Service area data
 
     """
-
 
     # read in data
     df_fips = pd.read_excel(fips_file)
@@ -263,16 +262,16 @@ def filter_two(df_fips, df_nan, df_valid):
     """Match NaN records by cleaning up naming conventions based on the most suitable match.
 
     :param df_fips:     Dataframe of prepared and cleaned FIPS data from prepare_data
-    :type df_fips:      str
+    :type df_fips:      pd.DataFrame
 
     :param df_nan:      Dataframe of data without a match between df_fips and df_states
-    :type df_nan:       str
+    :type df_nan:       pd.DataFrame
 
     :param df_valid:    Dataframe of valid data with a match between df_fips and df_states
-    :type df_valid:     str
+    :type df_valid:     pd.DataFrame
 
-    :return:           [0] df_valid: Dataframe of valid data with a match between df_fips and df_states
-                       [1] df_nan_bad: Dataframe of data without a match between df_fips and df_states
+    :return:            [0] df_valid: Dataframe of valid data with a match between df_fips and df_states
+                        [1] df_nan_bad: Dataframe of data without a match between df_fips and df_states
 
     """
 
@@ -324,16 +323,18 @@ def data_format(df):
     """Select for wanted columns and rename columns.
 
     :param df:                  Data frame containing valid data.
-    :type df:                   str
+    :type df:                   pd.DataFame
 
     :return:                    Data frame with relevant and renamed columns
 
     """
 
+    col_names = ['Data Year', 'Utility Number', 'Utility Name_x', 'state_abbreviation', 'state_name',
+                 'state_FIPS', 'county_name', 'county_FIPS', 'BA ID', 'BA Code',
+                 'Balancing Authority Name']
+
     # only keep columns that are needed
-    df = df[['Data Year', 'Utility Number', 'Utility Name_x', 'state_abbreviation', 'state_name',
-             'state_FIPS', 'county_name', 'county_FIPS', 'BA ID', 'BA Code',
-             'Balancing Authority Name']].copy()
+    df = df[col_names].copy()
 
     # rename columns
     df.rename(columns={"Data Year": "year",
@@ -348,7 +349,7 @@ def data_format(df):
                        "BA Code": "ba_abbreviation",
                        "Balancing Authority Name": "ba_name"}, inplace=True)
 
-    #remove comma from ba_name
+    # remove comma from ba_name
     df['ba_name'] = df['ba_name'].str.replace(",", "")
 
     return df
