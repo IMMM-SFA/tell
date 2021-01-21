@@ -18,7 +18,7 @@ class TestMatch(unittest.TestCase):
         success_df = self.construct_sample_dataframe(success=True)
 
         # create a comparison input data frame that should produce a KeyError when tested
-        fail_df = self.construct_sample_dataframe(success=True)
+        fail_df = self.construct_sample_dataframe(success=False)
 
         # generate an output data frame that has had columns renamed and reformatted
         output_df = match.data_format(success_df)
