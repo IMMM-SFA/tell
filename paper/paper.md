@@ -29,7 +29,7 @@ This would describe why you would need to build the `tell` software.
 # Summary
 I just took this content dirctly from a Confluence page as an example; it needs to be rewritten:  
 
-The TELL model will generate predictions of hourly total electricity load for every county in the Continental United States (CONUS). Predictions from TELL will be scaled to match the annual state-level total electricity loads predicted by the U.S. version of the Global Change Analysis Model [GCAM-USA; @iyer2017measuring, @iyer2019improving].
+The TELL model will generate predictions of hourly total electricity load for every county in the Continental United States (CONUS). Predictions from TELL will be scaled to match the annual state-level total electricity loads predicted by the U.S. version of the Global Change Analysis Model [GCAM-USA; @iyer2017measuring; @iyer2019improving].
 
 `tell` was implemented to...  
 
