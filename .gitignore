@@ -138,3 +138,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+#data source
+data/
+
+#outputs from running python scripts
+python_scripts/outputs
+python_scipts/prediction_figs
