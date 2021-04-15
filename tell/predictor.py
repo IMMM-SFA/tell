@@ -945,9 +945,6 @@ class process:
         return None
 
 
-
-
-
 if __name__ == "__main__":
-    #process
+    # process
     process(batch_run=True, dir='../data/csv/')
