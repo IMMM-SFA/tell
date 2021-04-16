@@ -360,7 +360,20 @@ class hyperparameters:
         return params
 
 
-class ml_lib:
+class MlLib:
+    """TODO:  describe this class
+
+    :param X_t: df -> training data,
+    :param Y_t: df -> training targets
+    :param X_e: df -> test data
+    :param Y_e: df -> test targets
+    :param model: str type of model to pick
+    :param datetime: array of dates for the
+    :param_fig_names: dict containing names of all the figures we want, including timeseries, seasonal prob dist, and cdf
+    :param dict_res: dict containing data needed for training and avaluation of residual model
+
+    """
+
     def __init__(
         self,
         X_t,
@@ -372,18 +385,6 @@ class ml_lib:
         model="mlp",
         dict_res=None,
     ):
-
-        """
-
-        :param X_t: df -> training data,
-        :param Y_t: df -> training targets
-        :param X_e: df -> test data
-        :param Y_e: df -> test targets
-        :param model: str type of model to pick
-        :param datetime: array of dates for the
-        :param_fig_names: dict containing names of all the figures we want, including timeseries, seasonal prob dist, and cdf
-        :param dict_res: dict containing data needed for training and avaluation of residual model
-        """
 
         # set data
         self.X_t, self.X_e, self.Y_t, self.Y_e = (
@@ -401,8 +402,6 @@ class ml_lib:
 
         # get the dict for residuals, if we want to fit residuals to the model
 
-
-
         # scale features. normalized features in lowercase
         out = self.scale_features()
         self.x_t, self.x_e, self.y_t, self.y_e = (
@@ -412,7 +411,7 @@ class ml_lib:
             out["y_e"],
         )
         self.out = out
-        #train and predict using the model. currently 'mlp' and 'linear' supported
+        # train and predict using the model. currently 'mlp' and 'linear' supported
         self.y_p = self.pick_model()
 
         # evaluation
@@ -430,16 +429,16 @@ class ml_lib:
         :return reg.coef_: regression coefficients of a linear model
         """
 
-        #instantiate and fit linear model
+        # instantiate and fit linear model
         reg = LR().fit(X=X, y=Y)
-        #get predictions
+
+        # get predictions
         y_p = reg.predict(X_e)
 
         if self.y_e is not None:
             print(r2_score(y_p, self.y_e))
 
         return y_p, reg.coef_
-
 
     def mlp_model(self, X, Y, X_e):
 
@@ -451,12 +450,12 @@ class ml_lib:
         :return: y_p: arr -> predictions over test set
         """
 
-        #currently hyperparameter selection is deactivate
+        # currently hyperparameter selection is deactivate
         # hyp_mlp = hyperparameters(model_str='mlp', X=X, Y=Y)
 
-        #instantiate and train the mlp model. we found 256 to be a good hyperparameter pick over some of larger bas
-        #performing hyperparameter search over all BAs may be computationally expensive
-        #accuracies for most BAs not sensitive to hyperparameters
+        # instantiate and train the mlp model. we found 256 to be a good hyperparameter pick over some of larger bas
+        # performing hyperparameter search over all BAs may be computationally expensive
+        # accuracies for most BAs not sensitive to hyperparameters
         mlp = MLP(hidden_layer_sizes=256, max_iter=500, validation_fraction=0.1)
         mlp.fit(X, Y)
         y_p = mlp.predict(X_e)
@@ -467,7 +466,8 @@ class ml_lib:
         if self.dict_res is not None:
             # fit residuals using linear_residual
             y_tmp = mlp.predict(X)  # predict on training data
-            #compute residuals: epsilon
+
+            # compute residuals: epsilon
             epsilon = Y - y_tmp  # residuals in the training data
 
             # train linear model to find residuals
@@ -475,7 +475,6 @@ class ml_lib:
             y_p = y_p + epsilon_e
 
         return y_p
-
 
     def linear_residual(self, epsilon):
 
@@ -605,9 +604,11 @@ class ml_lib:
 
         # first the absolute root-mean-squared error
         self.rms_abs = np.sqrt(mean_squared_error(self.Y_p, self.Y_e))
+
         # next, the root mean squared error as a function of
         self.rms_norm = self.rms_abs / np.mean(self.Y_e)
         self.mape = mean_absolute_percentage_error(self.Y_e, self.Y_p)
+
         # R2 score
         self.r2_val = r2_score(self.y_p, self.y_e)
 
@@ -683,7 +684,7 @@ class ml_lib:
 
 class Analysis:
 
-    def __init__(self, region="PJM", fig_dir="prediction_figs", csv_dir="outputs"):
+    def __init__(self, region="PJM", out_dir="outputs"):
         """Train and evaluate each individual BAs. Generates output CSV files under directory outputs
         Trains the "residual model" as well for population correction.
 
@@ -699,10 +700,10 @@ class Analysis:
         self.x_res = ["Population", "Hour", "Month", "Year"]
 
         # specify dataset for both main MLP and residual linear model
-        self.data = Dataset(region=region, csv_dir=csv_dir)
+        self.data = Dataset(region=region, csv_dir=out_dir)
 
         # data for residual model
-        self.data_res = Dataset(region=region, x_var=self.x_res, linear_mode_bool=True, csv_dir=csv_dir)
+        self.data_res = Dataset(region=region, x_var=self.x_res, linear_mode_bool=True, csv_dir=out_dir)
 
         # define training and test data for residual fits
         # training and test data for main MLP model
@@ -720,25 +721,20 @@ class Analysis:
             self.data_res.Y_e,
         )
 
-        #resetting indices for test data: both main model and residual model
+        # resetting indices for test data: both main model and residual model
         self.df_e, self.df_res_e = (
             self.data.df_e.reset_index(drop=True),
             self.data_res.df_e.reset_index(drop=True),
         )
 
-        #list of models for which analysis is to be performed. currently only 'linear' and 'mlp' supported
+        # list of models for which analysis is to be performed. currently only 'linear' and 'mlp' supported
         self.list_of_models = ["mlp"]
 
-        self.csv_dir = csv_dir
+        self.out_dir = out_dir
 
-        #create output dir if it not already created
-        if not os.path.exists(self.csv_dir):
-            os.makedirs(self.csv_dir)
-
-        # create fig_dir
-        self.fig_dir = fig_dir
-        if not os.path.exists(self.fig_dir):
-            os.makedirs(self.fig_dir)
+        # create output dir if it not already created
+        if not os.path.exists(self.out_dir):
+            os.makedirs(self.out_dir)
 
         # test multiple models. currently only testing for 'mlp' model
         self.test_multiple_models()
@@ -746,7 +742,7 @@ class Analysis:
     def test_multiple_models(self):
 
         Yp_list = []
-        #get labels for predictions based on type of model
+        # get labels for predictions based on type of model
         labels = [str_name + " predictions" for str_name in self.list_of_models]
 
         for m, model in enumerate(self.list_of_models):
@@ -755,8 +751,8 @@ class Analysis:
             fig_names = self.set_fignames(model_name=labels[m])
             # set up the dict for error correction
             err_correct = {"Xres_t": self.Xres_t, "Xres_e": self.Xres_e}
-            #instantiate ml_lib object for to train the model and get predictions over the test set
-            ml = ml_lib(
+            # instantiate ml_lib object for to train the model and get predictions over the test set
+            ml = MlLib(
                 X_t=self.X_t,
                 Y_t=self.Y_t,
                 X_e=self.X_e,
@@ -767,17 +763,17 @@ class Analysis:
                 dict_res=err_correct,
             )  # remove err_correct if it's not working
 
-            #get the predictions from the ML model
+            # get the predictions from the ML model
             Y_p = ml.Y_p
             self.df_e[labels[m]] = Y_p
 
-            #currently regression is commented out, but you can have a regression plot if you chose
+            # currently regression is commented out, but you can have a regression plot if you chose
             # self.plot_reg(Y_a=self.Y_e, Y_p=Y_p, label=labels[m])
 
             # write to file
             self.write_output_to_file(Y_p=Y_p, model=model)
 
-            ##export for bar chart
+            # export for bar chart
             if model == "mlp":
                 self.R2 = ml.r2_val
                 self.MAPE = ml.mape
@@ -795,10 +791,10 @@ class Analysis:
 
         fig_names = dict()
         fig_names["timeSeries"] = (
-            self.fig_dir + "/" + self.region + "_" + model_name + "_" + "timeseries.svg"
+            os.path.join(self.out_dir, f"{self.region}_{model_name}_timeseries.svg")
         )
         fig_names["dist"] = (
-            self.fig_dir + "/" + self.region + "_" + model_name + "_" + "probdist.svg"
+            os.path.join(self.out_dir, f"{self.region}_{model_name}_probdist.svg")
         )
 
         return fig_names
@@ -822,10 +818,9 @@ class Analysis:
         plt.xlabel("Actual forecast of electricity Demand (MWh)")
         plt.ylabel("Predictions of electricity demand (MWh)")
 
-        fig_name = self.fig_dir + "/" + self.region + "_" + label + ".svg"
+        fig_name = os.path.join(self.out_dir, f"{self.region}_{label}.svg")
         plt.tight_layout()
         plt.savefig(fig_name)
-        # plt.show()
 
         return None
 
@@ -839,7 +834,6 @@ class Analysis:
         """
 
         # need to flatten self.Y_e, as the dimensions are (..,1)
-
         out = {
             "Datetime": self.df_e["Datetime"].values,
             "Ground Truth": self.Y_e.squeeze(),
@@ -849,9 +843,9 @@ class Analysis:
         # export as pandas dataframe and write to file
         out = pd.DataFrame(out).reset_index(drop=True)
         csv_filename = (
-            self.csv_dir + "/" + self.region + "_" + model + "_predictions.csv"
+            os.path.join(self.out_dir, f"{self.region}_{model}_predictions.csv")
         )
-        out.to_csv(csv_filename)
+        out.to_csv(csv_filename, index=False)
 
         return None
 
@@ -901,8 +895,6 @@ class Process:
         """
 
         list_of_files = sorted(glob.glob(self.pat_to_check))
-
-        print(list_of_files)
 
         BA_list = []
         for filename in list_of_files:
