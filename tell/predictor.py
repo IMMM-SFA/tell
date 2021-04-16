@@ -892,7 +892,7 @@ class Process:
             self.ba_list = self.target_ba_list
 
         # loop over all BAs. generates summary.csv to show accuracy of all BAs
-        self.gen_results()  # steo ii: gen_results
+        self.summary_df = self.gen_results()  # steo ii: gen_results
 
     def search_for_pattern(self):
         """Sets self.ba_list to get a list of BAs for training and evaluation.
@@ -963,4 +963,6 @@ def predict(data_dir, out_dir, batch_run=True, target_ba_list=None):
 
     """
 
-    return Process(batch_run=batch_run, data_dir=data_dir, out_dir=out_dir, target_ba_list=target_ba_list)
+    proc = Process(batch_run=batch_run, data_dir=data_dir, out_dir=out_dir, target_ba_list=target_ba_list)
+
+    return proc.summary_df
