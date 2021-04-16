@@ -266,14 +266,15 @@ class Dataset:
             mnth = df["Month"]
             df["Month"] = np.sin((mnth * np.pi / 12))  # 12 months is pi
 
-        if self.add_dayofweek == True:
+        if self.add_dayofweek:
             dayofweek = df["Datetime"].dt.dayofweek.values
+
             # dayofweek 0: monday, 6: sunday
             weekday = np.zeros_like(dayofweek)
             weekday[dayofweek <= 4] = 1
             df["Weekday"] = weekday
 
-            ###Create a day of week variable
+            # Create a day of week variable
             day_of_week = np.zeros((dayofweek.shape[0], 7))
             for d in range(7):
                 tmp_val = np.zeros_like(dayofweek)
@@ -282,12 +283,13 @@ class Dataset:
 
             # concat day of week with df
             df_dayofweek = pd.DataFrame(day_of_week)
+
             # weeklist
             day_list = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
             df_dayofweek.columns = day_list
             df = pd.concat((df, df_dayofweek), axis=1)
 
-            ###federal holidays added as a new feature
+            # federal holidays added as a new feature
             df = self.remove_federal_holidays(df=df)
 
         return df, day_list
@@ -310,7 +312,7 @@ class Dataset:
         return None
 
 
-class hyperparameters:
+class Hyperparameters:
 
     """
     class for hyperparameter search
@@ -373,19 +375,23 @@ class MlLib:
     :param_fig_names: dict containing names of all the figures we want, including timeseries, seasonal prob dist, and cdf
     :param dict_res: dict containing data needed for training and avaluation of residual model
 
+    :param generate_plots:              Choice to generate and save plots
+    :type generate_plots:               bool
+
     """
 
-    def __init__(
-        self,
-        X_t,
-        Y_t,
-        X_e,
-        fig_names=None,
-        datetime=None,
-        Y_e=None,
-        model="mlp",
-        dict_res=None,
-    ):
+    def __init__(self,
+                 X_t,
+                 Y_t,
+                 X_e,
+                 fig_names=None,
+                 datetime=None,
+                 Y_e=None,
+                 model="mlp",
+                 dict_res=None,
+                 generate_plots=True):
+
+        self.generate_plots = generate_plots
 
         # set data
         self.X_t, self.X_e, self.Y_t, self.Y_e = (
@@ -565,36 +571,38 @@ class MlLib:
 
         self.df_results = pd.DataFrame(data)
 
-        # evaluate metrics
-        plt.rcParams.update({"font.size": 16})
+        if self.generate_plots:
 
-        # set mdates formatter
-        locator = mdates.AutoDateLocator()
-        formatter = mdates.ConciseDateFormatter(locator)
+            # evaluate metrics
+            plt.rcParams.update({"font.size": 16})
 
-        # quick plot:
-        time = np.arange(0, self.Y_e.shape[0])
-        fig, ax1 = plt.subplots()
+            # set mdates formatter
+            locator = mdates.AutoDateLocator()
+            formatter = mdates.ConciseDateFormatter(locator)
 
-        ax1.plot(self.datetime, self.Y_e, label="Ground Truth")
-        ax1.plot(self.datetime, self.Y_p, label="Predictions")
-        ax1.xaxis.set_major_locator(locator)
-        ax1.xaxis.set_major_formatter(formatter)
+            # quick plot:
+            time = np.arange(0, self.Y_e.shape[0])
+            fig, ax1 = plt.subplots()
 
-        plt.xlabel("Date/Time")
-        plt.ylabel("Electricity Demand (MWh)")
-        plt.legend()
-        plt.tight_layout()
+            ax1.plot(self.datetime, self.Y_e, label="Ground Truth")
+            ax1.plot(self.datetime, self.Y_p, label="Predictions")
+            ax1.xaxis.set_major_locator(locator)
+            ax1.xaxis.set_major_formatter(formatter)
 
-        if self.fig_names is not None:
-            print("Created figure: ", self.fig_names["timeSeries"])
-            plt.savefig(self.fig_names["timeSeries"])
+            plt.xlabel("Date/Time")
+            plt.ylabel("Electricity Demand (MWh)")
+            plt.legend()
+            plt.tight_layout()
 
-        else:
-            plt.show()
+            if self.fig_names is not None:
+                print("Created figure: ", self.fig_names["timeSeries"])
+                plt.savefig(self.fig_names["timeSeries"])
 
-        # close figure
-        plt.close()
+            else:
+                plt.show()
+
+            # close figure
+            plt.close()
 
         # evaluate the model
         self.evaluation_metrics()
@@ -685,7 +693,7 @@ class MlLib:
 
 class Analysis:
 
-    def __init__(self, data_dir, out_dir, region="PJM"):
+    def __init__(self, data_dir, out_dir, region="PJM", generate_plots=True):
         """Train and evaluate each individual BAs. Generates output CSV files under directory outputs
         Trains the "residual model" as well for population correction.
 
@@ -693,6 +701,8 @@ class Analysis:
         :param Y_e: ground truth during the evaluation period
 
         """
+
+        self.generate_plots = generate_plots
 
         # note, region is same as BA!
         self.region = region
@@ -747,11 +757,13 @@ class Analysis:
         labels = [str_name + " predictions" for str_name in self.list_of_models]
 
         for m, model in enumerate(self.list_of_models):
+
             print("----CHECKING PREDICTIVE MODELS-----")
-            # print('Model: {}'.format(model))
             fig_names = self.set_fignames(model_name=labels[m])
+
             # set up the dict for error correction
             err_correct = {"Xres_t": self.Xres_t, "Xres_e": self.Xres_e}
+
             # instantiate ml_lib object for to train the model and get predictions over the test set
             ml = MlLib(
                 X_t=self.X_t,
@@ -762,7 +774,8 @@ class Analysis:
                 fig_names=fig_names,
                 model=model,
                 dict_res=err_correct,
-            )  # remove err_correct if it's not working
+                generate_plots=self.generate_plots
+            )
 
             # get the predictions from the ML model
             Y_p = ml.Y_p
@@ -853,7 +866,7 @@ class Analysis:
 
 class Process:
 
-    def __init__(self, batch_run=False, data_dir=None, out_dir=None, target_ba_list=None):
+    def __init__(self, batch_run=False, data_dir=None, out_dir=None, target_ba_list=None, generate_plots=True):
         """Run multiple BA
 
         :param batch_run:               Indicating if we want to run the simulations for all BAs, or we handpick the BAs
@@ -871,11 +884,15 @@ class Process:
         :param target_ba_list:          A list of BA names to run if `batch_run` is False
         :type target_ba_list:           list
 
+        :param generate_plots:          Choice to generate and save plots
+        :type generate_plots:           bool
+
         """
 
         self.data_dir = data_dir
         self.out_dir = out_dir
         self.target_ba_list = target_ba_list
+        self.generate_plots = generate_plots
 
         # output summary file
         self.out_summary_file = os.path.join(self.out_dir, 'summary.csv')
@@ -925,7 +942,11 @@ class Process:
             print("BA: {}".format(BA_name))
             try:
                 # perform analysis for each BA, keep track of all BAs and corresponding accuracy metrics
-                ba = Analysis(region=BA_name, out_dir=self.out_dir, data_dir=self.data_dir)  # instantiate ba object
+                ba = Analysis(region=BA_name,
+                              out_dir=self.out_dir,
+                              data_dir=self.data_dir,
+                              generate_plots=self.generate_plots)
+
                 ba_out.append(BA_name), r2.append(ba.R2), mape.append(ba.MAPE)
 
             except ValueError:
@@ -940,7 +961,7 @@ class Process:
         return df
 
 
-def predict(data_dir, out_dir, batch_run=True, target_ba_list=None):
+def predict(data_dir, out_dir, batch_run=True, target_ba_list=None, generate_plots=True):
     """Convenience wrapper for the Process class which runs predictive models for each BA input CSV in the input
     directory and creates a summary and comparative figures of R2 and MAPE per BA.
 
@@ -959,10 +980,18 @@ def predict(data_dir, out_dir, batch_run=True, target_ba_list=None):
     :param target_ba_list:          A list of BA names to run if `batch_run` is False
     :type target_ba_list:           list
 
+
+    :param generate_plots:              Choice to generate and save plots
+    :type generate_plots:               bool
+
     :return:                        Data frame of BA, R2, MAPE statistics
 
     """
 
-    proc = Process(batch_run=batch_run, data_dir=data_dir, out_dir=out_dir, target_ba_list=target_ba_list)
+    proc = Process(batch_run=batch_run,
+                   data_dir=data_dir,
+                   out_dir=out_dir,
+                   target_ba_list=target_ba_list,
+                   generate_plots=generate_plots)
 
     return proc.summary_df
