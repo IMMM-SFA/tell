@@ -948,4 +948,27 @@ class Process:
 
         df.to_csv(self.out_summary_file, index=False)
 
-        return None
+        return df
+
+
+def predict(data_dir, out_dir, batch_run=True):
+    """Convenience wrapper for the Process class which runs predictive models for each BA input CSV in the input
+    directory and creates a summary and comparative figures of R2 and MAPE per BA.
+
+    :param data_dir:                Full path to the directory containing the target
+                                    CSV files
+    :type data_dir:                 str
+
+    :param out_dir:                 Full path to the directory where the outputs are to be written
+    :type out_dir:                  str
+
+    :param batch_run:               Indicating if we want to run the simulations for all BAs, or we handpick the BAs
+                                    If batch_run = True, the code will search for all BAs in 'dir'
+                                    If batch_run = False, we need to specify which BA to run
+    :type batch_run:                bool
+
+    :return:                        Data frame of BA, R2, MAPE statistics
+
+    """
+
+    return Process(batch_run=batch_run, data_dir=data_dir, out_dir=out_dir)
