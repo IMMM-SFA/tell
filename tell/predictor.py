@@ -80,6 +80,7 @@ class Dataset:
                  add_dayofweek=True,
                  linear_mode_bool=False,
                  ):
+
         self.region = region
         self.csv_dir = csv_dir
         self.start_time, self.end_time = start_time, end_time
@@ -684,7 +685,7 @@ class MlLib:
 
 class Analysis:
 
-    def __init__(self, region="PJM", out_dir="outputs"):
+    def __init__(self, data_dir, out_dir, region="PJM"):
         """Train and evaluate each individual BAs. Generates output CSV files under directory outputs
         Trains the "residual model" as well for population correction.
 
@@ -700,10 +701,10 @@ class Analysis:
         self.x_res = ["Population", "Hour", "Month", "Year"]
 
         # specify dataset for both main MLP and residual linear model
-        self.data = Dataset(region=region, csv_dir=out_dir)
+        self.data = Dataset(region=region, csv_dir=data_dir)
 
         # data for residual model
-        self.data_res = Dataset(region=region, x_var=self.x_res, linear_mode_bool=True, csv_dir=out_dir)
+        self.data_res = Dataset(region=region, x_var=self.x_res, linear_mode_bool=True, csv_dir=data_dir)
 
         # define training and test data for residual fits
         # training and test data for main MLP model
@@ -782,11 +783,11 @@ class Analysis:
 
     def set_fignames(self, model_name):
 
-        """
-        function to set figure names for timeseries plots and probability distributions of error residuals seggregated
-        monthly
+        """Set figure names for timeseries plots and probability distributions of error residuals by month
+
         :param model_name: str -> model name (e.g. 'linear', 'mlp')
         :return: fig_names: dict -> containing list of figures for 'timeSeries' and 'dist'
+
         """
 
         fig_names = dict()
@@ -851,7 +852,8 @@ class Analysis:
 
 
 class Process:
-    def __init__(self, batch_run=False, data_dir=None, out_dir=None):
+
+    def __init__(self, batch_run=False, data_dir=None, out_dir=None, target_ba_list=None):
         """Run multiple BA
 
         :param batch_run:               Indicating if we want to run the simulations for all BAs, or we handpick the BAs
@@ -866,62 +868,49 @@ class Process:
         :param out_dir:                 Full path to the directory where the outputs are to be written
         :type out_dir:                  str
 
+        :param target_ba_list:          A list of BA names to run if `batch_run` is False
+        :type target_ba_list:           list
+
         """
 
         self.data_dir = data_dir
+        self.out_dir = out_dir
+        self.target_ba_list = target_ba_list
 
         # output summary file
-        self.out_summary_file = os.path.join(out_dir, 'summary.csv')
+        self.out_summary_file = os.path.join(self.out_dir, 'summary.csv')
 
-        # checking dir to get list of csvs
+        # checking dir to get list of CSV files
         self.pat_to_check = os.path.join(self.data_dir, '*.csv')
 
         if batch_run:
             # case to run for all BAs
-            self.search_for_pattern()
+            self.ba_list = self.search_for_pattern()
 
         else:
             # case for handpick BAs
-            self.set_list_of_BA()  # step i: specify list of BA
+            self.ba_list = self.target_ba_list
 
         # loop over all BAs. generates summary.csv to show accuracy of all BAs
         self.gen_results()  # steo ii: gen_results
 
     def search_for_pattern(self):
+        """Sets self.ba_list to get a list of BAs for training and evaluation.
 
-        """
-        sets self.BA_list to get a list of BAs for training and evaluation
-        :return:
+        :return:            List of BAs to process
+
         """
 
         list_of_files = sorted(glob.glob(self.pat_to_check))
 
         BA_list = []
         for filename in list_of_files:
+
             main_str = filename.split("/")[-1]
             main_str = main_str.split("_")[0]  # get the BA name
             BA_list.append(main_str)
 
-        self.BA_list = BA_list
-
-        return None
-
-    def set_list_of_BA(self):
-        """Generate list of BAs we want to generate results for
-
-        :return:
-
-        """
-
-        self.BA_list = [
-            "PJM",
-            "OVEC",
-            "MISO",
-            "ERCO",
-            "NYIS",
-        ]
-
-        return None
+        return BA_list
 
     def gen_results(self):
         """Writes all outputs to csvs + a summary file with the evaluation metrics.
@@ -932,11 +921,11 @@ class Process:
 
         ba_out, r2, mape = [], [], []
 
-        for BA_name in self.BA_list:
+        for BA_name in self.ba_list:
             print("BA: {}".format(BA_name))
             try:
                 # perform analysis for each BA, keep track of all BAs and corresponding accuracy metrics
-                ba = Analysis(region=BA_name, csv_dir=self.data_dir)  # instantiate ba object
+                ba = Analysis(region=BA_name, out_dir=self.out_dir, data_dir=self.data_dir)  # instantiate ba object
                 ba_out.append(BA_name), r2.append(ba.R2), mape.append(ba.MAPE)
 
             except ValueError:
@@ -951,7 +940,7 @@ class Process:
         return df
 
 
-def predict(data_dir, out_dir, batch_run=True):
+def predict(data_dir, out_dir, batch_run=True, target_ba_list=None):
     """Convenience wrapper for the Process class which runs predictive models for each BA input CSV in the input
     directory and creates a summary and comparative figures of R2 and MAPE per BA.
 
@@ -967,8 +956,11 @@ def predict(data_dir, out_dir, batch_run=True):
                                     If batch_run = False, we need to specify which BA to run
     :type batch_run:                bool
 
+    :param target_ba_list:          A list of BA names to run if `batch_run` is False
+    :type target_ba_list:           list
+
     :return:                        Data frame of BA, R2, MAPE statistics
 
     """
 
-    return Process(batch_run=batch_run, data_dir=data_dir, out_dir=out_dir)
+    return Process(batch_run=batch_run, data_dir=data_dir, out_dir=out_dir, target_ba_list=target_ba_list)
