@@ -44,41 +44,42 @@ MONTH_LIST = [
 np.random.seed(391)
 
 
-class dataset:
-    def __init__(
-        self,
-        region,
-        csv_dir="../data/csv/",
-        start_time="2016-01-01 00:00:00",
-        end_time="2019-12-31 23:00:00",
-        split_time="2018-12-31 23:00:00",
-        x_var=[
-            "Hour",
-            "Month",
-            "Temperature",
-            "Specific_Humidity",
-            "Wind_Speed",
-            "Longwave_Radiation",
-            "Shortwave_Radiation"
-        ],
-        #'Longwave_Radiation', 'Wind_Speed'
-        y_var=["Demand"],
-        add_dayofweek=True,
-        linear_mode_bool=False,
-    ):
+class Dataset:
+    """TODO:  fill in a description of this class
 
-        """
-        :param region: str indicating region/BA we want to train and test on. must match with str in csv
-        :param csv_dir: str dir where the csvs are located
-        :param start_time: str start time in YYYY-MM-DD. all data before this time as not considered
-        :param end_time: str end_time in YYYY-MM-DD. all data after this time is not considered
-        :param split_time: partition time in YYYY-MM-DD to split into training and test_set
-        :param x_var: list-> features to consider
-        :param y_var: list-> targets to consider
-        :param add_dayofweek: bool -> weather we want to consider weekday vs weekend informoation
-        :param linear_mode_bool: bool-> whether it is a linear model or not. if so, the month and hour will need to be sinusoidal
-        """
 
+    :param region: str indicating region/BA we want to train and test on. must match with str in csv
+    :param csv_dir: str dir where the csvs are located
+    :param start_time: str start time in YYYY-MM-DD. all data before this time as not considered
+    :param end_time: str end_time in YYYY-MM-DD. all data after this time is not considered
+    :param split_time: partition time in YYYY-MM-DD to split into training and test_set
+    :param x_var: list-> features to consider
+    :param y_var: list-> targets to consider
+    :param add_dayofweek: bool -> weather we want to consider weekday vs weekend informoation
+    :param linear_mode_bool: bool-> whether it is a linear model or not. if so, the month and hour will need to be sinusoidal
+
+    """
+
+    def __init__(self,
+                 region,
+                 csv_dir="../data/csv/",
+                 start_time="2016-01-01 00:00:00",
+                 end_time="2019-12-31 23:00:00",
+                 split_time="2018-12-31 23:00:00",
+                 x_var=[
+                    "Hour",
+                    "Month",
+                    "Temperature",
+                    "Specific_Humidity",
+                    "Wind_Speed",
+                    "Longwave_Radiation",
+                    "Shortwave_Radiation"
+                 ],
+                 #'Longwave_Radiation', 'Wind_Speed'
+                 y_var=["Demand"],
+                 add_dayofweek=True,
+                 linear_mode_bool=False,
+                 ):
         self.region = region
         self.csv_dir = csv_dir
         self.start_time, self.end_time = start_time, end_time
@@ -100,14 +101,6 @@ class dataset:
             self.Y_t,
             self.Y_e,
         ) = self.preprocess_data(day_list=day_list)
-
-        # check pearson coeff
-        # self.compute_pearson()
-
-        # troubleshoot using plotting training and test data
-        # self.troubleshoot_by_plot()
-
-        # get
 
     def read_data(self):
 
@@ -131,10 +124,10 @@ class dataset:
         return df, df_t, df_e, day_list
 
     def preprocess_data(self, day_list=None):
+        """Takes the features and targets from df
 
-        """
-        takes the features and targets from df
         :return: df_t -> training dataframe df_e -> eval dataframe
+
         """
 
         # sort the entire df by the column headers we require
@@ -157,7 +150,8 @@ class dataset:
         function to extract filename for that
         :return filename: str filename corresponding to that region
         """
-        str_to_check = self.csv_dir + self.region + "_*.csv"  # pattern to search for
+
+        str_to_check = os.path.join(self.csv_dir, f"{self.region}_*.csv")  # pattern to search for
         filename = glob.glob(str_to_check)[
             0
         ]  # [0] list all filenames with the string str_to_check
@@ -683,37 +677,38 @@ class ml_lib:
         return None
 
 
-class analysis:
-    def __init__(self, region="PJM", fig_dir="prediction_figs", csv_dir="outputs"):
+class Analysis:
 
-        """
-        class to train and evaluate each individual BAs
-        generates output csvs under directory outputs
-        trains the "residual model" as well for population correction
+    def __init__(self, region="PJM", fig_dir="prediction_figs", csv_dir="outputs"):
+        """Train and evaluate each individual BAs. Generates output CSV files under directory outputs
+        Trains the "residual model" as well for population correction.
+
         :param df: df corresponding to the evaluation period
         :param Y_e: ground truth during the evaluation period
+
         """
-        #note, region is same as BA!
+
+        # note, region is same as BA!
         self.region = region
 
         # specify feature set for residuals
         self.x_res = ["Population", "Hour", "Month", "Year"]
 
         # specify dataset for both main MLP and residual linear model
-        self.data = dataset(region=region)
-        self.data_res = dataset(
-            region=region, x_var=self.x_res, linear_mode_bool=True
-        )  # data for residual model
+        self.data = Dataset(region=region, csv_dir=csv_dir)
+
+        # data for residual model
+        self.data_res = Dataset(region=region, x_var=self.x_res, linear_mode_bool=True, csv_dir=csv_dir)
 
         # define training and test data for residual fits
-        #training and test data for main MLP model
+        # training and test data for main MLP model
         self.X_t, self.Y_t, self.X_e, self.Y_e = (
             self.data.X_t,
             self.data.Y_t,
             self.data.X_e,
             self.data.Y_e,
         )
-        #training and test data for residual model
+        # training and test data for residual model
         self.Xres_t, self.Yres_t, self.Xres_e, self.Yres_e = (
             self.data_res.X_t,
             self.data_res.Y_t,
@@ -847,7 +842,7 @@ class analysis:
             "Predictions": Y_p,
         }
 
-        #export as pandas dataframe and write to file
+        # export as pandas dataframe and write to file
         out = pd.DataFrame(out).reset_index(drop=True)
         csv_filename = (
             self.csv_dir + "/" + self.region + "_" + model + "_predictions.csv"
@@ -857,32 +852,41 @@ class analysis:
         return None
 
 
-class process:
-    def __init__(self, batch_run=False, dir=None):
+class Process:
+    def __init__(self, batch_run=False, data_dir=None, out_dir=None):
+        """Run multiple BA
+
+        :param batch_run:               Indicating if we want to run the simulations for all BAs, or we handpick the BAs
+                                        If batch_run = True, the code will search for all BAs in 'dir'
+                                        If batch_run = False, we need to specify which BA to run
+        :type batch_run:                bool
+
+        :param data_dir:                Full path to the directory containing the target
+                                        CSV files
+        :type data_dir:                 str
+
+        :param out_dir:                 Full path to the directory where the outputs are to be written
+        :type out_dir:                  str
+
         """
-        class to run multiple BA
-        :param batch_run: bool indicating if we want to run the simulations for all BAs, or we handpick the BAs
-        if batch_run = True, the code will search for all BAs in 'dir'
-        if batch_run = False, we need to specify which BA to run
-        """
 
-        #checking dir to get list of csvs
-        if dir is None:
-            self.pat_to_check = (
-                "/home/aowabin/Documents/tell/tell/CSV_Files/CSV_Files/*.csv"
-            )
+        self.data_dir = data_dir
 
-        else:
-            self.pat_to_check = dir + '*.csv'
+        # output summary file
+        self.out_summary_file = os.path.join(out_dir, 'summary.csv')
 
-        if batch_run == True:
+        # checking dir to get list of csvs
+        self.pat_to_check = os.path.join(self.data_dir, '*.csv')
+
+        if batch_run:
             # case to run for all BAs
             self.search_for_pattern()
+
         else:
             # case for handpick BAs
             self.set_list_of_BA()  # step i: specify list of BA
 
-        #loop over all BAs. generates summary.csv to show accuracy of all BAs
+        # loop over all BAs. generates summary.csv to show accuracy of all BAs
         self.gen_results()  # steo ii: gen_results
 
     def search_for_pattern(self):
@@ -893,6 +897,9 @@ class process:
         """
 
         list_of_files = sorted(glob.glob(self.pat_to_check))
+
+        print(list_of_files)
+
         BA_list = []
         for filename in list_of_files:
             main_str = filename.split("/")[-1]
@@ -904,11 +911,12 @@ class process:
         return None
 
     def set_list_of_BA(self):
+        """Generate list of BAs we want to generate results for
+
+        :return:
 
         """
-        Generate list of BAs we want to generate results for
-        :return:
-        """
+
         self.BA_list = [
             "PJM",
             "OVEC",
@@ -920,18 +928,19 @@ class process:
         return None
 
     def gen_results(self):
+        """Writes all outputs to csvs + a summary file with the evaluation metrics.
 
-        """
-        writes all outputs to csvs + a summary file with the evaluation metrics
         :return:
+
         """
 
         ba_out, r2, mape = [], [], []
+
         for BA_name in self.BA_list:
             print("BA: {}".format(BA_name))
             try:
-                #perform analysis for each BA, keep track of all BAs and corresponding accuracy metrics
-                ba = analysis(region=BA_name)  # instantiate ba object
+                # perform analysis for each BA, keep track of all BAs and corresponding accuracy metrics
+                ba = Analysis(region=BA_name, csv_dir=self.data_dir)  # instantiate ba object
                 ba_out.append(BA_name), r2.append(ba.R2), mape.append(ba.MAPE)
 
             except ValueError:
@@ -940,11 +949,7 @@ class process:
         # write to file
         out = {"BA": ba_out, "R2": r2, "MAPE": mape}
         df = pd.DataFrame(out)
-        df.to_csv("summary.csv")
+
+        df.to_csv(self.out_summary_file, index=False)
 
         return None
-
-
-if __name__ == "__main__":
-    # process
-    process(batch_run=True, dir='../data/csv/')
