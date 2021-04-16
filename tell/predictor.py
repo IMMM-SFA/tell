@@ -555,6 +555,7 @@ class ml_lib:
 
         # first revert to the absolute values
         self.Y_p = self.unscale_targets(out=self.out, y_p=self.y_p)
+
         # complile results and predictions into a timeframe
         data = {
             "Datetime": self.datetime,
@@ -563,15 +564,15 @@ class ml_lib:
         }
 
         self.df_results = pd.DataFrame(data)
-        # evaluate metrics
 
+        # evaluate metrics
         plt.rcParams.update({"font.size": 16})
 
         # set mdates formatter
         locator = mdates.AutoDateLocator()
         formatter = mdates.ConciseDateFormatter(locator)
 
-        ##quick plot:
+        # quick plot:
         time = np.arange(0, self.Y_e.shape[0])
         fig, ax1 = plt.subplots()
 
@@ -586,13 +587,16 @@ class ml_lib:
         plt.tight_layout()
 
         if self.fig_names is not None:
-            print("fig_name: ", self.fig_names["timeSeries"])
+            print("Created figure: ", self.fig_names["timeSeries"])
             plt.savefig(self.fig_names["timeSeries"])
-            # plt.show()
+
         else:
             plt.show()
 
-        ###evaluate the model
+        # close figure
+        plt.close()
+
+        # evaluate the model
         self.evaluation_metrics()
 
         return None
