@@ -981,8 +981,8 @@ def predict(data_dir, out_dir, batch_run=True, target_ba_list=None, generate_plo
     :type target_ba_list:           list
 
 
-    :param generate_plots:              Choice to generate and save plots
-    :type generate_plots:               bool
+    :param generate_plots:          Choice to generate and save plots
+    :type generate_plots:           bool
 
     :return:                        Data frame of BA, R2, MAPE statistics
 
