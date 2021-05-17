@@ -23,6 +23,5 @@ if __name__ == '__main__':
 
 
     #run the prepare data function
-    tell.process_ferc_data(target_year, ferc_hourly_file, ferc_resp_eia_code, eia_operators_nerc_region_mapping,
-                           output_dir)
+    tell.process_ferc_data(target_year, ferc_hourly_file, ferc_resp_eia_code, eia_operators_nerc_region_mapping, output_dir)
 

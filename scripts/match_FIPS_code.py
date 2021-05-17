@@ -6,7 +6,7 @@ import tell
 if __name__ == '__main__':
 
     # set the target year
-    target_year = 2019
+    target_year = 2015
 
     # get the input directory as it currently exists within this repository
     input_dir = os.path.join(os.path.dirname(__file__), 'inputs')
@@ -25,3 +25,10 @@ if __name__ == '__main__':
 
     # prepare data
     tell.process_data(target_year, fips_file, service_area_file, sales_ult_file, bal_auth_file, output_dir)
+
+
+    output = os.path.join(output_dir, f'fips_service_match_{target_year}.csv')
+    output = pd.read_csv(output)
+    output2 = output.drop_duplicates()
+    output_file = os.path.join(output_dir, f'fips_service_match_rm{target_year}.csv')
+    output2.to_csv(output_file, sep=',', index=False)
