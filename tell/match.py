@@ -10,20 +10,15 @@ from tell.logger import Logger
 
 def count_matches(states_key, fips_key, ignore=('and', 'if', 'on', 'an', 'a', 'the')):
     """Count the number of word matches between two primary keys.
-
     :param states_key:                 The key representing the <state_abbrev>_<county_name> in the
                                        states data frame
     :type states_key:                  str
-
     :param fips_key:                   The key representing the <state_abbrev>_<county_name> in the
                                        FIPS data frame
     :type fips_key:                    str
-
     :param ignore:                     A list of common english words to ignore.
     :type ignore:                      list
-
     :return:                           Total number of matches or None if no matches
-
     """
 
     # get states state name
@@ -71,15 +66,11 @@ def count_matches(states_key, fips_key, ignore=('and', 'if', 'on', 'an', 'a', 't
 
 def combine_elements(part, part_list):
     """Check for any "de" suffix and join to second position (e.g., "de witt" to "dewitt")
-
         :param part:                 The suffix of interest to be searched for in the parts_list
         :type part:                  str
-
         :param part_list:           The str of interest separated into a list of parts
         :type part_list:            list
-
         :return:                    Joined part list with combined to suffix
-
     """
 
     if part in part_list:
@@ -94,12 +85,9 @@ def combine_elements(part, part_list):
 
 def keep_valid(x):
     """Keep only dictionaries that have a count for a county name present.
-
         :param x:                Dictionary with matches from filter_two
         :type x:                 dict
-
         :return:                  Dictionary with count with county name
-
     """
 
     d = {}
@@ -114,12 +102,9 @@ def keep_valid(x):
 def find_county(d):
     """Add the FIPS key to the data frame where the optimal value with a count
       of 1 has been identified.
-
       :param d:              Dictionary with count with county name from keep_valid
       :type d:               dict
-
       :return:               FIPS key combined to county dictionary with a count of 1 or more
-
       """
     if len(d) > 0:
 
@@ -144,12 +129,9 @@ def find_county(d):
 def get_max_count(d):
     """Generate a column that has the count of the optimal county name;
      ideally this is 1, if a different number investigate futher
-
      :param d:              Dictionary with FIPS key from find_county
      :type d:               dict
-
      :return:               Dataframe of FIPS matches with column count of optimal county name
-
      """
 
     if len(d) > 0:
@@ -174,22 +156,16 @@ def prepare_data(fips_file, service_area_file, sales_ult_file, bal_auth_file):
     """Load and prepare data.  Reduce complexity by making state and county names lower case and splitting
     out commonly known trailing words that do not exist in both data sets.  Build key to join by
     where <state_abbrev>_<county_lower>.
-
     :param fips_file:                           FIPS code csv input
     :type fips_file:                            str
-
     :param service_area_file:                   Balancing authority service area csv input
     :type service_area_file:                    str
-
     :param sales_ult_file:                      Balancing authority sales utility csv input
     :type sales_ult_file:                       str
-
     :param bal_auth_file:                       Balancing authority and ID codes csv input
     :type bal_auth_file:                        str
-
     :return:                                    [0] df_fips: Dataframe of prepared and cleaned FIPS data
                                                 [1] df_states:: Dataframe of prepared and cleaned Service area data
-
     """
 
     # read in data
@@ -223,16 +199,12 @@ def prepare_data(fips_file, service_area_file, sales_ult_file, bal_auth_file):
 
 def filter_one(df_fips, df_states, df_ult, df_ba):
     """Join datasets together where possible based on common key.
-
     :param fips_file:             Dataframe of prepared and cleaned FIPS data from prepare_data
     :type fips_file:              str
-
     :param service_area_file:     Dataframe of prepared and cleaned Service area data from prepare_data
     :type service_area_file:      str
-
     :return:                      [0] dataframe of valid data with a match between df_fips and df_states
                                   [1] dataframe of data without a match between df_fips and df_states
-
     """
 
     # merge states and fips based on key
@@ -260,19 +232,14 @@ def filter_one(df_fips, df_states, df_ult, df_ba):
 
 def filter_two(df_fips, df_nan, df_valid):
     """Match NaN records by cleaning up naming conventions based on the most suitable match.
-
     :param df_fips:     Dataframe of prepared and cleaned FIPS data from prepare_data
     :type df_fips:      pd.DataFrame
-
     :param df_nan:      Dataframe of data without a match between df_fips and df_states
     :type df_nan:       pd.DataFrame
-
     :param df_valid:    Dataframe of valid data with a match between df_fips and df_states
     :type df_valid:     pd.DataFrame
-
     :return:            [0] df_valid: Dataframe of valid data with a match between df_fips and df_states
                         [1] df_nan_bad: Dataframe of data without a match between df_fips and df_states
-
     """
 
     # get keys from states that are in teh FIPS code data frame that have NaN records
@@ -321,12 +288,9 @@ def filter_two(df_fips, df_nan, df_valid):
 
 def data_format(df):
     """Select for wanted columns and rename columns.
-
     :param df:                  Data frame containing valid data.
     :type df:                   pd.DataFame
-
     :return:                    Data frame with relevant and renamed columns
-
     """
 
     col_names = ['Data Year', 'Utility Number', 'Utility Name_x', 'state_abbreviation', 'state_name',
@@ -358,27 +322,19 @@ def data_format(df):
 def process_data(target_year, fips_file, service_area_file, sales_ult_file, bal_auth_file, output_dir):
     """Workflow function to join files and clean up erroneous and missing data.  Suggest possible solutions from the
     FIPS records for unmatched counties.
-
     :param target_year:                         Year to process; four digit year (e.g., 1990)
     :type target_year:                          int
-
     :param fips_file:                           FIPS code csv input
     :type fips_file:                            str
-
     :param service_area_file:                   Balancing authority service area csv input
     :type service_area_file:                    str
-
     :param sales_ult_file:                      Balancing authority sales utility csv input
     :type sales_ult_file:                       str
-
     :param bal_auth_file:                       Balancing authority and ID codes csv input
     :type bal_auth_file:                        str
-
     :param output_dir:                          Directory to store FIPS BA subset output
     :type output_dir:                           dir
-
     :return:                                    Dataframe of valid FIPS matched data merged with BA code
-
     """
 
     # initialize logger
