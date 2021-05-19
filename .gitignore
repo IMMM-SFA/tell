@@ -2,6 +2,10 @@ inputs/
 
 outputs/
 
+predict_output/
+
+CSV_Files/
+
 # package
 tell.egg-info
 
