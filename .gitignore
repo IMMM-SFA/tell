@@ -5,6 +5,9 @@ outputs/
 # package
 tell.egg-info
 
+#BA metadata
+EIA_BA_match.csv
+
 # PyCharm
 .idea/
 

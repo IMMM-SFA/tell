@@ -9,7 +9,7 @@
 import os
 import pandas as pd
 
-out_dir = 'C:/Users/mcgr323/projects/tell/raw_data/inputs/'
+out_dir = 'C:/Users/mcgr323/projects/tell/'
 
 
 EIA_BA_Number = [1,189,317,599,803,924,1738,2775, 3046,3413,3522,5326, 5416,5701,5723, 5748,6452,6455, 6909,8795,
