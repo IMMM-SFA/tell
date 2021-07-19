@@ -25,6 +25,7 @@ EIA BA number: EIA_930_BA_Information_From_BA_Number.m.
 import os
 import glob
 import pandas as pd
+import numpy as np
 
 # Set some processing flags:
 start_year = 2015; # Starting year of time series
@@ -48,14 +49,44 @@ for filename in all_files:
     li.append(df)
 
 frame = pd.concat(li, axis=0, ignore_index=True)
-col_names = ['year', 'county_fips', 'ba_number', 'ba_abbreviation','ba_name']
+col_names = ['year', 'county_fips', 'ba_number']
 
 # only keep columns that are needed
 frame = frame[col_names].copy()
+frame['ba_number'] = frame['ba_number'].fillna(0).astype(np.int64)
+frame['county_fips'] = frame['county_fips'].fillna(0).astype(np.int64)
 
 # select for valid BA numbers (from BA metadata)
 filename = 'C:/Users/mcgr323/projects/tell/EIA_BA_match.csv'
 metadata = pd.read_csv(filename, index_col=None, header=0)
+# rename columns
+metadata.rename(columns={"EIA_BA_Number": "ba_number"}, inplace=True)
+df = frame.merge(metadata, on=['ba_number'])
+df.rename(columns={"county_fips": "county_FIPS"}, inplace=True)
 
+# add BA number to population df
+df_pop = pd.merge(left=df_population, right=df, on='county_FIPS')
 
+# sum population by BA
 
+# interpolate population to hourly series 
+x = [-1.01, 5.66, 5.69, 13.77, 20.89]
+y = [0.28773, 1.036889, 1.043178, 1.595322, 1.543763]
+
+new_x = [0, 2, 4, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20]
+
+hourly_population = interp1d(x,y)(new_x)
+
+# 'linear' has no effect since it's the default, but I'll plot it too:
+from datetime import date
+from datetime import dateime
+
+#counteract start date by adding one year and a day
+start_string = date.toordinal(date(start_year,1,1))+366
+end_string = date.toordinal(date(end_year,12,31))+366
+
+python_start_datetime = datetime.fromordinal(int(start_string-366))
+python_end_datetime = datetime.fromordinal(int(end_string-366))
+
+set_interp = interp1d(x, y, kind='linear')
+new_y = set_interp(new_x)
