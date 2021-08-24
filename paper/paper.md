@@ -22,12 +22,12 @@ bibliography: paper.bib
 ---
 
 # Statement of need
-This would describe why you would need to build the `tell` software.
+ Forecasting changes in electricity loads in response to anthropogenic and natural stressors is necessary for promoting energy system resilience. Given the pressures of aging infrastructure and the increasing integration of renewables, accurate load forecasts are critical for maintaining a stable grid and as a basis for long-term planning. Within the past two decades there have been rapid advances in both short-term (minutes to hours ahead) and long-term (months to years ahead) probabilistic load forecasting approaches. The general structure of these types of models are, understandably, quite different. Short- and medium-term load models most commonly relate meteorology and day-of-week parameters to loads. Longer-term models also use meteorology/climate as explanatory variables, but typically require bringing in “macro” variables like the decadal evolution of population, number of customers, or economic indicators. 
 
 ![This is just a space holder for an image that will represent your new Python package.](figure_1.png){ width=25% }
 
 # Summary
-I just took this content dirctly from a Confluence page as an example; it needs to be rewritten:  
+The Total ELectricity Load (TELL) model provides a framework that integrates aspects of both short- and long-term predictions of electricity demand in a coherent and scalable way. TELL takes as input gridded hourly time-series of meteorology and uses the temporal variations in weather to predict hourly profiles of total electricity demand for every county in the lower 48 United States using a multilayer perceptron (MLP) approach. Hourly predictions from TELL are then scaled to match the annual state-level total electricity loads predicted by the U.S. version of the Global Change Analysis Model (GCAM-USA). GCAM-USA is designed to capture the long-term co-evolution of the human-Earth system. Using this unique approach allows TELL to reflect both changes in the shape of the load profile due to variations in weather and climate and the long-term evolution of energy demand due to changes in population, technology, and economics. TELL is unique from other probabilistic load forecasting models in that it features an explicit spatial component that allows us to relate predicted loads to where they would occur spatially within a grid operations model.
 
 The TELL model will generate predictions of hourly total electricity load for every county in the Continental United States (CONUS). Predictions from TELL will be scaled to match the annual state-level total electricity loads predicted by the U.S. version of the Global Change Analysis Model [GCAM-USA; @iyer2017measuring; @iyer2019improving].
 

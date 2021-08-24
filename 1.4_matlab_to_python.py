@@ -67,12 +67,21 @@ df.rename(columns={"county_fips": "county_FIPS"}, inplace=True)
 # add BA number to population df
 df_pop = pd.merge(left=df_population, right=df, on='county_FIPS')
 
+#subset population data by year
+#for x in range(start_year, end_year+1):
+df_year = df_pop['year'] == 2015
+df_pop_2015 = df_pop[df_year]
+
+# only keep columns that are needed
+key = ['year', 'pop_2015', 'ba_number']
+df_pop_2015 = df_pop_2015[key].copy()
+
 # sum population by BA
+pop_sum_2015 = df_pop_2015.groupby(['year','ba_number'])['pop_2015'].sum().reset_index()
 
-# interpolate population to hourly series 
-x = [-1.01, 5.66, 5.69, 13.77, 20.89]
-y = [0.28773, 1.036889, 1.043178, 1.595322, 1.543763]
 
+
+# interpolate population to hourly series
 new_x = [0, 2, 4, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20]
 
 hourly_population = interp1d(x,y)(new_x)
