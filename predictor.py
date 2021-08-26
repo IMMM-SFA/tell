@@ -11,11 +11,8 @@ import holidays
 
 from joblib.parallel import Parallel, delayed
 
-from sklearn.preprocessing import scale
 from sklearn.linear_model import LinearRegression as LR
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_percentage_error
-from sklearn.svm import SVR
-from sklearn.gaussian_process import GaussianProcessRegressor as GPR
 from sklearn.neural_network import MLPRegressor as MLP
 from scipy.stats import pearsonr
 from sklearn.model_selection import GridSearchCV
