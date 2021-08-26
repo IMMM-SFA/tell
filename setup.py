@@ -1,5 +1,6 @@
 from setuptools import setup, find_packages
 
+
 def readme():
     with open('README.md') as f:
         return f.read()
@@ -8,6 +9,7 @@ def readme():
 def get_requirements():
     with open('requirements.txt') as f:
         return f.read().split()
+
 
 setup(
     name='tell',
