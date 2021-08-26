@@ -5,7 +5,7 @@ import time
 import numpy as np
 import pandas as pd
 
-from logger import Logger
+from tell.logger import Logger
 
 
 def count_matches(states_key, fips_key, ignore=('and', 'if', 'on', 'an', 'a', 'the')):

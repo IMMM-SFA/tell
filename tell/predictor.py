@@ -21,27 +21,6 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 
-# define month_list for plots
-MONTH_LIST = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "April",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-]
-
-
-# set random seed, change this value as you prefer
-np.random.seed(391)
-
-
 class Dataset:
     """TODO:  fill in a description of this class
 
@@ -56,7 +35,24 @@ class Dataset:
     :param add_dayofweek: bool -> weather we want to consider weekday vs weekend informoation
     :param linear_mode_bool: bool-> whether it is a linear model or not. if so, the month and hour will need to be sinusoidal
 
+
     """
+
+    # define month_list for plots
+    MONTH_LIST = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "April",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ]
 
     def __init__(self,
                  region,
@@ -77,7 +73,12 @@ class Dataset:
                  y_var=["Demand"],
                  add_dayofweek=True,
                  linear_mode_bool=False,
+                 random_seed=None
                  ):
+
+        # set random seed, change this value as you prefer
+        if random_seed is not None:
+            np.random.seed(random_seed)
 
         self.region = region
         self.csv_dir = csv_dir
@@ -208,11 +209,12 @@ class Dataset:
         return df_out
 
     def partition_data(self, df):
+        """This method takes in df as an argument and splits them into a training and a test set
 
-        """
-        This method takes in df as an argument and splits them into a training and a test set
         :param df: contains entire dataset specified using start_time and end_time
+
         :return df_t, df_e: dfs for trining and test data respectively
+
         """
 
         df_t = df[(df["Datetime"] <= self.split_time)]
@@ -221,12 +223,13 @@ class Dataset:
         return df_t, df_e
 
     def remove_federal_holidays(self, df):
+        """Function to identify federal holidays. if federal holidays, the df[Holidays] = 1
 
-        """
-        Function to identify federal holidays. if federal holidays, the df[Holidays] = 1
-        :param df: input dataframe
-        :param year: year for which the holiday list needs to be determined. default -> global variable YEAR
-        :return: Dataframe without holidays included
+        :param df:                                  input dataframe
+        :type df:                                   pd.DataFrame
+
+        :return:                                    Dataframe without holidays included
+
         """
 
         year_min, year_max = df["Datetime"].dt.year.min(), df["Datetime"].dt.year.max()
@@ -242,10 +245,10 @@ class Dataset:
         return df
 
     def troubleshoot_by_plot(self):
+        """ plot to troubleshoot if the training data has missing values.
 
-        """
-        plot to troubleshoot if the training data has missing values.
         :return:
+
         """
 
         plt.plot(self.df_t["Datetime"], self.df_t["Demand"])
@@ -256,6 +259,7 @@ class Dataset:
         return None
 
     def preprocess_timedata(self, df):
+        """TODO"""
 
         if "Hour" in self.x_var and self.lin_model_bool == True:
             # this block of code indicates if we want to featurize a sine function or the raw input
@@ -296,10 +300,10 @@ class Dataset:
         return df, day_list
 
     def compute_pearson(self):
+        """Computes the pearson coeff for each x in self.x_var and each y in self.y_var
 
-        """
-        Computes the pearson coeff for each x in self.x_var and each y in self.y_var
         :return:
+
         """
 
         for x in self.x_var:
@@ -314,19 +318,17 @@ class Dataset:
 
 
 class Hyperparameters:
-
-    """
-    class for hyperparameter search
+    """class for hyperparameter search
     only used when we need to optimize hyperpaaremters for a specific balancing authority
+
+
+    :param model_str: str -> indicating model type. currently only mlp is supported
+    :param X: features in training set
+    :param Y: targets in training set
+
     """
 
     def __init__(self, model_str, X, Y):
-        """
-
-        :param model_str: str -> indicating model type. currently only mlp is supported
-        :param X: features in training set
-        :param Y: targets in training set
-        """
 
         #assigning model variables
         self.model_name = model_str
@@ -627,7 +629,6 @@ class MlLib:
         print("MAPE: ", self.mape)
         print("R2 value: ", self.r2_val)
 
-
         return None
 
     def evaluate_peaks(self):
@@ -678,7 +679,7 @@ class MlLib:
                 color="tab:blue",
                 stacked=True,
             )
-            fig_hist = main_str + "_" + MONTH_LIST[m] + ".svg"
+            fig_hist = main_str + "_" + Dataset.MONTH_LIST[m] + ".svg"
             # plt.xlabel('$(Y_e - Y_p)/Y_e$')
             # plt.ylabel('p')
             plt.tight_layout()
@@ -687,7 +688,8 @@ class MlLib:
 
             # print median value
             e = (df["Y_e"] - df["Y_p"]) / df["Y_e"]
-            print("Median for month {} is {}".format(MONTH_LIST[m], e.median()))
+
+            print("Median for month {} is {}".format(Dataset.MONTH_LIST[m], e.median()))
 
         return None
 

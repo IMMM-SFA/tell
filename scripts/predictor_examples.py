@@ -9,7 +9,7 @@ generate_plots = True
 
 t0 = time.time()
 
-df = predict(data_dir=data_dir,
+df = tell.predict(data_dir=data_dir,
                   out_dir=output_dir,
                   batch_run=batch_run,
                   target_ba_list=target_ba_list,

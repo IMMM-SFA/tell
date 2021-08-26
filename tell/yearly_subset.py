@@ -5,7 +5,7 @@ import time
 import klib
 import pandas as pd
 
-from logger import Logger
+from tell.logger import Logger
 
 
 def prepare_data_yearly(ferc_hourly_file, ferc_resp_eia_code, eia_operators_nerc_region_mapping):
