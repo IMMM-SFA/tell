@@ -1,4 +1,9 @@
 numpy>=1.19.2
 pandas>=1.1.2
-klib~=0.0.89
-setuptools~=46.3.0
+klib>=0.0.89
+joblib>=1.0.1
+matplotlib>=3.3.3
+seaborn>=0.11.1
+holidays>=0.11.1
+scikit-learn>=0.24.1
+scipy>=1.4.1
