@@ -32,9 +32,9 @@ start_year = 2015; # Starting year of time series
 end_year = 2019; # Ending year of time series
 
 # Set the data input and output directories:
-population_data_input_dir = 'C:/Users/mcgr323/OneDrive - PNNL/Desktop/raw_data/inputs';
-service_territory_data_input_dir = 'C:/Users/mcgr323/OneDrive - PNNL/Desktop/raw_data/inputs/Utility_Mapping/CSV_Files';
-csv_data_output_dir = 'C:/Users/mcgr323/OneDrive - PNNL/Desktop/raw_data/inputs/BA_Hourly_Population/CSV_Files';
+population_data_input_dir = '//connie-1/im3fs/tell/inputs';
+service_territory_data_input_dir = '//connie-1/im3fs/tell/inputs/Utility_Mapping/CSV_Files';
+csv_data_output_dir = 'C:/Users/mcgr323/OneDrive - PNNL/Desktop/inputs/BA_Hourly_Population/CSV_Files';
 
 # load population data
 df_population = pd.read_csv(population_data_input_dir +'/county_populations_2000_to_2019.csv')

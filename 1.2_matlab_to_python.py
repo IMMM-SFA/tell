@@ -18,8 +18,8 @@ import pandas as pd
 import datetime
 
 # set the data input and output directories:
-data_input_dir = 'C:/Users/mcgr323/projects/tell/raw_data/raw_data/EIA_930/Balancing_Authority';
-csv_data_output_dir = 'C:/Users/mcgr323/projects/tell/raw_data/inputs/BA_Hourly_Load/CSV_Files';
+data_input_dir = '//connie-1/im3fs/tell/inputs/raw_data/EIA_930/Balancing_Authority';
+csv_data_output_dir = 'C:/Users/mcgr323/projects/tell/BA_hourly_inputs/BA_Hourly_Load';
 
 
 def list_files(input_list):

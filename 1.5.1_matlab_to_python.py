@@ -32,7 +32,7 @@ Missing values are reported as -9999 in the .csv output files and as NaNs in the
 """
 
 # Set the data input and output directories:
-load_data_input_dir = 'C:/Users/mcgr323/projects/tell/raw_data/inputs/BA_Hourly_Load/CSV_Files/';
-population_data_input_dir = 'C:/Users/mcgr323/projects/tell/raw_data/inputs/BA_Hourly_Population/CSV_Files/';
-meteorology_data_input_dir = 'C:/Users/mcgr323/projects/tell/raw_data/inputs/BA_Hourly_Meteorology/CSV_Files/';
-csv_data_output_dir = '/Users/burl878/OneDrive - PNNL/Documents/IMMM/Data/TELL_Input_Data/inputs/Composite_BA_Hourly_Data/CSV_Files/';
+load_data_input_dir = '//connie-1/im3fs/tell/inputs/BA_Hourly_Load/CSV_Files/';
+population_data_input_dir = '//connie-1/im3fs/tell/inputs/BA_Hourly_Population/CSV_Files/';
+meteorology_data_input_dir = '//connie-1/im3fs/tell/inputs/BA_Hourly_Meteorology/CSV_Files/';
+csv_data_output_dir = 'C:/Users/mcgr323/projects/tell/BA_hourly_inputs/Composite_BA_Hourly_Data/CSV_Files/';
