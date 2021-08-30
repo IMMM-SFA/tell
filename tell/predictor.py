@@ -426,8 +426,7 @@ class MlLib:
         self.y_p = self.pick_model()
 
         # evaluation
-        self.df_results = self.analyze_results()
-
+        self.analyze_results()
         # self.evaluation_metrics()
 
     def linear_model(self, X, Y, X_e):
@@ -574,8 +573,7 @@ class MlLib:
             "Y_e": self.Y_e.squeeze(),
         }
 
-        # self.df_results = pd.DataFrame(data)
-        df_results = pd.DataFrame(data)
+        self.df_results = pd.DataFrame(data)
 
         if self.generate_plots:
 
@@ -613,7 +611,7 @@ class MlLib:
         # evaluate the model
         self.evaluation_metrics()
 
-        return df_results
+        return None
 
     def evaluation_metrics(self):
 
@@ -706,8 +704,6 @@ class Analysis:
 
     """
 
-    RESIDUALS_HEADER = ["Population", "Hour", "Month", "Year"]
-
     def __init__(self, data_dir, out_dir, region="PJM", generate_plots=True, model_list=["mlp"]):
 
         self.generate_plots = generate_plots
@@ -715,11 +711,14 @@ class Analysis:
         # note, region is same as BA!
         self.region = region
 
+        # specify feature set for residuals
+        self.x_res = ["Population", "Hour", "Month", "Year"]
+
         # specify dataset for both main MLP and residual linear model
         self.data = Dataset(region=region, csv_dir=data_dir)
 
         # data for residual model
-        self.data_res = Dataset(region=region, x_var=self.RESIDUALS_HEADER, linear_mode_bool=True, csv_dir=data_dir)
+        self.data_res = Dataset(region=region, x_var=self.x_res, linear_mode_bool=True, csv_dir=data_dir)
 
         # define training and test data for residual fits
         # training and test data for main MLP model
@@ -729,7 +728,6 @@ class Analysis:
             self.data.X_e,
             self.data.Y_e,
         )
-
         # training and test data for residual model
         self.Xres_t, self.Yres_t, self.Xres_e, self.Yres_e = (
             self.data_res.X_t,
@@ -754,7 +752,7 @@ class Analysis:
             os.makedirs(self.out_dir)
 
         # test multiple models. currently only testing for 'mlp' model
-        self.df_output = self.test_multiple_models()
+        self.test_multiple_models()
 
     def test_multiple_models(self):
 
@@ -797,10 +795,7 @@ class Analysis:
                 self.R2 = ml.r2_val
                 self.MAPE = ml.mape
 
-            # TODO concatenate the data frame outputs from each model; currently only one model is used
-            df_output = ml.df_results
-
-        return df_output
+        return None
 
     def set_fignames(self, model_name):
 
@@ -856,16 +851,20 @@ class Analysis:
 
         # need to flatten self.Y_e, as the dimensions are (..,1)
         out = {
-            "datetime": self.df_e["Datetime"].values,
-            "ground_truth_mwh": self.Y_e.squeeze(),
-            "predictions_mwh": Y_p,
+            "Datetime": self.df_e["Datetime"].values,
+            "Ground Truth": self.Y_e.squeeze(),
+            "Predictions": Y_p,
         }
 
         # export as pandas dataframe and write to file
         out = pd.DataFrame(out).reset_index(drop=True)
-        csv_filename = os.path.join(self.out_dir, f"{self.region}_{model}_electricity-demand_mwh.csv")
+        csv_filename = (
+            os.path.join(self.out_dir, f"{self.region}_{model}_predictions.csv")
+        )
 
         out.to_csv(csv_filename, index=False)
+
+        return None
 
 
 class Process:
@@ -902,6 +901,9 @@ class Process:
         # output summary file
         self.out_summary_file = os.path.join(self.out_dir, 'summary.csv')
 
+        # checking dir to get list of CSV files
+        self.pat_to_check = os.path.join(self.data_dir, '*.csv')
+
         # loop over all BAs. generates summary.csv to show accuracy of all BAs
         self.summary_df = self.gen_results()  # steo ii: gen_results
 
@@ -916,7 +918,7 @@ class Process:
 
         for ba_name in self.target_ba_list:
 
-            print(f"\nProcessing BA: {ba_name}")
+            print(f"Processing BA: {ba_name}")
 
             try:
                 # perform analysis for each BA, keep track of all BAs and corresponding accuracy metrics
@@ -1030,7 +1032,7 @@ def predict(data_dir, out_dir, target_ba_list=None, generate_plots=True, run_par
                                                            write_summary=write_summary) for i in ba_list)
 
         # aggregate outputs
-        df = aggregate_summary(outputs)
+        # df = aggregate_summary(outputs)
 
         # # output summary file
         # out_summary_file = os.path.join(out_dir, 'summary.csv')
