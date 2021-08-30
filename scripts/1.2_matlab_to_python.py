@@ -41,10 +41,10 @@ def data_subset(file_string):
      :return:            Subsetted dataframe
 
      """
-    #read in the Published Hourly Data
+    # read in the Published Hourly Data
     df = pd.read_excel(file_string, sheet_name='Published Hourly Data')
 
-    #use datetime string to get Year, Month, Day, Hour
+    # use datetime string to get Year, Month, Day, Hour
     df['Year'] = df['UTC time'].dt.strftime('%Y')
     df['Month'] = df['UTC time'].dt.strftime('%m')
     df['Day'] = df['UTC time'].dt.strftime('%d')
@@ -64,16 +64,19 @@ def data_subset(file_string):
     return df
 
 
-list_of_files = list_files(data_input_dir)
-BA_list = []
+if __name__ == '__main__':
+
+    list_of_files = list_files(data_input_dir)
+
+    BA_list = []
+
     for filename in list_of_files:
         main_str = filename.split("\\")[-1]
         main_str = main_str.split("_")[0]  # get the BA name
         BA_list.append(main_str)
-    return BA_list
 
-for i in list_of_files:
-    data_subset(i)
-    output_file = os.path.join(csv_data_output_dir, f'_Hourly_Load_Data.csv')
+    for i in list_of_files:
+        data_subset(i)
+        output_file = os.path.join(csv_data_output_dir, f'_Hourly_Load_Data.csv')
 
 

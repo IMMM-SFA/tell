@@ -375,7 +375,8 @@ class MlLib:
     :param Y_e: df -> test targets
     :param model: str type of model to pick
     :param datetime: array of dates for the
-    :param_fig_names: dict containing names of all the figures we want, including timeseries, seasonal prob dist, and cdf
+    :param_fig_names: dict containing names of all the figures we want, including timeseries,
+                        seasonal prob dist, and cdf
     :param dict_res: dict containing data needed for training and avaluation of residual model
 
     :param generate_plots:              Choice to generate and save plots
@@ -425,7 +426,8 @@ class MlLib:
         self.y_p = self.pick_model()
 
         # evaluation
-        self.analyze_results()
+        self.df_results = self.analyze_results()
+
         # self.evaluation_metrics()
 
     def linear_model(self, X, Y, X_e):
@@ -572,7 +574,8 @@ class MlLib:
             "Y_e": self.Y_e.squeeze(),
         }
 
-        self.df_results = pd.DataFrame(data)
+        # self.df_results = pd.DataFrame(data)
+        df_results = pd.DataFrame(data)
 
         if self.generate_plots:
 
@@ -597,7 +600,7 @@ class MlLib:
             plt.legend()
             plt.tight_layout()
 
-            if self.fig_names is not None:
+            if self.generate_plots and self.fig_names is not None:
                 print("Created figure: ", self.fig_names["timeSeries"])
                 plt.savefig(self.fig_names["timeSeries"])
 
@@ -610,7 +613,7 @@ class MlLib:
         # evaluate the model
         self.evaluation_metrics()
 
-        return None
+        return df_results
 
     def evaluation_metrics(self):
 
@@ -695,29 +698,28 @@ class MlLib:
 
 
 class Analysis:
+    """Train and evaluate each individual BAs. Generates output CSV files under directory outputs
+    Trains the "residual model" as well for population correction.
 
-    def __init__(self, data_dir, out_dir, region="PJM", generate_plots=True):
-        """Train and evaluate each individual BAs. Generates output CSV files under directory outputs
-        Trains the "residual model" as well for population correction.
+    :param df:                                  Data frame corresponding to the evaluation period
+    :param Y_e:                                 Ground truth during the evaluation period
 
-        :param df: df corresponding to the evaluation period
-        :param Y_e: ground truth during the evaluation period
+    """
 
-        """
+    RESIDUALS_HEADER = ["Population", "Hour", "Month", "Year"]
+
+    def __init__(self, data_dir, out_dir, region="PJM", generate_plots=True, model_list=["mlp"]):
 
         self.generate_plots = generate_plots
 
         # note, region is same as BA!
         self.region = region
 
-        # specify feature set for residuals
-        self.x_res = ["Population", "Hour", "Month", "Year"]
-
         # specify dataset for both main MLP and residual linear model
         self.data = Dataset(region=region, csv_dir=data_dir)
 
         # data for residual model
-        self.data_res = Dataset(region=region, x_var=self.x_res, linear_mode_bool=True, csv_dir=data_dir)
+        self.data_res = Dataset(region=region, x_var=self.RESIDUALS_HEADER, linear_mode_bool=True, csv_dir=data_dir)
 
         # define training and test data for residual fits
         # training and test data for main MLP model
@@ -727,6 +729,7 @@ class Analysis:
             self.data.X_e,
             self.data.Y_e,
         )
+
         # training and test data for residual model
         self.Xres_t, self.Yres_t, self.Xres_e, self.Yres_e = (
             self.data_res.X_t,
@@ -742,7 +745,7 @@ class Analysis:
         )
 
         # list of models for which analysis is to be performed. currently only 'linear' and 'mlp' supported
-        self.list_of_models = ["mlp"]
+        self.list_of_models = model_list
 
         self.out_dir = out_dir
 
@@ -751,13 +754,12 @@ class Analysis:
             os.makedirs(self.out_dir)
 
         # test multiple models. currently only testing for 'mlp' model
-        self.test_multiple_models()
+        self.df_output = self.test_multiple_models()
 
     def test_multiple_models(self):
 
-        Yp_list = []
         # get labels for predictions based on type of model
-        labels = [str_name + " predictions" for str_name in self.list_of_models]
+        labels = [f"{str_name}_predictions" for str_name in self.list_of_models]
 
         for m, model in enumerate(self.list_of_models):
 
@@ -795,7 +797,10 @@ class Analysis:
                 self.R2 = ml.r2_val
                 self.MAPE = ml.mape
 
-        return None
+            # TODO concatenate the data frame outputs from each model; currently only one model is used
+            df_output = ml.df_results
+
+        return df_output
 
     def set_fignames(self, model_name):
 
@@ -817,17 +822,17 @@ class Analysis:
         return fig_names
 
     def plot_reg(self, Y_a, Y_p, label):
+        """ Method for regression Plots
 
-        """
-        Method for regression Plots
         :param Y_a: array containing ground truth
         :param Y_p:
         :param label:
-        :return:
+
         """
 
         plt.rcParams.update({"font.size": 16})
         fig, ax = plt.subplots()
+
         plt.scatter(Y_a, Y_p)
         plt.plot(Y_a, Y_a, "r-", linewidth=3)
         plt.plot(Y_a, 1.1 * Y_a, "r--", linewidth=3)
@@ -842,41 +847,32 @@ class Analysis:
         return None
 
     def write_output_to_file(self, Y_p, model):
+        """This function is used to write output
 
-        """
-        This function is used to write output
-        Y_p: predictions (np array)
-        model: str to label which model it is
-        :return:
+        Y_p:                                predictions (np array)
+        model:                              str to label which model it is
+
         """
 
         # need to flatten self.Y_e, as the dimensions are (..,1)
         out = {
-            "Datetime": self.df_e["Datetime"].values,
-            "Ground Truth": self.Y_e.squeeze(),
-            "Predictions": Y_p,
+            "datetime": self.df_e["Datetime"].values,
+            "ground_truth_mwh": self.Y_e.squeeze(),
+            "predictions_mwh": Y_p,
         }
 
         # export as pandas dataframe and write to file
         out = pd.DataFrame(out).reset_index(drop=True)
-        csv_filename = (
-            os.path.join(self.out_dir, f"{self.region}_{model}_predictions.csv")
-        )
-        out.to_csv(csv_filename, index=False)
+        csv_filename = os.path.join(self.out_dir, f"{self.region}_{model}_electricity-demand_mwh.csv")
 
-        return None
+        out.to_csv(csv_filename, index=False)
 
 
 class Process:
 
-    def __init__(self, batch_run=False, data_dir=None, out_dir=None, target_ba_list=None, generate_plots=True,
-                 write_summary=False):
+    def __init__(self, data_dir=None, out_dir=None, target_ba_list=None, generate_plots=True,
+                 write_summary=True):
         """Run multiple BA
-
-        :param batch_run:               Indicating if we want to run the simulations for all BAs, or we handpick the BAs
-                                        If batch_run = True, the code will search for all BAs in 'dir'
-                                        If batch_run = False, we need to specify which BA to run
-        :type batch_run:                bool
 
         :param data_dir:                Full path to the directory containing the target
                                         CSV files
@@ -885,14 +881,15 @@ class Process:
         :param out_dir:                 Full path to the directory where the outputs are to be written
         :type out_dir:                  str
 
-        :param target_ba_list:          A list of BA names to run if `batch_run` is False
+        :param target_ba_list:          A list of BA names to run. If None, a list of all BA's found in the file names
+                                        of CSV file files in the data directory will be used.
         :type target_ba_list:           list
 
         :param generate_plots:          Choice to generate and save plots
         :type generate_plots:           bool
 
         :param write_summary:           Choice to write summary output file
-
+        :type write_summary:            bool
 
         """
 
@@ -900,41 +897,13 @@ class Process:
         self.out_dir = out_dir
         self.target_ba_list = target_ba_list
         self.generate_plots = generate_plots
+        self.write_summary = write_summary
 
         # output summary file
         self.out_summary_file = os.path.join(self.out_dir, 'summary.csv')
 
-        # checking dir to get list of CSV files
-        self.pat_to_check = os.path.join(self.data_dir, '*.csv')
-
-        if batch_run:
-            # case to run for all BAs
-            self.ba_list = self.search_for_pattern()
-
-        else:
-            # case for handpick BAs
-            self.ba_list = self.target_ba_list
-
         # loop over all BAs. generates summary.csv to show accuracy of all BAs
         self.summary_df = self.gen_results()  # steo ii: gen_results
-
-    def search_for_pattern(self):
-        """Sets self.ba_list to get a list of BAs for training and evaluation.
-
-        :return:            List of BAs to process
-
-        """
-
-        list_of_files = sorted(glob.glob(self.pat_to_check))
-
-        BA_list = []
-        for filename in list_of_files:
-
-            main_str = filename.split("\\")[-1]
-            main_str = main_str.split("_")[0]  # get the BA name
-            BA_list.append(main_str)
-
-        return BA_list
 
     def gen_results(self):
         """Writes all outputs to csvs + a summary file with the evaluation metrics.
@@ -945,25 +914,29 @@ class Process:
 
         ba_out, r2, mape = [], [], []
 
-        for BA_name in self.ba_list:
-            print("BA: {}".format(BA_name))
+        for ba_name in self.target_ba_list:
+
+            print(f"\nProcessing BA: {ba_name}")
+
             try:
                 # perform analysis for each BA, keep track of all BAs and corresponding accuracy metrics
-                ba = Analysis(region=BA_name,
+                ba = Analysis(region=ba_name,
                               out_dir=self.out_dir,
                               data_dir=self.data_dir,
                               generate_plots=self.generate_plots)
 
-                ba_out.append(BA_name), r2.append(ba.R2), mape.append(ba.MAPE)
+                ba_out.append(ba_name), r2.append(ba.R2), mape.append(ba.MAPE)
 
             except ValueError:
+                print(ba_name)
                 continue
 
         # write to file
         out = {"BA": ba_out, "R2": r2, "MAPE": mape}
         df = pd.DataFrame(out)
 
-        df.to_csv(self.out_summary_file, index=False, mode='a')
+        if self.write_summary:
+            df.to_csv(self.out_summary_file, index=False, mode='a')
 
         return df
 
@@ -978,27 +951,25 @@ def aggregate_summary(output_list):
 
     return pd.concat(output_dfs)
 
-def list_ba(input_list):
-        """Sets list of BAs for training and evaluation fro target BA in predict.
 
-        :return:            List of BAs to process
+def list_ba(data_directory):
+    """Sets list of BAs for training and evaluation fro target BA in predict.
 
-        """
+    :param data_directory:                  Directory containing the input CSV files
+    :type data_directory:                   str
 
-        path_to_check = os.path.join(input_list, '*.csv')
-        list_of_files = sorted(glob.glob(path_to_check))
+    :return:                                List of BAs to process
 
-        ba_names = []
-        for filename in list_of_files:
+    """
 
-            main_str = filename.split("\\")[-1]
-            main_str = main_str.split("_")[0]  # get the BA name
-            ba_names.append(main_str)
+    # generate a list of csv files in the input directory
+    list_of_files = [os.path.basename(i) for i in os.listdir(data_directory) if os.path.splitext(i)[-1] == '.csv']
 
-        return ba_names
+    return [i.split('_')[0] for i in list_of_files]
 
 
-def predict(data_dir, out_dir, batch_run=True, target_ba_list=None, generate_plots=True, run_parallel=True, n_jobs=-1):
+def predict(data_dir, out_dir, target_ba_list=None, generate_plots=True, run_parallel=True, n_jobs=-1,
+            write_summary=True):
     """Convenience wrapper for the Process class which runs predictive models for each BA input CSV in the input
     directory and creates a summary and comparative figures of R2 and MAPE per BA.
 
@@ -1009,14 +980,9 @@ def predict(data_dir, out_dir, batch_run=True, target_ba_list=None, generate_plo
     :param out_dir:                 Full path to the directory where the outputs are to be written
     :type out_dir:                  str
 
-    :param batch_run:               Indicating if we want to run the simulations for all BAs, or we handpick the BAs
-                                    If batch_run = True, the code will search for all BAs in 'dir'
-                                    If batch_run = False, we need to specify which BA to run
-    :type batch_run:                bool
-
-    :param target_ba_list:          A list of BA names to run if `batch_run` is False
+    :param target_ba_list:          A list of BA names to run.  If None, a list of all BA's found in the file names
+                                        of CSV file files in the data directory will be used.
     :type target_ba_list:           list
-
 
     :param generate_plots:          Choice to generate and save plots
     :type generate_plots:           bool
@@ -1027,32 +993,57 @@ def predict(data_dir, out_dir, batch_run=True, target_ba_list=None, generate_plo
     :param n_jobs:                  Set number of CPUs
     :type n_jobs:                   int
 
+    :param write_summary:           Choice to write summary output file
+    :type write_summary:            bool
+
     :return:                        Data frame of BA, R2, MAPE statistics
 
     """
 
+    # check existence of data directory
+    if not os.path.isdir(data_dir):
+        raise NotADirectoryError(f"`data_dir` value '{data_dir}' not a valid directory.")
+
+    # check if user wants to find all BA files in the or pass their own
+    if target_ba_list is None:
+
+        # generate a list of files to process
+        ba_list = list_ba(data_directory=data_dir)
+
+    # if input is a list and it has content
+    elif type(target_ba_list) == list and len(target_ba_list) > 0:
+
+        ba_list = target_ba_list
+
+    elif type(target_ba_list) == list and len(target_ba_list) == 0:
+        raise ValueError(f"`target_ba_list` is an empty list.  Pass `None` if you wish to use all BAs in the data dir.")
+
+    else:
+        raise ValueError(f"`target_ba_list` is not in a recognized format of type `list` or `None`")
+
     if run_parallel:
-        ba_list = list_ba(input_list=data_dir)
-        outputs = Parallel(n_jobs=n_jobs)(delayed(Process)(batch_run=batch_run,
-                                                       data_dir=data_dir,
-                                                       out_dir=out_dir,
-                                                       target_ba_list=[i],
-                                                       generate_plots=generate_plots) for i in ba_list)
+
+        outputs = Parallel(n_jobs=n_jobs)(delayed(Process)(data_dir=data_dir,
+                                                           out_dir=out_dir,
+                                                           target_ba_list=[i],
+                                                           generate_plots=generate_plots,
+                                                           write_summary=write_summary) for i in ba_list)
 
         # aggregate outputs
         df = aggregate_summary(outputs)
 
-        # output summary file
-        out_summary_file = os.path.join(out_dir, 'summary.csv')
-
-        df.to_csv(out_summary_file, index=False)
+        # # output summary file
+        # out_summary_file = os.path.join(out_dir, 'summary.csv')
+        #
+        # df.to_csv(out_summary_file, index=False)
 
         return df
 
     else:
-        proc = Process(batch_run=batch_run,
-                       data_dir=data_dir,
+        proc = Process(data_dir=data_dir,
                        out_dir=out_dir,
                        target_ba_list=target_ba_list,
-                       generate_plots=generate_plots)
+                       generate_plots=generate_plots,
+                       write_summary=write_summary)
+
         return proc.summary_df
