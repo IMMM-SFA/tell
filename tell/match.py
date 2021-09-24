@@ -10,15 +10,20 @@ from tell.logger import Logger
 
 def count_matches(states_key, fips_key, ignore=('and', 'if', 'on', 'an', 'a', 'the')):
     """Count the number of word matches between two primary keys.
+
     :param states_key:                 The key representing the <state_abbrev>_<county_name> in the
                                        states data frame
     :type states_key:                  str
+
     :param fips_key:                   The key representing the <state_abbrev>_<county_name> in the
                                        FIPS data frame
     :type fips_key:                    str
+
     :param ignore:                     A list of common english words to ignore.
     :type ignore:                      list
+
     :return:                           Total number of matches or None if no matches
+
     """
 
     # get states state name
