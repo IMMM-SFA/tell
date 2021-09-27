@@ -1,7 +1,6 @@
 import os
 import glob
 import pandas as pd
-import datetime
 
 
 def list_EIA_930_files(input_dir):
@@ -16,7 +15,7 @@ def list_EIA_930_files(input_dir):
     return (list_of_files)
 
 
-def EIA_data_subset(file_string):
+def EIA_data_subset(file_string, output_dir):
     """Select wanted columns in each file
 
      :return:            Subsetted dataframe
@@ -43,7 +42,7 @@ def EIA_data_subset(file_string):
                        "Adjusted TI": "Adjusted_Interchange_MWh"}, inplace=True)
 
     BA_name = os.path.splitext(os.path.basename(file_string))[0]
-    os.path.join(output_dir, f'{BA_name}_Hourly_Load_Data.csv')
+    df.to_csv(os.path.join(output_dir, f'{BA_name}_Hourly_Load_Data.csv'), index=None, header=True)
 
 
 def process_EIA_930(input_dir, output_dir):
