@@ -4,6 +4,36 @@ import numpy as np
 from datetime import date
 
 
+def fips_pop_sum(population_input_dir, start_year, end_year):
+    """Make a list of all of the files xlsx in the data_input_dir
+
+    :return:            List of input files to process
+
+    """
+    # get population from merged mapping data
+    df_pop = pd.read_csv(population_input_dir + '/county_populations_2000_to_2019.csv')
+
+    # loop over years to sum population by year
+    df = pd.DataFrame([])
+    for y in range(start_year, end_year + 1):
+        # only keep columns that are needed
+        key = [f'pop_{y}', 'county_FIPS']
+
+        # change pop yr name for later merging
+        df_pop_yr = df_pop[key].copy()
+
+        # sum population by BA
+        pop_sum_yr = df_pop_yr.groupby(['county_FIPS'])[f'pop_{y}'].sum().reset_index()
+
+        pop_sum_yr['year'] = y
+        pop_sum_yr.rename(columns={f'pop_{y}': 'population'}, inplace=True)
+
+        # combine all years for one dataset
+        df = df.append(pop_sum_yr)
+
+    return df
+
+
 def map_eia_ids():
     """Create dataframe of EIA BA Number, BA short name and BA long name for later mapping
 
@@ -68,7 +98,7 @@ def map_eia_ids():
     return df
 
 
-def merge_mapping_data(mapping_input_dir, population_input_dir):
+def merge_mapping_data(mapping_input_dir, population_input_dir, start_year, end_year):
     """Make a list of all of the files xlsx in the data_input_dir
 
     :return:            List of input files to process
@@ -94,44 +124,21 @@ def merge_mapping_data(mapping_input_dir, population_input_dir):
     # select for valid BA numbers (from BA metadata)
     metadata = map_eia_ids()
     metadata.rename(columns={"EIA_BA_Number": "ba_number"}, inplace=True)
+
     # merge mapping df to the the metadata
     df_map = frame.merge(metadata, on=['ba_number'])
     df_map.rename(columns={"county_fips": "county_FIPS"}, inplace=True)
 
-    return df
+    # get sum of population by FIPS and merge to mapping file
+    df_pop = fips_pop_sum(population_input_dir, start_year, end_year)
 
-
-def fips_pop_sum(population_input_dir, start_year, end_year):
-    """Make a list of all of the files xlsx in the data_input_dir
-
-    :return:            List of input files to process
-
-    """
-    # get population from merged mapping data
-    df_pop = pd.read_csv(population_input_dir + '/county_populations_2000_to_2019.csv')
-
-    # loop over years to sum population by year
-    df = pd.DataFrame([])
-    for y in range(start_year, end_year):
-
-        # only keep columns that are needed
-        key = [f'pop_{y}', 'county_FIPS']
-
-        # change pop yr name for later merging
-        df_pop_yr = df_pop_yr[key].copy()
-
-        # sum population by BA
-        pop_sum_yr = df_pop_yr.groupby(['county_FIPS'])[f'pop_{y}'].sum().reset_index()
-
-        #df_pop_yr.rename(columns={f'pop_{y}': 'population'}, inplace=True)
-
-        # combine all years for one dataset
-        df = df.append(pop_sum_yr)
+    df = pd.merge(df_pop, df_map, how='left', left_on=['county_FIPS', 'year'], right_on=['county_FIPS', 'year'])
 
     return df
+
 
 def ba_pop_sum(start_year, end_year):
-    start_string = date.toordinal(date(start_year,1,1))+366
+    start_string = date.toordinal(date(start_year, 1, 1)) + 366
     end_string = date.toordinal(date(end_year, 12, 31)) + 366
 
     python_start_datetime = date.fromordinal(int(start_string - 366))
@@ -140,4 +147,3 @@ def ba_pop_sum(start_year, end_year):
     df = pd.date_range(python_start_datetime, python_end_datetime, freq="60min").time
 
     return df
-
