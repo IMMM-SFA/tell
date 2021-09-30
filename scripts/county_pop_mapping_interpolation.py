@@ -1,6 +1,7 @@
 import glob
 import pandas as pd
 import numpy as np
+from datetime import date
 
 
 def map_eia_ids():
@@ -67,7 +68,7 @@ def map_eia_ids():
     return df
 
 
-def merge_mapping_data(mapping_input_dir):
+def merge_mapping_data(mapping_input_dir, population_input_dir):
     """Make a list of all of the files xlsx in the data_input_dir
 
     :return:            List of input files to process
@@ -91,11 +92,52 @@ def merge_mapping_data(mapping_input_dir):
     frame['county_fips'] = frame['county_fips'].fillna(0).astype(np.int64)
 
     # select for valid BA numbers (from BA metadata)
-    filename = 'C:/Users/mcgr323/projects/tell/EIA_BA_match.csv'
-    metadata = pd.read_csv(filename, index_col=None, header=0)
-    # rename columns
+    metadata = map_eia_ids()
     metadata.rename(columns={"EIA_BA_Number": "ba_number"}, inplace=True)
-    df = frame.merge(metadata, on=['ba_number'])
-    df.rename(columns={"county_fips": "county_FIPS"}, inplace=True)
+    # merge mapping df to the the metadata
+    df_map = frame.merge(metadata, on=['ba_number'])
+    df_map.rename(columns={"county_fips": "county_FIPS"}, inplace=True)
 
     return df
+
+
+def fips_pop_sum(population_input_dir, start_year, end_year):
+    """Make a list of all of the files xlsx in the data_input_dir
+
+    :return:            List of input files to process
+
+    """
+    # get population from merged mapping data
+    df_pop = pd.read_csv(population_input_dir + '/county_populations_2000_to_2019.csv')
+
+    # loop over years to sum population by year
+    df = pd.DataFrame([])
+    for y in range(start_year, end_year):
+
+        # only keep columns that are needed
+        key = [f'pop_{y}', 'county_FIPS']
+
+        # change pop yr name for later merging
+        df_pop_yr = df_pop_yr[key].copy()
+
+        # sum population by BA
+        pop_sum_yr = df_pop_yr.groupby(['county_FIPS'])[f'pop_{y}'].sum().reset_index()
+
+        #df_pop_yr.rename(columns={f'pop_{y}': 'population'}, inplace=True)
+
+        # combine all years for one dataset
+        df = df.append(pop_sum_yr)
+
+    return df
+
+def ba_pop_sum(start_year, end_year):
+    start_string = date.toordinal(date(start_year,1,1))+366
+    end_string = date.toordinal(date(end_year, 12, 31)) + 366
+
+    python_start_datetime = date.fromordinal(int(start_string - 366))
+    python_end_datetime = date.fromordinal(int(end_string - 366))
+
+    df = pd.date_range(python_start_datetime, python_end_datetime, freq="60min").time
+
+    return df
+

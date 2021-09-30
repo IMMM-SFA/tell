@@ -46,8 +46,6 @@ df_pop_2015 = df_pop_2015[key].copy()
 # sum population by BA
 pop_sum_2015 = df_pop_2015.groupby(['year','ba_number'])['pop_2015'].sum().reset_index()
 
-
-
 # interpolate population to hourly series
 new_x = [0, 2, 4, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20]
 
