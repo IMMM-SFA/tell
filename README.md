@@ -51,7 +51,14 @@ if __name__ == '__main__':
 
 **1.2 Convert the EIA-930 BA demand dataset from Excel files into CSV files**
 
-TODO 
+```buildoutcfg
+# Set the data input and output directories:
+EIA_930_input_dir = 
+EIA_930_output_dir = 'os.path.join(os.path.dirname(__file__), 'outputs')
+
+# Process the hourly load data
+tell.process_EIA_930(EIA_930_input_dir, EIA_930_output_dir)
+```
 
 **1.3 Average WRF meteorology within each BA’s territory**
 
