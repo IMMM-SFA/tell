@@ -19,3 +19,4 @@ pop_output_dir = 'C:/Users/mcgr323/OneDrive - PNNL/Desktop/inputs/BA_Hourly_Popu
 # Set some processing flags:
 start_year = 2015;  # Starting year of time series
 end_year = 2019;  # Ending year of time series
+

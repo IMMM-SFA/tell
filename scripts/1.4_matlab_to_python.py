@@ -62,5 +62,5 @@ end_string = date.toordinal(date(end_year,12,31))+366
 python_start_datetime = datetime.fromordinal(int(start_string-366))
 python_end_datetime = datetime.fromordinal(int(end_string-366))
 
-set_interp = interp1d(x, y, kind='linear')
-new_y = set_interp(new_x)
+x = 1:inv(24):365;
+T_interp = interp1(t,y1,x,'spline');
