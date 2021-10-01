@@ -17,7 +17,7 @@ setup(
     packages=find_packages(),
     url='https://github.com/IMMM-SFA/tell.git',
     license='BSD2-Clause',
-    author='Casey McGrath; Chris R. Vernon',
+    author='Casey McGrath; Casey Burleyson; Chris R. Vernon; Aowabin Rahman',
     author_email='casey.mcgrath@pnnl.gov',
     description='A model to predict total electricity loads',
     long_description=readme(),
