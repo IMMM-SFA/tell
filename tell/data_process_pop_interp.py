@@ -31,6 +31,7 @@ def fips_pop_yearly(population_input_dir, start_year, end_year):
 
     return df
 
+
 def merge_mapping_data(mapping_input_dir, population_input_dir, start_year, end_year):
     """Make a list of all of the files xlsx in the data_input_dir
 
@@ -55,7 +56,7 @@ def merge_mapping_data(mapping_input_dir, population_input_dir, start_year, end_
     frame['county_fips'] = frame['county_fips'].fillna(0).astype(np.int64)
 
     # select for valid BA numbers (from BA metadata)
-    metadata = tell.metadata_eia()
+    metadata = metadata_eia()
     metadata.rename(columns={"EIA_BA_Number": "ba_number"}, inplace=True)
 
     # merge mapping df to the the metadata
@@ -80,51 +81,24 @@ def ba_pop_sum(mapping_input_dir, population_input_dir, start_year, end_year):
     df_pop = merge_mapping_data(mapping_input_dir, population_input_dir, start_year, end_year)
 
     # loop over years to sum population by year
-    df = pd.DataFrame([])
-    for y in range(start_year, end_year + 1):
-
         # sum population by BA
-        pop_sum_yr = df_pop.groupby(['BA_Short_Name','year'])['population'].sum().reset_index()
-
-        # combine all years for one dataset
-        df = df.append(pop_sum_yr)
+    df = df_pop.groupby(['BA_Short_Name'], ['year'])['population'].sum().reset_index()
 
     return df
 
 
+def ba_pop_interpolate(mapping_input_dir, population_input_dir, start_year, end_year):
+    df = ba_pop_sum(mapping_input_dir, population_input_dir, start_year, end_year)
+    pd.to_datetime(df['year'], format='%Y')
+    df.rename(columns={"population": "pop"}, inplace=True)
+    df.rename(columns={'BA_Short_Name': 'name'}, inplace=True)
+    # Reshape
+    df = df.pivot(index='year', columns='name', values='pop')
 
-def ba_pop_sum(start_year, end_year):
+    # Build an hourly DatetimeIndex
+    idx = pd.date_range(df.index.min(), df.index.max(), freq='H')
 
-    ba_names = df_pop['BA_Short_Name'].unique()
+    # Reindex and interpolate with cubicspline as an example
+    res = df.reindex(idx).interpolate('linear')
 
-    df = pd.DataFrame([])
-    for i in ba_names):
-
-        t = df_pop['year']
-        y1 = df_pop['population']
-        x = pd.DataFrame({'Hours': pd.date_range(f'{start_year}-01-01', f'{end_year}-12-31',
-                                                 freq='1H', closed='left')})
-
-        BA_interp = interp1(t, y1, x, 'linear');
-
-    df = BA_interp.append(pop_sum_yr)
-
-    return df
-
-    return df
-
-
-
-names = df_pop['name'].unique()
-df = pd.DataFrame(columns = ['name', 'function'])
-
-for i in names:
-    condition = df_pop['name'].str.match(i) # define condition where name is i
-    mini_df = df_pop[condition] # all rows where condition is met
-    t = mini_df['year']
-    y1 = mini_df['population']
-    x = pd.DataFrame({'Hours': pd.date_range(f'{start_year}-01-01', f'{end_year}-12-31', freq='1H', closed='left')})
-
-    pop_interp = interp1d(t, y1, x, 'linear')
-    new_row = {name: i, function: pop_interp} # make a new row to append
-    df = df.append(new_row, ignore_index = True) # append it
+    return res

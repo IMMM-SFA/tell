@@ -45,7 +45,7 @@ def EIA_data_subset(file_string, output_dir):
     df.to_csv(os.path.join(output_dir, f'{BA_name}_Hourly_Load_Data.csv'), index=None, header=True)
 
 
-def process_EIA_930(input_dir, output_dir):
+def process_eia_930(input_dir, output_dir):
     """Read in list of EIA 930 files, subset files and save as csv in new file name
 
     :return:            List of input files to process
