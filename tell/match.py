@@ -375,8 +375,32 @@ def process_data(target_year, fips_file, service_area_file, sales_ult_file, bal_
 
         logging.info(f'Possible matches for unmatched county "{i}": from FIPS file: {possible_matches}')
 
+    # keep only the variables that are used in downstream applications:
+    df_valid = df_valid[{'year',
+                         'state_fips',
+                         'state_name',
+                         'county_fips',
+                         'county_name',
+                         'ba_number',
+                         'ba_abbreviation'}].copy(deep=False)
+
+    # rename the columns to use leading capital letters:
+    df_valid.rename(columns={"year": "Year",
+                             "state_fips": "State_FIPS",
+                             "state_name": "State_Name",
+                             "county_fips": "County_FIPS",
+                             "county_name": "County_Name",
+                             "ba_number": "BA_Number",
+                             "ba_abbreviation": "BA_Code"}, inplace=True)
+
+    # sort the dataframe by BA number and then county fips code:
+    df_valid = df_valid.sort_values(by=["BA_Number", "County_FIPS")
+
+    # drop the duplicates that result from more than one utility-BA combination per county:
+    df_valid = df_valid.drop_duplicates()
+
     # write to CSV
-    output_file = os.path.join(output_dir, f'fips_service_match_{target_year}.csv')
+    output_file = os.path.join(output_dir, f'ba_service_territory_{target_year}.csv')
     logging.info(f"Writing output file to:  {output_file}")
     df_valid.to_csv(output_file, sep=',', index=False)
 
