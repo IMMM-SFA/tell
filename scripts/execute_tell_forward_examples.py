@@ -21,16 +21,7 @@ gcam_usa_df = tell.extract_gcam_usa_loads((gcam_usa_input_dir + 'gcamDataTable_a
 gcam_usa_df = tell.gcam_usa_df[gcam_usa_df['Year'] == int(year_to_process)]
 
 # Load in the most recent (e.g., 2019) BA service territory map and simplify the dataframe:
-ba_mapping = pd.read_csv((ba_geolocation_input_dir + 'fips_service_match_2019.csv'), index_col=None, header=0)
-ba_mapping = ba_mapping[{'state_fips', 'state_name', 'county_fips', 'county_name', 'ba_number', 'ba_abbreviation'}].copy(deep=False)
-ba_mapping.rename(columns={"state_fips":"State_FIPS",
-                           "state_name":"State_Name",
-                           "county_fips":"County_FIPS",
-                           "county_name":"County_Name",
-                           "ba_number":"BA_Number",
-                           "ba_abbreviation":"BA_Code"}, inplace=True)
-ba_mapping = ba_mapping.sort_values("BA_Number")
-ba_mapping = ba_mapping.drop_duplicates()
+ba_mapping = pd.read_csv((ba_geolocation_input_dir + 'ba_service_territory_2019.csv'), index_col=None, header=0)
 
 # Load in the population data and simplify the dataframe:
 population = pd.read_csv(population_input_dir + '/county_populations_2000_to_2019.csv')
