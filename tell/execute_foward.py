@@ -223,11 +223,11 @@ def output_tell_county_data(joint_mlp_df,data_output_dir):
     # Make a copy of the necessary variables:
     county_output_df = joint_mlp_df[{'Datetime', 'County_FIPS', 'County_Name', 'State_Name', 'State_FIPS', 'County_BA_Load_MWh', 'County_BA_Load_MWh_Scaled'}].copy(deep=False)
     # Make a list of all of the counties in "county_output_df":
-    counties = county_output_df['County_Name'].unique()
+    counties = county_output_df['County_FIPS'].unique()
     # Loop over the counties and process their data:
     for i in range(len(counties)):
         # Subset to just the data for the county being processed:
-        output_df = county_output_df[county_output_df['County_Name'].isin([counties[i]])]
+        output_df = county_output_df[county_output_df['County_FIPS'] == counties[i]]
         # Sum the county loads as a function of time:
         output_df['Raw_TELL_County_Load_MWh'] = output_df.groupby('Datetime')['County_BA_Load_MWh'].transform('sum')
         output_df['Scaled_TELL_County_Load_MWh'] = output_df.groupby('Datetime')['County_BA_Load_MWh_Scaled'].transform('sum')
