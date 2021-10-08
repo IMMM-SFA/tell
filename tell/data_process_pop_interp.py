@@ -1,8 +1,6 @@
 import glob
 import pandas as pd
 import numpy as np
-import tell
-from datetime import date
 
 
 def fips_pop_yearly(population_input_dir, start_year, end_year):
@@ -82,12 +80,17 @@ def ba_pop_sum(mapping_input_dir, population_input_dir, start_year, end_year):
 
     # loop over years to sum population by year
         # sum population by BA
-    df = df_pop.groupby(['BA_Short_Name'], ['year'])['population'].sum().reset_index()
+    df = df_pop.groupby(['BA_Short_Name', 'year'])['population'].sum().reset_index()
 
     return df
 
 
 def ba_pop_interpolate(mapping_input_dir, population_input_dir, start_year, end_year):
+    """Make a list of all of the files xlsx in the data_input_dir
+
+       :return:            List of input files to process
+
+    """
     df = ba_pop_sum(mapping_input_dir, population_input_dir, start_year, end_year)
     pd.to_datetime(df['year'], format='%Y')
     df.rename(columns={"population": "pop"}, inplace=True)
@@ -96,9 +99,9 @@ def ba_pop_interpolate(mapping_input_dir, population_input_dir, start_year, end_
     df = df.pivot(index='year', columns='name', values='pop')
 
     # Build an hourly DatetimeIndex
-    idx = pd.date_range(df.index.min(), df.index.max(), freq='H')
+    idx = pd.date_range(start=f'{start_year}-01-01', end=f'{end_year}-12-31', freq='H')
 
     # Reindex and interpolate with cubicspline as an example
-    res = df.reindex(idx).interpolate('linear')
+    res = df.reindex(idx).interpolate(method='linear')
 
     return res
