@@ -4,10 +4,10 @@ import pandas as pd
 
 
 def list_EIA_930_files(input_dir):
-    """Make a list of all of the files xlsx in the data_input_dir
-
-    :return:            List of input files to process
-
+    """Make a list of all the filenames for EIA 930 hourly load data (xlsx)
+    :param input_dir:               Directory where EIA 930 hourly load data
+    :type input_dir:                dir
+    :return:                        List of EIA 930 hourly load files by BA short name
     """
     path_to_check = os.path.join(input_dir, '*.xlsx')
     list_of_files = sorted(glob.glob(path_to_check))
@@ -17,9 +17,11 @@ def list_EIA_930_files(input_dir):
 
 def EIA_data_subset(file_string, output_dir):
     """Select wanted columns in each file
-
-     :return:            Subsetted dataframe
-
+    :param file_string:            File name of EIA 930 hourly load data by BA
+    :type file_string:             str
+    :param output_dir:             Directory to store the EIA 930 hourly load data as a csv
+    :type output__dir:             dir
+    :return:                       Subsetted dataframe of EIA 930 hourly data
      """
     # read in the Published Hourly Data
     df = pd.read_excel(file_string, sheet_name='Published Hourly Data')
@@ -47,9 +49,12 @@ def EIA_data_subset(file_string, output_dir):
 
 def process_eia_930(input_dir, output_dir):
     """Read in list of EIA 930 files, subset files and save as csv in new file name
-
-    :return:            List of input files to process
-    """
+    :param input_dir:              Directory where EIA 930 hourly load data
+    :type input_dir:               dir
+    :param output_dir:             Directory to store the EIA 930 hourly load data as a csv
+    :type output__dir:             dir
+    :return:                       Subsetted dataframe of EIA 930 hourly data by BA short name 
+     """
     # run the list function for the EIA files
     list_of_files = list_EIA_930_files(input_dir)
 
