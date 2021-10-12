@@ -4,15 +4,20 @@ import numpy as np
 
 
 def fips_pop_yearly(population_input_dir, start_year, end_year):
-    """Make a list of all of the files xlsx in the data_input_dir
-
-    :return:            List of input files to process
-
+    """Read in population data, format columns and return single df for all years
+    :param population_input_dir:               Directory where county population is stored
+    :type population_input_dir:                dir
+    :param start_year:                         Year to start model ; four digit year (e.g., 1990)
+    :type start_year:                          int
+    :param end_year:                           Year to start model ; four digit year (e.g., 1990)
+    :type end_year:                            int
+    :return:                                   Dataframe of valid population data for select timeframe
     """
+
     # get population from merged mapping data
     df_pop = pd.read_csv(population_input_dir + '/county_populations_2000_to_2019.csv')
 
-    # loop over years to sum population by year
+    # loop over years for pop data
     df = pd.DataFrame([])
     for y in range(start_year, end_year + 1):
         # only keep columns that are needed
@@ -31,11 +36,17 @@ def fips_pop_yearly(population_input_dir, start_year, end_year):
 
 
 def merge_mapping_data(mapping_input_dir, population_input_dir, start_year, end_year):
-    """Make a list of all of the files xlsx in the data_input_dir
-
-    :return:            List of input files to process
-
-    """
+    """Merge the fips county data and population data from FIPS code
+     :param mapping_input_dir:                  Directory where fips county data is stored
+     :type mapping_input_dir:                   dir
+     :param population_input_dir:               Directory where county population is stored
+     :type population_input_dir:                dir
+     :param start_year:                         Year to start model ; four digit year (e.g., 1990)
+     :type start_year:                          int
+     :param end_year:                           Year to start model ; four digit year (e.g., 1990)
+     :type end_year:                            int
+     :return:                                   Dataframe of population data with FIPS and BA name
+     """
     # load FIPS county data for BA number and FIPs code matching for later population sum by BA
     all_files = glob.glob(mapping_input_dir + "/*.csv")
 
@@ -70,11 +81,17 @@ def merge_mapping_data(mapping_input_dir, population_input_dir, start_year, end_
 
 
 def ba_pop_sum(mapping_input_dir, population_input_dir, start_year, end_year):
-    """Make a list of all of the files xlsx in the data_input_dir
-
-    :return:            List of input files to process
-
-    """
+    """Sum the population by BA number and year
+     :param mapping_input_dir:                  Directory where fips county data is stored
+     :type mapping_input_dir:                   dir
+     :param population_input_dir:               Directory where county population is stored
+     :type population_input_dir:                dir
+     :param start_year:                         Year to start model ; four digit year (e.g., 1990)
+     :type start_year:                          int
+     :param end_year:                           Year to start model ; four digit year (e.g., 1990)
+     :type end_year:                            int
+     :return:                                   Dataframe of total population by BA name and year
+     """
     # get population from merged mapping data
     df_pop = merge_mapping_data(mapping_input_dir, population_input_dir, start_year, end_year)
 
@@ -86,11 +103,17 @@ def ba_pop_sum(mapping_input_dir, population_input_dir, start_year, end_year):
 
 
 def ba_pop_interpolate(mapping_input_dir, population_input_dir, start_year, end_year):
-    """Make a list of all of the files xlsx in the data_input_dir
-
-       :return:            List of input files to process
-
-    """
+    """Interpolate the population from yearly to hourly timeseries to match EIA 930 hourly data
+     :param mapping_input_dir:                  Directory where fips county data is stored
+     :type mapping_input_dir:                   dir
+     :param population_input_dir:               Directory where county population is stored
+     :type population_input_dir:                dir
+     :param start_year:                         Year to start model ; four digit year (e.g., 1990)
+     :type start_year:                          int
+     :param end_year:                           Year to start model ; four digit year (e.g., 1990)
+     :type end_year:                            int
+     :return:                                   Dataframe of hourly population timeseries for each BA name
+     """
     df = ba_pop_sum(mapping_input_dir, population_input_dir, start_year, end_year)
     pd.to_datetime(df['year'], format='%Y')
     df.rename(columns={"population": "pop"}, inplace=True)
