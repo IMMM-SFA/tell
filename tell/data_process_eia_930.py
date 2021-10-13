@@ -53,7 +53,7 @@ def process_eia_930(input_dir, output_dir):
     :type input_dir:               dir
     :param output_dir:             Directory to store the EIA 930 hourly load data as a csv
     :type output__dir:             dir
-    :return:                       Subsetted dataframe of EIA 930 hourly data by BA short name 
+    :return:                       Subsetted dataframe of EIA 930 hourly data by BA short name
      """
     # run the list function for the EIA files
     list_of_files = list_EIA_930_files(input_dir)

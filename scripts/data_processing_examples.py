@@ -1,8 +1,9 @@
 import tell
+import im3components
 
-#match fips code example
+# FIPS service terrority data
+
 if __name__ == '__main__':
-
     # set the target year
     target_year = 2015
 
@@ -24,13 +25,11 @@ if __name__ == '__main__':
     # prepare data
     tell.process_data(target_year, fips_file, service_area_file, sales_ult_file, bal_auth_file, output_dir)
 
-
     output = os.path.join(output_dir, f'fips_service_match_{target_year}.csv')
     output = pd.read_csv(output)
     output2 = output.drop_duplicates()
     output_file = os.path.join(output_dir, f'fips_service_match_rm{target_year}.csv')
     output2.to_csv(output_file, sep=',', index=False)
-
 
 # Hourly load data (EIA 930):
 
@@ -46,9 +45,20 @@ tell.process_eia_930(EIA_930_input_dir, EIA_930_output_dir)
 # Set the data input and output directories:
 population_input_dir = '//connie-1/im3fs/tell/inputs'
 mapping_input_dir = '//connie-1/im3fs/tell/inputs/Utility_Mapping/CSV_Files'
-pop_output_dir = 'C:/Users/mcgr323/OneDrive - PNNL/Desktop/inputs/BA_Hourly_Population/CSV_Files'
+pop_output_dir = 'C:/Users/mcgr323/projects/tell/BA_hourly_inputs/BA_population'
 
 # Set some processing flags:
 start_year = 2015;  # Starting year of time series
 end_year = 2019;  # Ending year of time series
 
+# Meteorlogy data: WRF
+
+# TODO add im3components functions for wrf_to_tell_part_one.py and wrf_to_tell_part_two.py
+
+WRF_output_dir = 'C:/Users/mcgr323/projects/tell/BA_hourly_inputs/BA_WRF'
+
+# Compile hourly load, hourly population and hourly WRF data for MLP model
+
+EIA_930_output_dir = 'C:/Users/mcgr323/projects/tell/BA_hourly_inputs/BA_Hourly_Load'
+pop_output_dir = 'C:/Users/mcgr323/projects/tell/BA_hourly_inputs/BA_population'
+WRF_output_dir = 'C:/Users/mcgr323/projects/tell/BA_hourly_inputs/BA_WRF'
