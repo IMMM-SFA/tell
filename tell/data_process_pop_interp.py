@@ -128,3 +128,5 @@ def ba_pop_interpolate(mapping_input_dir, population_input_dir, start_year, end_
     res = df.reindex(idx).interpolate(method='linear')
 
     return res
+
+
