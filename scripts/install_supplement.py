@@ -5,23 +5,26 @@ import shutil
 
 import requests
 
+import pkg_resources
 from pkg_resources import get_distribution
 from io import BytesIO as BytesIO
 
-import tell.package_data as pkg
 
+def get_data_directory():
+    """Return the directory of where the cerf package data resides."""
+
+    return pkg_resources.resource_filename('tell', 'data')
 
 class InstallSupplement:
     """Download and unpack example data supplement from Zenodo that matches the current installed
-    cerf distribution.
+    tell distribution.
     :param data_dir:                    Optional.  Full path to the directory you wish to store the data in.  Default is
                                         to install it in data directory of the package.
     :type data_dir:                     str
     """
 
     # URL for DOI minted example data hosted on Zenodo
-    DATA_VERSION_URLS = {'1.0.0': 'https://zenodo.org/record/5542502#.YV9ywdrMJPZ'}
-
+    DATA_VERSION_URLS = {'1.0.0': 'https://zenodo.org/record/5542502/files/tell_raw_data.zip?download=1'}
 
     def __init__(self, data_dir=None):
 
@@ -80,7 +83,7 @@ class InstallSupplement:
 
 def install_package_data(data_dir=None):
     """Download and unpack example data supplement from Zenodo that matches the current installed
-    cerf distribution.
+    tell distribution.
     :param data_dir:                    Optional.  Full path to the directory you wish to store the data in.  Default is
                                         to install it in data directory of the package.
     :type data_dir:                     str
