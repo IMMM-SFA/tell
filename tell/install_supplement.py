@@ -8,7 +8,7 @@ import requests
 from pkg_resources import get_distribution
 from io import BytesIO as BytesIO
 
-import tell.package_data as pkg
+#import tell.package_data as pkg
 
 class InstallSupplement:
     """Download and unpack example data supplement from Zenodo that matches the current installed
@@ -31,14 +31,15 @@ class InstallSupplement:
         current tell distribution."""
 
         # full path to the cerf root directory where the example dir will be stored
-        if self.data_dir is None:
-            data_directory = pkg.get_data_directory()
-        else:
-            data_directory = self.data_dir
+        #if self.data_dir is None:
+        #   data_directory = pkg.get_data_directory()
+        #else:
+        #   data_directory = self.data_dir
+        data_directory = self.data_dir
 
         # get the current version of cerf that is installed
-        current_version = get_distribution('tell').version
-
+        #current_version = get_distribution('tell').version
+        current_version = '1.0.0'
         try:
             data_link = InstallSupplement.DATA_VERSION_URLS[current_version]
 
