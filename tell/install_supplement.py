@@ -1,124 +1,90 @@
 import os
-import io
-import requests
+import tempfile
 import zipfile
-import logging
-import sys
+import shutil
+
+import requests
 
 from pkg_resources import get_distribution
+from io import BytesIO as BytesIO
 
-
-def install_supplement(download_directory):
-    """Convenience wrapper for the InstallSupplement class.
-
-    Download and unpack example data supplement from Zenodo that matches the current installed
-    distribution.
-
-    :param download_directory:                  Full path to the directory you wish to install
-                                                the example data to.  Must be write-enabled
-                                                for the user.
-
-    """
-
-    get = InstallSupplement(example_data_directory=download_directory)
-    get.fetch_zenodo()
-
+import tell.package_data as pkg
 
 class InstallSupplement:
     """Download and unpack example data supplement from Zenodo that matches the current installed
-    distribution.
-
-    :param example_data_directory:              Full path to the directory you wish to install
-                                                the example data to.  Must be write-enabled
-                                                for the user.
-
+    cerf distribution.
+    :param data_dir:                    Optional.  Full path to the directory you wish to store the data in.  Default is
+                                        to install it in data directory of the package.
+    :type data_dir:                     str
     """
 
-    # URL for DOI minted example data hosted on Zenodo matching the version of release
-    # TODO:  this dictionary should really be brought in from a config file within the package
-    # TODO:  replace current test link with a real data link
-    DATA_VERSION_URLS = {'0.1.0': 'https://zenodo.org/record/3856417/files/test.zip?download=1'}
+    # URL for DOI minted example data hosted on Zenodo
+    DATA_VERSION_URLS = {'1.0.0': 'https://zenodo.org/record/5542502/files/tell_raw_data.zip?download=1'}
 
-    def __init__(self, example_data_directory, model_name='tell'):
 
-        self.initialize_logger()
+    def __init__(self, data_dir=None):
 
-        # full path to the Xanthos root directory where the example dir will be stored
-        self.example_data_directory = self.valid_directory(example_data_directory)
-
-        self.model_name = model_name
-
-    def initialize_logger(self):
-        """Initialize logger to stdout."""
-
-        # initialize logger
-        logger = logging.getLogger()
-        logger.setLevel(logging.INFO)
-
-        # logger console handler
-        console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setLevel(logging.INFO)
-        console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-        logger.addHandler(console_handler)
-
-    @staticmethod
-    def close_logger():
-        """Shutdown logger."""
-
-        # Remove logging handlers
-        logger = logging.getLogger()
-
-        for handler in logger.handlers[:]:
-            handler.close()
-            logger.removeHandler(handler)
-
-        logging.shutdown()
-
-    def valid_directory(self, directory):
-        """Ensure the provided directory exists."""
-
-        if os.path.isdir(directory):
-            return directory
-        else:
-            msg = f"The write directory provided by the user does not exist:  {directory}"
-            logging.exception(msg)
-            self.close_logger()
-            raise NotADirectoryError(msg)
+        self.data_dir = data_dir
 
     def fetch_zenodo(self):
         """Download and unpack the Zenodo example data supplement for the
-        current distribution."""
+        current tell distribution."""
 
-        # get the current version of the package is installed
-        current_version = get_distribution(self.model_name).version
+        # full path to the cerf root directory where the example dir will be stored
+        if self.data_dir is None:
+            data_directory = pkg.get_data_directory()
+        else:
+            data_directory = self.data_dir
+
+        # get the current version of cerf that is installed
+        current_version = get_distribution('tell').version
 
         try:
             data_link = InstallSupplement.DATA_VERSION_URLS[current_version]
 
         except KeyError:
             msg = f"Link to data missing for current version:  {current_version}.  Please contact admin."
-            logging.exception(msg)
-            self.close_logger()
-            raise
+
+            raise KeyError(msg)
 
         # retrieve content from URL
-        try:
-            logging.info(f"Downloading example data for version {current_version} from {data_link}")
-            r = requests.get(data_link)
+        print("Downloading example data for tell version {}...".format(current_version))
+        r = requests.get(data_link)
 
-            with zipfile.ZipFile(io.BytesIO(r.content)) as zipped:
+        with zipfile.ZipFile(BytesIO(r.content)) as zipped:
 
-                # extract each file in the zipped dir to the project
-                for f in zipped.namelist():
-                    logging.info("Unzipped: {}".format(os.path.join(self.example_data_directory, f)))
-                    zipped.extract(f, self.example_data_directory)
+            # extract each file in the zipped dir to the project
+            for f in zipped.namelist():
 
-            logging.info("Download and install complete.")
+                extension = os.path.splitext(f)[-1]
 
-            self.close_logger()
+                if len(extension) > 0:
 
-        except requests.exceptions.MissingSchema:
-            msg = f"URL for data incorrect for current version:  {current_version}.  Please contact admin."
-            logging.exception(msg)
-            self.close_logger()
-            raise
+                    basename = os.path.basename(f)
+                    out_file = os.path.join(data_directory, basename)
+
+                    # extract to a temporary directory to be able to only keep the file out of the dir structure
+                    with tempfile.TemporaryDirectory() as tdir:
+
+                        # extract file to temporary directory
+                        zipped.extract(f, tdir)
+
+                        # construct temporary file full path with name
+                        tfile = os.path.join(tdir, f)
+
+                        print(f"Unzipped: {out_file}")
+                        # transfer only the file sans the parent directory to the data package
+                        shutil.copy(tfile, out_file)
+
+
+def install_package_data(data_dir=None):
+    """Download and unpack example data supplement from Zenodo that matches the current installed
+    tell distribution.
+    :param data_dir:                    Optional.  Full path to the directory you wish to store the data in.  Default is
+                                        to install it in data directory of the package.
+    :type data_dir:                     str
+    """
+
+    zen = InstallSupplement(data_dir=data_dir)
+
+    zen.fetch_zenodo()

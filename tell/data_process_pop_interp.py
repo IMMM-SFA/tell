@@ -2,6 +2,7 @@ import glob
 import pandas as pd
 import numpy as np
 
+import tell.metadata_eia as meta_eia
 
 def fips_pop_yearly(population_input_dir, start_year, end_year):
     """Read in population data, format columns and return single df for all years
@@ -65,7 +66,7 @@ def merge_mapping_data(mapping_input_dir, population_input_dir, start_year, end_
     frame['county_fips'] = frame['county_fips'].fillna(0).astype(np.int64)
 
     # select for valid BA numbers (from BA metadata)
-    metadata = metadata_eia()
+    metadata = meta_eia.metadata_eia()
     metadata.rename(columns={"EIA_BA_Number": "ba_number"}, inplace=True)
 
     # merge mapping df to the the metadata
