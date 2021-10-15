@@ -55,8 +55,6 @@ class Hyperparameters:
         clf = GridSearchCV(model, params, verbose=1) #performing grid search cross-validation for one BA
         clf.fit(self.X, self.Y) #fit gridsearch obj with data (X, Y)
 
-        #print(clf.cv_results_)
-
         return None
 
     def set_mlp_params(self):

@@ -12,8 +12,8 @@ from tell.construct_data import Dataset
 
 
 class MlLib:
-    """TODO:  describe this class
-
+    """
+    Class to train and evaluate ML models
     :param X_t: df -> training data,
     :param Y_t: df -> training targets
     :param X_e: df -> test data
@@ -29,23 +29,37 @@ class MlLib:
 
     """
 
-    def __init__(self, X_t, Y_t, X_e, fig_names=None, datetime=None, Y_e=None, model="mlp", dict_res=None,
-                 generate_plots=True):
+    def __init__(
+            self,
+            X_t,
+            Y_t,
+            X_e,
+            fig_names=None,
+            datetime=None,
+            Y_e=None,
+            Y_eval=None,
+            model="mlp",
+            dict_res=None,
+            generate_plots=True,
+            plot_gt=False
+    ):
 
         self.generate_plots = generate_plots
+        self.plot_gt = plot_gt
 
         # set data
         self.X_t, self.X_e, self.Y_t, self.Y_e = (
             X_t.values,
             X_e.values,
             Y_t.values,
-            Y_e.values,
+            Y_e.values
         )
+
+        self.Y_eval = Y_eval.values if Y_eval is not None else Y_eval
+
         self.model = model
         self.dict_res = dict_res
-
         self.datetime = datetime
-
         # set variable of fig_names
         self.fig_names = fig_names
 
@@ -53,7 +67,6 @@ class MlLib:
 
         # scale features. normalized features in lowercase
         out = self.scale_features()
-
         self.x_t, self.x_e, self.y_t, self.y_e = (
             out["x_t"],
             out["x_e"],
@@ -61,15 +74,11 @@ class MlLib:
             out["y_e"],
         )
         self.out = out
-
-        # TODO:
         # train and predict using the model. currently 'mlp' and 'linear' supported
         self.y_p = self.pick_model()
 
         # evaluation
         self.analyze_results()
-
-        # self.evaluation_metrics()
 
     def linear_model(self, X, Y, X_e):
         """
@@ -87,10 +96,8 @@ class MlLib:
         # get predictions
         y_p = reg.predict(X_e)
 
-        if self.y_e is not None:
-            print(r2_score(y_p, self.y_e))
-
         return y_p, reg.coef_
+
 
     def mlp_model(self, X, Y, X_e):
         """Trains the MLP model. also calls the linear residual model to adjust for population correction
@@ -197,6 +204,10 @@ class MlLib:
         :return:
         """
 
+        # define locator and formatter for plots
+        locator = mdates.AutoDateLocator()
+        formatter = mdates.ConciseDateFormatter(locator)
+
         # first revert to the absolute values
         self.Y_p = self.unscale_targets(out=self.out, y_p=self.y_p)
 
@@ -209,8 +220,38 @@ class MlLib:
 
         self.df_results = pd.DataFrame(data)
 
-        # if self.generate_plots:
-        # TODO:  replace with plotting.plot_training_evaluation()
+        if self.generate_plots:
+            # evaluate metrics
+            plt.rcParams.update({"font.size": 16})
+
+            # set mdates formatter
+            locator = mdates.AutoDateLocator()
+            formatter = mdates.ConciseDateFormatter(locator)
+
+            # quick plot:
+            time = np.arange(0, self.Y_e.shape[0])
+            fig, ax1 = plt.subplots()
+
+            if self.plot_gt:
+                ax1.plot(self.datetime, np.ma.masked_where(self.Y_e <= 0, self.Y_e), label="Ground Truth")
+            ax1.plot(self.datetime, self.Y_p, label="Predictions")
+            ax1.xaxis.set_major_locator(locator)
+            ax1.xaxis.set_major_formatter(formatter)
+
+            plt.xlabel("Date/Time")
+            plt.ylabel("Electricity Demand (MWh)")
+            plt.legend()
+            plt.tight_layout()
+
+            if self.fig_names is not None:
+                print("Created figure: ", self.fig_names["timeSeries"])
+                plt.savefig(self.fig_names["timeSeries"])
+
+            else:
+                plt.show()
+
+            # close figure
+            plt.close()
 
         # evaluate the model
         self.evaluation_metrics()
@@ -219,15 +260,20 @@ class MlLib:
 
     def evaluation_metrics(self):
 
+        """
+          method to compute the evaluation metrics
+        """
+
+        # remove all the nan in self.Y_eval before evaluation
+        idx_notnan = np.where(self.Y_eval != -9999)
+        Y_p = self.Y_p[idx_notnan[0]]
+        Y_eval = self.Y_eval[idx_notnan[0]].squeeze()
+
         # first the absolute root-mean-squared error
-        self.rms_abs = np.sqrt(mean_squared_error(self.Y_p, self.Y_e))
-
-        # next, the root mean squared error as a function of
-        self.rms_norm = self.rms_abs / np.mean(self.Y_e)
-        self.mape = mean_absolute_percentage_error(self.Y_e, self.Y_p)
-
-        # R2 score
-        self.r2_val = r2_score(self.y_p, self.y_e)
+        self.rms_abs = np.sqrt(mean_squared_error(Y_p, Y_eval))
+        self.rms_norm = self.rms_abs / np.mean(Y_eval)
+        self.mape = mean_absolute_percentage_error(Y_p, Y_eval)
+        self.r2_val = r2_score(Y_p, Y_eval)
 
         print("RMS-ABS: ", self.rms_abs)
         print("RMS NORM: ", self.rms_norm)
@@ -284,15 +330,11 @@ class MlLib:
                 stacked=True,
             )
             fig_hist = main_str + "_" + Dataset.MONTH_LIST[m] + ".svg"
-            # plt.xlabel('$(Y_e - Y_p)/Y_e$')
-            # plt.ylabel('p')
             plt.tight_layout()
             plt.savefig(fig_hist)
             plt.clf()
 
             # print median value
             e = (df["Y_e"] - df["Y_p"]) / df["Y_e"]
-
-            print("Median for month {} is {}".format(Dataset.MONTH_LIST[m], e.median()))
 
         return None

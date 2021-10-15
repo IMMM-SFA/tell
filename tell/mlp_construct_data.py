@@ -1,6 +1,4 @@
 
-
-
 class Dataset:
     """TODO:  fill in a description of this class
 
@@ -49,7 +47,7 @@ class Dataset:
                     "Longwave_Radiation",
                     "Shortwave_Radiation"
                  ],
-                 #'Longwave_Radiation', 'Wind_Speed'
+                 # 'Longwave_Radiation', 'Wind_Speed'
                  y_var=["Demand"],
                  add_dayofweek=True,
                  linear_mode_bool=False,
@@ -76,17 +74,22 @@ class Dataset:
         (
             self.df_t,
             self.df_e,
+            self.df_eval,
             self.X_t,
             self.X_e,
+            self.X_eval,
             self.Y_t,
             self.Y_e,
+            self.Y_eval
         ) = self.preprocess_data(day_list=day_list)
 
     def read_data(self):
 
         """
         Function to read csvs
-        :return: X, Y
+        :return df (pd.DataFrame) - entire data contained within start_time and end_time
+        :return df_t (pd.DataFrame) - training data (before split_time)
+        :return df_e (pd.DataFrame) - evaluation data (after split_time)
         """
 
         # step 1-> check filename
@@ -104,7 +107,13 @@ class Dataset:
         # step 4 -> split into training and test set using split_time
         df_t, df_e = self.partition_data(df=df)
 
-        return df, df_t, df_e, day_list
+        # dropping negative rows after the data has been partitioned
+        df_t = self.drop_neg_rows(df=df_t)
+
+        # dropping negative and NaN rows for
+        df_eval = self.drop_neg_rows(df=df_e, drop_nan=False)
+
+        return df, df_t, df_e, df_eval, day_list
 
     def preprocess_data(self, day_list=None):
         """Takes the features and targets from df
@@ -118,14 +127,15 @@ class Dataset:
             self.x_var = self.x_var + ["Weekday", "Holidays"]
 
         # extract the training and test data. only including datetime, x_var (features) and y_var (targets)
-        df_t, df_e = (
+        df_t, df_e, df_eval = (
             self.df_t[["Datetime"] + self.x_var + self.y_var],
             self.df_e[["Datetime"] + self.x_var + self.y_var],
+            self.df_eval[["Datetime"] + self.x_var + self.y_var],
         )
-        X_t, X_e = df_t[self.x_var], df_e[self.x_var]
-        Y_t, Y_e = df_t[self.y_var], df_e[self.y_var]
+        X_t, X_e, X_eval = df_t[self.x_var], df_e[self.x_var], df_eval[self.x_var]
+        Y_t, Y_e, Y_eval = df_t[self.y_var], df_e[self.y_var], df_eval[self.y_var]
 
-        return df_t, df_e, X_t, X_e, Y_t, Y_e
+        return df_t, df_e, df_eval, X_t, X_e, X_eval, Y_t, Y_e, Y_eval
 
     def get_filename(self):
 
@@ -155,15 +165,11 @@ class Dataset:
             (df["Datetime"] >= self.start_time) & (df["Datetime"] <= self.end_time)
         ]  # sort df by start time endtime
 
-        # dropping negative rows
-        df = self.drop_neg_rows(
-            df=df
-        )  # might need to replace with interpolation, but currently simply drops the -ve rows
         df = df.reset_index(drop=True)  # rese
 
         return df
 
-    def drop_neg_rows(self, df):
+    def drop_neg_rows(self, df, drop_nan=True):
 
         """
         This method drops -9999 values. it also drops "extreme" values, i.e. demand that lies outside +/- 5*sigma
@@ -173,18 +179,31 @@ class Dataset:
 
         # step 1: identify and remove Nan values
         idx_nan = np.where(df == -9999)[0]  # identify which indices have NaN value
-        df = df.drop(df.index[idx_nan])  # dropping data points with an NaN value
 
-        # step 2: identify where demand is zero, this is not feasible
-        idx_zero = np.where(df["Demand"] == 0)[0]
-        df = df.drop(df.index[idx_zero])
+        if drop_nan:
+            df = df.drop(df.index[idx_nan])  # dropping data points with an NaN value
+        else:
+            pass
 
-        ###dropping excessively high or low values (outside +/- 5*sigma)
+            # step 2: identify where demand is zero, this is not feasible
+        idx_zero = np.where(df["Demand"] <= 0)[0]
+
+        if drop_nan:
+            df = df.drop(df.index[idx_zero])
+        else:
+            # df.loc[df["Demand"] == 0]["Demand"] = -9999
+            df.loc[df["Demand"] == 0, "Demand"] = -9999
+
         mu_y, sigma_y = df["Demand"].mean(), df["Demand"].std()
         idx_1 = np.where(
             (df["Demand"] <= mu_y - 5 * sigma_y) | (df["Demand"] >= mu_y + 5 * sigma_y)
         )
-        df_out = df.drop(df.index[idx_1])
+
+        if drop_nan:
+            df_out = df.drop(df.index[idx_1])
+        else:
+            df.loc[(df["Demand"] <= mu_y - 5 * sigma_y) | (df["Demand"] >= mu_y + 5 * sigma_y), "Demand"] = -9999
+            df_out = df.copy()
 
         return df_out
 
@@ -240,6 +259,8 @@ class Dataset:
 
     def preprocess_timedata(self, df):
         """TODO"""
+
+        day_list = None
 
         if "Hour" in self.x_var and self.lin_model_bool == True:
             # this block of code indicates if we want to featurize a sine function or the raw input
