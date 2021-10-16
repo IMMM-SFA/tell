@@ -1,6 +1,7 @@
 import glob
 import pandas as pd
 import numpy as np
+import os
 
 import tell.metadata_eia as meta_eia
 
@@ -103,12 +104,14 @@ def ba_pop_sum(mapping_input_dir, population_input_dir, start_year, end_year):
     return df
 
 
-def ba_pop_interpolate(mapping_input_dir, population_input_dir, start_year, end_year):
+def ba_pop_interpolate(mapping_input_dir, population_input_dir, output_dir, start_year, end_year):
     """Interpolate the population from yearly to hourly timeseries to match EIA 930 hourly data
      :param mapping_input_dir:                  Directory where fips county data is stored
      :type mapping_input_dir:                   dir
      :param population_input_dir:               Directory where county population is stored
      :type population_input_dir:                dir
+     :param output_dir:                         Directory where to store the hourly population data
+     :type output_dir:                          dir
      :param start_year:                         Year to start model ; four digit year (e.g., 1990)
      :type start_year:                          int
      :param end_year:                           Year to start model ; four digit year (e.g., 1990)
@@ -127,6 +130,8 @@ def ba_pop_interpolate(mapping_input_dir, population_input_dir, start_year, end_
 
     # Reindex and interpolate with cubicspline as an example
     res = df.reindex(idx).interpolate(method='linear')
+
+    res.to_csv(os.path.join(output_dir, 'hourly_population.csv'), index=False, header=True)
 
     return res
 
