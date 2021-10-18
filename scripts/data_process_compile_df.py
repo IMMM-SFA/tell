@@ -35,4 +35,3 @@ def compile_data(eia_930_output_dir, pop_output_dir, wrf_output_dir):
     wrf_df = concat_data(wrf_output_dir)
 
 
-

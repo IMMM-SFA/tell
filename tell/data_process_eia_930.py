@@ -62,12 +62,3 @@ def process_eia_930(input_dir, output_dir, n_jobs=-1):
 
      """
     # run the list function for the EIA files
-    list_of_files = list_EIA_930_files(input_dir)
-
-    # run all files in parallel
-    results = Parallel(n_jobs=n_jobs)(
-        delayed(eia_data_subset)(
-            file_string=i,
-            output_dir=output_dir
-        ) for i in list_of_files
-    )
