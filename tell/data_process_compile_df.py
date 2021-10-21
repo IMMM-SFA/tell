@@ -2,6 +2,18 @@ import glob
 import pandas as pd
 import numpy as np
 
+def list_csv_files(input_dir):
+    """Make a list of all the filenames for EIA 930 hourly load data (xlsx)
+    :param input_dir:               Directory where EIA 930 hourly load data
+    :type input_dir:                dir
+    :return:                        List of EIA 930 hourly load files by BA short name
+    """
+
+    path_to_check = os.path.join(input_dir, '*.csv')
+
+    return sorted(glob.glob(path_to_check))
+
+
 def concat_data(input_dir):
     """Make a list of all the filenames for EIA 930 hourly load data (xlsx)
     :param input_dir:               Directory where EIA 930 hourly load data
@@ -14,6 +26,7 @@ def concat_data(input_dir):
         df_small = pd.read_csv(path_file)
         list_dfs.append(df_small)
 
+    BA_name = os.path.splitext(os.path.basename(file_string))[0]
     df = pd.concat(list_dfs, axis=0)
 
     return df

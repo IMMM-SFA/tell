@@ -46,7 +46,7 @@ def eia_data_subset(file_string, output_dir):
                        "Adjusted TI": "Adjusted_Interchange_MWh"}, inplace=True)
 
     BA_name = os.path.splitext(os.path.basename(file_string))[0]
-    df.to_csv(os.path.join(output_dir, f'{BA_name}_Hourly_Load_Data.csv'), index=False, header=True)
+    df.to_csv(os.path.join(output_dir, f'{BA_name}_hourly_load_data.csv'), index=False, header=True)
 
 
 def process_eia_930(input_dir, output_dir, n_jobs=-1):
@@ -72,8 +72,4 @@ def process_eia_930(input_dir, output_dir, n_jobs=-1):
         ) for i in list_of_files
     )
 
-#     # run the data suset function for EIA files
-#     for file_string in list_of_files[0:4]:
-#         print(file_string)
 
-#         eia_data_subset(file_string, output_dir)
