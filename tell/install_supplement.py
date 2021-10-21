@@ -5,10 +5,7 @@ import shutil
 
 import requests
 
-from pkg_resources import get_distribution
 from io import BytesIO as BytesIO
-
-#import tell.package_data as pkg
 
 class InstallSupplement:
     """Download and unpack example data supplement from Zenodo that matches the current installed
