@@ -9,14 +9,15 @@ from io import BytesIO as BytesIO
 
 class InstallSupplement:
     """Download and unpack example data supplement from Zenodo that matches the current installed
-    cerf distribution.
+    tell distribution.
     :param data_dir:                    Optional.  Full path to the directory you wish to store the data in.  Default is
                                         to install it in data directory of the package.
     :type data_dir:                     str
     """
 
     # URL for DOI minted example data hosted on Zenodo
-    DATA_VERSION_URLS = {'1.0.0': 'https://zenodo.org/record/5542502/files/tell_raw_data.zip?download=1'}
+    DATA_VERSION_URLS = {'1.0.0': 'https://zenodo.org/record/5542502/files/tell_raw_data.zip?download=1',
+                         '2.0.0': 'https://zenodo.org/record/5602053/files/tell_raw_data.zip?download=1'}
 
 
     def __init__(self, data_dir=None):
@@ -36,7 +37,7 @@ class InstallSupplement:
 
         # get the current version of cerf that is installed
         #current_version = get_distribution('tell').version
-        current_version = '1.0.0'
+        current_version = '2.0.0'
         try:
             data_link = InstallSupplement.DATA_VERSION_URLS[current_version]
 

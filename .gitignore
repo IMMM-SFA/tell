@@ -1,6 +1,6 @@
 inputs/
 outputs/
-tell_raw_data/
+raw_data/
 
 # package
 tell.egg-info

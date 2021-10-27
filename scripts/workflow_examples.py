@@ -2,7 +2,7 @@ import tell
 import im3components
 
 # Change to your local directory where you would like to store the data
-tell_data_dir = 'C:/Users/mcgr323/projects/tell_valid/tell/tell_raw_data'
+data_dir = 'C:/Users/mcgr323/projects/tell_valid/tell/raw_data'
 
 # Download the raw data from the Zenodo package
 tell.install_package_data(data_dir=data_dir)
