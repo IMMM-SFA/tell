@@ -401,7 +401,7 @@ def process_data(target_year, fips_file, service_area_file, sales_ult_file, bal_
     df_valid = df_valid.drop_duplicates()
 
     # write to CSV
-    output_file = os.path.join(output_dir, f'ba_service_territory_{target_year}.csv')
+    output_file = os.path.join(output_dir, f'fips_service_match_{target_year}.csv')
     #logging.info(f"Writing output file to:  {output_file}")
     df_valid.to_csv(output_file, sep=',', index=False)
 
@@ -410,3 +410,37 @@ def process_data(target_year, fips_file, service_area_file, sales_ult_file, bal_
 
     # close logger and clean up
     #logger.close_logger()
+
+def map_fips_codes(start_year, end_year,raw_data_dir, current_dir):
+    """Workflow function to run "process_data" function for all years to process.
+    :param start_year:                         Year to start process; four digit year (e.g., 1990)
+    :type start_year:                          int
+    :param end_year:                           Year to end process; four digit year (e.g., 1990)
+    :type end_year:                            int
+    :param raw_data_dir:                       Directory where raw data is download via install_supplement.py
+    :type raw_data_dir:                         dir
+    :param current_dir:                        Directory where TELL package is downloaded
+    :type current_dir:                         dir
+    :return:                                   Dataframe of valid FIPS matched data merged with BA code
+    """
+
+    # Directory containing the outputs
+    output_dir = os.path.join(current_dir, 'outputs')
+    years_to_process = range(start_year, end_year+1)
+
+    for target_year in years_to_process:
+        # Set paths to files
+        fips_file = os.path.join(raw_data_dir, 'state_and_county_fips_codes.csv')
+        service_area_file = os.path.join(raw_data_dir, f'Service_Territory_{target_year}.xlsx')
+        sales_ult_file = os.path.join(raw_data_dir, f'Sales_Ult_Cust_{target_year}.xlsx')
+        bal_auth_file = os.path.join(raw_data_dir, f'Balancing_Authority_{target_year}.xlsx')
+
+        # Run the process_data function
+        process_data(target_year, fips_file, service_area_file, sales_ult_file, bal_auth_file, output_dir)
+
+        # Drop duplicates from output file
+        output = os.path.join(output_dir, f'fips_service_match_{target_year}.csv')
+        output = pd.read_csv(output)
+        output2 = output.drop_duplicates()
+        output_file = os.path.join(output_dir, f'fips_service_match_rm{target_year}.csv')
+        output2.to_csv(output_file, sep=',', index=False)

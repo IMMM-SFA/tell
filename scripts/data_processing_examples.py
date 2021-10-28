@@ -2,13 +2,15 @@ import tell
 import pandas as pd
 import os
 
-tell_data_dir = 'C:/Users/mcgr323/projects/tell_valid/tell/tell_raw_data'
+
+
+tell_data_dir = 'C:/Users/mcgr323/projects/tell_valid/tell'
 
 # set the target year
 target_year = 2015
 
 # directory containing the outputs
-output_dir = os.path.join(tell_data_dir, 'outputs')
+output_dir = os.path.join(current_dir, 'outputs')
 
 # paths to files
 fips_file = os.path.join(tell_data_dir, 'state_and_county_fips_codes.csv')

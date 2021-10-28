@@ -1,11 +1,21 @@
 import tell
-import im3components
+import os
 
-# Change to your local directory where you would like to store the data
-data_dir = 'C:/Users/mcgr323/projects/tell_valid/tell/raw_data'
+# Create directory to store raw data
+current_dir = os.getcwd()
+raw_data_dir = os.path.join(current_dir, r'raw_data')
+if not os.path.exists(raw_data_dir):
+   os.makedirs(raw_data_dir)
 
 # Download the raw data from the Zenodo package
-tell.install_package_data(data_dir=data_dir)
+tell.install_package_data(data_dir = raw_data_dir)
+
+## FIPS to BA code mapping ##
+#Set the start and end year for processing
+start_year = 2015
+end_year = 2019
+
+tell.map_fips_codes(start_year, end_year,raw_data_dir, current_dir)
 
 ## Hourly load data (EIA 930) ##
 # Set the data input and output directories:
