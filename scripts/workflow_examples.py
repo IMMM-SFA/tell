@@ -19,17 +19,17 @@ tell.map_fips_codes(start_year, end_year,raw_data_dir, current_dir)
 
 ## Hourly load data (EIA 930) ##
 # Set the data input and output directories:
-eia_930_input_dir = tell_data_dir
-eia_930_output_dir = f'{tell_data_dir}/hourly_ba_load'
+eia_930_input_dir = current_dir
+eia_930_output_dir = f'{current_dir}/hourly_ba_load'
 
 # Process the hourly load data
 tell.process_eia_930(eia_930_input_dir, eia_930_output_dir)
 
 ## County population data ##
 # Set the data input and output directories:
-pop_input_dir = tell_data_dir
-map_input_dir = tell_data_dir
-pop_output_dir = f'{tell_data_dir}/hourly_population'
+pop_input_dir = current_dir
+map_input_dir = current_dir
+pop_output_dir = f'{current_dir}/hourly_population'
 
 # Set some processing flags:
 start_year = 2015;  # Starting year of time series
@@ -40,8 +40,8 @@ tell.ba_pop_interpolate(map_input_dir, pop_input_dir, pop_output_dir, start_year
 ## Meterolgoy data ##
 
 # Set the data input and output directories:
-wrf_input_dir = tell_data_dir
-wrf_output_dir = f'{tell_data_dir}/hourly_meterology'
+wrf_input_dir = current_dir
+wrf_output_dir = f'{current_dir}/hourly_meterology'
 
 # load the wrf to tell functions from im3components package
 from im3components.wrf_tell.wrf_tell_counties import wrf_to_tell_counties
@@ -55,13 +55,13 @@ df = wrf_to_tell_counties(wrf_input_dir)
 wrf_to_tell_balancing_authorities(df, wrf_output_dir)
 
 ## Compile hourly load, hourly population and hourly WRF data for MLP model ##
-compile_output_dir = f'{tell_data_dir}/compiled_data'
+compile_output_dir = f'{current_dir}/compiled_data'
 
 tell.compile_data(eia_930_output_dir, pop_output_dir, wrf_output_dir, compile_output_dir)
 
 import time
 
-output_dir =  f'{tell_data_dir}/mlp_output'
+output_dir =  f'{current_dir}/mlp_output'
 batch_run = True
 target_ba_list = None
 generate_plots = True
@@ -85,10 +85,10 @@ year_to_process = '2020'
 gcam_usa_scenario = 'scenario_name'
 
 # Set the data input and output directories:
-mlp_input_dir = 'f'{tell_data_dir}/'mlp_output'/{year_to_process}'
-ba_geolocation_input_dir = tell_data_dir
-gcam_usa_input_dir = f'{tell_data_dir}/{gcam_usa_scenario}'
-data_output_dir = 'f'{tell_data_dir}/'mlp_state_output'/{year_to_process}'
+mlp_input_dir = 'f'{current_dir}/'mlp_output'/{year_to_process}'
+ba_geolocation_input_dir = current_dir
+gcam_usa_input_dir = f'{current_dir}/{gcam_usa_scenario}'
+data_output_dir = 'f'{current_dir}/'mlp_state_output'/{year_to_process}'
 
 #Run the MLP model forward in time and
 tell.execute_forward(year_to_process, mlp_input_dir, ba_geolocation_input_dir,
