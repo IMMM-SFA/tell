@@ -2,7 +2,7 @@ import tell
 import os
 
 # Create directory to store raw data
-current_dir = os.path.dirname(os.getcwd())
+current_dir = os.getcwd()
 raw_data_dir = os.path.join(current_dir, r'raw_data')
 if not os.path.exists(raw_data_dir):
    os.makedirs(raw_data_dir)
@@ -19,8 +19,10 @@ tell.map_fips_codes(start_year, end_year,raw_data_dir, current_dir)
 
 ## Hourly load data (EIA 930) ##
 # Set the data input and output directories:
-eia_930_input_dir = current_dir
-eia_930_output_dir = f'{current_dir}/hourly_ba_load'
+eia_930_input_dir = raw_data_dir
+eia_930_output_dir = os.path.join(current_dir, r'outputs', r'hourly_ba_load')
+if not os.path.exists(eia_930_output_dir):
+   os.makedirs(eia_930_output_dir)
 
 # Process the hourly load data
 tell.process_eia_930(eia_930_input_dir, eia_930_output_dir)

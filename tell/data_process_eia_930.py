@@ -12,7 +12,7 @@ def list_EIA_930_files(input_dir):
     :return:                        List of EIA 930 hourly load files by BA short name
     """
 
-    path_to_check = os.path.join(input_dir, '*.xlsx')
+    path_to_check = os.path.join(input_dir, f'{BA_name}*.xlsx')
 
     return sorted(glob.glob(path_to_check))
 
