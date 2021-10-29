@@ -444,5 +444,5 @@ def map_fips_codes(start_year, end_year,raw_data_dir, current_dir):
         output = os.path.join(output_dir, f'fips_service_match_{target_year}.csv')
         output = pd.read_csv(output)
         output2 = output.drop_duplicates()
-        output_file = os.path.join(output_dir, f'fips_service_match{target_year}.csv')
+        output_file = os.path.join(output_dir, f'fips_service_match_{target_year}.csv')
         output2.to_csv(output_file, sep=',', index=False)
