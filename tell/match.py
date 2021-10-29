@@ -175,7 +175,7 @@ def prepare_data(fips_file, service_area_file, sales_ult_file, bal_auth_file):
 
     # read in data
     df_fips = pd.read_csv(fips_file)
-    df_states = pd.read_excel(service_area_file, sheet_name='Counties')
+    df_states = pd.read_excel(service_area_file, sheet_name='Counties_States')
     df_ult = pd.read_excel(sales_ult_file, sheet_name='States', skiprows=2)
     df_ba = pd.read_excel(bal_auth_file)
 
@@ -196,8 +196,7 @@ def prepare_data(fips_file, service_area_file, sales_ult_file, bal_auth_file):
     df_states['states_key'] = df_states['State'] + '_' + df_states['county_lower']
 
     # filter df_ult and df_ba
-    df_ult = df_ult[["Utility Number", "Utility Name", "BA_CODE"]]
-    df_ult.rename(columns={"BA_CODE": "BA Code"}, inplace=True)
+    df_ult = df_ult[["Utility Number", "Utility Name", "BA Code"]]
     df_ba = df_ba[["BA Code", "BA ID", "Balancing Authority Name"]]
 
     return df_fips, df_states, df_ult, df_ba
@@ -344,37 +343,37 @@ def process_data(target_year, fips_file, service_area_file, sales_ult_file, bal_
     """
 
     # initialize logger
-    #logger = Logger(output_directory=output_dir)
-    #logger.initialize_logger()
+    logger = Logger(output_directory=output_dir)
+    logger.initialize_logger()
 
     # report start time
-    #logging.info("Start time:  {}".format(time.strftime("%Y-%m-%d %H:%M:%S")))
+    logging.info("Start time:  {}".format(time.strftime("%Y-%m-%d %H:%M:%S")))
 
     # prepare data
-    #logging.info("Preparing data...")
+    logging.info("Preparing data...")
     df_fips, df_states, df_ult, df_ba = prepare_data(fips_file, service_area_file, sales_ult_file, bal_auth_file)
 
     # apply filter one
-    #logging.info("Applying filter one...")
+    logging.info("Applying filter one...")
     df_valid, df_nan = filter_one(df_fips, df_states, df_ult, df_ba)
 
     # apply filter two
-    #logging.info("Applying filter two...")
+    logging.info("Applying filter two...")
     df_valid, df_nan = filter_two(df_fips, df_nan, df_valid)
 
     # format columns
-    #logging.info("Formatting output data...")
+    logging.info("Formatting output data...")
     df_valid = data_format(df_valid)
 
     # get an array of counties that do not have a match
-    #logging.info("Identifying unmatched data...")
+    logging.info("Identifying unmatched data...")
     unmatched_counties = df_nan['county_lower_x'].unique()
 
     # report possible matches for the county
     for i in unmatched_counties:
         possible_matches = df_nan.loc[df_nan['county_lower_x'] == i]['matches'].values[0]
 
-     #   logging.info(f'Possible matches for unmatched county "{i}": from FIPS file: {possible_matches}')
+        logging.info(f'Possible matches for unmatched county "{i}": from FIPS file: {possible_matches}')
 
     # keep only the variables that are used in downstream applications:
     df_valid = df_valid[{'year',
@@ -402,14 +401,14 @@ def process_data(target_year, fips_file, service_area_file, sales_ult_file, bal_
 
     # write to CSV
     output_file = os.path.join(output_dir, f'fips_service_match_{target_year}.csv')
-    #logging.info(f"Writing output file to:  {output_file}")
+    logging.info(f"Writing output file to:  {output_file}")
     df_valid.to_csv(output_file, sep=',', index=False)
 
     # report close time
-    #logging.info("End time:  {}".format(time.strftime("%Y-%m-%d %H:%M:%S")))
+    logging.info("End time:  {}".format(time.strftime("%Y-%m-%d %H:%M:%S")))
 
     # close logger and clean up
-    #logger.close_logger()
+    logger.close_logger()
 
 def map_fips_codes(start_year, end_year,raw_data_dir, current_dir):
     """Workflow function to run "process_data" function for all years to process.
@@ -425,7 +424,10 @@ def map_fips_codes(start_year, end_year,raw_data_dir, current_dir):
     """
 
     # Directory containing the outputs
-    output_dir = os.path.join(current_dir, 'outputs')
+    output_dir = os.path.join(current_dir, r'outputs')
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
     years_to_process = range(start_year, end_year+1)
 
     for target_year in years_to_process:
@@ -442,5 +444,5 @@ def map_fips_codes(start_year, end_year,raw_data_dir, current_dir):
         output = os.path.join(output_dir, f'fips_service_match_{target_year}.csv')
         output = pd.read_csv(output)
         output2 = output.drop_duplicates()
-        output_file = os.path.join(output_dir, f'fips_service_match_rm{target_year}.csv')
+        output_file = os.path.join(output_dir, f'fips_service_match{target_year}.csv')
         output2.to_csv(output_file, sep=',', index=False)

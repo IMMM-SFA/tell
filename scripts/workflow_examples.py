@@ -2,7 +2,7 @@ import tell
 import os
 
 # Create directory to store raw data
-current_dir = os.getcwd()
+current_dir = os.path.dirname(os.getcwd())
 raw_data_dir = os.path.join(current_dir, r'raw_data')
 if not os.path.exists(raw_data_dir):
    os.makedirs(raw_data_dir)
@@ -90,6 +90,6 @@ ba_geolocation_input_dir = tell_data_dir
 gcam_usa_input_dir = f'{tell_data_dir}/{gcam_usa_scenario}'
 data_output_dir = 'f'{tell_data_dir}/'mlp_state_output'/{year_to_process}'
 
-#Run the MLP model forawrd in time and
+#Run the MLP model forward in time and
 tell.execute_forward(year_to_process, mlp_input_dir, ba_geolocation_input_dir,
                      pop_input_dir, gcam_usa_input_dir, data_output_dir)

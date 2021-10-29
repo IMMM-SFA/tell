@@ -1,8 +1,10 @@
 import numpy as np
 import pandas as pd
 import os
+import datetime
+import glob
 from scipy import interpolate
-from state_fips_functions import state_metadata_from_state_abbreviation
+from .states_fips_function import state_metadata_from_state_abbreviation
 
 
 # Create a function to extract the state-level annual loads from a given GCAM-USA output file:
@@ -78,7 +80,7 @@ def aggregate_mlp_output_files(list_of_files):
 
 
 # Create a function to write a summary file describing state-level annual total loads from TELL and GCAM-USA:
-def output_tell_summary_data(joint_mlp_df, data_output_dir):
+def output_tell_summary_data(joint_mlp_df, data_output_dir, year_to_process):
     """
     Writes a summary file describing state-level annual total loads from TELL and GCAM-USA.
     :param joint_mlp_df: df -> dataframe of processed TELL loads
@@ -116,7 +118,7 @@ def output_tell_summary_data(joint_mlp_df, data_output_dir):
 
 
 # Create a function to write a file of hourly loads for each BA:
-def output_tell_ba_data(joint_mlp_df, data_output_dir):
+def output_tell_ba_data(joint_mlp_df, data_output_dir, year_to_process):
     """
     Writes a file of hourly loads for each BA.
     :param joint_mlp_df: df -> dataframe of processed TELL loads
@@ -162,7 +164,7 @@ def output_tell_ba_data(joint_mlp_df, data_output_dir):
 
 
 # Create a function to write out a file of hourly loads for each state:
-def output_tell_state_data(joint_mlp_df, data_output_dir):
+def output_tell_state_data(joint_mlp_df, data_output_dir, year_to_process):
     """
     Writes a file of hourly loads for each state.
     :param joint_mlp_df: df -> dataframe of processed TELL loads
@@ -209,7 +211,7 @@ def output_tell_state_data(joint_mlp_df, data_output_dir):
 
 
 # Create a function to write out a file of hourly loads for each county:
-def output_tell_county_data(joint_mlp_df, data_output_dir):
+def output_tell_county_data(joint_mlp_df, data_output_dir, year_to_process):
     """
     Writes a file of hourly loads for each county.
     :param joint_mlp_df: df -> dataframe of processed TELL loads
@@ -275,9 +277,9 @@ def execute_forward(year_to_process, mlp_input_dir, ba_geolocation_input_dir,
     begin_time = datetime.datetime.now()
 
     # Check if the nested data output directories exists and if not create them:
-    if os.path.exists(data_output_dir) == False:
+    if os.path.exists(data_output_dir) is False:
         os.mkdir(data_output_dir)
-    if os.path.exists(data_output_dir + 'County_Level_Data/') == False:
+    if os.path.exists(data_output_dir + 'County_Level_Data/') is False:
         os.mkdir(data_output_dir + 'County_Level_Data/')
 
     # Load in the accompanying GCAM-USA output file and subset to the "year_to_process":
@@ -330,10 +332,10 @@ def execute_forward(year_to_process, mlp_input_dir, ba_geolocation_input_dir,
         joint_mlp_df['State_Scaling_Factor'])
 
     # Output the data using the output functions:
-    output_tell_summary_data(joint_mlp_df, data_output_dir)
-    output_tell_ba_data(joint_mlp_df, data_output_dir)
-    output_tell_state_data(joint_mlp_df, data_output_dir)
-    output_tell_county_data(joint_mlp_df, data_output_dir)
+    output_tell_summary_data(joint_mlp_df, data_output_dir, year_to_process)
+    output_tell_ba_data(joint_mlp_df, data_output_dir, year_to_process)
+    output_tell_state_data(joint_mlp_df, data_output_dir, year_to_process)
+    output_tell_county_data(joint_mlp_df, data_output_dir, year_to_process)
 
     # Output the elapsed time in order to benchmark the run time:
     print('Elapsed time = ', datetime.datetime.now() - begin_time)
