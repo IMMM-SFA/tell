@@ -1,5 +1,4 @@
 import os
-import glob
 import pandas as pd
 
 from joblib import Parallel, delayed
@@ -11,10 +10,24 @@ def list_EIA_930_files(input_dir):
     :type input_dir:                dir
     :return:                        List of EIA 930 hourly load files by BA short name
     """
+    ba_name = ['NBSO', 'AEC', 'YAD', 'AMPL', 'AZPS', 'AECI', 'BPAT', 'CISO', 'CPLE', 'CHPD', 'CEA', 'DOPD', 'DUK',
+                     'EPE',
+                     'ERCO', 'EEI', 'FPL', 'FPC', 'GVL', 'HST', 'IPCO', 'IID', 'JEA', 'LDWP', 'LGEE', 'NWMT', 'NEVP',
+                     'ISNE',
+                     'NSB', 'NYIS', 'OVEC', 'PACW', 'PACE', 'GRMA', 'FMPP', 'GCPD', 'PJM', 'AVRN', 'PSCO', 'PGE', 'PNM',
+                     'PSEI',
+                     'BANC', 'SRP', 'SCL', 'SCEG', 'SC', 'SPA', 'SOCO', 'TPWR', 'TAL', 'TEC', 'TVA', 'TIDC', 'HECO',
+                     'WAUW',
+                     'AVA', 'SEC', 'TEPC', 'WALC', 'WAUE', 'WACM', 'SEPA', 'HECO', 'GRIF', 'GWA', 'GRIS', 'MISO',
+                     'DEAA',
+                     'CPLW', 'GRID', 'WWA', 'SWPP']
+    path_list = []
+    for i in ba_name:
+        path_to_check = os.path.join(input_dir, f'{i}.xlsx')
+        if os.path.isfile(path_to_check) is True:
+            path_list.append(path_to_check)
 
-    path_to_check = os.path.join(input_dir, f'{BA_name}*.xlsx')
-
-    return sorted(glob.glob(path_to_check))
+    return path_list
 
 
 def eia_data_subset(file_string, output_dir):
