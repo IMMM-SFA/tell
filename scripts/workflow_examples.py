@@ -29,9 +29,9 @@ tell.process_eia_930(eia_930_input_dir, eia_930_output_dir)
 
 ## County population data ##
 # Set the data input and output directories:
-pop_input_dir = current_dir
-map_input_dir = current_dir
-pop_output_dir = f'{current_dir}/hourly_population'
+pop_input_dir = raw_data_dir
+map_input_dir = os.path.join(current_dir, r'outputs')
+pop_output_dir =  os.path.join(current_dir, r'outputs', r'hourly_population')
 
 # Set some processing flags:
 start_year = 2015;  # Starting year of time series
