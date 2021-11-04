@@ -50,41 +50,36 @@ def merge_mapping_data(map_input_dir, pop_input_dir, start_year, end_year):
      :return:                                   Dataframe of population data with FIPS and BA name
      """
     # load FIPS county data for BA number and FIPs code matching for later population sum by BA
-    all_files = glob.glob(map_input_dir + "state_and_county_fips_codes.csv")
-
-    list = []
-
-    for filename in all_files:
-        df = pd.read_csv(filename, index_col=None, header=0)
-        list.append(df)
-
-    frame = pd.concat(list, axis=0, ignore_index=True)
-    col_names = ['Year', 'County_FIPS', 'BA_Number']
+    df = pd.DataFrame()
+    for file in os.listdir(map_input_dir):
+        if file.endswith(".csv"):
+            df = df.append(pd.read_csv(file), ignore_index=True)
 
     # only keep columns that are needed
-    frame = frame[col_names].copy()
-    frame['BA_Number'] = frame['BA_Number'].fillna(0).astype(np.int64)
-    frame['County_FIPS'] = frame['County_FIPS'].fillna(0).astype(np.int64)
+    col_names = ['Year', 'County_FIPS', 'BA_Number']
+    df = df[col_names].copy()
+    df['BA_Number'] = df['BA_Number'].fillna(0).astype(np.int64)
+    df['County_FIPS'] = df['County_FIPS'].fillna(0).astype(np.int64)
 
-    num = frame['BA_Number'].totuple()
+    # select for valid (and unique) BA numbers (using metadata_eia.py)
+    num = df['BA_Number'].tolist()
     unique_num = np.unique(num).tolist()
-    # select for valid BA numbers (from BA metadata)
-    metadata_df = metadata_eia([unique_num])
-
+    metadata_df = metadata_eia(unique_num)
 
     # merge mapping df to the the metadata
-    df_map = frame.merge(metadata, on=['ba_number'])
-    df_map.rename(columns={"county_fips": "county_FIPS"}, inplace=True)
+    df_map = df.merge(metadata_df, on=['BA_Number'])
+    df_map.rename(columns={"County_FIPS": "county_FIPS"}, inplace=True)
+    df_map.rename(columns={"Year": "year"}, inplace=True)
 
     # get sum of population by FIPS and merge to mapping file
     df_pop = fips_pop_yearly(pop_input_dir, start_year, end_year)
 
-    df = pd.merge(df_pop, df_map, how='left', left_on=['county_FIPS', 'year'], right_on=['county_FIPS', 'year'])
+    df_combine = pd.merge(df_pop, df_map, how='left', left_on=['county_FIPS', 'year'], right_on=['county_FIPS', 'year'])
 
-    return df
+    return df_combine
 
 
-def ba_pop_sum(mapping_input_dir, population_input_dir, start_year, end_year):
+def ba_pop_sum(map_input_dir, pop_input_dir, start_year, end_year):
     """Sum the population by BA number and year
      :param mapping_input_dir:                  Directory where fips county data is stored
      :type mapping_input_dir:                   dir
@@ -97,16 +92,15 @@ def ba_pop_sum(mapping_input_dir, population_input_dir, start_year, end_year):
      :return:                                   Dataframe of total population by BA name and year
      """
     # get population from merged mapping data
-    df_pop = merge_mapping_data(mapping_input_dir, population_input_dir, start_year, end_year)
+    df_pop = merge_mapping_data(map_input_dir, pop_input_dir, start_year, end_year)
 
-    # loop over years to sum population by year
-        # sum population by BA
-    df = df_pop.groupby(['BA_Short_Name', 'year'])['population'].sum().reset_index()
+    # sum population by year
+    df = df_pop.groupby(['BA_Name', 'year'])['population'].sum().reset_index()
 
     return df
 
 
-def ba_pop_interpolate(mapping_input_dir, population_input_dir, output_dir, start_year, end_year):
+def ba_pop_interpolate(map_input_dir, pop_input_dir, output_dir, start_year, end_year):
     """Interpolate the population from yearly to hourly timeseries to match EIA 930 hourly data
      :param mapping_input_dir:                  Directory where fips county data is stored
      :type mapping_input_dir:                   dir
@@ -120,20 +114,22 @@ def ba_pop_interpolate(mapping_input_dir, population_input_dir, output_dir, star
      :type end_year:                            int
      :return:                                   Dataframe of hourly population timeseries for each BA name
      """
-    df = ba_pop_sum(mapping_input_dir, population_input_dir, start_year, end_year)
+    df = ba_pop_sum(map_input_dir, pop_input_dir, start_year, end_year)
     pd.to_datetime(df['year'], format='%Y')
     df.rename(columns={"population": "pop"}, inplace=True)
-    df.rename(columns={'BA_Short_Name': 'name'}, inplace=True)
+    df.rename(columns={'BA_Name': 'name'}, inplace=True)
     # Reshape
-    df = df.pivot(index='year', columns='name', values='pop')
+    df = df.pivot(index='name', columns='year', values='pop')
 
-    # Build an hourly DatetimeIndex
-    idx = pd.date_range(start=f'{start_year}-01-01', end=f'{end_year}-12-31', freq='H')
+    # Get range of dates to interpolate from
+    rng = pd.date_range(df.columns[0], df.columns[-1], freq='H')
 
-    # Reindex and interpolate with cubicspline as an example
-    res = df.reindex(idx).interpolate(method='linear')
+    # Reindex and interpolate with linear interpolation
+    df_interp = df.reindex(rng, axis=1).interpolate(axis=1)
 
-    res.to_csv(os.path.join(output_dir, 'hourly_population.csv'), index=False, header=True)
+    df_split = split(df_interp, df_interp.index)
+    new_names < - as.character(unique(df$A))
+    df.to_csv(os.path.join(output_dir, f'{BA_name}_hourly_load_data.csv'), index=False, header=True)
 
     return res
 
