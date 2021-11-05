@@ -30,7 +30,7 @@ tell.process_eia_930(eia_930_input_dir, eia_930_output_dir)
 ## County population data ##
 # Set the data input and output directories:
 pop_input_dir = raw_data_dir
-map_input_dir = os.path.join(current_dir, r'outputs')
+map_input_dir = os.path.join(current_dir, r'outputs', r'fips_mapping_files')
 pop_output_dir =  os.path.join(current_dir, r'outputs', r'hourly_population')
 
 # Set some processing flags:

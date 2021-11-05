@@ -424,7 +424,7 @@ def map_fips_codes(start_year, end_year,raw_data_dir, current_dir):
     """
 
     # Directory containing the outputs
-    output_dir = os.path.join(current_dir, r'outputs')
+    output_dir = os.path.join(current_dir, r'outputs', r'fips_mapping_files')
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 

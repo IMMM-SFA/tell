@@ -1,9 +1,9 @@
-import glob
 import pandas as pd
 import numpy as np
 import os
+from datetime import datetime
 
-import tell.metadata_eia as meta_eia
+import tell.metadata_eia as metadata_eia
 
 def fips_pop_yearly(pop_input_dir, start_year, end_year):
     """Read in population data, format columns and return single df for all years
@@ -52,8 +52,7 @@ def merge_mapping_data(map_input_dir, pop_input_dir, start_year, end_year):
     # load FIPS county data for BA number and FIPs code matching for later population sum by BA
     df = pd.DataFrame()
     for file in os.listdir(map_input_dir):
-        if file.endswith(".csv"):
-            df = df.append(pd.read_csv(file), ignore_index=True)
+        df = df.append(pd.read_csv(os.path.join(map_input_dir, file)), ignore_index=True)
 
     # only keep columns that are needed
     col_names = ['Year', 'County_FIPS', 'BA_Number']
@@ -100,7 +99,7 @@ def ba_pop_sum(map_input_dir, pop_input_dir, start_year, end_year):
     return df
 
 
-def ba_pop_interpolate(map_input_dir, pop_input_dir, output_dir, start_year, end_year):
+def ba_pop_interpolate(map_input_dir, pop_input_dir, start_year, end_year):
     """Interpolate the population from yearly to hourly timeseries to match EIA 930 hourly data
      :param mapping_input_dir:                  Directory where fips county data is stored
      :type mapping_input_dir:                   dir
@@ -115,22 +114,30 @@ def ba_pop_interpolate(map_input_dir, pop_input_dir, output_dir, start_year, end
      :return:                                   Dataframe of hourly population timeseries for each BA name
      """
     df = ba_pop_sum(map_input_dir, pop_input_dir, start_year, end_year)
-    pd.to_datetime(df['year'], format='%Y')
+    df['year'] = pd.to_datetime(df['year'], format='%Y')
     df.rename(columns={"population": "pop"}, inplace=True)
     df.rename(columns={'BA_Name': 'name'}, inplace=True)
     # Reshape
     df = df.pivot(index='name', columns='year', values='pop')
 
+    rng_start = f'{start_year}-01-01'
+    rng_end = f'{end_year}-12-31'
+    datetime.strptime(rng_start, "%Y-%m-%d")
+    datetime.strptime(rng_end, "%Y-%m-%d")
     # Get range of dates to interpolate from
-    rng = pd.date_range(df.columns[0], df.columns[-1], freq='H')
+    rng = pd.date_range(rng_start, rng_end, freq='H')
 
     # Reindex and interpolate with linear interpolation
     df_interp = df.reindex(rng, axis=1).interpolate(axis=1)
 
-    df_split = split(df_interp, df_interp.index)
-    new_names < - as.character(unique(df$A))
-    df.to_csv(os.path.join(output_dir, f'{BA_name}_hourly_load_data.csv'), index=False, header=True)
+    df_interp.reset_index(level=0, inplace=True)
+    ba_names = df_interp['name'].unique
+    # Write hourly population to csv
 
-    return res
+    #f = lambda x: x.to_csv(pop_output_dir + "hourly_pop_{}.csv".format(x.name.lower()), index=False)
+    #df.groupby('BA_name').apply(f)
+    #df_interp.to_csv(os.path.join(output_dir, f'{BA_name}_hourly_load_data.csv'), index=False, header=True)
+
+    return df_interp
 
 
