@@ -45,7 +45,7 @@ def eia_data_subset(file_string, output_dir):
     df['Year'] = df['UTC time'].dt.strftime('%Y')
     df['Month'] = df['UTC time'].dt.strftime('%m')
     df['Day'] = df['UTC time'].dt.strftime('%d')
-    df['Hour'] = df['UTC time'].dt.strftime('%d')
+    df['Hour'] = df['UTC time'].dt.strftime('%H')
 
     # only keep columns that are needed
     col_names = ['Year', 'Month', 'Day', 'Hour', 'DF', 'Adjusted D', 'Adjusted NG', 'Adjusted TI']

@@ -130,9 +130,22 @@ def ba_pop_interpolate(map_input_dir, pop_input_dir, start_year, end_year):
     # Reindex and interpolate with linear interpolation
     df_interp = df.reindex(rng, axis=1).interpolate(axis=1)
 
+    # Make dates rows and BA names columns
+    df_interp = df_interp.T
+
+    # Make BA name column
     df_interp.reset_index(level=0, inplace=True)
-    ba_names = df_interp['name'].unique
-    # Write hourly population to csv
+
+    # Extract year, month, day ,hour for each date
+    df_interp['Year'] = df_interp.dt.strftime('%Y')
+    df_interp['Month'] = pd.DatetimeIndex(df_interp['index']).month
+    df_interp['Day'] = pd.DatetimeIndex(df_interp['index']).day
+    df_interp['Hour'] = pd.DatetimeIndex(df_interp['index']).hour
+
+
+    # Spilt the dataframe by BA name
+    ba_df_list = np.array_split(df_interp, df_interp['name'].nunique())
+
 
     #f = lambda x: x.to_csv(pop_output_dir + "hourly_pop_{}.csv".format(x.name.lower()), index=False)
     #df.groupby('BA_name').apply(f)
