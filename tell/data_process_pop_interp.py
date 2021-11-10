@@ -137,14 +137,27 @@ def ba_pop_interpolate(map_input_dir, pop_input_dir, start_year, end_year):
     df_interp.reset_index(level=0, inplace=True)
 
     # Extract year, month, day ,hour for each date
-    df_interp['Year'] = df_interp.dt.strftime('%Y')
-    df_interp['Month'] = pd.DatetimeIndex(df_interp['index']).month
-    df_interp['Day'] = pd.DatetimeIndex(df_interp['index']).day
-    df_interp['Hour'] = pd.DatetimeIndex(df_interp['index']).hour
+    df_interp['Year'] = df_interp['index'].dt.strftime('%Y')
+    df_interp['Month'] = df_interp['index'].dt.strftime('%m')
+    df_interp['Day'] = df_interp['index'].dt.strftime('%d')
+    df_interp['Hour'] = df_interp['index'].dt.strftime('%H')
+
+    # Reorder columns and remove datestring
+    col = df_interp.pop("Year")
+    df_interp.insert(0, col.name, col)
+
+    col = df_interp.pop("Month")
+    df_interp.insert(1, col.name, col)
+
+    col = df_interp.pop("Day")
+    df_interp.insert(2, col.name, col)
+
+    col = df_interp.pop("Hour")
+    df_interp.insert(3, col.name, col)
+
+    df_interp = df_interp.drop('index', 1)
 
 
-    # Spilt the dataframe by BA name
-    ba_df_list = np.array_split(df_interp, df_interp['name'].nunique())
 
 
     #f = lambda x: x.to_csv(pop_output_dir + "hourly_pop_{}.csv".format(x.name.lower()), index=False)
