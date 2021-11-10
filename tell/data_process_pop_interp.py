@@ -5,6 +5,7 @@ from datetime import datetime
 
 import tell.metadata_eia as metadata_eia
 
+
 def fips_pop_yearly(pop_input_dir, start_year, end_year):
     """Read in population data, format columns and return single df for all years
     :param pop_input_dir:                      Directory where county population is stored
@@ -99,19 +100,19 @@ def ba_pop_sum(map_input_dir, pop_input_dir, start_year, end_year):
     return df
 
 
-def ba_pop_interpolate(map_input_dir, pop_input_dir, start_year, end_year):
+def ba_pop_interpolate(map_input_dir, pop_input_dir, pop_output_dir, start_year, end_year):
     """Interpolate the population from yearly to hourly timeseries to match EIA 930 hourly data
-     :param mapping_input_dir:                  Directory where fips county data is stored
-     :type mapping_input_dir:                   dir
-     :param population_input_dir:               Directory where county population is stored
-     :type population_input_dir:                dir
-     :param output_dir:                         Directory where to store the hourly population data
-     :type output_dir:                          dir
-     :param start_year:                         Year to start model ; four digit year (e.g., 1990)
-     :type start_year:                          int
-     :param end_year:                           Year to start model ; four digit year (e.g., 1990)
-     :type end_year:                            int
-     :return:                                   Dataframe of hourly population timeseries for each BA name
+     :param map_input_dir:               Directory where fips county data is stored
+     :type map_input_dir:                dir
+     :param pop_input_dir:               Directory where county population is stored
+     :type pop_input_dir:                dir
+     :param pop_output_dir:              Directory where to store the hourly population data
+     :type pop_output_dir:               dir
+     :param start_year:                  Year to start model ; four digit year (e.g., 1990)
+     :type start_year:                   int
+     :param end_year:                    Year to start model ; four digit year (e.g., 1990)
+     :type end_year:                     int
+     :return:                            Dataframe of hourly population timeseries for each BA name
      """
     df = ba_pop_sum(map_input_dir, pop_input_dir, start_year, end_year)
     df['year'] = pd.to_datetime(df['year'], format='%Y')
@@ -157,13 +158,13 @@ def ba_pop_interpolate(map_input_dir, pop_input_dir, start_year, end_year):
 
     df_interp = df_interp.drop('index', 1)
 
+    # Get list of BA names from column headers
+    df_names = df_interp.loc[:, ~df_interp.columns.isin(['Year', 'Month', 'Day', 'Hour'])]
+    BA_name = list(df_names)
 
-
-
-    #f = lambda x: x.to_csv(pop_output_dir + "hourly_pop_{}.csv".format(x.name.lower()), index=False)
-    #df.groupby('BA_name').apply(f)
-    #df_interp.to_csv(os.path.join(output_dir, f'{BA_name}_hourly_load_data.csv'), index=False, header=True)
-
-    return df_interp
-
-
+    # Loop over BA names to write each BA population to csv
+    for name in BA_name:
+        df_interp.to_csv(os.path.join(pop_output_dir, f'{name}_hourly_population.csv'),
+                         index=False,
+                         columns=['Year', 'Month', 'Day', 'Hour', f'{name}'],
+                         header=['Year', 'Month', 'Day', 'Hour', 'Pop'])
