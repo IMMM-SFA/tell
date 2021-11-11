@@ -35,13 +35,9 @@ pop_output_dir =  os.path.join(current_dir, r'outputs', r'hourly_population')
 if not os.path.exists(pop_output_dir):
    os.makedirs(pop_output_dir)
 
-# Set some processing flags:
-start_year = 2015;  # Starting year of time series
-end_year = 2019;  # Ending year of time series
-
 tell.ba_pop_interpolate(map_input_dir, pop_input_dir, pop_output_dir, start_year, end_year)
 
-## Meterolgoy data ##
+## Meterology data ##
 
 # Set the data input and output directories:
 wrf_input_dir = current_dir
