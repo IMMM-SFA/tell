@@ -17,7 +17,8 @@ class InstallSupplement:
 
     # URL for DOI minted example data hosted on Zenodo
     DATA_VERSION_URLS = {'1.0.0': 'https://zenodo.org/record/5542502/files/tell_raw_data.zip?download=1',
-                         '2.0.0': 'https://zenodo.org/record/5602053/files/tell_raw_data.zip?download=1'}
+                         '2.0.0': 'https://zenodo.org/record/5602053/files/tell_raw_data.zip?download=1',
+                         '3.0.0': 'https://zenodo.org/record/5714756/files/tell_raw_data.zip?download=1'}
 
 
     def __init__(self, data_dir=None):
@@ -37,7 +38,7 @@ class InstallSupplement:
 
         # get the current version of cerf that is installed
         #current_version = get_distribution('tell').version
-        current_version = '2.0.0'
+        current_version = '3.0.0'
         try:
             data_link = InstallSupplement.DATA_VERSION_URLS[current_version]
 

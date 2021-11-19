@@ -106,39 +106,23 @@ year_to_plot = '2020'
 # Choose whether or not to save the images and set the image resolution:
 save_images = 0 # (1 = Yes)
 image_resolution = 150 # (dpi)
+
 # If you want to save the images, check that the image output directory exist and if not then create it:
 if save_images == 1:
    if os.path.exists((image_output_dir + year_to_plot)) == False:
       os.mkdir((image_output_dir + year_to_plot))
-# Read in the state shapefile, rename the GEOID variable as 'State_FIPS', convert 'State_FIPS' to an integer then mulitply it by 1000:
-states_df = gpd.read_file((shapefile_input_dir + 'tl_2020_us_state.shp')).rename(columns={'GEOID': 'State_FIPS',})
-states_df['State_FIPS'] = states_df['State_FIPS'].astype(int) * 1000
-
-# Read in the 'TELL_State_Summary_Data' .csv file and reassign the 'State_FIPS' code as an integer:
-state_summary_df = pd.read_csv((data_input_dir + year_to_plot + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'), dtype={'State_FIPS': int})
-
-# Merge the two dataframes together using state FIPS codes to join them and display the merged datafram:
-states_df = states_df.merge(state_summary_df, on='State_FIPS', how='left')
 
 # Plot a map of the state scaling factors:
-tell.plot_state_scaling_factors(states_df, year_to_plot, save_images, image_resolution, image_output_dir)
+tell.plot_state_scaling_factors(shapefile_input_dir, data_input_dir, year_to_plot, save_images, image_resolution, image_output_dir)
 
 # Plot the state annual total loads from GCAM-USA and TELL:
 tell.plot_state_annual_total_loads(state_summary_df, year_to_plot, save_images, image_resolution, image_output_dir)
-
-# Read in the 'TELL_State_Hourly_Load_Data' .csv file and display the dataframe:
-state_hourly_load_df = pd.read_csv((data_input_dir + year_to_plot + '/' + 'TELL_State_Hourly_Load_Data_' + year_to_plot + '.csv'), parse_dates=["Time_UTC"])
-state_hourly_load_df
 
 # Plot the time-series of total hourly loads for a given state by specifying either the state name or FIPS code:
 tell.plot_state_load_time_series('California', state_hourly_load_df, year_to_plot, save_images, image_resolution, image_output_dir)
 
 # Plot the load duration curve for a given state by specifying either the state name or FIPS code:
 tell.plot_state_load_duration_curve('California', state_hourly_load_df, year_to_plot, save_images, image_resolution, image_output_dir)
-
-# Read in the 'TELL_Balancing_Authority_Hourly_Load_Data' .csv file and display the dataframe:
-ba_hourly_load_df = pd.read_csv((data_input_dir + year_to_plot + '/' + 'TELL_Balancing_Authority_Hourly_Load_Data_' + year_to_plot + '.csv'), parse_dates=["Time_UTC"])
-ba_hourly_load_df
 
 # Plot the time-series of total hourly loads for a given BA by specifying either the BA abbreviation or BA number:
 tell.plot_ba_load_time_series('ERCO', ba_hourly_load_df, year_to_plot, save_images, image_resolution, image_output_dir)

@@ -8,7 +8,17 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
-def plot_state_scaling_factors(states_df, year_to_plot, save_images, image_resolution, image_output_dir):
+def plot_state_scaling_factors(shapefile_input_dir, data_input_dir, year_to_plot, save_images, image_resolution, image_output_dir):
+    states_df = gpd.read_file((shapefile_input_dir + 'tl_2020_us_state.shp')).rename(columns={'GEOID': 'State_FIPS', })
+    states_df['State_FIPS'] = states_df['State_FIPS'].astype(int) * 1000
+
+    # Read in the 'TELL_State_Summary_Data' .csv file and reassign the 'State_FIPS' code as an integer:
+    state_summary_df = pd.read_csv((data_input_dir + year_to_plot + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'),
+        dtype={'State_FIPS': int})
+
+    # Merge the two dataframes together using state FIPS codes to join them and display the merged datafram:
+    states_df = states_df.merge(state_summary_df, on='State_FIPS', how='left')
+
     fig, ax = plt.subplots(1, 1, figsize=(25,10))
     divider = make_axes_locatable(ax)
     cax = divider.append_axes("right", size="3%", pad=0.1)
@@ -26,8 +36,9 @@ def plot_state_scaling_factors(states_df, year_to_plot, save_images, image_resol
     if save_images == 1:
        plt.savefig((image_output_dir + year_to_plot + '/' + 'TELL_State_Scaling_Factors_' + year_to_plot + '.png'), dpi=image_resolution, bbox_inches='tight')
 
-def plot_state_annual_total_loads(state_summary_df, year_to_plot, save_images, image_resolution, image_output_dir):
-
+def plot_state_annual_total_loads(data_input_dir, year_to_plot, save_images, image_resolution, image_output_dir):
+     state_summary_df = pd.read_csv((data_input_dir + year_to_plot + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'),
+        dtype={'State_FIPS': int})
         x_axis = np.arange(len(state_summary_df))
 
         plt.figure(figsize=(22, 10))
@@ -44,8 +55,12 @@ def plot_state_annual_total_loads(state_summary_df, year_to_plot, save_images, i
                 dpi=image_resolution, bbox_inches='tight')
 
 
-def plot_state_load_time_series(state, state_hourly_load_df, year_to_plot, save_images, image_resolution,
+def plot_state_load_time_series(state, data_input_dir, year_to_plot, save_images, image_resolution,
                                 image_output_dir):
+    state_hourly_load_df = pd.read_csv(
+        (data_input_dir + year_to_plot + '/' + 'TELL_State_Hourly_Load_Data_' + year_to_plot + '.csv'),
+        parse_dates=["Time_UTC"])
+
     if (type(state)) == str:
         state_subset_df = state_hourly_load_df.loc[state_hourly_load_df['State_Name'] == state]
     if (type(state)) == int:
@@ -95,7 +110,11 @@ def plot_state_load_time_series(state, state_hourly_load_df, year_to_plot, save_
         # Define a function to plot time-series of hourly loads for a given BA based on the BA abbreviation or BA number:
 
 
-def plot_ba_load_time_series(BA, ba_hourly_load_df, year_to_plot, save_images, image_resolution, image_output_dir):
+def plot_ba_load_time_series(BA, data_input_dir, year_to_plot, save_images, image_resolution, image_output_dir):
+    # Read in the 'TELL_Balancing_Authority_Hourly_Load_Data' .csv file and display the dataframe:
+    ba_hourly_load_df = pd.read_csv((data_input_dir + year_to_plot + '/' + 'TELL_Balancing_Authority_Hourly_Load_Data_' + year_to_plot + '.csv'),
+        parse_dates=["Time_UTC"])
+
     if (type(BA)) == str:
         ba_subset_df = ba_hourly_load_df.loc[ba_hourly_load_df['BA_Code'] == BA]
     if (type(BA)) == int:

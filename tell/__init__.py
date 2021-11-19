@@ -14,4 +14,7 @@ from .mlp_predict import *
 # model forward execution step
 from .execute_forward import *
 
+# model visualization and evaluation
+from .visualization import *
+
 __version__ = '0.0.1'
