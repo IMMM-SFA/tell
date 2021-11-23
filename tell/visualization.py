@@ -1,14 +1,28 @@
 # Import all of the required libraries and packages:
-import os
 import numpy as np
 import pandas as pd
 import geopandas as gpd
-import shapefile as shp
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
-def plot_state_scaling_factors(shapefile_input_dir, data_input_dir, year_to_plot, save_images, image_resolution, image_output_dir):
+def plot_state_scaling_factors(shapefile_input_dir, data_input_dir, year_to_plot, save_images, image_resolution,
+                               image_output_dir):
+    """Select wanted columns in each file
+     :param shapefile_input_dir:        Directory where the Census TL shapefile is stored
+     :type shapefile_input_dir:         str
+     :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
+     :type data_input_dir:              dir
+     :param year_to_plot:               Directory to store the EIA 930 hourly load data as a csv
+     :type year_to_plot:                dir
+     :param save_images:                Directory to store the EIA 930 hourly load data as a csv
+     :type save_images:                 dir
+     :param image_resolution:           Directory to store the EIA 930 hourly load data as a csv
+     :type image_resolution:            dir
+     :param image_output_dir:           Directory to store the EIA 930 hourly load data as a csv
+     :type image_output_dir:            dir
+     :return:                           Subsetted dataframe of EIA 930 hourly data
+      """
     states_df = gpd.read_file((shapefile_input_dir + 'tl_2020_us_state.shp')).rename(columns={'GEOID': 'State_FIPS', })
     states_df['State_FIPS'] = states_df['State_FIPS'].astype(int) * 1000
 
@@ -37,6 +51,19 @@ def plot_state_scaling_factors(shapefile_input_dir, data_input_dir, year_to_plot
        plt.savefig((image_output_dir + year_to_plot + '/' + 'TELL_State_Scaling_Factors_' + year_to_plot + '.png'), dpi=image_resolution, bbox_inches='tight')
 
 def plot_state_annual_total_loads(data_input_dir, year_to_plot, save_images, image_resolution, image_output_dir):
+    """Select wanted columns in each file
+       :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
+       :type data_input_dir:              dir
+       :param year_to_plot:               Directory to store the EIA 930 hourly load data as a csv
+       :type year_to_plot:                dir
+       :param save_images:                Directory to store the EIA 930 hourly load data as a csv
+       :type save_images:                 dir
+       :param image_resolution:           Directory to store the EIA 930 hourly load data as a csv
+       :type image_resolution:            dir
+       :param image_output_dir:           Directory to store the EIA 930 hourly load data as a csv
+       :type image_output_dir:            dir
+       :return:                           Subsetted dataframe of EIA 930 hourly data
+        """
      state_summary_df = pd.read_csv((data_input_dir + year_to_plot + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'),
         dtype={'State_FIPS': int})
         x_axis = np.arange(len(state_summary_df))
@@ -57,6 +84,21 @@ def plot_state_annual_total_loads(data_input_dir, year_to_plot, save_images, ima
 
 def plot_state_load_time_series(state, data_input_dir, year_to_plot, save_images, image_resolution,
                                 image_output_dir):
+    """Select wanted columns in each file
+       :param state:                      Directory where the Census TL shapefile is stored
+       :type state:                       str
+       :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
+       :type data_input_dir:              dir
+       :param year_to_plot:               Directory to store the EIA 930 hourly load data as a csv
+       :type year_to_plot:                dir
+       :param save_images:                Directory to store the EIA 930 hourly load data as a csv
+       :type save_images:                 dir
+       :param image_resolution:           Directory to store the EIA 930 hourly load data as a csv
+       :type image_resolution:            dir
+       :param image_output_dir:           Directory to store the EIA 930 hourly load data as a csv
+       :type image_output_dir:            dir
+       :return:                           Subsetted dataframe of EIA 930 hourly data
+        """
     state_hourly_load_df = pd.read_csv(
         (data_input_dir + year_to_plot + '/' + 'TELL_State_Hourly_Load_Data_' + year_to_plot + '.csv'),
         parse_dates=["Time_UTC"])
@@ -111,6 +153,21 @@ def plot_state_load_time_series(state, data_input_dir, year_to_plot, save_images
 
 
 def plot_ba_load_time_series(BA, data_input_dir, year_to_plot, save_images, image_resolution, image_output_dir):
+    """Select wanted columns in each file
+       :param BA:                         Directory where the Census TL shapefile is stored
+       :type BA:                          str
+       :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
+       :type data_input_dir:              dir
+       :param year_to_plot:               Directory to store the EIA 930 hourly load data as a csv
+       :type year_to_plot:                dir
+       :param save_images:                Directory to store the EIA 930 hourly load data as a csv
+       :type save_images:                 dir
+       :param image_resolution:           Directory to store the EIA 930 hourly load data as a csv
+       :type image_resolution:            dir
+       :param image_output_dir:           Directory to store the EIA 930 hourly load data as a csv
+       :type image_output_dir:            dir
+       :return:                           Subsetted dataframe of EIA 930 hourly data
+        """
     # Read in the 'TELL_Balancing_Authority_Hourly_Load_Data' .csv file and display the dataframe:
     ba_hourly_load_df = pd.read_csv((data_input_dir + year_to_plot + '/' + 'TELL_Balancing_Authority_Hourly_Load_Data_' + year_to_plot + '.csv'),
         parse_dates=["Time_UTC"])
