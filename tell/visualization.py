@@ -8,7 +8,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 def plot_state_scaling_factors(shapefile_input_dir, data_input_dir, year_to_plot, save_images, image_resolution,
                                image_output_dir):
-    """Select wanted columns in each file
+    """Create state scaling factors map and save image in image directory
      :param shapefile_input_dir:        Directory where the Census TL shapefile is stored
      :type shapefile_input_dir:         str
      :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
@@ -51,7 +51,7 @@ def plot_state_scaling_factors(shapefile_input_dir, data_input_dir, year_to_plot
        plt.savefig((image_output_dir + year_to_plot + '/' + 'TELL_State_Scaling_Factors_' + year_to_plot + '.png'), dpi=image_resolution, bbox_inches='tight')
 
 def plot_state_annual_total_loads(data_input_dir, year_to_plot, save_images, image_resolution, image_output_dir):
-    """Select wanted columns in each file
+    """Plot the state annual total loads and save to image directory
        :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
        :type data_input_dir:              dir
        :param year_to_plot:               Directory to store the EIA 930 hourly load data as a csv
@@ -84,7 +84,7 @@ def plot_state_annual_total_loads(data_input_dir, year_to_plot, save_images, ima
 
 def plot_state_load_time_series(state, data_input_dir, year_to_plot, save_images, image_resolution,
                                 image_output_dir):
-    """Select wanted columns in each file
+    """Plot sate load time series and save to image directory
        :param state:                      Directory where the Census TL shapefile is stored
        :type state:                       str
        :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
@@ -153,7 +153,7 @@ def plot_state_load_time_series(state, data_input_dir, year_to_plot, save_images
 
 
 def plot_ba_load_time_series(BA, data_input_dir, year_to_plot, save_images, image_resolution, image_output_dir):
-    """Select wanted columns in each file
+    """Plot the ba load time series and save to image directory
        :param BA:                         Directory where the Census TL shapefile is stored
        :type BA:                          str
        :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
