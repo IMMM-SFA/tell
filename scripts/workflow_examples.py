@@ -113,16 +113,19 @@ if save_images == 1:
       os.mkdir((image_output_dir + year_to_plot))
 
 # Plot a map of the state scaling factors:
-tell.plot_state_scaling_factors(shapefile_input_dir, data_input_dir, year_to_plot, save_images, image_resolution, image_output_dir)
+tell.plot_state_scaling_factors(shapefile_input_dir, data_input_dir, year_to_plot, save_images, image_resolution,
+                                image_output_dir)
 
 # Plot the state annual total loads from GCAM-USA and TELL:
 tell.plot_state_annual_total_loads(state_summary_df, year_to_plot, save_images, image_resolution, image_output_dir)
 
 # Plot the time-series of total hourly loads for a given state by specifying either the state name or FIPS code:
-tell.plot_state_load_time_series('California', state_hourly_load_df, year_to_plot, save_images, image_resolution, image_output_dir)
+tell.plot_state_load_time_series('California', state_hourly_load_df, year_to_plot, save_images, image_resolution,
+                                 image_output_dir)
 
 # Plot the load duration curve for a given state by specifying either the state name or FIPS code:
-tell.plot_state_load_duration_curve('California', state_hourly_load_df, year_to_plot, save_images, image_resolution, image_output_dir)
+tell.plot_state_load_duration_curve('California', state_hourly_load_df, year_to_plot, save_images, image_resolution,
+                                    image_output_dir)
 
 # Plot the time-series of total hourly loads for a given BA by specifying either the BA abbreviation or BA number:
 tell.plot_ba_load_time_series('ERCO', ba_hourly_load_df, year_to_plot, save_images, image_resolution, image_output_dir)

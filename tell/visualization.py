@@ -9,19 +9,19 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 def plot_state_scaling_factors(shapefile_input_dir, data_input_dir, year_to_plot, save_images, image_resolution,
                                image_output_dir):
     """Create state scaling factors map and save image in image directory
-     :param shapefile_input_dir:        Directory where the Census TL shapefile is stored
-     :type shapefile_input_dir:         str
-     :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
-     :type data_input_dir:              dir
-     :param year_to_plot:               Directory to store the EIA 930 hourly load data as a csv
-     :type year_to_plot:                dir
-     :param save_images:                Directory to store the EIA 930 hourly load data as a csv
-     :type save_images:                 dir
-     :param image_resolution:           Directory to store the EIA 930 hourly load data as a csv
-     :type image_resolution:            dir
-     :param image_output_dir:           Directory to store the EIA 930 hourly load data as a csv
-     :type image_output_dir:            dir
-     :return:                           Subsetted dataframe of EIA 930 hourly data
+         :param shapefile_input_dir:        Directory where the Census TL shapefile is stored
+         :type shapefile_input_dir:         dir
+         :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
+         :type data_input_dir:              dir
+         :param year_to_plot:               What year to plot as a data visualization
+         :type year_to_plot:                int
+         :param save_images:                Save images to directory? 0 is no, 1 is yes
+         :type save_images:                 boolean
+         :param image_resolution:           Resolution in dpi to save images
+         :type image_resolution:            int
+         :param image_output_dir:           Directory to store the image outputs
+         :type image_output_dir:            dir
+         :return:                           State scaling factors map and save image in image directory
       """
     states_df = gpd.read_file((shapefile_input_dir + 'tl_2020_us_state.shp')).rename(columns={'GEOID': 'State_FIPS', })
     states_df['State_FIPS'] = states_df['State_FIPS'].astype(int) * 1000
@@ -52,17 +52,17 @@ def plot_state_scaling_factors(shapefile_input_dir, data_input_dir, year_to_plot
 
 def plot_state_annual_total_loads(data_input_dir, year_to_plot, save_images, image_resolution, image_output_dir):
     """Plot the state annual total loads and save to image directory
-       :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
-       :type data_input_dir:              dir
-       :param year_to_plot:               Directory to store the EIA 930 hourly load data as a csv
-       :type year_to_plot:                dir
-       :param save_images:                Directory to store the EIA 930 hourly load data as a csv
-       :type save_images:                 dir
-       :param image_resolution:           Directory to store the EIA 930 hourly load data as a csv
-       :type image_resolution:            dir
-       :param image_output_dir:           Directory to store the EIA 930 hourly load data as a csv
-       :type image_output_dir:            dir
-       :return:                           Subsetted dataframe of EIA 930 hourly data
+        :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
+        :type data_input_dir:              dir
+        :param year_to_plot:               What year to plot as a data visualization
+        :type year_to_plot:                int
+        :param save_images:                Save images to directory? 0 is no, 1 is yes
+        :type save_images:                 boolean
+        :param image_resolution:           Resolution in dpi to save images
+        :type image_resolution:            int
+        :param image_output_dir:           Directory to store the image outputs
+        :type image_output_dir:            dir
+        :return:                           Plot of state annual total loads and save to image directory
         """
      state_summary_df = pd.read_csv((data_input_dir + year_to_plot + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'),
         dtype={'State_FIPS': int})
@@ -84,20 +84,20 @@ def plot_state_annual_total_loads(data_input_dir, year_to_plot, save_images, ima
 
 def plot_state_load_time_series(state, data_input_dir, year_to_plot, save_images, image_resolution,
                                 image_output_dir):
-    """Plot sate load time series and save to image directory
-       :param state:                      Directory where the Census TL shapefile is stored
+    """Plot state load time series and save to image directory
+       :param state:                      What state to plot state load time series
        :type state:                       str
        :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
        :type data_input_dir:              dir
-       :param year_to_plot:               Directory to store the EIA 930 hourly load data as a csv
-       :type year_to_plot:                dir
-       :param save_images:                Directory to store the EIA 930 hourly load data as a csv
-       :type save_images:                 dir
-       :param image_resolution:           Directory to store the EIA 930 hourly load data as a csv
-       :type image_resolution:            dir
-       :param image_output_dir:           Directory to store the EIA 930 hourly load data as a csv
+       :param year_to_plot:               What year to plot as a data visualization
+       :type year_to_plot:                int
+       :param save_images:                Save images to directory? 0 is no, 1 is yes
+       :type save_images:                 boolean
+       :param image_resolution:           Resolution in dpi to save images
+       :type image_resolution:            int
+       :param image_output_dir:           Directory to store the image outputs
        :type image_output_dir:            dir
-       :return:                           Subsetted dataframe of EIA 930 hourly data
+       :return:                           Plot of state load time series and save to image directory
         """
     state_hourly_load_df = pd.read_csv(
         (data_input_dir + year_to_plot + '/' + 'TELL_State_Hourly_Load_Data_' + year_to_plot + '.csv'),
@@ -123,7 +123,7 @@ def plot_state_load_time_series(state, data_input_dir, year_to_plot, save_images
 
     if save_images == 1:
         plt.savefig((image_output_dir + year_to_plot + '/' + 'TELL_State_Hourly_Loads_' + state_name + '_' + year_to_plot + '.png'),
-                    dpi=image_resolution
+                    dpi=image_resolution, bbox_inches='tight')
 
         def plot_state_load_duration_curve(state, state_hourly_load_df, year_to_plot, save_images, image_resolution,
                                            image_output_dir):
@@ -147,26 +147,26 @@ def plot_state_load_time_series(state, data_input_dir, year_to_plot, save_images
     state_name = state_name.replace(" ", "_")
     if save_images == 1:
         plt.savefig((image_output_dir + year_to_plot + '/' + 'TELL_State_Load_Duration_Curve_' + state_name + '_' + year_to_plot + '.png'),
-                    dpi=image_reso
+                    dpi=image_resolution, bbox_inches='tight')
 
         # Define a function to plot time-series of hourly loads for a given BA based on the BA abbreviation or BA number:
 
 
 def plot_ba_load_time_series(BA, data_input_dir, year_to_plot, save_images, image_resolution, image_output_dir):
-    """Plot the ba load time series and save to image directory
-       :param BA:                         Directory where the Census TL shapefile is stored
+    """Plot the BA load time series and save to image directory
+       :param BA:                         What BA to plot load time series
        :type BA:                          str
        :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
        :type data_input_dir:              dir
-       :param year_to_plot:               Directory to store the EIA 930 hourly load data as a csv
-       :type year_to_plot:                dir
-       :param save_images:                Directory to store the EIA 930 hourly load data as a csv
-       :type save_images:                 dir
-       :param image_resolution:           Directory to store the EIA 930 hourly load data as a csv
-       :type image_resolution:            dir
-       :param image_output_dir:           Directory to store the EIA 930 hourly load data as a csv
+       :param year_to_plot:               What year to plot as a data visualization
+       :type year_to_plot:                int
+       :param save_images:                Save images to directory? 0 is no, 1 is yes
+       :type save_images:                 boolean
+       :param image_resolution:           Resolution in dpi to save images
+       :type image_resolution:            int
+       :param image_output_dir:           Directory to store the image outputs
        :type image_output_dir:            dir
-       :return:                           Subsetted dataframe of EIA 930 hourly data
+       :return:                            BA load time series plot and save to image directory
         """
     # Read in the 'TELL_Balancing_Authority_Hourly_Load_Data' .csv file and display the dataframe:
     ba_hourly_load_df = pd.read_csv((data_input_dir + year_to_plot + '/' + 'TELL_Balancing_Authority_Hourly_Load_Data_' + year_to_plot + '.csv'),
@@ -188,4 +188,4 @@ def plot_ba_load_time_series(BA, data_input_dir, year_to_plot, save_images, imag
 
     if save_images == 1:
         plt.savefig((image_output_dir + year_to_plot + '/' + 'TELL_BA_Hourly_Loads_' + ba_subset_df['BA_Code'].iloc[
-            0] + '_' + year_to_plot + '.png'), dpi=image_resolution, bbox_i
+            0] + '_' + year_to_plot + '.png'), dpi=image_resolution, bbox_inches='tight')
