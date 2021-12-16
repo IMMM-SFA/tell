@@ -7,6 +7,7 @@ from .logger import *
 # data processing steps
 from .data_process_eia_930 import *
 from .data_process_pop_interp import *
+from .install_weather_forcing_sample import install_sample_data
 
 # mlp steps
 from .mlp_predict import *
@@ -15,6 +16,6 @@ from .mlp_predict import *
 from .execute_forward import *
 
 # model visualization and evaluation
-from .visualization import *
+#from .visualization import *
 
 __version__ = '0.0.1'

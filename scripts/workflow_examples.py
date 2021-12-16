@@ -38,10 +38,13 @@ if not os.path.exists(pop_output_dir):
 tell.ba_pop_interpolate(map_input_dir, pop_input_dir, pop_output_dir, start_year, end_year)
 
 ## Meterology data ##
+wrf_output_dir =  os.path.join(current_dir, r'outputs', r'hourly_meterology')
+if not os.path.exists(wrf_output_dir):
+   os.makedirs(wrf_output_dir)
 
-# Set the data input and output directories:
-wrf_input_dir = current_dir
-wrf_output_dir = f'{current_dir}/hourly_meterology'
+# Download the raw data from the Zenodo package
+tell.install_sample_data(data_dir = wrf_output_dir)
+
 
 # load the wrf to tell functions from im3components package
 from im3components.wrf_tell.wrf_tell_counties import wrf_to_tell_counties
@@ -128,4 +131,4 @@ tell.plot_state_load_duration_curve('California', state_hourly_load_df, year_to_
                                     image_output_dir)
 
 # Plot the time-series of total hourly loads for a given BA by specifying either the BA abbreviation or BA number:
-tell.plot_ba_load_time_series('ERCO', ba_hourly_load_df, year_to_plot, save_images, image_resolution, image_output_dir)
+tell.('ERCO', ba_hourly_load_df, year_to_plot, save_images, image_resolution, image_output_dir)
