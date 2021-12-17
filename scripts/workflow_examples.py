@@ -3,6 +3,7 @@ import os
 
 # Create directory to store raw data
 current_dir =  os.path.dirname(os.getcwd())
+current_dir =  os.path.join(os.path.dirname(os.getcwd()),  r'tell_valid')
 raw_data_dir = os.path.join(current_dir, r'raw_data')
 if not os.path.exists(raw_data_dir):
    os.makedirs(raw_data_dir)
