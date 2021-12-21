@@ -38,25 +38,21 @@ if not os.path.exists(pop_output_dir):
 
 tell.ba_pop_interpolate(map_input_dir, pop_input_dir, pop_output_dir, start_year, end_year)
 
-## Meterology data ##
+## Create input directory meterology data ##
+wrf_input_dir =  os.path.join(current_dir, r'raw_data', r'wrf')
+if not os.path.exists(wrf_input_dir):
+   os.makedirs(wrf_input_dir)
+
+# Download the raw wrf data from the Zenodo package
+tell.install_sample_data(data_dir = wrf_input_dir)
+
+## Create output directory meterology data ##
 wrf_output_dir =  os.path.join(current_dir, r'outputs', r'hourly_meterology')
 if not os.path.exists(wrf_output_dir):
    os.makedirs(wrf_output_dir)
 
-# Download the raw data from the Zenodo package
-tell.install_sample_data(data_dir = wrf_output_dir)
+# Process erf data to put into right date format
 
-
-# load the wrf to tell functions from im3components package
-from im3components.wrf_tell.wrf_tell_counties import wrf_to_tell_counties
-from im3components.wrf_tell.wrf_tell_balancing_authorities import wrf_to_tell_balancing_authorities
-
-# average wrf meterolgoy by county
-df = wrf_to_tell_counties(wrf_input_dir)
-
-# aggregate wrf county averages to annual hourly times-series  of population-weighted meteorology for each balancing
-# authority (BA).
-wrf_to_tell_balancing_authorities(df, wrf_output_dir)
 
 ## Compile hourly load, hourly population and hourly WRF data for MLP model ##
 compile_output_dir = f'{current_dir}/compiled_data'
