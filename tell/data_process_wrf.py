@@ -42,14 +42,20 @@ def wrf_data_date(file_string, output_dir):
     # read in the Published Hourly Data
     df = pd.read_csv(file_string)
 
+    df['Time_UTC'] = pd.to_datetime(df['Time_UTC'])
     # use datetime string to get Year, Month, Day, Hour
     df['Year'] = df['Time_UTC'].dt.strftime('%Y')
     df['Month'] = df['Time_UTC'].dt.strftime('%m')
     df['Day'] = df['Time_UTC'].dt.strftime('%d')
     df['Hour'] = df['Time_UTC'].dt.strftime('%H')
 
+    # only keep columns that are needed
+    col_names = ['Year', 'Month', 'Day', 'Hour', 'T2', 'Q2', 'SWDOWN', 'GLW', 'WSPD']
+    df = df[col_names].copy()
+
+    # write to csv
     BA_name = os.path.splitext(os.path.basename(file_string))[0]
-    df.to_csv(os.path.join(output_dir, f'{BA_name}_hourly_load_data.csv'), index=False, header=True)
+    df.to_csv(os.path.join(output_dir, f'{BA_name}_hourly_wrf_data.csv'), index=False, header=True)
 
 
 def process_wrf(input_dir, output_dir, n_jobs=-1):

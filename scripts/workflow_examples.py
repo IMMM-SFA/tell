@@ -51,11 +51,13 @@ wrf_output_dir =  os.path.join(current_dir, r'outputs', r'hourly_meterology')
 if not os.path.exists(wrf_output_dir):
    os.makedirs(wrf_output_dir)
 
-# Process erf data to put into right date format
-
+# Process wrf data to put into right date format
+tell.process_wrf(wrf_input_dir, wrf_output_dir)
 
 ## Compile hourly load, hourly population and hourly WRF data for MLP model ##
-compile_output_dir = f'{current_dir}/compiled_data'
+compile_output_dir =  os.path.join(current_dir, r'outputs', r'compiled_data')
+if not os.path.exists(compile_output_dir):
+   os.makedirs(compile_output_dir)
 
 tell.compile_data(eia_930_output_dir, pop_output_dir, wrf_output_dir, compile_output_dir)
 
