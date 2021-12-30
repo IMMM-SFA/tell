@@ -26,9 +26,9 @@ def compile_data(eia_930_output_dir, pop_output_dir, wrf_output_dir, compile_out
 
     for i in ba_name:
         # get the paths for th EIA, population and WRF data
-        eia_path = glob.glob(eia_930_output_dir + f"{i}*.csv")
-        pop_path = glob.glob(pop_output_dir + f"{i}*.csv")
-        wrf_path = glob.glob(wrf_output_dir + f"{i}*.csv")
+        eia_path = glob.glob(eia_930_output_dir + "\\" + f"{i}*.csv")
+        pop_path = glob.glob(pop_output_dir + "\\" + f"{i}*.csv")
+        wrf_path = glob.glob(wrf_output_dir + "\\" + f"{i}*.csv")
 
         # read in the csv
         eia_df = pd.read_csv(eia_path)
@@ -43,3 +43,7 @@ def compile_data(eia_930_output_dir, pop_output_dir, wrf_output_dir, compile_out
 
     return
 
+    for i in ba_name:
+        # get the paths for th EIA, population and WRF data
+        eia_path = glob.glob(eia_930_output_dir + f"{i}*.csv")
+    return eia_path
