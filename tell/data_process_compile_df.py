@@ -41,9 +41,4 @@ def compile_data(eia_930_output_dir, pop_output_dir, wrf_output_dir, compile_out
         # write the merged dataframe to a csv
         merged.to_csv(os.path.join(compile_output_dir, f'{i}_hourly_compiled_data.csv'), index=False, header=True)
 
-    return
-
-    for i in ba_name:
-        # get the paths for th EIA, population and WRF data
-        eia_path = glob.glob(eia_930_output_dir + f"{i}*.csv")
-    return eia_path
+    return merged
