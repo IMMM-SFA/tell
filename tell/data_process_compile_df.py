@@ -1,8 +1,7 @@
 import pandas as pd
 import os
-import glob as glob
 
-def compile_data(eia_930_output_dir, pop_output_dir, wrf_output_dir, compile_output_dir):
+def compile_data(eia_dir, pop_dir, wrf_dir, target_yr, compile_output_dir):
     """Read in population data, format columns and return single df for all years
     :param population_input_dir:               Directory where county population is stored
     :type population_input_dir:                dir
@@ -26,9 +25,10 @@ def compile_data(eia_930_output_dir, pop_output_dir, wrf_output_dir, compile_out
 
     for i in ba_name:
         # get the paths for th EIA, population and WRF data
-        eia_path = glob.glob(eia_930_output_dir + "\\" + f"{i}*.csv")
-        pop_path = glob.glob(pop_output_dir + "\\" + f"{i}*.csv")
-        wrf_path = glob.glob(wrf_output_dir + "\\" + f"{i}*.csv")
+        eia_path = os.path.join(eia_dir, f"{i}_hourly_load_data.csv")
+        pop_path = os.path.join(pop_dir, f"{i}_hourly_population.csv")
+        wrf_path = os.path.join(wrf_dir, f"{i}_WRF_Hourly_Mean_Meteorology_{target_yr}_hourly_wrf_data.csv")
+
 
         # read in the csv
         eia_df = pd.read_csv(eia_path)
@@ -36,7 +36,8 @@ def compile_data(eia_930_output_dir, pop_output_dir, wrf_output_dir, compile_out
         wrf_df = pd.read_csv(wrf_path)
 
         # merge the EIA 930, population and WRF data by date
-        merged = pd.merge(eia_df, pop_df, wrf_df, how='left', on=['Year', 'Month', 'Day', 'Hour'])
+        merged_first = pd.merge(eia_df, pop_df, how='inner', on =['Year', 'Month', 'Day', 'Hour'])
+        merged = pd.merge(merged_first, wrf_df, how='inner', on=['Year', 'Month', 'Day', 'Hour'])
 
         # write the merged dataframe to a csv
         merged.to_csv(os.path.join(compile_output_dir, f'{i}_hourly_compiled_data.csv'), index=False, header=True)
