@@ -11,17 +11,12 @@ def compile_data(eia_dir, pop_dir, wrf_dir, target_yr, compile_output_dir):
     :type end_year:                            int
     :return:                                   Dataframe of valid population data for select timeframe
     """
-    ba_name = ['NBSO', 'AEC', 'YAD', 'AMPL', 'AZPS', 'AECI', 'BPAT', 'CISO', 'CPLE', 'CHPD', 'CEA', 'DOPD', 'DUK',
-               'EPE',
-               'ERCO', 'EEI', 'FPL', 'FPC', 'GVL', 'HST', 'IPCO', 'IID', 'JEA', 'LDWP', 'LGEE', 'NWMT', 'NEVP',
-               'ISNE',
-               'NSB', 'NYIS', 'OVEC', 'PACW', 'PACE', 'GRMA', 'FMPP', 'GCPD', 'PJM', 'AVRN', 'PSCO', 'PGE', 'PNM',
-               'PSEI',
-               'BANC', 'SRP', 'SCL', 'SCEG', 'SC', 'SPA', 'SOCO', 'TPWR', 'TAL', 'TEC', 'TVA', 'TIDC', 'HECO',
-               'WAUW',
-               'AVA', 'SEC', 'TEPC', 'WALC', 'WAUE', 'WACM', 'SEPA', 'HECO', 'GRIF', 'GWA', 'GRIS', 'MISO',
-               'DEAA',
-               'CPLW', 'GRID', 'WWA', 'SWPP']
+    ba_name = ['AEC', 'YAD', 'AMPL', 'AZPS', 'AECI', 'BPAT', 'CISO', 'CPLE', 'CHPD', 'CEA', 'DOPD', 'DUK',
+               'EPE', 'ERCO', 'EEI', 'FPL', 'FPC', 'GVL', 'HST', 'IPCO', 'IID', 'JEA', 'LDWP', 'LGEE', 'NWMT',
+               'NEVP','ISNE','NSB', 'NYIS', 'OVEC', 'PACW', 'PACE', 'GRMA', 'FMPP', 'GCPD', 'PJM', 'AVRN', 'PSCO',
+               'PGE', 'PNM','PSEI', 'BANC', 'SRP', 'SCL', 'SCEG', 'SC', 'SPA', 'SOCO', 'TPWR', 'TAL', 'TEC', 'TVA',
+               'TIDC', 'HECO', 'WAUW','AVA', 'SEC', 'TEPC', 'WALC', 'WAUE', 'WACM', 'SEPA', 'HECO', 'GRIF', 'GWA',
+               'GRIS', 'MISO','DEAA', 'CPLW', 'GRID', 'WWA', 'SWPP']
 
     for i in ba_name:
         # get the paths for th EIA, population and WRF data
@@ -29,15 +24,20 @@ def compile_data(eia_dir, pop_dir, wrf_dir, target_yr, compile_output_dir):
         pop_path = os.path.join(pop_dir, f"{i}_hourly_population.csv")
         wrf_path = os.path.join(wrf_dir, f"{i}_WRF_Hourly_Mean_Meteorology_{target_yr}_hourly_wrf_data.csv")
 
-
-        # read in the csv
-        eia_df = pd.read_csv(eia_path)
-        pop_df = pd.read_csv(pop_path)
-        wrf_df = pd.read_csv(wrf_path)
+        if os.path.isfile(eia_path) is True:
+            eia_df = pd.read_csv(eia_path)
+        if os.path.isfile(pop_path) is True:
+            pop_df = pd.read_csv(pop_path)
+        if os.path.isfile(wrf_path) is True:
+            wrf_df = pd.read_csv(wrf_path)
 
         # merge the EIA 930, population and WRF data by date
-        merged_first = pd.merge(eia_df, pop_df, how='inner', on =['Year', 'Month', 'Day', 'Hour'])
-        merged = pd.merge(merged_first, wrf_df, how='inner', on=['Year', 'Month', 'Day', 'Hour'])
+        if os.path.isfile(eia_path) is True:
+            if os.path.isfile(pop_path) is True:
+                merged_first = pd.merge(eia_df, pop_df, how='inner', on =['Year', 'Month', 'Day', 'Hour'])
+
+        if os.path.isfile(wrf_path) is True:
+            merged = pd.merge(merged_first, wrf_df, how='inner', on=['Year', 'Month', 'Day', 'Hour'])
 
         # write the merged dataframe to a csv
         merged.to_csv(os.path.join(compile_output_dir, f'{i}_hourly_compiled_data.csv'), index=False, header=True)
