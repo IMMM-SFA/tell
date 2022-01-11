@@ -8,6 +8,8 @@ from .logger import *
 from .data_process_eia_930 import *
 from .data_process_pop_interp import *
 from .install_weather_forcing_sample import install_sample_data
+from .data_process_wrf import process_wrf
+from .data_process_compile_df import compile_data
 
 # mlp steps
 from .mlp_predict import *

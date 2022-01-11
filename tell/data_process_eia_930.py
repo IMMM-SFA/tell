@@ -16,7 +16,7 @@ def list_EIA_930_files(input_dir):
                'PGE', 'PNM', 'PSEI', 'BANC', 'SRP', 'SCL', 'SCEG', 'SC', 'SPA', 'SOCO', 'TPWR', 'TAL', 'TEC', 'TVA',
                'TIDC', 'HECO', 'WAUW', 'AVA', 'SEC', 'TEPC', 'WALC', 'WAUE', 'WACM', 'SEPA', 'HECO', 'GRIF', 'GWA',
                'GRIS', 'MISO', 'DEAA', 'CPLW', 'GRID', 'WWA', 'SWPP']
-    
+
     path_list = []
     for i in ba_name:
         path_to_check = os.path.join(input_dir, f'{i}.xlsx')

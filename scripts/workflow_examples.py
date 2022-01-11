@@ -1,9 +1,10 @@
 import tell
 import os
+import time
 
 # Create directory to store raw data
 current_dir =  os.path.dirname(os.getcwd())
-current_dir =  os.path.join(os.path.dirname(os.getcwd()),  r'tell_valid')
+current_dir =  os.path.join(os.path.dirname(os.getcwd()), r'tell_valid')
 raw_data_dir = os.path.join(current_dir, r'raw_data')
 if not os.path.exists(raw_data_dir):
    os.makedirs(raw_data_dir)
@@ -55,26 +56,34 @@ if not os.path.exists(wrf_output_dir):
 tell.process_wrf(wrf_input_dir, wrf_output_dir)
 
 ## Compile hourly load, hourly population and hourly WRF data for MLP model ##
+# create directory to store the compiled data
 compile_output_dir =  os.path.join(current_dir, r'outputs', r'compiled_data')
 if not os.path.exists(compile_output_dir):
    os.makedirs(compile_output_dir)
 
+#set target year for WRF data
+target_yr = 2019
+
+# compile the hourly load data, population data, and wrf climate data by date
 tell.compile_data(eia_930_output_dir, pop_output_dir, wrf_output_dir, target_yr, compile_output_dir)
 
-import time
+# create the directory for the mlp output
+mlp_output_dir =  os.path.join(current_dir, r'outputs', r'mlp_output')
+if not os.path.exists(mlp_output_dir):
+   os.makedirs(mlp_output_dir)
 
-output_dir =  f'{current_dir}/mlp_output'
+# specify the parameters of the MLP model
 batch_run = True
 target_ba_list = None
 generate_plots = True
-start_time = "2016-01-01 00:00:00"
+start_time = "2019-01-01 00:00:00"
 end_time = "2019-12-31 23:00:00"
-start_test_period = "2018-12-31 23:00:00"
+start_test_period = "2019-06-01 00:00:00"
 
 t0 = time.time()
 
 tell.predict(compile_output_dir ,
-            out_dir,
+            mlp_output_dir,
             start_time = start_time,
             end_time = end_time
             start_test_period = start_test_period,

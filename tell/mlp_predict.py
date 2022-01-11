@@ -1102,9 +1102,7 @@ def predict(
         split_time="2018-12-31 23:00:00",
         batch_run=True,
         target_ba_list=None,
-        generate_plots=True,
-        plot_gt=False
-):
+        generate_plots=True):
     """Convenience wrapper for the Process class which runs predictive models for each BA input CSV in the input
     directory and creates a summary and comparative figures of R2 and MAPE per BA.
 
