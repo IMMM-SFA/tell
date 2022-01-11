@@ -4,7 +4,7 @@ import pandas as pd
 from joblib import Parallel, delayed
 
 
-def list_wrf_files(input_dir, sample_year):
+def list_wrf_files(input_dir, target_yr):
     """Make a list of all the filenames for EIA 930 hourly load data (xlsx)
     :param input_dir:               Directory where EIA 930 hourly load data
     :type input_dir:                dir
@@ -25,7 +25,7 @@ def list_wrf_files(input_dir, sample_year):
                      'CPLW', 'GRID', 'WWA', 'SWPP']
     path_list = []
     for i in ba_name:
-        path_to_check = os.path.join(input_dir, f'{i}_WRF_Hourly_Mean_Meteorology_{sample_year}.csv')
+        path_to_check = os.path.join(input_dir, f'{i}_WRF_Hourly_Mean_Meteorology_{target_yr}.csv')
         if os.path.isfile(path_to_check) is True:
             path_list.append(path_to_check)
 
@@ -58,7 +58,7 @@ def wrf_data_date(file_string, output_dir):
     df.to_csv(os.path.join(output_dir, f'{BA_name}_hourly_wrf_data.csv'), index=False, header=True)
 
 
-def process_wrf(input_dir, output_dir, n_jobs=-1):
+def process_wrf(input_dir, output_dir, target_yr, n_jobs=-1):
     """Read in list of EIA 930 files, subset files and save as csv in new file name
 
     :param input_dir:              Directory where EIA 930 hourly load data
@@ -71,7 +71,7 @@ def process_wrf(input_dir, output_dir, n_jobs=-1):
 
      """
     # run the list function for the EIA files
-    list_of_files = list_wrf_files(input_dir, sample_year)
+    list_of_files = list_wrf_files(input_dir, target_yr)
 
     # run all files in parallel
     results = Parallel(n_jobs=n_jobs)(

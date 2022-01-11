@@ -52,8 +52,11 @@ wrf_output_dir =  os.path.join(current_dir, r'outputs', r'hourly_meterology')
 if not os.path.exists(wrf_output_dir):
    os.makedirs(wrf_output_dir)
 
+# set the target year
+target_yr = 2019
+
 # Process wrf data to put into right date format
-tell.process_wrf(wrf_input_dir, wrf_output_dir)
+tell.process_wrf(wrf_input_dir, wrf_output_dir, target_yr, n_jobs=-1)
 
 ## Compile hourly load, hourly population and hourly WRF data for MLP model ##
 # create directory to store the compiled data
@@ -96,10 +99,11 @@ year_to_process = '2020'
 gcam_usa_scenario = 'scenario_name'
 
 # Set the data input and output directories:
-mlp_input_dir = 'f'{current_dir}/'mlp_output'/{year_to_process}'
+mlp_input_dir = os.path.join(current_dir, r'outputs', r'mlp_output')
 ba_geolocation_input_dir = current_dir
-gcam_usa_input_dir = f'{current_dir}/{gcam_usa_scenario}'
-data_output_dir = 'f'{current_dir}/'mlp_state_output'/{year_to_process}'
+gcam_usa_input_dir = os.path.join(current_dir, r'gcam_usa_scenario')
+data_output_dir = os.path.join(current_dir, r'outputs', r'forward_output', r'{year_to_process}')
+
 
 #Run the MLP model forward in time and
 tell.execute_forward(year_to_process, mlp_input_dir, ba_geolocation_input_dir,
@@ -108,7 +112,7 @@ tell.execute_forward(year_to_process, mlp_input_dir, ba_geolocation_input_dir,
 #Data visualization
 # Set the data input and output directories:
 data_input_dir = data_output_dir
-image_output_dir = 'f'{current_dir}/'image_output'/
+image_output_dir = os.path.join(current_dir, r'outputs', r'image_output')
 shapefile_input_dir = raw_data_dir
 
 # Set the year of TELL output to visualize:
