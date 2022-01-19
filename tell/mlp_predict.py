@@ -118,6 +118,9 @@ class Dataset:
         filename = self.get_filename()
         # step 2-> read csv
         df = pd.read_csv(filename)
+        # Step 2B - Rename the columns
+        df = self.rename_columns(df)
+        print(df.columns)
         # step 3-> sort df by timeframe specified in start_time and end_time
         df = self.sort_timeframe(df=df)
         # step 4 -> add time variables (sin(hr) and weekday/weekend)
@@ -132,6 +135,28 @@ class Dataset:
         df_eval = self.drop_neg_rows(df=df_e, drop_nan=False)
 
         return df, df_t, df_e, df_eval, day_list
+
+    @staticmethod
+    def rename_columns(df):
+        """
+        New method to map the column names in compiled_data to the names in the original code
+        :param df:
+        :return:
+        """
+
+        map_dict = {
+            "Adjusted_Demand_MWh": "Demand",
+            "Pop": "Population",
+            "T2": "Temperature",
+            "SWDOWN": "Shortwave_Radiation",
+            "GLW": "Longwave_Radiation",
+            "WSPD": "Wind_Speed",
+            "Q2": "Specific_Humidity"
+        }
+
+        df_out = df.rename(map_dict, axis="columns") if "Adjusted_Demand_MWh" in df.columns else df
+
+        return df_out
 
     def preprocess_data(self, day_list=None):
         """Takes the features and targets from df
@@ -897,8 +922,8 @@ class Analysis:
         # need to flatten self.Y_e, as the dimensions are (..,1)
         out = {
             "Datetime": self.df_e["Datetime"].values,
-            "Ground Truth": self.Y_e.squeeze(),
-            "Predictions": Y_p,
+            "Adjusted_Demand_MWh": self.Y_e.squeeze(),
+            "NN-Predicted_Demand_MWh": Y_p,
         }
 
         # export as pandas dataframe and write to file
@@ -974,6 +999,8 @@ class Process:
         if batch_run:
             # case to run for all BAs
             self.ba_list = self.search_for_pattern()
+            if not len(self.ba_list) > 0:
+                raise AssertionError("No csvs found in the directory!")
 
         else:
             # case for handpick BAs
