@@ -80,6 +80,7 @@ class Dataset:
              linear_mode_bool=False,
      ):
 
+        print("csv_dir in mlp_predict.py: ", csv_dir)
         self.region = region
         self.csv_dir = csv_dir
         self.start_time, self.end_time = start_time, end_time
@@ -1178,13 +1179,13 @@ def predict(
     return proc.summary_df
 
 
-if __name__ == "__main__":
-    single_ba(
-        data_dir='../data/csv/',
-        out_dir='../python_scripts/outputs',
-        ba='SOCO',
-        start_time="2016-01-01 00:00:00",
-        end_time="2019-12-31 23:00:00",
-        split_time="2018-12-31 23:00:00",
-        plot_gt=True
-    )
+# if __name__ == "__main__":
+#     single_ba(
+#         data_dir='../data/csv/',
+#         out_dir='../python_scripts/outputs',
+#         ba='SOCO',
+#         start_time="2016-01-01 00:00:00",
+#         end_time="2019-12-31 23:00:00",
+#         split_time="2018-12-31 23:00:00",
+#         plot_gt=True
+#     )
