@@ -80,7 +80,6 @@ class Dataset:
              linear_mode_bool=False,
      ):
 
-        print("csv_dir in mlp_predict.py: ", csv_dir)
         self.region = region
         self.csv_dir = csv_dir
         self.start_time, self.end_time = start_time, end_time
@@ -1021,7 +1020,7 @@ class Process:
 
         BA_list = []
         for filename in list_of_files:
-            main_str = filename.split("/")[-1]
+            main_str = filename.split(os.path.sep)[-1]
             main_str = main_str.split("_")[0]  # get the BA name
             BA_list.append(main_str)
 
