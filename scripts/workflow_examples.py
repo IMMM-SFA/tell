@@ -81,15 +81,15 @@ target_ba_list = None
 generate_plots = True
 start_time = "2019-01-01 00:00:00"
 end_time = "2019-12-31 23:00:00"
-start_test_period = "2019-06-01 00:00:00"
+split_time = "2019-06-01 00:00:00"
 
 t0 = time.time()
 
 tell.predict(compile_output_dir ,
             mlp_output_dir,
             start_time = start_time,
-            end_time = end_time
-            start_test_period = start_test_period,
+            end_time = end_time,
+            split_time = split_time,
             batch_run = batch_run,
             target_ba_list = target_ba_list,
             generate_plots = generate_plots)
