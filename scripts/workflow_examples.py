@@ -5,7 +5,7 @@ import time
 # Create directory to store raw data
 current_dir =  os.path.dirname(os.getcwd())
 current_dir =  os.path.join(os.path.dirname(os.getcwd()), r'tell_valid')
-raw_data_dir = os.path.join(current_dir, r'raw_data')
+raw_data_dir = os.path.join(current_dir, r'raw_data', r'demand_and_population')
 if not os.path.exists(raw_data_dir):
    os.makedirs(raw_data_dir)
 
@@ -31,15 +31,15 @@ tell.process_eia_930(eia_930_input_dir, eia_930_output_dir)
 
 ## County population data ##
 # Set the data input and output directories:
-pop_input_dir = raw_data_dir
+population_input_dir = raw_data_dir
 map_input_dir = os.path.join(current_dir, r'outputs', r'fips_mapping_files')
-pop_output_dir =  os.path.join(current_dir, r'outputs', r'hourly_population')
+population_output_dir =  os.path.join(current_dir, r'outputs', r'hourly_population')
 if not os.path.exists(pop_output_dir):
    os.makedirs(pop_output_dir)
 
 tell.ba_pop_interpolate(map_input_dir, pop_input_dir, pop_output_dir, start_year, end_year)
 
-## Create input directory meterology data ##
+## Create input directory meteorology data ##
 wrf_input_dir =  os.path.join(current_dir, r'raw_data', r'wrf')
 if not os.path.exists(wrf_input_dir):
    os.makedirs(wrf_input_dir)
@@ -47,7 +47,7 @@ if not os.path.exists(wrf_input_dir):
 # Download the raw wrf data from the Zenodo package
 tell.install_sample_data(data_dir = wrf_input_dir)
 
-## Create output directory meterology data ##
+## Create output directory meteorology data ##
 wrf_output_dir =  os.path.join(current_dir, r'outputs', r'hourly_meterology')
 if not os.path.exists(wrf_output_dir):
    os.makedirs(wrf_output_dir)
@@ -100,14 +100,16 @@ gcam_usa_scenario = 'scenario_name'
 
 # Set the data input and output directories:
 mlp_input_dir = os.path.join(current_dir, r'outputs', r'mlp_output')
-ba_geolocation_input_dir = current_dir
-gcam_usa_input_dir = os.path.join(current_dir, r'gcam_usa_scenario')
-data_output_dir = os.path.join(current_dir, r'outputs', r'forward_output', r'{year_to_process}')
+ba_geolocation_input_dir = os.path.join(current_dir, r'outputs', r'fips_mapping_files')
+gcam_usa_input_dir = raw_data_dir
+data_output_dir = os.path.join(current_dir, r'outputs', r'forward_output', rf'{year_to_process}')
+if not os.path.exists(data_output_dir):
+   os.makedirs(data_output_dir)
 
 
 #Run the MLP model forward in time and
 tell.execute_forward(year_to_process, mlp_input_dir, ba_geolocation_input_dir,
-                     pop_input_dir, gcam_usa_input_dir, data_output_dir)
+                     population_input_dir, gcam_usa_input_dir, data_output_dir)
 
 #Data visualization
 # Set the data input and output directories:
