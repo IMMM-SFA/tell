@@ -94,9 +94,8 @@ tell.predict(compile_output_dir ,
             target_ba_list = target_ba_list,
             generate_plots = generate_plots)
 
-# Set the year and GCAM-USA scenario to process:
+# Set the year to process:
 year_to_process = '2020'
-gcam_usa_scenario = 'scenario_name'
 
 # Set the data input and output directories:
 mlp_input_dir = os.path.join(current_dir, r'outputs', r'mlp_output')
@@ -115,6 +114,8 @@ tell.execute_forward(year_to_process, mlp_input_dir, ba_geolocation_input_dir,
 # Set the data input and output directories:
 data_input_dir = data_output_dir
 image_output_dir = os.path.join(current_dir, r'outputs', r'image_output')
+if not os.path.exists(image_output_dir):
+   os.makedirs(image_output_dir)
 shapefile_input_dir = raw_data_dir
 
 # Set the year of TELL output to visualize:
@@ -126,8 +127,9 @@ image_resolution = 150 # (dpi)
 
 # If you want to save the images, check that the image output directory exist and if not then create it:
 if save_images == 1:
-   if os.path.exists((image_output_dir + year_to_plot)) == False:
-      os.mkdir((image_output_dir + year_to_plot))
+    image_output_dir = os.path.join(image_output_dir, rf'{year_to_process}')
+    if not os.path.exists(image_output_dir):
+        os.makedirs(image_output_dir)
 
 # Plot a map of the state scaling factors:
 tell.plot_state_scaling_factors(shapefile_input_dir, data_input_dir, year_to_plot, save_images, image_resolution,

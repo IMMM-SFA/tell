@@ -253,7 +253,7 @@ def output_tell_county_data(joint_mlp_df, data_output_dir, year_to_process):
         state_name = state_name.replace(" ", "_")
         state_name = state_name.replace(",", "_")
         csv_output_filename = os.path.join(
-            data_output_dir + 'County_Level_Data/TELL_' + state_name + '_' + county_name + '_Hourly_Load_Data_' + year_to_process + '.csv')
+            data_output_dir + '\\County_Level_Data\\TELL_' + state_name + '_' + county_name + '_Hourly_Load_Data_' + year_to_process + '.csv')
         # Write out the dataframe to a .csv file:
         output_df.to_csv(csv_output_filename, sep=',', index=False)
     return
@@ -279,8 +279,8 @@ def execute_forward(year_to_process, mlp_input_dir, ba_geolocation_input_dir,
     # Check if the nested data output directories exists and if not create them:
     if os.path.exists(data_output_dir) is False:
         os.mkdir(data_output_dir)
-    if os.path.exists(data_output_dir + 'County_Level_Data/') is False:
-        os.mkdir(data_output_dir + 'County_Level_Data/')
+    if os.path.exists(data_output_dir + '\\County_Level_Data') is False:
+        os.mkdir(data_output_dir + '\\County_Level_Data')
 
     # Load in the accompanying GCAM-USA output file and subset to the "year_to_process":
     gcam_usa_df = extract_gcam_usa_loads(gcam_usa_input_dir + '\\gcamDataTable_aggParam.csv')

@@ -33,7 +33,9 @@ setup(
         'seaborn >= 0.11.1',
         'holidays >= 0.11.1',
         'scikit-learn >= 0.24.1',
-        'scipy >= 1.4.1'
+        'scipy >= 1.4.1',
+        'glob >= ',
+        'mpl_toolkits >= ',
     ],
     extras_require={
         'dev': [
