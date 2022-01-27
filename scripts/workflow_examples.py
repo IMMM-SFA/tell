@@ -48,7 +48,7 @@ if not os.path.exists(wrf_input_dir):
 tell.install_sample_data(data_dir = wrf_input_dir)
 
 ## Create output directory meteorology data ##
-wrf_output_dir =  os.path.join(current_dir, r'outputs', r'hourly_meterology')
+wrf_output_dir =  os.path.join(current_dir, r'outputs', r'hourly_meteorology')
 if not os.path.exists(wrf_output_dir):
    os.makedirs(wrf_output_dir)
 
@@ -68,7 +68,7 @@ if not os.path.exists(compile_output_dir):
 target_yr = 2019
 
 # compile the hourly load data, population data, and wrf climate data by date
-tell.compile_data(eia_930_output_dir, pop_output_dir, wrf_output_dir, target_yr, compile_output_dir)
+tell.compile_data(eia_930_output_dir, population_output_dir, wrf_output_dir, target_yr, compile_output_dir)
 
 # create the directory for the mlp output
 mlp_output_dir =  os.path.join(current_dir, r'outputs', r'mlp_output')
