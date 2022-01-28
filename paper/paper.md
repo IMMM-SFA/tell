@@ -5,14 +5,26 @@ tags:
   - Electricity loads
   - MultiSector Dynamics
 authors:
-  - name: Casey McGrath
+  - name: Casey R. McGrath
     orcid: 0000-0002-8808-8312
     affiliation: 1
-  - name: Casey Burleyson
+  - name: Casey D. Burleyson
     affiliation: 1
     orchid: 0000-0001-6218-9361
+  - name: Aowabin Rahman
+    orcid: 0000-0003-2543-5126
+    affiliation: 1
   - name: Chris R. Vernon
     orcid: 0000-0002-3406-6214
+    affiliation: 1
+  - name: Zarrar Khan
+    orcid: 0000-0002-8147-8553
+    affiliation: 1
+  - name: Jennie S. Rice
+    orcid: 
+    affiliation: 1
+  - name: Nathalie Voisin
+    orcid: 0000-0002-6848-449X
     affiliation: 1
 affiliations:
  - name: Pacific Northwest National Laboratory, Richland, WA., USA
