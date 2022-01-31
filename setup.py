@@ -25,17 +25,18 @@ setup(
     python_requires='>=3.6.*, <4',
     include_package_data=True,
     install_requires=[
+        'geopandas >= 0.10.2',
         'numpy >= 1.19.2',
+        'openpyxl >= 3.0.9',
         'pandas >= 1.1.2',
         'klib >= 0.0.89',
         'joblib >= 1.0.1',
         'matplotlib >= 3.3.3',
         'seaborn >= 0.11.1',
         'holidays >= 0.11.1',
+        'requests >= 2.27.1',
         'scikit-learn >= 0.24.1',
         'scipy >= 1.4.1',
-        'glob >= ',
-        'mpl_toolkits >= ',
     ],
     extras_require={
         'dev': [

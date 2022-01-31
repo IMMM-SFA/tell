@@ -72,9 +72,10 @@ class InstallSupplement:
                         # construct temporary file full path with name
                         tfile = os.path.join(tdir, f)
 
-                        print(f"Unzipped: {out_file}")
                         # transfer only the file sans the parent directory to the data package
                         shutil.copy(tfile, out_file)
+
+        print(f"Done!")
 
 
 def install_package_data(data_dir=None):

@@ -175,7 +175,10 @@ def prepare_data(fips_file, service_area_file, sales_ult_file, bal_auth_file):
 
     # read in data
     df_fips = pd.read_csv(fips_file)
-    df_states = pd.read_excel(service_area_file, sheet_name='Counties_States')
+    try:
+        df_states = pd.read_excel(service_area_file, sheet_name='Counties')
+    except:
+        df_states = pd.read_excel(service_area_file, sheet_name='Counties_States')
     df_ult = pd.read_excel(sales_ult_file, sheet_name='States', skiprows=2)
     df_ba = pd.read_excel(bal_auth_file)
 
@@ -196,7 +199,10 @@ def prepare_data(fips_file, service_area_file, sales_ult_file, bal_auth_file):
     df_states['states_key'] = df_states['State'] + '_' + df_states['county_lower']
 
     # filter df_ult and df_ba
-    df_ult = df_ult[["Utility Number", "Utility Name", "BA Code"]]
+    try:
+        df_ult = df_ult[["Utility Number", "Utility Name", "BA_CODE"]].rename(columns={'BA_CODE': 'BA Code'})
+    except:
+        df_ult = df_ult[["Utility Number", "Utility Name", "BA Code"]]
     df_ba = df_ba[["BA Code", "BA ID", "Balancing Authority Name"]]
 
     return df_fips, df_states, df_ult, df_ba
@@ -220,7 +226,7 @@ def filter_one(df_fips, df_states, df_ult, df_ba):
     df_fips_ult = df_states_fips.merge(df_ult, on='Utility Number', how='left')
 
     # add the BA number and name by BA ulitity code
-    df_valid = df_fips_ult.merge(df_ba, on='BA Code', how='left')
+    df_valid = df_fips_ult.merge(df_ba, left_on='BA Code', right_on='BA Code', how='left')
 
     # filter out remaining rows that did not have a match
     df_nan = df_valid.loc[df_valid['county_lower_y'].isna()].copy()
