@@ -52,7 +52,7 @@ def extract_ba_code(filename):
     :param filename: str -> name of the MLP output file
     :return: ba_code: str -> alphanumeric code of the balancing authority
     """
-    ba_code = filename[filename.rindex('\\') + 1:].rstrip('_mlp_predictions.csv')
+    ba_code = filename[filename.rindex(os.sep) + 1:].rstrip('_mlp_predictions.csv')
     return ba_code
 
 
@@ -253,7 +253,7 @@ def output_tell_county_data(joint_mlp_df, data_output_dir, year_to_process):
         state_name = state_name.replace(" ", "_")
         state_name = state_name.replace(",", "_")
         csv_output_filename = os.path.join(
-            data_output_dir + '\\County_Level_Data\\TELL_' + state_name + '_' + county_name + '_Hourly_Load_Data_' + year_to_process + '.csv')
+            data_output_dir + '/County_Level_Data/TELL_' + state_name + '_' + county_name + '_Hourly_Load_Data_' + year_to_process + '.csv')
         # Write out the dataframe to a .csv file:
         output_df.to_csv(csv_output_filename, sep=',', index=False)
     return
@@ -278,19 +278,19 @@ def execute_forward(year_to_process, mlp_input_dir, ba_geolocation_input_dir,
 
     # Check if the nested data output directories exists and if not create them:
     if os.path.exists(data_output_dir) is False:
-        os.mkdir(data_output_dir)
-    if os.path.exists(data_output_dir + '\\County_Level_Data') is False:
-        os.mkdir(data_output_dir + '\\County_Level_Data')
+        os.makedirs(data_output_dir, exist_ok=True)
+    if os.path.exists(os.path.join(data_output_dir, 'County_Level_Data')) is False:
+        os.mkdir(os.path.join(data_output_dir, 'County_Level_Data'))
 
     # Load in the accompanying GCAM-USA output file and subset to the "year_to_process":
-    gcam_usa_df = extract_gcam_usa_loads(gcam_usa_input_dir + '\\gcamDataTable_aggParam.csv')
+    gcam_usa_df = extract_gcam_usa_loads(os.path.join(gcam_usa_input_dir, 'gcamDataTable_aggParam.csv'))
     gcam_usa_df = gcam_usa_df[gcam_usa_df['Year'] == int(year_to_process)]
 
     # Load in the most recent (e.g., 2019) BA service territory map and simplify the dataframe:
-    ba_mapping = pd.read_csv((ba_geolocation_input_dir + '\\fips_service_match_2019.csv'), index_col=None, header=0)
+    ba_mapping = pd.read_csv((os.path.join(ba_geolocation_input_dir, 'fips_service_match_2019.csv')), index_col=None, header=0)
 
     # Load in the population data and simplify the dataframe:
-    population = pd.read_csv(population_input_dir + '\\county_populations_2000_to_2019.csv')
+    population = pd.read_csv(os.path.join(population_input_dir, 'county_populations_2000_to_2019.csv'))
     population = population[{'county_FIPS', 'pop_2019'}].copy(deep=False)
     population.rename(columns={"county_FIPS": "County_FIPS",
                                "pop_2019": "Population"}, inplace=True)
@@ -307,7 +307,7 @@ def execute_forward(year_to_process, mlp_input_dir, ba_geolocation_input_dir,
     # Create a list of all of the MLP output files in the "data_input_dir" and aggregate the files
     # in that list using the "aggregate_mlp_output_files" function:
     mlp_output_df = aggregate_mlp_output_files(
-        sorted(glob.glob(os.path.join(mlp_input_dir +'\\*_mlp_predictions.csv'))))
+        sorted(glob.glob(os.path.join(mlp_input_dir, '*_mlp_predictions.csv'))))
 
     # Merge the "mapping_df" with "mlp_output_df":
     joint_mlp_df = pd.merge(mlp_output_df, mapping_df, on='BA_Code')

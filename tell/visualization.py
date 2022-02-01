@@ -23,11 +23,11 @@ def plot_state_scaling_factors(shapefile_input_dir, data_input_dir, year_to_plot
          :type image_output_dir:            dir
          :return:                           State scaling factors map and save image in image directory
       """
-    states_df = gpd.read_file((shapefile_input_dir + 'tl_2020_us_state.shp')).rename(columns={'GEOID': 'State_FIPS', })
+    states_df = gpd.read_file((shapefile_input_dir + '/tl_2020_us_state.shp')).rename(columns={'GEOID': 'State_FIPS', })
     states_df['State_FIPS'] = states_df['State_FIPS'].astype(int) * 1000
 
     # Read in the 'TELL_State_Summary_Data' .csv file and reassign the 'State_FIPS' code as an integer:
-    state_summary_df = pd.read_csv((data_input_dir + year_to_plot + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'),
+    state_summary_df = pd.read_csv((data_input_dir + '/' + year_to_plot + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'),
         dtype={'State_FIPS': int})
 
     # Merge the two dataframes together using state FIPS codes to join them and display the merged datafram:
@@ -64,22 +64,22 @@ def plot_state_annual_total_loads(data_input_dir, year_to_plot, save_images, ima
         :type image_output_dir:            dir
         :return:                           Plot of state annual total loads and save to image directory
         """
-     state_summary_df = pd.read_csv((data_input_dir + year_to_plot + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'),
+    state_summary_df = pd.read_csv((data_input_dir + year_to_plot + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'),
         dtype={'State_FIPS': int})
-        x_axis = np.arange(len(state_summary_df))
+    x_axis = np.arange(len(state_summary_df))
 
-        plt.figure(figsize=(22, 10))
-        plt.bar(x_axis - 0.2, state_summary_df['GCAM_USA_Load_TWh'], 0.4, label='GCAM-USA Loads')
-        plt.bar(x_axis + 0.2, state_summary_df['Raw_TELL_Load_TWh'], 0.4, label='Unscaled TELL Loads')
-        plt.xticks(x_axis, state_summary_df['State_Name'])
-        plt.xticks(rotation=90)
-        plt.legend()
-        plt.ylabel("Annual Total Load [TWh]")
-        plt.title(('Annual Total Loads from GCAM-USA and TELL in ' + year_to_plot))
+    plt.figure(figsize=(22, 10))
+    plt.bar(x_axis - 0.2, state_summary_df['GCAM_USA_Load_TWh'], 0.4, label='GCAM-USA Loads')
+    plt.bar(x_axis + 0.2, state_summary_df['Raw_TELL_Load_TWh'], 0.4, label='Unscaled TELL Loads')
+    plt.xticks(x_axis, state_summary_df['State_Name'])
+    plt.xticks(rotation=90)
+    plt.legend()
+    plt.ylabel("Annual Total Load [TWh]")
+    plt.title(('Annual Total Loads from GCAM-USA and TELL in ' + year_to_plot))
 
-        if save_images == 1:
-            plt.savefig((image_output_dir + year_to_plot + '/' + 'TELL_State_Annual_Total_Loads_' + year_to_plot + '.png'),
-                dpi=image_resolution, bbox_inches='tight')
+    if save_images == 1:
+        plt.savefig((image_output_dir + year_to_plot + '/' + 'TELL_State_Annual_Total_Loads_' + year_to_plot + '.png'),
+            dpi=image_resolution, bbox_inches='tight')
 
 
 def plot_state_load_time_series(state, data_input_dir, year_to_plot, save_images, image_resolution,
@@ -124,13 +124,6 @@ def plot_state_load_time_series(state, data_input_dir, year_to_plot, save_images
     if save_images == 1:
         plt.savefig((image_output_dir + year_to_plot + '/' + 'TELL_State_Hourly_Loads_' + state_name + '_' + year_to_plot + '.png'),
                     dpi=image_resolution, bbox_inches='tight')
-
-        def plot_state_load_duration_curve(state, state_hourly_load_df, year_to_plot, save_images, image_resolution,
-                                           image_output_dir):
-    if (type(state)) == str:
-        state_subset_df = state_hourly_load_df.loc[state_hourly_load_df['State_Name'] == state]
-    if (type(state)) == int:
-        state_subset_df = state_hourly_load_df.loc[state_hourly_load_df['State_FIPS'] == state]
 
     load_df_sorted = state_subset_df.sort_values(by=['Scaled_TELL_State_Load_MWh'], ascending=False)
     load_df_sorted['Interval'] = 1

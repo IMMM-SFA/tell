@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
+from glob import glob
 from datetime import datetime
 
 import tell.metadata_eia as metadata_eia
@@ -52,7 +53,7 @@ def merge_mapping_data(map_input_dir, pop_input_dir, start_year, end_year):
      """
     # load FIPS county data for BA number and FIPs code matching for later population sum by BA
     df = pd.DataFrame()
-    for file in os.listdir(map_input_dir):
+    for file in glob(f'{map_input_dir}/*.csv'):
         df = df.append(pd.read_csv(os.path.join(map_input_dir, file)), ignore_index=True)
 
     # only keep columns that are needed

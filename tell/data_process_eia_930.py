@@ -10,12 +10,12 @@ def list_EIA_930_files(input_dir):
     :type input_dir:                dir
     :return:                        List of EIA 930 hourly load files by BA short name
     """
-    ba_name = ['AEC', 'YAD', 'AMPL', 'AZPS', 'AECI', 'BPAT', 'CISO', 'CPLE', 'CHPD', 'CEA', 'DOPD', 'DUK',
+    ba_name = ['AEC', 'YAD', 'AZPS', 'AECI', 'BPAT', 'CISO', 'CPLE', 'CHPD', 'DOPD', 'DUK',
                'EPE', 'ERCO', 'EEI', 'FPL', 'FPC', 'GVL', 'HST', 'IPCO', 'IID', 'JEA', 'LDWP', 'LGEE', 'NWMT',
                'NEVP', 'ISNE', 'NSB', 'NYIS', 'OVEC', 'PACW', 'PACE', 'GRMA', 'FMPP', 'GCPD', 'PJM', 'AVRN', 'PSCO',
                'PGE', 'PNM', 'PSEI', 'BANC', 'SRP', 'SCL', 'SCEG', 'SC', 'SPA', 'SOCO', 'TPWR', 'TAL', 'TEC', 'TVA',
-               'TIDC', 'HECO', 'WAUW', 'AVA', 'SEC', 'TEPC', 'WALC', 'WAUE', 'WACM', 'SEPA', 'HECO', 'GRIF', 'GWA',
-               'GRIS', 'MISO', 'DEAA', 'CPLW', 'GRID', 'WWA', 'SWPP']
+               'TIDC', 'WAUW', 'AVA', 'SEC', 'TEPC', 'WALC', 'WACM', 'SEPA', 'GRIF', 'GWA', 'MISO',
+               'DEAA', 'CPLW', 'GRID', 'WWA', 'SWPP']
 
     path_list = []
     for i in ba_name:
@@ -79,5 +79,3 @@ def process_eia_930(input_dir, output_dir, n_jobs=-1):
             output_dir=output_dir
         ) for i in list_of_files
     )
-
-
