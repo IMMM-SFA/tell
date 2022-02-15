@@ -3,6 +3,7 @@ import shutil
 import tempfile
 import zipfile
 from io import BytesIO as BytesIO
+from pkg_resources import get_distribution
 
 import requests
 
@@ -16,8 +17,8 @@ class InstallSample:
     """
 
     # URL for DOI minted example data hosted on Zenodo
-    DATA_VERSION_URLS = {'1.0.0': 'https://zenodo.org/record/5784704/files/tell_weather_forcing_sample_data.zip?download=1'}
-
+    DATA_VERSION_URLS = {'0.0.1': 'https://zenodo.org/record/5784704/files/tell_weather_forcing_sample_data.zip?download=1',
+                         '0.1.0': 'https://zenodo.org/record/5784704/files/tell_weather_forcing_sample_data.zip?download=1'}
 
     def __init__(self, data_dir=None):
 
@@ -27,16 +28,12 @@ class InstallSample:
         """Download and unpack the Zenodo example data supplement for the
         current tell distribution."""
 
-        # full path to the cerf root directory where the example dir will be stored
-        #if self.data_dir is None:
-        #   data_directory = pkg.get_data_directory()
-        #else:
-        #   data_directory = self.data_dir
+        # full path to the root directory where the example dir will be stored
         data_directory = self.data_dir
 
         # get the current version of cerf that is installed
-        #current_version = get_distribution('tell').version
-        current_version = '1.0.0'
+        current_version = get_distribution('tell').version
+
         try:
             data_link = InstallSample.DATA_VERSION_URLS[current_version]
 
@@ -46,7 +43,7 @@ class InstallSample:
             raise KeyError(msg)
 
         # retrieve content from URL
-        print("Downloading example data for weather forecasting {}...".format(current_version))
+        print(f"Downloading example data for weather forecasting {current_version}...")
         r = requests.get(data_link)
 
         with zipfile.ZipFile(BytesIO(r.content)) as zipped:

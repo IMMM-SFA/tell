@@ -43,7 +43,7 @@ class InstallSupplement:
             raise KeyError(msg)
 
         # retrieve content from URL
-        print("Downloading example data for tell version {}...".format(current_version))
+        print(f"Downloading sample data for tell version {current_version}...")
         r = requests.get(data_link)
 
         with zipfile.ZipFile(BytesIO(r.content)) as zipped:
