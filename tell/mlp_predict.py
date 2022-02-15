@@ -1,23 +1,19 @@
 import os
+import glob
+import warnings
+
+import holidays
 import numpy as np
 import pandas as pd
-import holidays
-import glob
-
-import warnings
-warnings.filterwarnings("ignore", category=UserWarning)
-
-from sklearn.linear_model import LinearRegression as LR
-from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_percentage_error
-
-from sklearn.neural_network import MLPRegressor as MLP
-
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-
 from scipy.stats import pearsonr
+from sklearn.linear_model import LinearRegression as LR
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_percentage_error
+from sklearn.neural_network import MLPRegressor as MLP
 from sklearn.model_selection import GridSearchCV
 
+warnings.filterwarnings("ignore", category=UserWarning)
 
 # define month_list for plots
 MONTH_LIST = [

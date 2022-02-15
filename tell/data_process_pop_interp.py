@@ -1,8 +1,9 @@
-import pandas as pd
-import numpy as np
 import os
 from glob import glob
 from datetime import datetime
+
+import numpy as np
+import pandas as pd
 
 import tell.metadata_eia as metadata_eia
 

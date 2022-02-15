@@ -1,9 +1,11 @@
+import os
+import glob
+import datetime
+
 import numpy as np
 import pandas as pd
-import os
-import datetime
-import glob
 from scipy import interpolate
+
 from .states_fips_function import state_metadata_from_state_abbreviation
 
 

@@ -1,11 +1,11 @@
 import os
+import shutil
 import tempfile
 import zipfile
-import shutil
+from io import BytesIO as BytesIO
 
 import requests
 
-from io import BytesIO as BytesIO
 
 class InstallSample:
     """Download and unpack example data supplement from Zenodo that matches the current installed

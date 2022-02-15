@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def metadata_eia(numbers):
     """Define the state FIPS code and state name from a given state abbreviation.
     :param eia_ba_number num -> EIA 930 BA number

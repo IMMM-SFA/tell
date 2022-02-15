@@ -1,11 +1,11 @@
 import os
+import shutil
 import tempfile
 import zipfile
-import shutil
+from io import BytesIO as BytesIO
 
 import requests
 
-from io import BytesIO as BytesIO
 
 class InstallSupplement:
     """Download and unpack example data supplement from Zenodo that matches the current installed
@@ -19,7 +19,6 @@ class InstallSupplement:
     DATA_VERSION_URLS = {'1.0.0': 'https://zenodo.org/record/5542502/files/tell_raw_data.zip?download=1',
                          '2.0.0': 'https://zenodo.org/record/5602053/files/tell_raw_data.zip?download=1',
                          '3.0.0': 'https://zenodo.org/record/5714756/files/tell_raw_data.zip?download=1'}
-
 
     def __init__(self, data_dir=None):
 

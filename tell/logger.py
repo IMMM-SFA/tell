@@ -1,14 +1,3 @@
-"""
-Logger for the tell model
-
-@author   Chris R. Vernon
-@email:   chris.vernon@pnnl.gov
-
-License:  BSD 2-Clause, see LICENSE and DISCLAIMER files
-
-"""
-
-
 import os
 import logging
 import sys

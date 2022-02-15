@@ -1,5 +1,7 @@
-import pandas as pd
 import os
+
+import pandas as pd
+
 
 def compile_data(eia_dir, pop_dir, wrf_dir, target_yr, compile_output_dir):
     """Read in population data, format columns and return single df for all years
