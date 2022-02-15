@@ -23,8 +23,8 @@ def fips_pop_yearly(pop_input_dir, start_year, end_year):
     df_pop = pd.read_csv(pop_input_dir + '/county_populations_2000_to_2019.csv')
 
     # loop over years for pop data
-    df = pd.DataFrame([])
     for y in range(start_year, end_year + 1):
+
         # only keep columns that are needed
         key = [f'pop_{y}', 'county_FIPS']
 
@@ -35,7 +35,10 @@ def fips_pop_yearly(pop_input_dir, start_year, end_year):
         df_pop_yr.rename(columns={f'pop_{y}': 'population'}, inplace=True)
 
         # combine all years for one dataset
-        df = df.append(df_pop_yr)
+        if y == start_year:
+            df = df_pop_yr.copy()
+        else:
+            df = pd.concat([df, df_pop_yr])
 
     return df
 
@@ -53,9 +56,15 @@ def merge_mapping_data(map_input_dir, pop_input_dir, start_year, end_year):
      :return:                                   Dataframe of population data with FIPS and BA name
      """
     # load FIPS county data for BA number and FIPs code matching for later population sum by BA
-    df = pd.DataFrame()
-    for file in glob(f'{map_input_dir}/*.csv'):
-        df = df.append(pd.read_csv(os.path.join(map_input_dir, file)), ignore_index=True)
+    for idx, file in enumerate(glob(f'{map_input_dir}/*.csv')):
+
+        # target data frame
+        dfx = pd.read_csv(os.path.join(map_input_dir, file))
+
+        if idx == 0:
+            df = dfx.copy()
+        else:
+            df = pd.concat([df, dfx])
 
     # only keep columns that are needed
     col_names = ['Year', 'County_FIPS', 'BA_Number']
@@ -158,7 +167,7 @@ def ba_pop_interpolate(map_input_dir, pop_input_dir, pop_output_dir, start_year,
     col = df_interp.pop("Hour")
     df_interp.insert(3, col.name, col)
 
-    df_interp = df_interp.drop('index', 1)
+    df_interp = df_interp.drop(columns='index')
 
     # Get list of BA names from column headers
     df_names = df_interp.loc[:, ~df_interp.columns.isin(['Year', 'Month', 'Day', 'Hour'])]
