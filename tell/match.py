@@ -382,13 +382,13 @@ def process_data(target_year, fips_file, service_area_file, sales_ult_file, bal_
         logging.info(f'Possible matches for unmatched county "{i}": from FIPS file: {possible_matches}')
 
     # keep only the variables that are used in downstream applications:
-    df_valid = df_valid[{'year',
+    df_valid = df_valid[['year',
                          'state_fips',
                          'state_name',
                          'county_fips',
                          'county_name',
                          'ba_number',
-                         'ba_abbreviation'}].copy(deep=False)
+                         'ba_abbreviation']].copy(deep=False)
 
     # rename the columns to use leading capital letters:
     df_valid.rename(columns={"year": "Year",
