@@ -3,6 +3,7 @@ import shutil
 import tempfile
 import zipfile
 from io import BytesIO as BytesIO
+from pkg_resources import get_distribution
 
 import requests
 
@@ -16,9 +17,8 @@ class InstallSupplement:
     """
 
     # URL for DOI minted example data hosted on Zenodo
-    DATA_VERSION_URLS = {'1.0.0': 'https://zenodo.org/record/5542502/files/tell_raw_data.zip?download=1',
-                         '2.0.0': 'https://zenodo.org/record/5602053/files/tell_raw_data.zip?download=1',
-                         '3.0.0': 'https://zenodo.org/record/5714756/files/tell_raw_data.zip?download=1'}
+    DATA_VERSION_URLS = {'0.0.1': 'https://zenodo.org/record/5714756/files/tell_raw_data.zip?download=1',
+                         '0.1.0': 'https://zenodo.org/record/5714756/files/tell_raw_data.zip?download=1'}
 
     def __init__(self, data_dir=None):
 
@@ -28,16 +28,12 @@ class InstallSupplement:
         """Download and unpack the Zenodo example data supplement for the
         current tell distribution."""
 
-        # full path to the cerf root directory where the example dir will be stored
-        #if self.data_dir is None:
-        #   data_directory = pkg.get_data_directory()
-        #else:
-        #   data_directory = self.data_dir
+        # full path to the root directory where the example dir will be stored
         data_directory = self.data_dir
 
         # get the current version of cerf that is installed
-        #current_version = get_distribution('tell').version
-        current_version = '3.0.0'
+        current_version = get_distribution('tell').version
+
         try:
             data_link = InstallSupplement.DATA_VERSION_URLS[current_version]
 
