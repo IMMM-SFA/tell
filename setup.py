@@ -22,7 +22,7 @@ setup(
     description='A model to predict total electricity loads',
     long_description=readme(),
     long_description_content_type="text/markdown",
-    python_requires='>=3.6.*, <4',
+    python_requires='>=3.7.*, <4',
     include_package_data=True,
     install_requires=[
         'setuptools>=49.2.1',
