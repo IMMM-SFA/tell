@@ -3,26 +3,25 @@ import os
 import pandas as pd
 from joblib import Parallel, delayed
 
+from .package_data import get_ba_abbreviations
+
 
 def list_wrf_files(input_dir, target_yr):
     """Make a list of all the filenames for EIA 930 hourly load data (xlsx)
+
     :param input_dir:               Directory where EIA 930 hourly load data
-    :type input_dir:                dir
+    :type input_dir:                str
+
     :param year:                    Year of which wrf sample data is needed (Zenodo package includes 2019, 2059, 2099)
     :type year:                     int
+
     :return:                        List of EIA 930 hourly load files by BA short name
+
     """
-    ba_name = ['NBSO', 'AEC', 'YAD', 'AMPL', 'AZPS', 'AECI', 'BPAT', 'CISO', 'CPLE', 'CHPD', 'CEA', 'DOPD', 'DUK',
-                     'EPE',
-                     'ERCO', 'EEI', 'FPL', 'FPC', 'GVL', 'HST', 'IPCO', 'IID', 'JEA', 'LDWP', 'LGEE', 'NWMT', 'NEVP',
-                     'ISNE',
-                     'NSB', 'NYIS', 'OVEC', 'PACW', 'PACE', 'GRMA', 'FMPP', 'GCPD', 'PJM', 'AVRN', 'PSCO', 'PGE', 'PNM',
-                     'PSEI',
-                     'BANC', 'SRP', 'SCL', 'SCEG', 'SC', 'SPA', 'SOCO', 'TPWR', 'TAL', 'TEC', 'TVA', 'TIDC', 'HECO',
-                     'WAUW',
-                     'AVA', 'SEC', 'TEPC', 'WALC', 'WAUE', 'WACM', 'SEPA', 'HECO', 'GRIF', 'GWA', 'GRIS', 'MISO',
-                     'DEAA',
-                     'CPLW', 'GRID', 'WWA', 'SWPP']
+
+    # get a list of BA abbreviations to process
+    ba_name = get_ba_abbreviations()
+
     path_list = []
     for i in ba_name:
         path_to_check = os.path.join(input_dir, f'{i}_WRF_Hourly_Mean_Meteorology_{target_yr}.csv')
