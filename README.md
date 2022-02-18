@@ -1,6 +1,8 @@
 ![build](https://github.com/IMMM-SFA/tell/workflows/build/badge.svg) [![codecov](https://codecov.io/gh/IMMM-SFA/tell/branch/package/graph/badge.svg?token=URP1KWRI6U)](https://codecov.io/gh/IMMM-SFA/tell)
 
-### **`tell` is an open-source Python package for predicting future electricty load in the Lower 48 United States.**
+# TELL
+
+`tell` is an open-source Python package for predicting future electricty load in the Lower 48 United States.
 
 ## A little about `tell`
 
