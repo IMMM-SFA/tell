@@ -1,21 +1,33 @@
 import os
 
 import pandas as pd
+from pandas import DataFrame
 
 from .package_data import get_ba_abbreviations
 
 
-def compile_data(eia_dir, pop_dir, wrf_dir, target_yr, compile_output_dir):
-    """Read in population data, format columns and return single df for all years
-    :param population_input_dir:               Directory where county population is stored
-    :type population_input_dir:                dir
-    :param start_year:                         Year to start model ; four digit year (e.g., 1990)
-    :type start_year:                          int
-    :param end_year:                           Year to start model ; four digit year (e.g., 1990)
-    :type end_year:                            int
-    :return:                                   Dataframe of valid population data for select timeframe
-    """
+def compile_data(eia_dir: str, pop_dir: str, wrf_dir: str, target_yr: int, compile_output_dir: str) -> DataFrame:
+    """Read in EIA, population, and WRF data and compile into a merged DataFrame
 
+    :param eia_dir:               Directory where modified EIA 930 hourly load data is stored
+    :type eia_dir:                str
+
+    :param pop_dir:               Directory where modified county population is stored
+    :type pop_dir:                str
+
+    :param wrf_dir:               Directory where modified wrf data is stored
+    :type wrf_dir:                str
+
+    :param target_yr:             Target year for analysis
+    :type target_yr:              int
+
+    :param compile_output_dir:    Directory where modified wrf data set is stored
+    :type compile_output_dir:     str
+
+
+    :return:                      DataFrame
+
+    """
 
     # get a list of BA abbreviations to process
     ba_name = get_ba_abbreviations()
@@ -36,12 +48,12 @@ def compile_data(eia_dir, pop_dir, wrf_dir, target_yr, compile_output_dir):
         # merge the EIA 930, population and WRF data by date
         if os.path.isfile(eia_path) is True:
             if os.path.isfile(pop_path) is True:
-                merged_first = pd.merge(eia_df, pop_df, how='inner', on =['Year', 'Month', 'Day', 'Hour'])
+                merged_first = pd.merge(eia_df, pop_df, how='inner', on=['Year', 'Month', 'Day', 'Hour'])
 
         if os.path.isfile(wrf_path) is True:
             merged = pd.merge(merged_first, wrf_df, how='inner', on=['Year', 'Month', 'Day', 'Hour'])
 
-        # write the merged dataframe to a csv
+        # write the merged DataFrame to a csv
         merged.to_csv(os.path.join(compile_output_dir, f'{i}_hourly_compiled_data.csv'), index=False, header=True)
 
     return merged

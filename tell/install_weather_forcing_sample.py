@@ -11,14 +11,16 @@ import requests
 class InstallSample:
     """Download and unpack example data supplement from Zenodo that matches the current installed
     tell distribution.
+
     :param data_dir:                    Optional.  Full path to the directory you wish to store the data in.  Default is
                                         to install it in data directory of the package.
     :type data_dir:                     str
+
     """
 
     # URL for DOI minted example data hosted on Zenodo
     DATA_VERSION_URLS = {'0.0.1': 'https://zenodo.org/record/5784704/files/tell_weather_forcing_sample_data.zip?download=1',
-                         '0.1.0': 'https://zenodo.org/record/5784704/files/tell_weather_forcing_sample_data.zip?download=1'}
+                         '0.1.0': 'https://zenodo.org/record/6147143/files/tell_weather_forcing_sample_data.zip?download=1'}
 
     def __init__(self, data_dir=None):
 
@@ -75,9 +77,11 @@ class InstallSample:
 def install_sample_data(data_dir=None):
     """Download and unpack example data supplement from Zenodo that matches the current installed
     tell distribution.
+
     :param data_dir:                    Optional.  Full path to the directory you wish to store the data in.  Default is
                                         to install it in data directory of the package.
     :type data_dir:                     str
+
     """
 
     zen = InstallSample(data_dir=data_dir)

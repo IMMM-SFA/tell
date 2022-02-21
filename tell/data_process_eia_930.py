@@ -1,23 +1,25 @@
 import os
 
 import pandas as pd
+from pandas import DataFrame
 from joblib import Parallel, delayed
+
 
 from .package_data import get_ba_abbreviations
 
 
-def list_EIA_930_files(input_dir):
-    """Make a list of all the filenames for EIA 930 hourly load data (xlsx)
-    :param input_dir:               Directory where EIA 930 hourly load data
-    :type input_dir:                dir
-    :return:                        List of EIA 930 hourly load files by BA short name
+def list_EIA_930_files(input_dir: str) -> list:
+    """Make a list of all the file names for EIA 930 hourly load data
+
+    :param input_dir:               Directory where raw EIA 930 hourly load data is stored
+    :type input_dir:                str
+
+    :return:                        list
+
     """
-    ba_name = ['AEC', 'YAD', 'AZPS', 'AECI', 'BPAT', 'CISO', 'CPLE', 'CHPD', 'DOPD', 'DUK',
-               'EPE', 'ERCO', 'EEI', 'FPL', 'FPC', 'GVL', 'HST', 'IPCO', 'IID', 'JEA', 'LDWP', 'LGEE', 'NWMT',
-               'NEVP', 'ISNE', 'NSB', 'NYIS', 'OVEC', 'PACW', 'PACE', 'GRMA', 'FMPP', 'GCPD', 'PJM', 'AVRN', 'PSCO',
-               'PGE', 'PNM', 'PSEI', 'BANC', 'SRP', 'SCL', 'SCEG', 'SC', 'SPA', 'SOCO', 'TPWR', 'TAL', 'TEC', 'TVA',
-               'TIDC', 'WAUW', 'AVA', 'SEC', 'TEPC', 'WALC', 'WACM', 'SEPA', 'GRIF', 'GWA', 'MISO',
-               'DEAA', 'CPLW', 'GRID', 'WWA', 'SWPP']
+
+    # get a list of BA abbreviations to process
+    ba_name = get_ba_abbreviations()
 
     path_list = []
     for i in ba_name:
@@ -27,13 +29,17 @@ def list_EIA_930_files(input_dir):
     return path_list
 
 
-def eia_data_subset(file_string, output_dir):
+def eia_data_subset(file_string: str, output_dir: str):
     """Select wanted columns in each file
+
     :param file_string:            File name of EIA 930 hourly load data by BA
     :type file_string:             str
-    :param output_dir:             Directory to store the EIA 930 hourly load data as a csv
-    :type output__dir:             dir
-    :return:                       Subsetted dataframe of EIA 930 hourly data
+
+    :param output_dir:             Directory to store the modified EIA 930 hourly load data
+    :type output_dir:              str
+
+    :return:                       DataFrame
+
      """
     # read in the Published Hourly Data
     df = pd.read_excel(file_string, sheet_name='Published Hourly Data')
@@ -59,23 +65,26 @@ def eia_data_subset(file_string, output_dir):
     df.to_csv(os.path.join(output_dir, f'{BA_name}_hourly_load_data.csv'), index=False, header=True)
 
 
-def process_eia_930(input_dir, output_dir, n_jobs=-1):
+def process_eia_930(input_dir: str, output_dir: str, n_jobs: int):
     """Read in list of EIA 930 files, subset files and save as csv in new file name
 
-    :param input_dir:              Directory where EIA 930 hourly load data
-    :type input_dir:               dir
+    :param input_dir:              Directory where raw EIA 930 hourly load data is stored
+    :type input_dir:               DataFrame
 
-    :param output_dir:             Directory to store the EIA 930 hourly load data as a csv
-    :type output__dir:             dir
+    :param output_dir:             Directory to store the modified EIA 930 hourly load data
+    :type output_dir:              DataFrame
 
-    :return:                       Subsetted dataframe of EIA 930 hourly data by BA short name
+    :param n_jobs:                 Number of jobs to process
+    :type n_jobs:                  int
+
+    :return:                       DataFrame
 
      """
     # run the list function for the EIA files
     list_of_files = list_EIA_930_files(input_dir)
 
     # run all files in parallel
-    results = Parallel(n_jobs=n_jobs)(
+    Parallel(n_jobs=n_jobs)(
         delayed(eia_data_subset)(
             file_string=i,
             output_dir=output_dir

@@ -4,19 +4,25 @@ from datetime import datetime
 
 import numpy as np
 import pandas as pd
+from pandas import DataFrame
 
-import tell.metadata_eia as metadata_eia
+from .metadata_eia import metadata_eia
 
 
-def fips_pop_yearly(pop_input_dir, start_year, end_year):
+def fips_pop_yearly(pop_input_dir: str, start_year: int, end_year: int) -> DataFrame:
     """Read in population data, format columns and return single df for all years
-    :param pop_input_dir:                      Directory where county population is stored
-    :type pop_input_dir:                       dir
+
+    :param pop_input_dir:                      Directory where raw county population is stored
+    :type pop_input_dir:                       str
+
     :param start_year:                         Year to start model ; four digit year (e.g., 1990)
     :type start_year:                          int
+
     :param end_year:                           Year to start model ; four digit year (e.g., 1990)
     :type end_year:                            int
-    :return:                                   Dataframe of valid population data for select timeframe
+
+    :return:                                   DataFrame
+
     """
 
     # get population from merged mapping data
@@ -43,18 +49,25 @@ def fips_pop_yearly(pop_input_dir, start_year, end_year):
     return df
 
 
-def merge_mapping_data(map_input_dir, pop_input_dir, start_year, end_year):
+def merge_mapping_data(map_input_dir: str, pop_input_dir: str, start_year: int, end_year: int) -> DataFrame:
     """Merge the fips county data and population data from FIPS code
-     :param map_input_dir:                      Directory where fips county data is stored
-     :type map_input_dir:                       dir
-     :param pop_input_dir:                      Directory where county population is stored
-     :type pop_input_dir:                       dir
+
+     :param map_input_dir:                      Directory where raw fips county data is stored
+     :type map_input_dir:                       str
+
+     :param pop_input_dir:                      Directory where raw county population is stored
+     :type pop_input_dir:                       str
+
      :param start_year:                         Year to start model ; four digit year (e.g., 1990)
      :type start_year:                          int
+
      :param end_year:                           Year to start model ; four digit year (e.g., 1990)
      :type end_year:                            int
-     :return:                                   Dataframe of population data with FIPS and BA name
+
+     :return:                                   DataFrame
+
      """
+
     # load FIPS county data for BA number and FIPs code matching for later population sum by BA
     for idx, file in enumerate(glob(f'{map_input_dir}/*.csv')):
 
@@ -90,17 +103,23 @@ def merge_mapping_data(map_input_dir, pop_input_dir, start_year, end_year):
     return df_combine
 
 
-def ba_pop_sum(map_input_dir, pop_input_dir, start_year, end_year):
+def ba_pop_sum(map_input_dir: str, pop_input_dir: str, start_year: int, end_year: int) -> DataFrame:
     """Sum the population by BA number and year
-     :param mapping_input_dir:                  Directory where fips county data is stored
-     :type mapping_input_dir:                   dir
-     :param population_input_dir:               Directory where county population is stored
-     :type population_input_dir:                dir
-     :param start_year:                         Year to start model ; four digit year (e.g., 1990)
-     :type start_year:                          int
-     :param end_year:                           Year to start model ; four digit year (e.g., 1990)
-     :type end_year:                            int
-     :return:                                   Dataframe of total population by BA name and year
+
+     :param map_input_dir:               Directory where raw  fips county data is stored
+     :type map_input_dir:                str
+
+     :param pop_input_dir:               Directory where raw county population is stored
+     :type pop_input_dir:                str
+
+     :param start_year:                  Year to start model ; four digit year (e.g., 1990)
+     :type start_year:                   int
+
+     :param end_year:                    Year to start model ; four digit year (e.g., 1990)
+     :type end_year:                     int
+
+     :return:                            DataFrame
+
      """
     # get population from merged mapping data
     df_pop = merge_mapping_data(map_input_dir, pop_input_dir, start_year, end_year)
@@ -111,20 +130,28 @@ def ba_pop_sum(map_input_dir, pop_input_dir, start_year, end_year):
     return df
 
 
-def ba_pop_interpolate(map_input_dir, pop_input_dir, pop_output_dir, start_year, end_year):
-    """Interpolate the population from yearly to hourly timeseries to match EIA 930 hourly data
-     :param map_input_dir:               Directory where fips county data is stored
-     :type map_input_dir:                dir
-     :param pop_input_dir:               Directory where county population is stored
-     :type pop_input_dir:                dir
+def ba_pop_interpolate(map_input_dir: str, pop_input_dir: str, pop_output_dir: str, start_year: int, end_year: int):
+    """Interpolate the population from yearly to hourly time-series to match EIA 930 hourly data
+
+     :param map_input_dir:               Directory where raw fips county data is stored
+     :type map_input_dir:                str
+
+     :param pop_input_dir:               Directory where raw county population is stored
+     :type pop_input_dir:                str
+
      :param pop_output_dir:              Directory where to store the hourly population data
-     :type pop_output_dir:               dir
+     :type pop_output_dir:               str
+
      :param start_year:                  Year to start model ; four digit year (e.g., 1990)
      :type start_year:                   int
+
      :param end_year:                    Year to start model ; four digit year (e.g., 1990)
      :type end_year:                     int
-     :return:                            Dataframe of hourly population timeseries for each BA name
+
+     :return:                            DataFrame
+
      """
+
     df = ba_pop_sum(map_input_dir, pop_input_dir, start_year, end_year)
     df['year'] = pd.to_datetime(df['year'], format='%Y')
     df.rename(columns={"population": "pop"}, inplace=True)
