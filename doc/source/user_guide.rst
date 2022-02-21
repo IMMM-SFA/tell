@@ -111,7 +111,7 @@ In total, we formulated a multi-layer perceptron (MLP) model for 55 out of the 6
     * - AEC
       - PowerSouth Energy Cooperative
       - 189
-      - `Summary Figure 1 <_static/BA_Quick_Look_Plots/AEC_Quick_Look_Plots.png>`_
+      - `AEC <_static/BA_Quick_Look_Plots/AEC_Quick_Look_Plots.png>`_
     * - AECI
       - Associated Electric Cooperative Incorporated
       - 924
@@ -119,7 +119,7 @@ In total, we formulated a multi-layer perceptron (MLP) model for 55 out of the 6
     * - AVA
       - Avista Corporation
       - 20169
-      - `Summary Figure <images/AVA_Quick_Look_Plots.png>`_
+      - `AVA <_static/BA_Quick_Look_Plots/AVA_Quick_Look_Plots.png>`_
     * - **AVRN**
       - **Avangrid Renewables**
       - **NA**
@@ -127,23 +127,23 @@ In total, we formulated a multi-layer perceptron (MLP) model for 55 out of the 6
     * - AZPS
       - Arizona Public Service Company
       - 803
-      - `Summary Figure <images/AZPS_Quick_Look_Plots.png>`_
+      - `AZPS <_static/BA_Quick_Look_Plots/AZPS_Quick_Look_Plots.png>`_
     * - BANC
       - Balancing Authority of Northern California
       - 16534
-      - `Summary Figure <images/BANC_Quick_Look_Plots.png>`_
+      - `BANC <_static/BA_Quick_Look_Plots/BANC_Quick_Look_Plots.png>`_
     * - BPAT
       - Bonneville Power Administration
       - 1738
-      - `Summary Figure <images/BPAT_Quick_Look_Plots.png>`_
+      - `BPAT <_static/BA_Quick_Look_Plots/BPAT_Quick_Look_Plots.png>`_
     * - CHPD
       - Public Utility District No. 1 of Chelan County
       - 3413
-      - `Summary Figure <images/CHPD_Quick_Look_Plots.png>`_
+      - `CHPD <_static/BA_Quick_Look_Plots/CHPD_Quick_Look_Plots.png>`_
     * - CISO
       - California Independent System Operator
       - 2775
-      - `Summary Figure <images/CISO_Quick_Look_Plots.png>`_
+      - `CISO <_static/BA_Quick_Look_Plots/CISO_Quick_Look_Plots.png>`_
     * - CPLE
       - Duke Energy Progress East
       - 3046
