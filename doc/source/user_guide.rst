@@ -25,7 +25,7 @@ The following are the building blocks of how **tell** projects future loads.
 
 How **tell** Works
 ~~~~~~~~~~~~~~~~~~
-The basic workflow for **tell*** proceeds in six sequential steps. Note that you may not need to repeat each step (e.g., training the empirical models) each time you
+The basic workflow for **tell** proceeds in six sequential steps. Note that you may not need to repeat each step (e.g., training the empirical models) each time you
 want to conduct a simulation using **tell**.
 
 #. Formulate empirical models that relate the historical observed meteorology and population to the hourly time-series of total electricity demand for each of the
