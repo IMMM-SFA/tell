@@ -483,14 +483,21 @@ Multi-Layer Perceptron (MLP) Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **tell** uses a series of multilayer perceptron (MLP) models to predict future loads. There is one unique MLP model for each BA. The
 MLP models are trained on historical load data from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_ dataset and
-weather from IM3's historical runs using the Weather Research and Forecasting (WRF) model. The MLP models for each BA were
-trained on data from 2016-2018 and evaluated against observed loads from 2019. Details of the MLP predictive variables are included
-in the table below.
+weather from IM3's historical runs using the Weather Research and Forecasting (WRF) model. In the production version of the **tell**
+model the MLP models for each BA were trained on data from 2016-2018 and evaluated against observed loads from 2019. For the quickstarter
+notebook the MLP models were trained and evaluated against data from 2019 only in order to improve the timeliness of the training
+process.
+
+.. math::
+   y_pred = y_MLP + e
+
+
+Details of the MLP predictive variables are included in the table below.
 
 .. list-table::
     :header-rows: 1
 
-    * - Predictive Variable
+    * - Variable
       - Description
       - Units/Format
     * - Temperature
