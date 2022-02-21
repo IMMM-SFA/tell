@@ -53,44 +53,6 @@ Fundamental concepts
 ----------------------------------
 The following are the building blocks of how **tell** projects future loads.
 
-Scenarios
-~~~~~~~~~
-**tell** is designed to work in conjunction with the United States version of the Global Change Analysis Model (GCAM-USA)
-to explore different future scenarios of population and climate change. The models are configured to run the following
-combinations of Representative Concentration Pathways (`RCPs <https://en.wikipedia.org/wiki/Representative_Concentration_Pathway>`_)
-and Shared Socioeconomic Pathways (`SSPs <https://en.wikipedia.org/wiki/Shared_Socioeconomic_Pathways>`_):
-
-.. list-table::
-    :header-rows: 1
-
-    * - Climate Scenario
-      - Population Scenario
-      - scenario_name
-    * - RCP 4.5 - Cooler
-      - SSP3
-      - rcp45cooler_ssp3
-    * - RCP 4.5 - Cooler
-      - SSP5
-      - rcp45cooler_ssp5
-    * - RCP 4.5 - Hotter
-      - SSP3
-      - rcp45hotter_ssp3
-    * - RCP 4.5 - Hotter
-      - SSP5
-      - rcp45hotter_ssp5
-    * - RCP 8.5 - Cooler
-      - SSP3
-      - rcp85cooler_ssp3
-    * - RCP 8.5 - Cooler
-      - SSP5
-      - rcp85cooler_ssp5
-    * - RCP 8.5 - Hotter
-      - SSP3
-      - rcp85hotter_ssp3
-    * - RCP 8.5 - Hotter
-      - SSP5
-      - rcp85hotter_ssp5
-
 
 Balancing Authorities
 ~~~~~~~~~~~~~~~~~~~~~
@@ -482,20 +444,19 @@ hourly load profile for California as a whole.
 Multi-Layer Perceptron (MLP) Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **tell** uses a series of multilayer perceptron (MLP) models to predict future loads. There is one unique MLP model for each BA. The
-MLP models are trained on historical load data from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_ dataset and
-weather from IM3's historical runs using the Weather Research and Forecasting (WRF) model. In the production version of the **tell**
-model the MLP models for each BA were trained on data from 2016-2018 and evaluated against observed loads from 2019. For the quickstarter
-notebook the MLP models were trained and evaluated against data from 2019 only in order to improve the timeliness of the training
-process.
+general form of each MLP model is:
 
 .. math::
 
-   *y*\ :subscript:`pred` \ = y_{MLP} + `\epsilon`
+   y_{pred} = y_{MLP} + `\epsilon`
 
-where `\epsilon` is a linear model that uses the annual evolution of total population within the BA service territory to predict the
-residuals from the raw MLP model for a given BA.
-
-Details of the MLP predictive variables are included in the table below.
+where y :subscript:`MLP` is the actual MLP model and \\epsilon represents a linear model that uses the annual evolution of total population
+within the BA service territory to predict the residuals from the actual MLP model for a given BA. The MLP model for each BA is trained and
+evaluated independently. Hyperparameter tuning for the models is done using grid search. The MLP models are trained on historical load data
+from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_ dataset and weather from IM3's historical runs using the Weather
+Research and Forecasting (WRF) model. In the production version of the **tell** model the MLP models for each BA were trained on data from
+2016-2018 and evaluated against observed loads from 2019. For the **tell** quickstarter notebook the MLP models are trained and evaluated against data
+from 2019 only in order to improve the timeliness of the training process. Details of the MLP predictive variables are included in the table below.
 
 .. list-table::
     :header-rows: 1
@@ -530,6 +491,45 @@ Details of the MLP predictive variables are included in the table below.
     * - Federal holiday
       - Is the day a federal holiday?
       - Yes/No
+
+
+Scenarios
+~~~~~~~~~
+**tell** is designed to work in conjunction with the United States version of the Global Change Analysis Model (GCAM-USA)
+to explore different future scenarios of population and climate change. The models are configured to run the following
+combinations of Representative Concentration Pathways (`RCPs <https://en.wikipedia.org/wiki/Representative_Concentration_Pathway>`_)
+and Shared Socioeconomic Pathways (`SSPs <https://en.wikipedia.org/wiki/Shared_Socioeconomic_Pathways>`_):
+
+.. list-table::
+    :header-rows: 1
+
+    * - Climate Scenario
+      - Population Scenario
+      - scenario_name
+    * - RCP 4.5 - Cooler
+      - SSP3
+      - rcp45cooler_ssp3
+    * - RCP 4.5 - Cooler
+      - SSP5
+      - rcp45cooler_ssp5
+    * - RCP 4.5 - Hotter
+      - SSP3
+      - rcp45hotter_ssp3
+    * - RCP 4.5 - Hotter
+      - SSP5
+      - rcp45hotter_ssp5
+    * - RCP 8.5 - Cooler
+      - SSP3
+      - rcp85cooler_ssp3
+    * - RCP 8.5 - Cooler
+      - SSP5
+      - rcp85cooler_ssp5
+    * - RCP 8.5 - Hotter
+      - SSP3
+      - rcp85hotter_ssp3
+    * - RCP 8.5 - Hotter
+      - SSP5
+      - rcp85hotter_ssp5
 
 
 Key outputs
