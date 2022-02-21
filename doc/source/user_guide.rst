@@ -450,7 +450,7 @@ general form of each MLP model is:
 
    y_{pred} = y_{MLP} + `\epsilon`
 
-where y :subscript:`MLP` is the actual MLP model and \\epsilon represents a linear model that uses the annual evolution of total population
+where y:subscript:`MLP` is the actual MLP model and epsilon represents a linear model that uses the annual evolution of total population
 within the BA service territory to predict the residuals from the actual MLP model for a given BA. The MLP model for each BA is trained and
 evaluated independently. Hyperparameter tuning for the models is done using grid search. The MLP models are trained on historical load data
 from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_ dataset and weather from IM3's historical runs using the Weather
@@ -534,17 +534,16 @@ and Shared Socioeconomic Pathways (`SSPs <https://en.wikipedia.org/wiki/Shared_S
 
 Key outputs
 -----------
-**tell** produces four types of output files. Each type of output is both written out as a .csv file in the ``output_directory`` and
-returned as a Pandas DataFrame. Each type of output file can be suppressed by commenting out the relevant line in ``tell.execute_tell``.
-Missing values in each output file are coded as -9999. All times are in UTC.
+**tell** produces four types of output files. Each type of output is both written out as a .csv file or series of .csv files in the ``output_directory``.
+Each type of output file can be suppressed by commenting out the relevant line in ``execute_forward.py``. Missing values in each output file are
+coded as -9999. All times are in UTC.
 
 State summary data
 ~~~~~~~~~~~~~~~~~~
-This output file gives the annual total loads for each of the 48 states in the CONUS and the District of Columbia. It also contains the scaling factor for each state that force the aggregate annual total loads from  **tell** to agree with those produced by GCAM-USA.
+This output file gives the annual total loads for each of the 48 states in the CONUS and the District of Columbia. It also contains the scaling factor for
+each state that force the aggregate annual total loads from  **tell** to agree with those produced by GCAM-USA.
 
 Filename: *TELL_State_Summary_Data_YYYY.csv*
-
-DataFrame: *TBD*
 
 .. list-table::
     :header-rows: 1
@@ -581,8 +580,6 @@ This output file gives the hourly time-series of total loads for each of the 48 
 
 Filename: *TELL_State_Hourly_Load_Data_YYYY.csv*
 
-DataFrame: *TBD*
-
 .. list-table::
     :header-rows: 1
 
@@ -612,8 +609,6 @@ This output file gives the hourly time-series of total loads for each of the BAs
 
 Filename: *TELL_Balancing_Authority_Hourly_Load_Data_YYYY.csv*
 
-DataFrame: *TBD*
-
 .. list-table::
     :header-rows: 1
 
@@ -639,11 +634,10 @@ DataFrame: *TBD*
 
 County hourly load data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-This collection of output files gives the hourly time-series of total loads for each county in the CONUS and the District of Columbia. These output files are stored in a subdirectory of ``output_directory`` named ``County_Level_Data``.
+This collection of output files gives the hourly time-series of total loads for each county in the CONUS and the District of Columbia.
+These output files are stored in a subdirectory of ``output_directory`` named ``County_Level_Data``.
 
 Filename Format: *TELL_statename_countyname_Hourly_Load_Data_YYYY.csv*
-
-DataFrame: *TBD*
 
 .. list-table::
     :header-rows: 1
