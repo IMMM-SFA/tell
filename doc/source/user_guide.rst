@@ -147,7 +147,7 @@ In total, we formulated a multi-layer perceptron (MLP) model for 55 out of the 6
     * - CPLE
       - Duke Energy Progress East
       - 3046
-      - `Summary Figure <images/CPLE_Quick_Look_Plots.png>`_
+      - `CPLE <_static/BA_Quick_Look_Plots/CPLE_Quick_Look_Plots.png>`_
     * - **CPLW**
       - **Duke Energy Progress West**
       - **NA**
@@ -159,39 +159,39 @@ In total, we formulated a multi-layer perceptron (MLP) model for 55 out of the 6
     * - DOPD
       - Public Utility District No. 1 of Douglas County
       - 5326
-      - `Summary Figure <images/DOPD_Quick_Look_Plots.png>`_
+      - `DOPD <_static/BA_Quick_Look_Plots/DOPD_Quick_Look_Plots.png>`_
     * - DUK
       - Duke Energy Carolinas
       - 5416
-      - `Summary Figure <images/DUK_Quick_Look_Plots.png>`_
+      - `DUK <_static/BA_Quick_Look_Plots/DUK_Quick_Look_Plots.png>`_
     * - **EEI**
-      - **Electric Energy Inc.**
+      - **Electric Energy Incorporated**
       - **NA**
       - **Generation Only**
     * - EPE
       - El Paso Electric Company
       - 5701
-      - `Summary Figure <images/EPE_Quick_Look_Plots.png>`_
+      - `EPE <_static/BA_Quick_Look_Plots/EPE_Quick_Look_Plots.png>`_
     * - ERCO
       - Electric Reliability Council of Texas
       - 5723
-      - `Summary Figure <images/ERCO_Quick_Look_Plots.png>`_
+      - `ERCO <_static/BA_Quick_Look_Plots/ERCO_Quick_Look_Plots.png>`_
     * - FMPP
       - Florida Municipal Power Pool
       - 14610
-      - `Summary Figure <images/FMPP_Quick_Look_Plots.png>`_
+      - `FMPP <_static/BA_Quick_Look_Plots/FMPP_Quick_Look_Plots.png>`_
     * - FPC
       - Duke Energy Florida
       - 6455
-      - `Summary Figure <images/FPC_Quick_Look_Plots.png>`_
+      - `FPC <_static/BA_Quick_Look_Plots/FPC_Quick_Look_Plots.png>`_
     * - FPL
       - Florida Power and Light
       - 6452
-      - `Summary Figure <images/FPL_Quick_Look_Plots.png>`_
+      - `FPL <_static/BA_Quick_Look_Plots/FPL_Quick_Look_Plots.png>`_
     * - GCPD
       - Public Utility District No. 2 of Grant County
       - 14624
-      - `Summary Figure <images/GCPD_Quick_Look_Plots.png>`_
+      - `GCPD <_static/BA_Quick_Look_Plots/GCPD_Quick_Look_Plots.png>`_
     * - **GLHB**
       - **GridLiance**
       - **NA**
@@ -211,7 +211,7 @@ In total, we formulated a multi-layer perceptron (MLP) model for 55 out of the 6
     * - GVL
       - Gainesville Regional Utilities
       - 6909
-      - `Summary Figure <images/GVL_Quick_Look_Plots.png>`_
+      - `GVL <_static/BA_Quick_Look_Plots/GVL_Quick_Look_Plots.png>`_
     * - **GWA**
       - **NaturEner Power Watch**
       - **NA**
@@ -223,51 +223,51 @@ In total, we formulated a multi-layer perceptron (MLP) model for 55 out of the 6
     * - HST
       - City of Homestead
       - 8795
-      - `Summary Figure <images/HST_Quick_Look_Plots.png>`_
+      - `HST <_static/BA_Quick_Look_Plots/HST_Quick_Look_Plots.png>`_
     * - IID
       - Imperial Irrigation District
       - 9216
-      - `Summary Figure <images/IID_Quick_Look_Plots.png>`_
+      - `IID <_static/BA_Quick_Look_Plots/IID_Quick_Look_Plots.png>`_
     * - IPCO
       - Idaho Power Company
       - 9191
-      - `Summary Figure <images/IPCO_Quick_Look_Plots.png>`_
+      - `IPCO <_static/BA_Quick_Look_Plots/IPCO_Quick_Look_Plots.png>`_
     * - ISNE
       - Independent System Operator of New England
       - 13434
-      - `Summary Figure <images/ISNE_Quick_Look_Plots.png>`_
+      - `ISNE <_static/BA_Quick_Look_Plots/ISNE_Quick_Look_Plots.png>`_
     * - JEA
       - JEA
       - 9617
-      - `Summary Figure <images/JEA_Quick_Look_Plots.png>`_
+      - `JEA <_static/BA_Quick_Look_Plots/JEA_Quick_Look_Plots.png>`_
     * - LDWP
       - Los Angeles Department of Water and Power
       - 11208
-      - `Summary Figure <images/LDWP_Quick_Look_Plots.png>`_
+      - `LDWP <_static/BA_Quick_Look_Plots/LDWP_Quick_Look_Plots.png>`_
     * - LGEE
       - Louisville Gas and Electric Company and Kentucky Utilities Company
       - 11249
-      - `Summary Figure <images/LGEE_Quick_Look_Plots.png>`_
+      - `LGEE <_static/BA_Quick_Look_Plots/LGEE_Quick_Look_Plots.png>`_
     * - MISO
       - Midcontinent Independent System Operator
       - 56669
-      - `Summary Figure <images/MISO_Quick_Look_Plots.png>`_
+      - `MISO <_static/BA_Quick_Look_Plots/MISO_Quick_Look_Plots.png>`_
     * - NEVP
       - Nevada Power Company
       - 13407
-      - `Summary Figure <images/NEVP_Quick_Look_Plots.png>`_
+      - `NEVP <_static/BA_Quick_Look_Plots/NEVP_Quick_Look_Plots.png>`_
     * - NSB
       - Utilities Commission of New Smyrna Beach
       - 13485
-      - `Summary Figure <images/NSB_Quick_Look_Plots.png>`_
+      - `NSB <_static/BA_Quick_Look_Plots/NSB_Quick_Look_Plots.png>`_
     * - NWMT
       - NorthWestern Corporation
       - 12825
-      - `Summary Figure <images/NWMT_Quick_Look_Plots.png>`_
+      - `NWMT <_static/BA_Quick_Look_Plots/NWMT_Quick_Look_Plots.png>`_
     * - NYIS
       - New York Independent System Operator
       - 13501
-      - `Summary Figure <images/NYIS_Quick_Look_Plots.png>`_
+      - `NYIS <_static/BA_Quick_Look_Plots/NYIS_Quick_Look_Plots.png>`_
     * - **OVEC**
       - **Ohio Valley Electric Corporation**
       - **NA**
@@ -275,47 +275,47 @@ In total, we formulated a multi-layer perceptron (MLP) model for 55 out of the 6
     * - PACE
       - PacifiCorp East
       - 14379
-      - `Summary Figure <images/PACE_Quick_Look_Plots.png>`_
+      - `PACE <_static/BA_Quick_Look_Plots/PACE_Quick_Look_Plots.png>`_
     * - PACW
       - PacifiCorp West
       - 14378
-      - `Summary Figure <images/PACW_Quick_Look_Plots.png>`_
+      - `PACW <_static/BA_Quick_Look_Plots/PACW_Quick_Look_Plots.png>`_
     * - PGE
       - Portland General Electric Company
       - 15248
-      - `Summary Figure <images/PGE_Quick_Look_Plots.png>`_
+      - `PGE <_static/BA_Quick_Look_Plots/PGE_Quick_Look_Plots.png>`_
     * - PJM
       - PJM Interconnection
       - 14725
-      - `Summary Figure <images/PJM_Quick_Look_Plots.png>`_
+      - `PJM <_static/BA_Quick_Look_Plots/PJM_Quick_Look_Plots.png>`_
     * - PNM
       - Public Service Company of New Mexico
       - 15473
-      - `Summary Figure <images/PNM_Quick_Look_Plots.png>`_
+      - `PNM <_static/BA_Quick_Look_Plots/PNM_Quick_Look_Plots.png>`_
     * - PSCO
       - Public Service Company of Colorado
       - 15466
-      - `Summary Figure <images/PSCO_Quick_Look_Plots.png>`_
+      - `PSCO <_static/BA_Quick_Look_Plots/PSCO_Quick_Look_Plots.png>`_
     * - PSEI
       - Puget Sound Energy
       - 15500
-      - `Summary Figure <images/PSEI_Quick_Look_Plots.png>`_
+      - `PSEI <_static/BA_Quick_Look_Plots/PSEI_Quick_Look_Plots.png>`_
     * - SC
       - South Carolina Public Service Authority
       - 17543
-      - `Summary Figure <images/SC_Quick_Look_Plots.png>`_
+      - `SC <_static/BA_Quick_Look_Plots/SC_Quick_Look_Plots.png>`_
     * - SCEG
       - South Carolina Electric and Gas Company
       - 17539
-      - `Summary Figure <images/SCEG_Quick_Look_Plots.png>`_
+      - `SCEG <_static/BA_Quick_Look_Plots/SCEG_Quick_Look_Plots.png>`_
     * - SCL
       - Seattle City Light
       - 16868
-      - `Summary Figure <images/SCL_Quick_Look_Plots.png>`_
+      - `SCL <_static/BA_Quick_Look_Plots/SCL_Quick_Look_Plots.png>`_
     * - SEC
       - Seminole Electric Cooperative
       - 21554
-      - `Summary Figure <images/SEC_Quick_Look_Plots.png>`_
+      - `SEC <_static/BA_Quick_Look_Plots/SEC_Quick_Look_Plots.png>`_
     * - SEPA
       - Southeastern Power Administration
       - **NA**
@@ -323,15 +323,15 @@ In total, we formulated a multi-layer perceptron (MLP) model for 55 out of the 6
     * - SOCO
       - Southern Company Services - Transmission
       - 18195
-      - `Summary Figure <images/SOCO_Quick_Look_Plots.png>`_
+      - `SOCO <_static/BA_Quick_Look_Plots/SOCO_Quick_Look_Plots.png>`_
     * - SPA
       - Southwestern Power Administration
       - 17716
-      - `Summary Figure <images/SPA_Quick_Look_Plots.png>`_
+      - `SPA <_static/BA_Quick_Look_Plots/SPA_Quick_Look_Plots.png>`_
     * - SRP
       - Salt River Project
       - 16572
-      - `Summary Figure <images/SRP_Quick_Look_Plots.png>`_
+      - `SRP <_static/BA_Quick_Look_Plots/SRP_Quick_Look_Plots.png>`_
     * - SWPP
       - Southwest Power Pool
       - 59504
@@ -339,39 +339,39 @@ In total, we formulated a multi-layer perceptron (MLP) model for 55 out of the 6
     * - TAL
       - City of Tallahassee
       - 18445
-      - `Summary Figure <images/TAL_Quick_Look_Plots.png>`_
+      - `SWPP <_static/BA_Quick_Look_Plots/SWPP_Quick_Look_Plots.png>`_
     * - TEC
       - Tampa Electric Company
       - 18454
-      - `Summary Figure <images/TEC_Quick_Look_Plots.png>`_
+      - `TEC <_static/BA_Quick_Look_Plots/TEC_Quick_Look_Plots.png>`_
     * - TEPC
       - Tucson Electric Power
       - 24211
-      - `Summary Figure <images/TEPC_Quick_Look_Plots.png>`_
+      - `TEPC <_static/BA_Quick_Look_Plots/TEPC_Quick_Look_Plots.png>`_
     * - TIDC
       - Turlock Irrigation District
       - 19281
-      - `Summary Figure <images/TIDC_Quick_Look_Plots.png>`_
+      - `TIDC <_static/BA_Quick_Look_Plots/TIDC_Quick_Look_Plots.png>`_
     * - TPWR
       - City of Tacoma Department of Public Utilities
       - 18429
-      - `Summary Figure <images/TPWR_Quick_Look_Plots.png>`_
+      - `TPWR <_static/BA_Quick_Look_Plots/TPWR_Quick_Look_Plots.png>`_
     * - TVA
       - Tennessee Valley Authority
       - 18642
-      - `Summary Figure <images/TVA_Quick_Look_Plots.png>`_
+      - `TVA <_static/BA_Quick_Look_Plots/TVA_Quick_Look_Plots.png>`_
     * - WACM
       - Western Area Power Administration - Rocky Mountain Region
       - 28503
-      - `Summary Figure <images/WACM_Quick_Look_Plots.png>`_
+      - `WACM <_static/BA_Quick_Look_Plots/WACM_Quick_Look_Plots.png>`_
     * - WALC
       - Western Area Power Administration - Desert Southwest Region
       - 25471
-      - `Summary Figure <images/WALC_Quick_Look_Plots.png>`_
+      - `WALC <_static/BA_Quick_Look_Plots/WALC_Quick_Look_Plots.png>`_
     * - WAUW
       - Western Area Power Administration - Upper Great Plains West
       - 19610
-      - `Summary Figure <images/WAUW_Quick_Look_Plots.png>`_
+      - `WAUW <_static/BA_Quick_Look_Plots/WAUW_Quick_Look_Plots.png>`_
     * - **WWA**
       - **NaturEner Wind Watch**
       - **NA**
