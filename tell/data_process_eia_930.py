@@ -3,6 +3,8 @@ import os
 import pandas as pd
 from joblib import Parallel, delayed
 
+from .package_data import get_ba_abbreviations
+
 
 def list_EIA_930_files(input_dir):
     """Make a list of all the filenames for EIA 930 hourly load data (xlsx)

@@ -19,6 +19,7 @@ def list_wrf_files(input_dir, target_yr):
 
     """
 
+
     # get a list of BA abbreviations to process
     ba_name = get_ba_abbreviations()
 

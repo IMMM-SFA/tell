@@ -2,6 +2,8 @@ import os
 
 import pandas as pd
 
+from .package_data import get_ba_abbreviations
+
 
 def compile_data(eia_dir, pop_dir, wrf_dir, target_yr, compile_output_dir):
     """Read in population data, format columns and return single df for all years
@@ -13,12 +15,10 @@ def compile_data(eia_dir, pop_dir, wrf_dir, target_yr, compile_output_dir):
     :type end_year:                            int
     :return:                                   Dataframe of valid population data for select timeframe
     """
-    ba_name = ['AEC', 'YAD', 'AMPL', 'AZPS', 'AECI', 'BPAT', 'CISO', 'CPLE', 'CHPD', 'CEA', 'DOPD', 'DUK',
-               'EPE', 'ERCO', 'EEI', 'FPL', 'FPC', 'GVL', 'HST', 'IPCO', 'IID', 'JEA', 'LDWP', 'LGEE', 'NWMT',
-               'NEVP','ISNE','NSB', 'NYIS', 'OVEC', 'PACW', 'PACE', 'GRMA', 'FMPP', 'GCPD', 'PJM', 'AVRN', 'PSCO',
-               'PGE', 'PNM','PSEI', 'BANC', 'SRP', 'SCL', 'SCEG', 'SC', 'SPA', 'SOCO', 'TPWR', 'TAL', 'TEC', 'TVA',
-               'TIDC', 'HECO', 'WAUW','AVA', 'SEC', 'TEPC', 'WALC', 'WAUE', 'WACM', 'SEPA', 'HECO', 'GRIF', 'GWA',
-               'GRIS', 'MISO','DEAA', 'CPLW', 'GRID', 'WWA', 'SWPP']
+
+
+    # get a list of BA abbreviations to process
+    ba_name = get_ba_abbreviations()
 
     for i in ba_name:
         # get the paths for th EIA, population and WRF data
