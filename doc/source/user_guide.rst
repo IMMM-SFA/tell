@@ -339,7 +339,7 @@ In total, we formulated a multi-layer perceptron (MLP) model for 55 out of the 6
     * - TAL
       - City of Tallahassee
       - 18445
-      - `SWPP <_static/BA_Quick_Look_Plots/SWPP_Quick_Look_Plots.png>`_
+      - `TAL <_static/BA_Quick_Look_Plots/TAL_Quick_Look_Plots.png>`_
     * - TEC
       - Tampa Electric Company
       - 18454
