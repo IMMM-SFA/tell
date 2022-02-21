@@ -26,8 +26,11 @@ The following are the building blocks of how **tell** projects future loads.
 How **tell** Works
 ~~~~~~~~~~~~~~~~~~
 The basic workflow for **tell*** proceeds in six sequential steps.
-1. Blah
-2. Blah
+
+#. Blah
+
+#. Blah
+
 
 Balancing Authorities
 ~~~~~~~~~~~~~~~~~~~~~
