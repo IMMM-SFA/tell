@@ -13,15 +13,21 @@ Tutorial
 Jupyter Notebooks
 
 
-**tell** Quickstarter
-~~~~~~~~~~~~~~~~~~~~~
-The following is a link to a Jupyter Notebook to run **tell**:  `tell quickstarter <https://github.com/IMMM-SFA/cerf/blob/main/notebooks/quickstarter.ipynb>`_
+Quickstarter
+~~~~~~~~~~~~
+The following is a link to a Jupyter Notebook to run **tell**:  `quickstarter <https://github.com/IMMM-SFA/cerf/blob/main/notebooks/quickstarter.ipynb>`_
 
 
 Fundamental Concepts
 --------------------
 The following are the building blocks of how **tell** projects future loads.
 
+
+How **tell** Works
+~~~~~~~~~~~~~~~~~~
+The basic workflow for **tell*** proceeds in six sequential steps.
+1. Blah
+2. Blah
 
 Balancing Authorities
 ~~~~~~~~~~~~~~~~~~~~~
@@ -349,7 +355,7 @@ data that are critical to **tell**:
    :width: 600
    :align: center
 
-Using these two datasets in combination, **tell** reverse engineers the counties that each BA *likely* operated in within a given year. In
+Using these two datasets in combination, **tell** reverse engineers the counties that each BA likely operated in within a given year. In
 addition to being completely objective and reproducible, this method overcomes the limitations described above because it allows
 more than one BA to be mapped to a single county and also allows the geolocation of BAs to evolve over time. **tell**
 maps BA service territory annually from 2015-2019. The results of that mapping are contained in the .csv files below and are
