@@ -490,7 +490,7 @@ process.
 
 .. math::
 
-   y_{pred} = y_{MLP} + 0x03B5
+   y\ :subscript:`pred`\ = y_{MLP} + 0x03B5
 
 
 Details of the MLP predictive variables are included in the table below.
