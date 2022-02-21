@@ -489,12 +489,11 @@ notebook the MLP models were trained and evaluated against data from 2019 only i
 process.
 
 .. math::
+
    y_{pred} = y_{MLP} + 0x03B5
 
-
-.. math::
-
-    LMP_{lev} = LMP * LF_{fuel}
+where \epsilon is a linear model that uses the annual evolution of total population within the BA service territory to predict the
+residuals from the raw MLP model for a given BA.
 
 Details of the MLP predictive variables are included in the table below.
 
