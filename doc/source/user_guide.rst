@@ -25,11 +25,21 @@ The following are the building blocks of how **tell** projects future loads.
 
 How **tell** Works
 ~~~~~~~~~~~~~~~~~~
-The basic workflow for **tell*** proceeds in six sequential steps.
+The basic workflow for **tell*** proceeds in six sequential steps. Note that you may not need to repeat each step (e.g., training the empirical models) each time you
+want to conduct a simulation using **tell**.
 
-#. Blah
+#. Formulate empirical models that relate the historical observed meteorology and population to the hourly time-series of total electricity demand for each of the
+balancing authorities (BA) that report their hourly loads in the EIA-930 dataset.
 
-#. Blah
+#. Use the empirical models to predict future hourly loads for each BA based on IM3’s climate and population forcing scenarios.
+
+#. Distribute the hourly loads for each BA to the counties that BA operates in and then aggregate the county-level hourly loads from all BAs into annual state-level loads.
+
+#. Calculate state-level scaling factors that force the bottom-up annual state-level total loads from **tell** to match the future annual state-level total loads from GCAM-USA.
+
+#. Apply the state scaling factors to each county-level time-series of hourly total electricity loads.
+
+#. Output yearly time-series of total electricity demand at the state, county, and BA level that are conceptually and quantitatively consistent with each other.
 
 
 Balancing Authorities
