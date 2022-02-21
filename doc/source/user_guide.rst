@@ -489,7 +489,7 @@ notebook the MLP models were trained and evaluated against data from 2019 only i
 process.
 
 .. math::
-   y_pred = y_MLP + e
+   *y* :sub:`pred` = *y* :sub:`MLP` + \epsilon
 
 
 Details of the MLP predictive variables are included in the table below.
