@@ -492,6 +492,10 @@ process.
    y_{pred} = y_{MLP} + 0x03B5
 
 
+.. math::
+
+    LMP_{lev} = LMP * LF_{fuel}
+
 Details of the MLP predictive variables are included in the table below.
 
 .. list-table::
