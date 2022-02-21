@@ -335,7 +335,7 @@ In total, we formulated a multi-layer perceptron (MLP) model for 55 out of the 6
     * - SWPP
       - Southwest Power Pool
       - 59504
-      - `Summary Figure <images/SWPP_Quick_Look_Plots.png>`_
+      - `SWPP <_static/BA_Quick_Look_Plots/SWPP_Quick_Look_Plots.png>`_
     * - TAL
       - City of Tallahassee
       - 18445
