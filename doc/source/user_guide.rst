@@ -489,6 +489,7 @@ notebook the MLP models were trained and evaluated against data from 2019 only i
 process.
 
 .. math::
+
    y_{pred} = y_{MLP} + 0x03B5
 
 
