@@ -39,6 +39,7 @@ extensions = [
     'sphinx_panels',
     'sphinx_rtd_theme',
     'sphinx.ext.githubpages',
+    'sphinx.exp.mathjax',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
