@@ -111,11 +111,11 @@ In total, we formulated a multi-layer perceptron (MLP) model for 55 out of the 6
     * - AEC
       - PowerSouth Energy Cooperative
       - 189
-      - `Summary Figure 1 <source/images/AEC_Quick_Look_Plots.png>`_
+      - `Summary Figure 1 <source/_static/BA_Quick_Look_Plots/AEC_Quick_Look_Plots.png>`_
     * - AECI
-      - Associated Electric Cooperative
+      - Associated Electric Cooperative Incorporated
       - 924
-      - `Summary Figure <images/AECI_Quick_Look_Plots.png>`_
+      - `AECI <source/_static/BA_Quick_Look_Plots/AECI_Quick_Look_Plots.png>`_
     * - AVA
       - Avista Corporation
       - 20169
