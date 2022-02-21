@@ -7,42 +7,11 @@ Setting up a **tell** run
 
 The following with introduce you to the input data required by **tell** and how to set up a configuration file to run **tell**.
 
-Configuration file setup
-~~~~~~~~~~~~~~~~~~~~~~~
-
-The **tell** package utilizes a YAML configuration file customized by the user with scenario-specific settings.
-
-The following are the required values if your wish to construct your own configuration files:
-
-``settings``
-^^^^^^^^^^^^
-These are required values for project-level settings.
-
-.. table::
-
-    +--------------------+-------------------------------------------------------+-------+-------+
-    | Name               | Description                                           | Unit  | Type  |
-    +====================+=======================================================+=======+=======+
-    | run_year           | Target year to run in YYYY format                     | year  | int   |
-    +--------------------+-------------------------------------------------------+-------+-------+
-    | scenario_name      | Name of the combined population and climate scenario  | NA    | str   |
-    +--------------------+-------------------------------------------------------+-------+-------+
-    | output_directory   | Directory to write the output data to                 | NA    | str   |
-    +--------------------+-------------------------------------------------------+-------+-------+
-
-The following is an example implementation in the YAML configuration file:
-
-.. code-block:: yaml
-
-  settings:
-      run_year: 2020
-      scenario_name: rcp45cooler_ssp3
-      output_directory: <your output directory>
-
 
 Tutorials
 ---------
 Jupyter Notebooks
+
 
 **tell** quickstarter
 ~~~~~~~~~~~~~~~~~~~~~
