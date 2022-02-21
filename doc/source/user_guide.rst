@@ -384,7 +384,7 @@ In total, we formulated a multi-layer perceptron (MLP) model for 55 out of the 6
 
 Geolocating Balancing Authorities
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-As a spatially-explicit model, **tell** needs the ability to geolocate loads predicted by the model. Since the fundamental predictions
+As a spatially-explicit model, **tell** needs the ability to geolocate the loads it predicts. Since the fundamental predictions
 in **tell** occur at the spatial scale of BAs, we needed to devise a way to determine where each BA operated within the U.S.
 For **tell**, being able to do  this geolocation using county boundaries has a number of benefits in terms of load disaggregation
 and reaggregation - so we focused on techniques to map BAs to the counties they operate in. While there are multiple maps
@@ -394,12 +394,12 @@ of BA service territories available online, there are several fundamental challe
 how the BAs were placed and if the methods used to do so are robust.
 
 2. The maps often depict the BAs as spatially unique and non-overlapping. For county-scale mapping at least, we know this to be
-untrue. Additionally, the maps are mostly static representations of how BAs were configured at a single point in time. As the
+untrue. Additionally, the maps are typically static representations of how BAs were configured at a single point in time. As the
 actual territory of BAs can and does change over time, this presents challenges for placing BA loads occurring over a range of years.
 
 3. Maps available online are often cartoon or stylized versions of reality with curvy lines that do not follow traditional geopolitical
 boundaries. As such, to go from the cartoon map to an actual list of counties that a BA operates in would necessitate a number of
-subjective decisions that are not 100% reproducible from person to person.
+subjective decisions that are not reproducible from person to person.
 
 Given these limitations, we devised our own method to geolocate BAs in **tell**. We eventually found a publicly available
 dataset from the EIA that served as our foundation. The `EIA-861 <https://www.eia.gov/electricity/data/eia861/>`_ dataset is an annual
@@ -422,8 +422,7 @@ Using these two datasets in combination, **tell** reverse engineers the counties
 addition to being completely objective and reproducible, this method overcomes the limitations described above because it allows
 more than one BA to be mapped to a single county and also allows the geolocation of BAs to evolve over time. **tell**
 maps BA service territory annually from 2015-2019. The results of that mapping are contained in the .csv files below and are
-summarized graphically in the map. The spatial extent of each BA in 2019 is shown in the "Summary_Figure" link for each
-BA in the table above.
+summarized graphically in the map. The spatial extent of each BA in 2019 is shown in the link for each BA in the table above.
 
 .. image:: _static/Overlapping_Balancing_Authorities_Map.png
    :width: 900
@@ -458,7 +457,7 @@ annual state-level load values produced by GCAM-USA we first disaggregate the ho
 and then reaggregate those hourly county-level loads to an annual total load prediction for each state. For each BA we identify
 the counties that BA operates in using the methodology described above. We then use the
 county-level populations for those counties to determine the fraction of the BA's total load that should be assigned to each county. A
-graphical depiction of this for the ISNE BA is shown below. The load received by each county in a BA's service territory thus has the
+graphical depiction of this for the ISNE BA is shown below. Using this approach, the load received by each county in a BA's service territory has the
 same shape and temporal patterns, but the magnitude varies depending on the population in that county relative to the total population
 in the BA's service territory. As there are spatial overlaps in BAs, many counties receive partial loads from more than one BA.
 
@@ -501,13 +500,13 @@ in the table below.
       - 2-m water vapor mixing ratio from WRF (Q2)
       - kg kg :sup:`-1`
     * - Shortwave radiation
-      - Downward shortwave radiative flux from WRF (SWdn)
+      - Downwelling shortwave radiative flux at the surface from WRF (SWdn)
       - W m :sup:`-2`
     * - Longwave radiation
-      - Downward longwave radiative flux from WRF (GLW)
+      - Downwwelling longwave radiative flux at the surface from WRF (GLW)
       - W m :sup:`-2`
     * - Wind speed
-      - Wind speed derived from 10-m U and V wind components from WRF (U10 and V10)
+      - 10-m wind speed derived from the U and V wind components from WRF (U10 and V10)
       - m s :sup:`-1`
     * - Day of the week
       - Day of the week
