@@ -490,7 +490,7 @@ process.
 
 .. math::
 
-   y_{pred} = y_{MLP} + `\epsilon`
+   *y*\ :subscript:`pred` \ = y_{MLP} + `\epsilon`
 
 where `\epsilon` is a linear model that uses the annual evolution of total population within the BA service territory to predict the
 residuals from the raw MLP model for a given BA.
@@ -518,15 +518,19 @@ Details of the MLP predictive variables are included in the table below.
     * - Wind speed
       - 10-m wind speed derived from the U and V wind components from WRF (U10 and V10)
       - m s :sup:`-1`
+    * - Population
+      - Total population in the counties covered by the BA
+      - NA
     * - Day of the week
       - Day of the week
       - Weekday or weekend
     * - Hour of the day
       - Hour of the day in UTC
       - 00-23
-    * - Population
-      - Total population in the counties covered by the BA
-      - NA
+    * - Federal holiday
+      - Hour of the day in UTC
+      - 00-23
+
 
 Key outputs
 -----------
