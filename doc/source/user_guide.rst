@@ -490,7 +490,7 @@ process.
 
 .. math::
 
-   y_{pred} = y_{MLP} + 0x03B5
+   `y_{pred} = y_{MLP} + 0x03B5`
 
 where \epsilon is a linear model that uses the annual evolution of total population within the BA service territory to predict the
 residuals from the raw MLP model for a given BA.
