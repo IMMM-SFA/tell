@@ -528,8 +528,8 @@ Details of the MLP predictive variables are included in the table below.
       - Hour of the day in UTC
       - 00-23
     * - Federal holiday
-      - Hour of the day in UTC
-      - 00-23
+      - Is the day a federal holiday?
+      - Yes/No
 
 
 Key outputs
