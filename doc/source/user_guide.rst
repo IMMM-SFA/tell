@@ -23,8 +23,8 @@ Fundamental Concepts
 The following are the building blocks of how **tell** projects future loads.
 
 
-How **tell** Works
-~~~~~~~~~~~~~~~~~~
+How It Works
+~~~~~~~~~~~~
 The basic logic for **tell** proceeds in six sequential steps. Note that you may not need to repeat each step (e.g., training the empirical models) each time you
 want to conduct a simulation using **tell**.
 
@@ -54,6 +54,13 @@ The **tell** model was designed using the following conceptual constraints:
       - Should cover the entire U.S. (excluding Alaska and Hawaii) and produce demands at an appropriately high spatial resolution for input into a nodal unit commitment/economic dispath (UC/ED) model
     * - Temporal resolution and scope
       - Should produce hourly projections of total electricity demand in one-year incremenets through the year 2100.
+    * - Forcing factors
+      - Projections should respond to changes in meteorology/climate and population.
+    * - Multiscale consistency
+      - Should produce hourly total electricity demand at the county, state, and balancing authority scale that are conceptually and quantitatively consistent.
+    * - Open-source
+      - Should be based entirely on publicly available data and be made available as an open-source model.
+
 
 Balancing Authorities
 ~~~~~~~~~~~~~~~~~~~~~
