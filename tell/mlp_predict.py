@@ -246,7 +246,7 @@ class Dataset:
         """
         This method takes in df as an argument and splits them into a training and a test set
         :param df: contains entire dataset specified using start_time and end_time
-        :return df_t, df_e: dfs for trining and test data respectively
+        :return df_t, df_e: dfs for training and test data respectively
         """
 
         df_t = df[(df["Datetime"] <= self.split_time)]
