@@ -28,8 +28,7 @@ How **tell** Works
 The basic workflow for **tell** proceeds in six sequential steps. Note that you may not need to repeat each step (e.g., training the empirical models) each time you
 want to conduct a simulation using **tell**.
 
-#. Formulate empirical models that relate the historical observed meteorology and population to the hourly time-series of total electricity demand for each of the
-balancing authorities (BA) that report their hourly loads in the EIA-930 dataset.
+#. Formulate empirical models that relate the historical observed meteorology and population to the hourly time-series of total electricity demand for each of the balancing authorities (BA) that report their hourly loads in the EIA-930 dataset.
 
 #. Use the empirical models to predict future hourly loads for each BA based on IM3’s climate and population forcing scenarios.
 
