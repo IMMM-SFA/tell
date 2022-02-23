@@ -122,6 +122,7 @@ def find_county(d: dict) -> dict:
       :return:               FIPS key combined to county dictionary with a count of 1 or more
       
       """
+
     if len(d) > 0:
 
         values = [d[k] for k in d.keys()]

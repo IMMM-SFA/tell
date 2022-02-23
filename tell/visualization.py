@@ -5,34 +5,44 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
-def plot_state_scaling_factors(shapefile_input_dir, data_input_dir, year_to_plot, save_images, image_resolution,
-                               image_output_dir):
+def plot_state_scaling_factors(shapefile_input_dir: str, data_input_dir: str, year_to_plot: str, save_images: int,
+                               image_resolution: int, image_output_dir: str):
     """Create state scaling factors map and save image in image directory
-         :param shapefile_input_dir:        Directory where the Census TL shapefile is stored
-         :type shapefile_input_dir:         dir
-         :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
-         :type data_input_dir:              dir
-         :param year_to_plot:               What year to plot as a data visualization
-         :type year_to_plot:                int
-         :param save_images:                Save images to directory? 0 is no, 1 is yes
-         :type save_images:                 boolean
-         :param image_resolution:           Resolution in dpi to save images
-         :type image_resolution:            int
-         :param image_output_dir:           Directory to store the image outputs
-         :type image_output_dir:            dir
-         :return:                           State scaling factors map and save image in image directory
-      """
+
+    :param shapefile_input_dir:        Directory where the Census TL shapefile is stored
+    :type shapefile_input_dir:         str
+
+    :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
+    :type data_input_dir:              str
+
+    :param year_to_plot:               What year to plot as a data visualization
+    :type year_to_plot:                str
+
+    :param save_images:                Save images to directory? 0 is no, 1 is yes
+    :type save_images:                 int
+
+    :param image_resolution:           Resolution in dpi to save images
+    :type image_resolution:            int
+
+    :param image_output_dir:           Directory to store the image outputs
+    :type image_output_dir:            str
+
+    :return:                           State scaling factors map and save image in image directory
+
+
+    """
+
     states_df = gpd.read_file((shapefile_input_dir + '/tl_2020_us_state.shp')).rename(columns={'GEOID': 'State_FIPS', })
     states_df['State_FIPS'] = states_df['State_FIPS'].astype(int) * 1000
 
     # Read in the 'TELL_State_Summary_Data' .csv file and reassign the 'State_FIPS' code as an integer:
-    state_summary_df = pd.read_csv((data_input_dir + '/' + year_to_plot + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'),
-        dtype={'State_FIPS': int})
+    state_summary_df = pd.read_csv((data_input_dir + '/' + year_to_plot + '/' + 'TELL_State_Summary_Data_' +
+                                    year_to_plot + '.csv'), dtype={'State_FIPS': int})
 
-    # Merge the two dataframes together using state FIPS codes to join them and display the merged datafram:
+    # Merge the two dataframes together using state FIPS codes to join them and display the merged data frame:
     states_df = states_df.merge(state_summary_df, on='State_FIPS', how='left')
 
-    fig, ax = plt.subplots(1, 1, figsize=(25,10))
+    fig, ax = plt.subplots(1, 1, figsize=(25, 10))
     divider = make_axes_locatable(ax)
     cax = divider.append_axes("right", size="3%", pad=0.1)
     ax1 = states_df.plot(column='Scaling_Factor',
@@ -40,30 +50,41 @@ def plot_state_scaling_factors(shapefile_input_dir, data_input_dir, year_to_plot
                          ax=ax,
                          cax=cax,
                          edgecolor='grey',
-                         vmin = 0.5,
-                         vmax = 1.5,
+                         vmin=0.5,
+                         vmax=1.5,
                          linewidth=0.1,
                          legend=True,
-                         legend_kwds={'label': 'TELL Scaling Factor','orientation': 'vertical'})
+                         legend_kwds={'label': 'TELL Scaling Factor', 'orientation': 'vertical'})
     ax1.set_title(('State-Level Scaling Factors in ' + year_to_plot))
-    if save_images == 1:
-       plt.savefig((image_output_dir + year_to_plot + '/' + 'TELL_State_Scaling_Factors_' + year_to_plot + '.png'), dpi=image_resolution, bbox_inches='tight')
+    if save_images == 1: plt.savefig((image_output_dir + year_to_plot + '/' + 'TELL_State_Scaling_Factors_' +
+                                      year_to_plot + '.png'), dpi=image_resolution, bbox_inches='tight')
 
-def plot_state_annual_total_loads(data_input_dir, year_to_plot, save_images, image_resolution, image_output_dir):
+
+def plot_state_annual_total_loads(data_input_dir: str, year_to_plot: str, save_images: int, image_resolution: int,
+                                  image_output_dir: str):
     """Plot the state annual total loads and save to image directory
-        :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
-        :type data_input_dir:              dir
-        :param year_to_plot:               What year to plot as a data visualization
-        :type year_to_plot:                int
-        :param save_images:                Save images to directory? 0 is no, 1 is yes
-        :type save_images:                 boolean
-        :param image_resolution:           Resolution in dpi to save images
-        :type image_resolution:            int
-        :param image_output_dir:           Directory to store the image outputs
-        :type image_output_dir:            dir
-        :return:                           Plot of state annual total loads and save to image directory
-        """
-    state_summary_df = pd.read_csv((data_input_dir + year_to_plot + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'),
+
+    :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
+    :type data_input_dir:              str
+
+    :param year_to_plot:               What year to plot as a data visualization
+    :type year_to_plot:                str
+
+    :param save_images:                Save images to directory? 0 is no, 1 is yes
+    :type save_images:                 int
+
+    :param image_resolution:           Resolution in dpi to save images
+    :type image_resolution:            int
+
+    :param image_output_dir:           Directory to store the image outputs
+    :type image_output_dir:            str
+
+    :return:                           Plot of state annual total loads and save to image directory
+
+    """
+
+    state_summary_df = pd.read_csv(
+        (data_input_dir + year_to_plot + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'),
         dtype={'State_FIPS': int})
     x_axis = np.arange(len(state_summary_df))
 
@@ -78,26 +99,34 @@ def plot_state_annual_total_loads(data_input_dir, year_to_plot, save_images, ima
 
     if save_images == 1:
         plt.savefig((image_output_dir + year_to_plot + '/' + 'TELL_State_Annual_Total_Loads_' + year_to_plot + '.png'),
-            dpi=image_resolution, bbox_inches='tight')
+                    dpi=image_resolution, bbox_inches='tight')
 
 
-def plot_state_load_time_series(state, data_input_dir, year_to_plot, save_images, image_resolution,
-                                image_output_dir):
+def plot_state_load_time_series(state: str, data_input_dir: str, year_to_plot: str, save_images: int,
+                                image_resolution: int, image_output_dir: str):
     """Plot state load time series and save to image directory
-       :param state:                      What state to plot state load time series
-       :type state:                       str
-       :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
-       :type data_input_dir:              dir
-       :param year_to_plot:               What year to plot as a data visualization
-       :type year_to_plot:                int
-       :param save_images:                Save images to directory? 0 is no, 1 is yes
-       :type save_images:                 boolean
-       :param image_resolution:           Resolution in dpi to save images
-       :type image_resolution:            int
-       :param image_output_dir:           Directory to store the image outputs
-       :type image_output_dir:            dir
-       :return:                           Plot of state load time series and save to image directory
-        """
+    :param state:                      What state to plot state load time series
+    :type state:                       str
+
+    :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
+    :type data_input_dir:              str
+
+    :param year_to_plot:               What year to plot as a data visualization
+    :type year_to_plot:                str
+
+    :param save_images:                Save images to directory? 0 is no, 1 is yes
+    :type save_images:                 int
+
+    :param image_resolution:           Resolution in dpi to save images
+    :type image_resolution:            int
+
+    :param image_output_dir:           Directory to store the image outputs
+    :type image_output_dir:            str
+
+    :return:                           Plot of state load time series and save to image directory
+
+    """
+
     state_hourly_load_df = pd.read_csv(
         (data_input_dir + year_to_plot + '/' + 'TELL_State_Hourly_Load_Data_' + year_to_plot + '.csv'),
         parse_dates=["Time_UTC"])
@@ -121,8 +150,9 @@ def plot_state_load_time_series(state, data_input_dir, year_to_plot, save_images
     state_name = state_name.replace(" ", "_")
 
     if save_images == 1:
-        plt.savefig((image_output_dir + year_to_plot + '/' + 'TELL_State_Hourly_Loads_' + state_name + '_' + year_to_plot + '.png'),
-                    dpi=image_resolution, bbox_inches='tight')
+        plt.savefig((
+                                image_output_dir + year_to_plot + '/' + 'TELL_State_Hourly_Loads_' + state_name + '_'
+                                + year_to_plot + '.png'), dpi=image_resolution, bbox_inches='tight')
 
     load_df_sorted = state_subset_df.sort_values(by=['Scaled_TELL_State_Load_MWh'], ascending=False)
     load_df_sorted['Interval'] = 1
@@ -138,36 +168,45 @@ def plot_state_load_time_series(state, data_input_dir, year_to_plot, save_images
     state_name = state_subset_df['State_Name'].iloc[0]
     state_name = state_name.replace(" ", "_")
     if save_images == 1:
-        plt.savefig((image_output_dir + year_to_plot + '/' + 'TELL_State_Load_Duration_Curve_' + state_name + '_' + year_to_plot + '.png'),
-                    dpi=image_resolution, bbox_inches='tight')
-
-        # Define a function to plot time-series of hourly loads for a given BA based on the BA abbreviation or BA number:
+        plt.savefig((image_output_dir + year_to_plot + '/' + 'TELL_State_Load_Duration_Curve_' + state_name + '_' +
+                     year_to_plot + '.png'), dpi=image_resolution, bbox_inches='tight')
 
 
-def plot_ba_load_time_series(BA, data_input_dir, year_to_plot, save_images, image_resolution, image_output_dir):
+def plot_ba_load_time_series(ba: str, data_input_dir: str, year_to_plot: str, save_images: int, image_resolution: int,
+                             image_output_dir: str):
     """Plot the BA load time series and save to image directory
-       :param BA:                         What BA to plot load time series
-       :type BA:                          str
-       :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
-       :type data_input_dir:              dir
-       :param year_to_plot:               What year to plot as a data visualization
-       :type year_to_plot:                int
-       :param save_images:                Save images to directory? 0 is no, 1 is yes
-       :type save_images:                 boolean
-       :param image_resolution:           Resolution in dpi to save images
-       :type image_resolution:            int
-       :param image_output_dir:           Directory to store the image outputs
-       :type image_output_dir:            dir
-       :return:                            BA load time series plot and save to image directory
-        """
+
+    :param ba:                         What BA to plot load time series
+    :type ba:                          str
+
+    :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
+    :type data_input_dir:              str
+
+    :param year_to_plot:               What year to plot as a data visualization
+    :type year_to_plot:                str
+
+    :param save_images:                Save images to directory? 0 is no, 1 is yes
+    :type save_images:                 int
+
+    :param image_resolution:           Resolution in dpi to save images
+    :type image_resolution:            int
+
+    :param image_output_dir:           Directory to store the image outputs
+    :type image_output_dir:            str
+
+    :return:                            BA load time series plot and save to image directory
+
+    """
+
     # Read in the 'TELL_Balancing_Authority_Hourly_Load_Data' .csv file and display the dataframe:
-    ba_hourly_load_df = pd.read_csv((data_input_dir + year_to_plot + '/' + 'TELL_Balancing_Authority_Hourly_Load_Data_' + year_to_plot + '.csv'),
+    ba_hourly_load_df = pd.read_csv(
+        (data_input_dir + year_to_plot + '/' + 'TELL_Balancing_Authority_Hourly_Load_Data_' + year_to_plot + '.csv'),
         parse_dates=["Time_UTC"])
 
-    if (type(BA)) == str:
-        ba_subset_df = ba_hourly_load_df.loc[ba_hourly_load_df['BA_Code'] == BA]
-    if (type(BA)) == int:
-        ba_subset_df = ba_hourly_load_df.loc[ba_hourly_load_df['BA_Number'] == BA]
+    if (type(ba)) == str:
+        ba_subset_df = ba_hourly_load_df.loc[ba_hourly_load_df['BA_Code'] == ba]
+    if (type(ba)) == int:
+        ba_subset_df = ba_hourly_load_df.loc[ba_hourly_load_df['BA_Number'] == ba]
 
     fig, ax = plt.subplots(2, figsize=(22, 10), sharex=True, sharey=True)
     ax[0].plot(ba_subset_df['Time_UTC'], ba_subset_df['Raw_TELL_BA_Load_MWh'], 'k-', label='Raw Load', linewidth=0.5)
