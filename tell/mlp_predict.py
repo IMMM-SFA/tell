@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+from pandas import DataFrame
 from scipy.stats import pearsonr
 from sklearn.linear_model import LinearRegression as LR
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_percentage_error
@@ -15,63 +16,56 @@ from sklearn.model_selection import GridSearchCV
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
-# define month_list for plots
-MONTH_LIST = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "April",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-]
-
 # set random seed, change this value as you prefer
 np.random.seed(391)
 
 
 class Dataset:
-    """
-    class for preprocessing the dataset for all BAs
+    """Class for pre-processing the data set for all BAs
 
-    :param region: str indicating region/BA we want to train and test on. must match with str in csv
-    :param csv_dir: str dir where the csvs are located
-    :param start_time: str start time in YYYY-MM-DD. all data before this time as not considered
-    :param end_time: str end_time in YYYY-MM-DD. all data after this time is not considered
-    :param split_time: partition time in YYYY-MM-DD to split into training and test_set
-    :param x_var: list-> features to consider
-    :param y_var: list-> targets to consider
-    :param add_dayofweek: bool -> weather we want to consider weekday vs weekend informoation
-    :param linear_mode_bool: bool-> whether it is a linear model or not. if so, the month and hour will need to be sinusoidal
+    :param region:                      Indicating region/BA we want to train and test on. must match with str in csv
+    :type region:                       str
+
+    :param csv_dir:                     The directory where the csvs are located
+    :type csv_dir:                      str
+
+    :param start_time:                  The start time in YYYY-MM-DD. all data before this time as not considered
+    :type start_time:                   str
+
+    :param end_time:                    The end_time in YYYY-MM-DD. all data after this time is not considered
+    :type end_time:                     str
+
+    :param split_time:                  The partition time in YYYY-MM-DD to split into training and test_set
+    :type split_time:                   str
+
+    :param x_var:                       The features to consider
+    :type x_var:                        list
+
+    :param y_var:                       The targets to consider
+    :type y_var:                        list
+
+    :param add_dayofweek:               Whether we want to consider weekday vs weekend information
+    :type add_dayofweek:                bool
+
+    :param linear_mode_bool:            Whether it is a linear model or not. if so, the month and hour will need to be
+                                        sinusoidal
+    :type linear_mode_bool:             bool
 
     """
 
     def __init__(
-             self,
-             region = 'PJM',
-             csv_dir = "..\\CSV_Files",
-             start_time="2016-01-01 00:00:00",
-             end_time="2019-12-31 23:00:00",
-             split_time="2018-12-31 23:00:00",
-             x_var=[
-                 "Hour",
-                 "Month",
-                 "Temperature",
-                 "Specific_Humidity",
-                 "Wind_Speed",
-                 "Longwave_Radiation",
-                 "Shortwave_Radiation"
-             ],
-             # 'Longwave_Radiation', 'Wind_Speed'
-             y_var=["Demand"],
-             add_dayofweek=True,
-             linear_mode_bool=False,
-     ):
+            self,
+            region='PJM',
+            csv_dir="..\\CSV_Files",
+            start_time="2016-01-01 00:00:00",
+            end_time="2019-12-31 23:00:00",
+            split_time="2018-12-31 23:00:00",
+            x_var=["Hour", "Month", "Temperature", "Specific_Humidity", "Wind_Speed", "Longwave_Radiation",
+                   "Shortwave_Radiation"],
+            y_var=["Demand"],
+            add_dayofweek=True,
+            linear_mode_bool=False,
+    ):
 
         self.region = region
         self.csv_dir = csv_dir
@@ -98,13 +92,13 @@ class Dataset:
             self.Y_eval
         ) = self.preprocess_data(day_list=day_list)
 
-    def read_data(self):
+    def read_data(self) -> DataFrame:
+        """Function to read the data sets created in the data_process_compile_df.py script
 
-        """
-        Function to read csvs
-        :return df (pd.DataFrame) - entire data contained within start_time and end_time
-        :return df_t (pd.DataFrame) - training data (before split_time)
-        :return df_e (pd.DataFrame) - evaluation data (after split_time)
+        :return                 [0] df (pd.DataFrame) - entire data contained within start_time and end_time
+                                [1] df_t (pd.DataFrame) - training data (before split_time)
+                                [2] df_e (pd.DataFrame) - evaluation data (after split_time)
+
         """
 
         # step 1-> check filename
@@ -130,11 +124,13 @@ class Dataset:
         return df, df_t, df_e, df_eval, day_list
 
     @staticmethod
-    def rename_columns(df):
-        """
-        New method to map the column names in compiled_data to the names in the original code
-        :param df:
-        :return:
+    def rename_columns(df: DataFrame):
+        """New method to map the column names in data_process_compile_df.py to the names in the original code
+
+        :param df:                  DataFrame created from the data_process_compile_df.py script
+        :type df:                   DataFrame
+
+        :return:                    DataFrame with renamed columns
         """
 
         map_dict = {
@@ -151,64 +147,70 @@ class Dataset:
 
         return df_out
 
-    def preprocess_data(self, day_list=None):
+    def preprocess_data(self):
         """Takes the features and targets from df
 
-        :return: df_t -> training dataframe df_e -> eval dataframe
+        :return:                    df_t -> training dataframe df_e -> eval dataframe
 
         """
 
         # sort the entire df by the column headers we require
-        if self.add_dayofweek == True:
-            self.x_var = self.x_var + ["Weekday", "Holidays"]
+        if self.add_dayofweek:
+            self.x_var = self.x_var + ['Weekday', 'Holidays']
 
         # extract the training and test data. only including datetime, x_var (features) and y_var (targets)
-        df_t, df_e, df_eval = (
-            self.df_t[["Datetime"] + self.x_var + self.y_var],
-            self.df_e[["Datetime"] + self.x_var + self.y_var],
-            self.df_eval[["Datetime"] + self.x_var + self.y_var],
-        )
+        df_t, df_e, df_eval = [
+            self.df_t[['Datetime'] + self.x_var + self.y_var],
+            self.df_e[['Datetime'] + self.x_var + self.y_var],
+            self.df_eval[['Datetime'] + self.x_var + self.y_var], ]
+
         X_t, X_e, X_eval = df_t[self.x_var], df_e[self.x_var], df_eval[self.x_var]
         Y_t, Y_e, Y_eval = df_t[self.y_var], df_e[self.y_var], df_eval[self.y_var]
 
         return df_t, df_e, df_eval, X_t, X_e, X_eval, Y_t, Y_e, Y_eval
 
-    def get_filename(self):
+    def get_filename(self) -> str:
+        """Function to extract filename for specific region
 
-        """
-        function to extract filename for that
-        :return filename: str filename corresponding to that region
+        :return:                 filename: str filename corresponding to that region
+
         """
 
         str_to_check = os.path.join(self.csv_dir, f"{self.region}_*.csv")  # pattern to search for
-        filename = glob.glob(str_to_check)[0]  # [0] list all filenames with the string str_to_check
+        filename = glob.glob(str_to_check)[0]  # [0] list all file names with the string str_to_check
 
         return filename
 
-    def sort_timeframe(self, df):
+    def sort_timeframe(self, df: DataFrame) -> DataFrame:
+        """Function to filter data frame by specified time frame self.start_time and self.end Time
+
+        :param df:                      DataFrame created from the data_process_compile_df.py script
+        :type df:                       DataFrame
+
+        :return:                        df_out: sorted df
 
         """
-        function to filter dataframe by specified timeframe self.start_time and self.end Time
-        :return df_out: sorted df
-        """
-        df["Datetime"] = pd.to_datetime(
-            df[["Day", "Month", "Year", "Hour"]]
-        )  # Hour added
+
+        df["Datetime"] = pd.to_datetime(df[["Day", "Month", "Year", "Hour"]])  # Hour added
 
         df = df[
-            (df["Datetime"] >= self.start_time) & (df["Datetime"] <= self.end_time)
-            ]  # sort df by start time endtime
+            (df["Datetime"] >= self.start_time) & (df["Datetime"] <= self.end_time)]  # sort df by start time endtime
 
-        df = df.reset_index(drop=True)  # rese
+        df = df.reset_index(drop=True)  # reset index
 
         return df
 
-    def drop_neg_rows(self, df, drop_nan=True):
+    def drop_neg_rows(self, df: DataFrame, drop_nan=True) -> DataFrame:
+        """This method drops -9999 values. it also drops "extreme" values, i.e. demand that lies outside +/- 5*sigma
 
-        """
-        This method drops -9999 values. it also drops "extreme" values, i.e. demand that lies outside +/- 5*sigma
-        :param df:
-        :return:
+        :param df:                      DataFrame created from the data_process_compile_df.py script
+        :type df:                       DataFrame
+
+        :param drop_nan:                Whether or not to drop NAN values (default is TRUE)
+        :type drop_nan:                 bool
+
+        :return:                        DataFrame without NAN values
+
         """
 
         # step 1: identify and remove Nan values
@@ -225,28 +227,28 @@ class Dataset:
         if drop_nan:
             df = df.drop(df.index[idx_zero])
         else:
-            #df.loc[df["Demand"] == 0]["Demand"] = -9999
             df.loc[df["Demand"] == 0, "Demand"] = -9999
 
         mu_y, sigma_y = df["Demand"].mean(), df["Demand"].std()
-        idx_1 = np.where(
-            (df["Demand"] <= mu_y - 5 * sigma_y) | (df["Demand"] >= mu_y + 5 * sigma_y)
-        )
+        idx_1 = np.where((df["Demand"] <= mu_y - 5 * sigma_y) | (df["Demand"] >= mu_y + 5 * sigma_y))
 
         if drop_nan:
             df_out = df.drop(df.index[idx_1])
         else:
-            df.loc[(df["Demand"] <= mu_y - 5 * sigma_y) | (df["Demand"] >= mu_y + 5 * sigma_y), "Demand"]= -9999
+            df.loc[(df["Demand"] <= mu_y - 5 * sigma_y) | (df["Demand"] >= mu_y + 5 * sigma_y), "Demand"] = -9999
             df_out = df.copy()
 
         return df_out
 
-    def partition_data(self, df):
+    def partition_data(self, df: DataFrame) -> DataFrame:
+        """This method takes in df as an argument and splits them into a training and a test set
 
-        """
-        This method takes in df as an argument and splits them into a training and a test set
-        :param df: contains entire dataset specified using start_time and end_time
-        :return df_t, df_e: dfs for training and test data respectively
+        :param df:                      DataFrame created from the data_process_compile_df.py script
+        :type df:                       DataFrame
+
+        :return                         [0] df_t,
+                                        [1] df_e: dfs for training and test data respectively
+
         """
 
         df_t = df[(df["Datetime"] <= self.split_time)]
@@ -254,13 +256,14 @@ class Dataset:
 
         return df_t, df_e
 
-    def remove_federal_holidays(self, df):
+    def remove_federal_holidays(self, df: DataFrame) -> DataFrame:
+        """Function to identify federal holidays. if federal holidays, the df[Holidays] = 1
 
-        """
-        Function to identify federal holidays. if federal holidays, the df[Holidays] = 1
-        :param df: input dataframe
-        :param year: year for which the holiday list needs to be determined. default -> global variable YEAR
-        :return: Dataframe without holidays included
+        :param df:                      DataFrame created from the data_process_compile_df.py script
+        :type df:                       DataFrame
+
+        :return:                        DataFrame without holidays included
+
         """
 
         year_min, year_max = df["Datetime"].dt.year.min(), df["Datetime"].dt.year.max()
@@ -276,10 +279,9 @@ class Dataset:
         return df
 
     def troubleshoot_by_plot(self):
+        """Plot to troubleshoot if the training data has missing values.
 
-        """
-        plot to troubleshoot if the training data has missing values.
-        :return:
+        :return:                    None
         """
 
         plt.plot(self.df_t["Datetime"], self.df_t["Demand"])
@@ -287,9 +289,16 @@ class Dataset:
         plt.ylabel("Demand (MW)", fontsize=20)
         plt.show()
 
-        return None
+    def preprocess_timedata(self, df: DataFrame):
+        """Function to manipulate time varaibles
 
-    def preprocess_timedata(self, df):
+        :param df:                      DataFrame created from the data_process_compile_df.py script
+        :type df:                       DataFrame
+
+        :return:                        [0] DataFrame with manipulated time variables
+                                        [1] Day of week list
+
+        """
 
         day_list = None
 
@@ -321,7 +330,7 @@ class Dataset:
             # concat day of week with df
             df_dayofweek = pd.DataFrame(day_of_week)
 
-            # weeklist
+            # week list
             day_list = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
             df_dayofweek.columns = day_list
             df = pd.concat((df, df_dayofweek), axis=1)
@@ -332,10 +341,10 @@ class Dataset:
         return df, day_list
 
     def compute_pearson(self):
+        """Computes the pearson coeff for each x in self.x_var and each y in self.y_var
 
-        """
-        Computes the pearson coeff for each x in self.x_var and each y in self.y_var
-        :return:
+        :return:                   None
+
         """
 
         for x in self.x_var:
@@ -346,21 +355,24 @@ class Dataset:
                     )
                 )
 
-        return None
-
 
 class Hyperparameters:
-    """
-    class for hyperparameter search
-    only used when we need to optimize hyperpaaremters for a specific balancing authority
+    """Class for hyper-parameter search only used when we need to optimize hyper-parameters for a specific balancing
+    authority
+
     """
 
-    def __init__(self, model_str, X, Y):
+    def __init__(self, model_str: str, X: str, Y: str):
         """
+        :param model_str: Indicating model type. currently only mlp is supported
+        :type model_str: str
 
-        :param model_str: str -> indicating model type. currently only mlp is supported
         :param X: features in training set
+        :type X: str
+
         :param Y: targets in training set
+        :type Y: str
+
         """
 
         # assigning model variables
@@ -371,24 +383,27 @@ class Hyperparameters:
             self.mlp()
 
     def mlp(self):
+        """Performs hyper-parameter optimization for an mlp
+
+        :return:                None
+
         """
-        performs hyperparameter optimization for an mlp
-        :return:
-        """
+
         model = MLP(max_iter=1000)  # instantiate MLP model with 100 training epochs
         params = self.set_mlp_params()  # params -> a dict containing search space of all hyperparameters
         clf = GridSearchCV(model, params, verbose=1)  # performing grid search cross-validation for one BA
         clf.fit(self.X, self.Y)  # fit gridsearch obj with data (X, Y)
 
-        return None
-
     def set_mlp_params(self):
+        """Function to set hyperparameters for MLP currently only MLP with 1 hidden layer is supported. the only
+        hyper-parameter is size of hidden layer
+
+        :return                         params: dict containing search space for hyperparameters
+
         """
-        function to set hyperparameters for MLP
-        currently only MLP with 1 hidden layer is supported. the only hyperparameter is size of hidden layer
-        :return params: dict containing search space for hyperparameters
-        """
+
         params = dict()  # instantiate params
+
         # define hyperparameters search space. currently only supporting MLP with 1 hidden l
         params["hidden_layer_sizes"] = [16, 32, 64, 128, 256, 712, 1028]
 
@@ -396,16 +411,32 @@ class Hyperparameters:
 
 
 class MlLib:
-    """
-    class to train and evaluate ML models
-    :param X_t: df -> training data,
-    :param Y_t: df -> training targets
-    :param X_e: df -> test data
-    :param Y_e: df -> test targets
-    :param model: str type of model to pick
-    :param datetime: array of dates for the
-    :param_fig_names: dict containing names of all the figures we want, including timeseries, seasonal prob dist, and cdf
-    :param dict_res: dict containing data needed for training and avaluation of residual model
+    """Class to train and evaluate ML models
+
+    :param X_t:                         Training data
+    :type X_t:                          np.array
+
+    :param Y_t:                         Training targets
+    :type Y_t:                          np.array
+
+    :param X_e:                         Test data
+    :type X_e:                          np.array
+
+    :param Y_e:                         Test targets
+    :type Y_e:                          np.array
+
+    :param model:                       Type of model to pick
+    :type model:                        str
+
+    :param datetime:                    Array of dates for the model
+    :type datetime:                     np.array
+
+    :param fig_names:                   Names of all the figures we want, including time-series, seasonal prob dist,
+                                        and cdf
+    :type fig_names:                    dict
+
+    :param dict_res:                    Data needed for training and evaluation of residual model
+    :type dict_res:                     dict
 
     :param generate_plots:              Choice to generate and save plots
     :type generate_plots:               bool
@@ -413,19 +444,19 @@ class MlLib:
     """
 
     def __init__(
-             self,
-             X_t,
-             Y_t,
-             X_e,
-             fig_names=None,
-             datetime=None,
-             Y_e=None,
-             Y_eval=None,
-             model="mlp",
-             dict_res=None,
-             generate_plots=True,
-             plot_gt=False
-     ):
+            self,
+            X_t,
+            Y_t,
+            X_e,
+            fig_names=None,
+            datetime=None,
+            Y_e=None,
+            Y_eval=None,
+            model="mlp",
+            dict_res=None,
+            generate_plots=True,
+            plot_gt=False
+    ):
 
         self.generate_plots = generate_plots
         self.plot_gt = plot_gt
@@ -463,36 +494,47 @@ class MlLib:
         # evaluation
         self.analyze_results()
 
-    def linear_model(self, X, Y, X_e):
+    def linear_model(self, X: np.array, Y: np.array, X_e: np.array):
+        """Training and test data of a linear model. can be used for either the main model or the residual model
 
-        """
-        training and test data of a linear model. can be used for either the main model or the residual model
-        :param X: training features
-        :param Y: training targets
-        :param X_e: test features
-        :return y_p: predictions over test set
-        :return reg.coef_: regression coefficients of a linear model
+        :param X:                       Training features
+        :type X:                        np.array
+
+        :param Y:                       Training targets
+        :type Y:                        np.array
+
+        :param X_e:                     Test features
+        :type X_e:                      np.array
+
+        :return                         [0] y_p: predictions over test set
+                                        [1] reg.coef_: regression coefficients of a linear model
+
         """
 
         # instantiate and fit linear model
+
         reg = LR().fit(X=X, y=Y)
+
         # get predictions
         y_p = reg.predict(X_e)
 
         return y_p, reg.coef_
 
-    def mlp_model(self, X, Y, X_e, X_eval=None):
+    def mlp_model(self, X: np.array, Y: np.array, X_e: np.array, X_eval=None):
+        """Trains the MLP model. also calls the linear residual model to adjust for population correction
+
+        :param X:                       Training features
+        :type X:                        np.array
+
+        :param Y:                       Training targets
+        :type Y:                        np.array
+
+        :param X_e:                     Test features
+        :type X_e:                      np.array
+
+        :return:                        y_p: np.array -> predictions over test set
 
         """
-        trains the MLP model. also calls the linear residual model to adjust for population correction
-        :param X: np.array -> train features
-        :param Y: np.array -> train targets
-        :param X_e: np.array -> test features
-        :return: y_p: np.array -> predictions over test set
-        """
-
-        # currently hyperparameter selection is deactivate
-        # hyp_mlp = hyperparameters(model_str='mlp', X=X, Y=Y)
 
         # instantiate and train the mlp model. we found 256 to be a good hyperparameter pick over some of larger bas
         # performing hyperparameter search over all BAs may be computationally expensive
@@ -514,10 +556,14 @@ class MlLib:
 
         return y_p
 
-    def linear_residual(self, epsilon):
+    def linear_residual(self, epsilon: int):
+        """Function to fit the residuals of MLP predictions
 
-        """
-        function to fit the residuals of MLP predictions
+        :param epsilon:                 epsilon
+        :type epsilon:                  int
+
+        :return:                        epsilon_p
+
         """
 
         # fit the residuals with a linear model if a dict_res is provided
@@ -528,6 +574,11 @@ class MlLib:
         return epsilon_p
 
     def pick_model(self):
+        """Function to pick the "best" model
+
+        :return:                        y_p
+
+        """
 
         if self.model == "linear":
             y_p, coeff = self.linear_model(X=self.x_t, Y=self.y_t, X_e=self.x_e)
@@ -542,7 +593,12 @@ class MlLib:
 
         return y_p
 
-    def scale_features(self):
+    def scale_features(self) -> dict:
+        """Function to scale the features of the model
+
+        :return:                        dict_out, Dictionary of scaled features
+
+        """
 
         # get the mean and std of training set
         mu_x, sigma_x = np.mean(self.X_t), np.std(self.X_t)
@@ -572,7 +628,18 @@ class MlLib:
 
         return dict_out
 
-    def unscale_targets(self, out, y_p):
+    def unscale_targets(self, out: dict, y_p: np.array) -> np.array:
+        """Function to unscale the targets of the model
+
+        :param out:                Dict output from scale_features function
+        :type out:                 dict
+
+        :param y_p:                Predictions over test set
+        :type y_p:                 np.array
+
+        :return:                    Y_p
+
+        """
 
         mu_y, sigma_y = out["mu_y"], out["sigma_y"]
         Y_p = y_p * sigma_y + mu_y
@@ -580,10 +647,10 @@ class MlLib:
         return Y_p
 
     def analyze_results(self):
+        """Function to compute the evaluation metrics, and prepare plots
 
-        """
-        Function to compute the evaluation metrics, and prepare plots
-        :return:
+        :return:                    None
+
         """
 
         # define locator and formatter for plots
@@ -638,12 +705,11 @@ class MlLib:
         # evaluate the model
         self.evaluation_metrics()
 
-        return None
-
     def evaluation_metrics(self):
+        """Method to compute the evaluation metrics
 
-        """
-        method to compute the evaluation metrics
+        :return:                        None
+
         """
 
         # remove all the nan in self.Y_eval before evaluation
@@ -662,13 +728,11 @@ class MlLib:
         print("MAPE: ", self.mape)
         print("R2 value: ", self.r2_val)
 
-        return None
-
     def evaluate_peaks(self):
+        """This function is to compute the difference in peak values and in peak timings
 
-        """
-        This function is to compute the difference in peak values and in peak timimngs
-        :return:
+        :return:                    None
+
         """
 
         df_grp = self.df_results.groupby(pd.Grouper(key="Datetime", freq="D"))
@@ -677,7 +741,7 @@ class MlLib:
         idx_Yp = df_grp["Y_p"].idxmax().values
         peak_Ye, peak_Yp = self.Y_e[idx_Ye], self.Y_p[idx_Yp]
 
-        # define peaktimes
+        # define peak times
         time_Ye, time_Yp = self.datetime[idx_Ye], self.datetime[idx_Yp]
 
         delta_time = np.abs(idx_Yp - idx_Ye)
@@ -687,9 +751,15 @@ class MlLib:
         self.peak_abs = np.sqrt(mean_squared_error(peak_Ye, peak_Yp))
         self.peak_err = mean_absolute_percentage_error(peak_Ye, peak_Yp)
 
-        return None
-
     def monthly_plots(self):
+        """This function creates the monthly plots of observed and predicted hourly load
+
+         :return:                    None
+
+         """
+
+        # define month_list for plots
+        MONTH_LIST = ["Jan", "Feb", "Mar", "April", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
         # set rcparams
         plt.rcParams.update({"font.size": 18})
@@ -718,10 +788,27 @@ class MlLib:
             # print median value
             e = (df["Y_e"] - df["Y_p"]) / df["Y_e"]
 
-        return None
-
 
 class Analysis:
+    """Train and evaluate each individual BAs. Generates output CSV files under directory outputs
+    Trains the "residual model" as well for population correction.
+
+    :param data_dir:                Full path to dir for data source
+    :type data_dir:                 str
+
+    :param out_dir:                 Full path to dir for output csvs and figures
+    :type data_dir:                 str
+
+    :param start_time:              Start-time for analysis, in YYYY-MM-DD HH:MM:SS. Default: 2016-01-01 00:00:00
+    :type start_time:               str
+
+    :param end_time:                End time for analysis. Default: 2019-12-31 23:00:00
+    :type end_time:                 str
+
+    :param split_time:              Timestamp splitting train and test data. Default: 2018-12-31 23:00:00
+    :type split_time:               str
+
+    """
 
     def __init__(
             self,
@@ -734,17 +821,6 @@ class Analysis:
             generate_plots=True,
             plot_gt=False
     ):
-        """Train and evaluate each individual BAs. Generates output CSV files under directory outputs
-        Trains the "residual model" as well for population correction.
-
-        :param data_dir:                str indicating full path to dir for data source
-        :param out_dir:                 str indicating full path to dir for output csvs and figures
-        :param start_time:              str indicating the start-time for analysis. Format YYYY-MM-DD HH:MM:SS.
-                                        Default: 2016-01-01 00:00:00
-        :param end_time:                str indicating the end time for analysis. Default: 2019-12-31 23:00:00
-        :param split_time:              str indicating the timestamp splitting train and test data.
-                                        Default: 2018-12-31 23:00:00
-        """
 
         self.start_time = start_time
         self.end_time = end_time
@@ -815,6 +891,11 @@ class Analysis:
         self.test_multiple_models()
 
     def test_multiple_models(self):
+        """This function tests multiple model types
+
+         :return:                    None
+
+         """
 
         Yp_list = []
         # get labels for predictions based on type of model
@@ -857,14 +938,13 @@ class Analysis:
                 self.R2 = ml.r2_val
                 self.MAPE = ml.mape
 
-        return None
-
-    def set_fignames(self, model_name):
-
+    def set_fignames(self, model_name: str) -> dict:
         """Set figure names for timeseries plots and probability distributions of error residuals by month
 
-        :param model_name: str -> model name (e.g. 'linear', 'mlp')
-        :return: fig_names: dict -> containing list of figures for 'timeSeries' and 'dist'
+        :param model_name:                   Model name (e.g. 'linear', 'mlp')
+        :type model_name:                    str
+
+        :return:                            fig_names: dict -> containing list of figures for 'timeSeries' and 'dist'
 
         """
 
@@ -879,13 +959,18 @@ class Analysis:
         return fig_names
 
     def plot_reg(self, Y_a, Y_p, label):
+        """ Method for regression plots (automatically saves them)
 
-        """
-        Method for regression Plots
-        :param Y_a: array containing ground truth
-        :param Y_p:
-        :param label:
-        :return:
+        :param Y_a:                     Array containing ground truth
+        :type Y_a:                      np.array
+
+        :param Y_p:                     Array containing predicted hourly load
+        :type Y_a:                      np.array
+
+        :param label:                   Label for plot
+        :type label:                    str
+
+        :return:                        None
         """
 
         plt.rcParams.update({"font.size": 16})
@@ -901,15 +986,17 @@ class Analysis:
         plt.tight_layout()
         plt.savefig(fig_name)
 
-        return None
+    def write_output_to_file(self, Y_p: np.array, model: str):
+        """This function is used to write output of each model
 
-    def write_output_to_file(self, Y_p, model):
+        :param Y_p:                     Model hourly load predictions
+        :type Y_p:                      np.array
 
-        """
-        This function is used to write output
-        Y_p: predictions (np array)
-        model: str to label which model it is
-        :return: None
+        :param model:                   Label for the model
+        :type model:                    str
+
+        :return:                        None
+
         """
 
         # need to flatten self.Y_e, as the dimensions are (..,1)
@@ -930,6 +1017,39 @@ class Analysis:
 
 
 class Process:
+    """Run multiple BA
+
+    :param start_time:              Start-time for analysis, in YYYY-MM-DD HH:MM:SS. Default: 2016-01-01 00:00:00
+    :type start_time:               str
+
+    :param end_time:                End time for analysis. Default: 2019-12-31 23:00:00
+    :param end_time:                str
+
+    :param split_time:              Timestamp splitting train and test data. Default: 2018-12-31 23:00:00
+    :type split_time:               str
+
+    :param batch_run:               Indicating if we want to run the simulations for all BAs, or we handpick the BAs
+                                    If batch_run = True, the code will search for all BAs in 'dir'
+                                    If batch_run = False, we need to specify which BA to run
+    :type batch_run:                bool
+
+    :param data_dir:                Full path to the directory containing the target
+                                    CSV files
+    :type data_dir:                 str
+
+    :param out_dir:                 Full path to the directory where the outputs are to be written
+    :type out_dir:                  str
+
+    :param target_ba_list:          A list of BA names to run if `batch_run` is False
+    :type target_ba_list:           list
+
+    :param generate_plots:          Choice to generate and save plots
+    :type generate_plots:           bool
+
+    :param plot_gt:                 Choice to plot ground truth data in plot along with MLP predictions
+    :type plot_gt:                  bool
+
+    """
 
     def __init__(
             self,
@@ -943,35 +1063,6 @@ class Process:
             generate_plots=True,
             plot_gt=False
     ):
-        """Run multiple BA
-
-        :param start_time:              str indicating the start-time for analysis. Format YYYY-MM-DD HH:MM:SS.
-                                        Default: 2016-01-01 00:00:00
-        :param end_time:                str indicating the end time for analysis. Default: 2019-12-31 23:00:00
-        :param split_time:              str indicating the timestamp splitting train and test data.
-                                        Default: 2018-12-31 23:00:00
-        :param batch_run:               Indicating if we want to run the simulations for all BAs, or we handpick the BAs
-                                        If batch_run = True, the code will search for all BAs in 'dir'
-                                        If batch_run = False, we need to specify which BA to run
-        :type batch_run:                bool
-
-        :param data_dir:                Full path to the directory containing the target
-                                        CSV files
-        :type data_dir:                 str
-
-        :param out_dir:                 Full path to the directory where the outputs are to be written
-        :type out_dir:                  str
-
-        :param target_ba_list:          A list of BA names to run if `batch_run` is False
-        :type target_ba_list:           list
-
-        :param generate_plots:          Choice to generate and save plots
-        :type generate_plots:           bool
-
-        :param plot_gt:                 Choice to plot ground truth data in plot along with MLP predictions
-        :type plot_gt:                  bool
-
-        """
 
         self.start_time = start_time
         self.end_time = end_time
@@ -1002,7 +1093,7 @@ class Process:
         # loop over all BAs. generates summary.csv to show accuracy of all BAs
         self.summary_df = self.gen_results()  # steo ii: gen_results
 
-    def search_for_pattern(self):
+    def search_for_pattern(self) -> list:
         """Sets self.ba_list to get a list of BAs for training and evaluation.
 
         :return:            List of BAs to process
@@ -1019,10 +1110,10 @@ class Process:
 
         return BA_list
 
-    def gen_results(self):
+    def gen_results(self) -> DataFrame:
         """Writes all outputs to csvs + a summary file with the evaluation metrics.
 
-        :return:
+        :return:                        Summary file of model statistics
 
         """
 
@@ -1057,51 +1148,39 @@ class Process:
         return df
 
 
-def single_ba(
-        data_dir,
-        out_dir,
-        ba='PJM',
-        start_time="2016-01-01 00:00:00",
-        end_time="2018-07-14 23:00:00",
-        split_time="2018-06-30 23:00:00",
-        plot_gt=False
-):
+def single_ba(data_dir, out_dir, ba='PJM', start_time="2016-01-01 00:00:00", end_time="2018-07-14 23:00:00",
+             split_time="2018-06-30 23:00:00", plot_gt=False):
     """
     Convenience wrapper for the Analysis class which runs predictive models for a single BA input CSV in the input
     calls on the analysis function to train and infer on single BA
     useful for troubleshooting
 
-    :param data_dir:                Full path to the directory containing the target
-                                    CSV files
+    :param data_dir:                Full path to the directory containing the target CSV files
+    :type data_dir:                 str
+
     :param out_dir:                 Full path to the directory where the outputs are to be written
+    :type data_dir:                 str
 
-    :param ba:                      str indicating the balancing authority. default: PJM
-    :param start_time:              str indicating the start-time for analysis. Format YYYY-MM-DD HH:MM:SS.
-                                    Default: 2016-01-01 00:00:00
-    :param end_time:                str indicating the end time for analysis. Default: 2019-12-31 23:00:00
-    :param split_time:              str indicating the timestamp splitting train and test data.
-                                    Default: 2018-12-31 23:00:00
+    :param ba:                      Balancing authority to run analysis. default: PJM
+    :type ba:                       str
 
-    :param batch_run:               Indicating if we want to run the simulations for all BAs, or we handpick the BAs
-                                    If batch_run = True, the code will search for all BAs in 'dir'
-                                    If batch_run = False, we need to specify which BA to run
-    :type batch_run:                bool
+    :param start_time:              Start-time for analysis, in YYY-MM-DD HH:MM:SS. Default: 2016-01-01 00:00:00
+    :type start_time:               str
 
-    :param target_ba_list:          A list of BA names to run if `batch_run` is False
-    :type target_ba_list:           list
+    :param end_time:                End time for analysis. Default: 2019-12-31 23:00:00
+    :type end_time:                 str
 
-
-    :param generate_plots:          Choice to generate and save plots
-    :type generate_plots:           bool
+    :param split_time:              Timestamp splitting train and test data. Default: 2018-12-31 23:00:00
+    :type split_time:               str
 
     :param plot_gt:                 Choice to plot ground truth with MLP predictions
-    :type plot_gt:                 bool
+    :type plot_gt:                  bool
 
     :return:                        Data frame of BA, R2, MAPE statistics
-h
+
     """
 
-    analysis = Analysis(
+    Analysis(
         data_dir=data_dir,
         out_dir=out_dir,
         region=ba,
@@ -1111,32 +1190,27 @@ h
         plot_gt=plot_gt
     )
 
-    return None
 
+def predict(data_dir, out_dir, start_time="2016-01-01 00:00:00", end_time="2019-12-31 23:00:00",
+        split_time="2018-12-31 23:00:00", batch_run=True, target_ba_list=None, generate_plots=True):
 
-def predict(
-        data_dir,
-        out_dir,
-        start_time="2016-01-01 00:00:00",
-        end_time="2019-12-31 23:00:00",
-        split_time="2018-12-31 23:00:00",
-        batch_run=True,
-        target_ba_list=None,
-        generate_plots=True):
     """Convenience wrapper for the Process class which runs predictive models for each BA input CSV in the input
     directory and creates a summary and comparative figures of R2 and MAPE per BA.
 
-    :param data_dir:                Full path to the directory containing the target
-                                    CSV files
+    :param data_dir:                Full path to the directory containing the target CSV files
     :type data_dir:                 str
 
     :param out_dir:                 Full path to the directory where the outputs are to be written
+    :type out_dir:                  str
 
-    :param start_time:              str indicating the start-time for analysis. Format YYYY-MM-DD HH:MM:SS.
-                                    Default: 2016-01-01 00:00:00
-    :param end_time:                str indicating the end time for analysis. Default: 2019-12-31 23:00:00
-    :param split_time:              str indicating the timestamp splitting train and test data.
-                                    Default: 2018-12-31 23:00:00
+    :param start_time:              Start-time for analysis, in YYY-MM-DD HH:MM:SS. Default: 2016-01-01 00:00:00
+    :type start_time:               str
+
+    :param end_time:                End time for analysis. Default: 2019-12-31 23:00:00
+    :type end_time:                 str
+
+    :param split_time:              Timestamp splitting train and test data. Default: 2018-12-31 23:00:00
+    :type split_time:               str
 
     :param batch_run:               Indicating if we want to run the simulations for all BAs, or we handpick the BAs
                                     If batch_run = True, the code will search for all BAs in 'dir'
@@ -1149,9 +1223,6 @@ def predict(
 
     :param generate_plots:          Choice to generate and save plots
     :type generate_plots:           bool
-
-    :param plot_gt:                 Choice on whether to plot ground truth with MLP predictions
-    :type plot_gt:                  bool
 
     :return:                        Data frame of BA, R2, MAPE statistics
 
@@ -1169,15 +1240,3 @@ def predict(
     )
 
     return proc.summary_df
-
-
-# if __name__ == "__main__":
-#     single_ba(
-#         data_dir='../data/csv/',
-#         out_dir='../python_scripts/outputs',
-#         ba='SOCO',
-#         start_time="2016-01-01 00:00:00",
-#         end_time="2019-12-31 23:00:00",
-#         split_time="2018-12-31 23:00:00",
-#         plot_gt=True
-#     )
