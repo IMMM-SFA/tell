@@ -58,6 +58,12 @@ class InstallSupplement:
                     basename = os.path.basename(f)
                     out_file = os.path.join(data_directory, basename)
 
+                    # check header to get content length, in bytes
+                    total_length = int(r.headers.get("Content-Length"))
+
+                    # implement progress bar via tqdm
+                    with tqdm.wrapattr(r.raw, "read", total=total_length, desc="")as raw:
+
                     # extract to a temporary directory to be able to only keep the file out of the dir structure
                     with tempfile.TemporaryDirectory() as tdir:
 

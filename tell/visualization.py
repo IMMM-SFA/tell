@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
-def plot_state_scaling_factors(shapefile_input_dir: str, data_input_dir: str, year_to_plot: str, save_images: int,
-                               image_resolution: int, image_output_dir: str):
+def plot_state_scaling_factors(shapefile_input_dir: str, data_input_dir: str, year_to_plot: str, image_resolution: int,
+                               image_output_dir: str, save_images=0):
     """Create state scaling factors map and save image in image directory
 
     :param shapefile_input_dir:        Directory where the Census TL shapefile is stored
@@ -18,7 +18,7 @@ def plot_state_scaling_factors(shapefile_input_dir: str, data_input_dir: str, ye
     :param year_to_plot:               What year to plot as a data visualization
     :type year_to_plot:                str
 
-    :param save_images:                Save images to directory? 0 is no, 1 is yes
+    :param save_images:                Save images to directory? 0 is no, 1 is yes (default = 0)
     :type save_images:                 int
 
     :param image_resolution:           Resolution in dpi to save images
@@ -60,8 +60,8 @@ def plot_state_scaling_factors(shapefile_input_dir: str, data_input_dir: str, ye
                                       year_to_plot + '.png'), dpi=image_resolution, bbox_inches='tight')
 
 
-def plot_state_annual_total_loads(data_input_dir: str, year_to_plot: str, save_images: int, image_resolution: int,
-                                  image_output_dir: str):
+def plot_state_annual_total_loads(data_input_dir: str, year_to_plot: str,  image_resolution: int, image_output_dir: str,
+                                  save_images=0):
     """Plot the state annual total loads and save to image directory
 
     :param data_input_dir:             Directory to store the EIA 930 hourly load data as a csv
@@ -70,7 +70,7 @@ def plot_state_annual_total_loads(data_input_dir: str, year_to_plot: str, save_i
     :param year_to_plot:               What year to plot as a data visualization
     :type year_to_plot:                str
 
-    :param save_images:                Save images to directory? 0 is no, 1 is yes
+    :param save_images:                Save images to directory? 0 is no, 1 is yes (default = 0)
     :type save_images:                 int
 
     :param image_resolution:           Resolution in dpi to save images
@@ -102,8 +102,8 @@ def plot_state_annual_total_loads(data_input_dir: str, year_to_plot: str, save_i
                     dpi=image_resolution, bbox_inches='tight')
 
 
-def plot_state_load_time_series(state: str, data_input_dir: str, year_to_plot: str, save_images: int,
-                                image_resolution: int, image_output_dir: str):
+def plot_state_load_time_series(state: str, data_input_dir: str, year_to_plot: str,  image_resolution: int,
+                                image_output_dir: str, save_images=0):
     """Plot state load time series and save to image directory
     :param state:                      What state to plot state load time series
     :type state:                       str
@@ -114,7 +114,7 @@ def plot_state_load_time_series(state: str, data_input_dir: str, year_to_plot: s
     :param year_to_plot:               What year to plot as a data visualization
     :type year_to_plot:                str
 
-    :param save_images:                Save images to directory? 0 is no, 1 is yes
+    :param save_images:                Save images to directory? 0 is no, 1 is yes (default = 0)
     :type save_images:                 int
 
     :param image_resolution:           Resolution in dpi to save images
@@ -172,8 +172,8 @@ def plot_state_load_time_series(state: str, data_input_dir: str, year_to_plot: s
                      year_to_plot + '.png'), dpi=image_resolution, bbox_inches='tight')
 
 
-def plot_ba_load_time_series(ba: str, data_input_dir: str, year_to_plot: str, save_images: int, image_resolution: int,
-                             image_output_dir: str):
+def plot_ba_load_time_series(ba: str, data_input_dir: str, year_to_plot: str,  image_resolution: int,
+                             image_output_dir: str, save_images=0):
     """Plot the BA load time series and save to image directory
 
     :param ba:                         What BA to plot load time series
@@ -185,7 +185,7 @@ def plot_ba_load_time_series(ba: str, data_input_dir: str, year_to_plot: str, sa
     :param year_to_plot:               What year to plot as a data visualization
     :type year_to_plot:                str
 
-    :param save_images:                Save images to directory? 0 is no, 1 is yes
+    :param save_images:                Save images to directory? 0 is no, 1 is yes (default = 0)
     :type save_images:                 int
 
     :param image_resolution:           Resolution in dpi to save images
