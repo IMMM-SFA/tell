@@ -1,12 +1,10 @@
 AEC: PowerSouth Energy Cooperative
 AECI: Associated Electric Cooperative Incorporated
-AMPL: N/A
 AVA: Avista Corporation
 AVRN: Avangrid Renewables
 AZPS: Arizona Public Service Company
 BANC: Balancing Authority of Northern California
 BPAT: Bonneville Power Administration
-CEA: N/A
 CHPD: Public Utility District No. 1 of Chelan County
 CISO: California Independent System Operator
 CPLE: Duke Energy Progress East
@@ -21,13 +19,13 @@ FMPP: Florida Municipal Power Pool
 FPC: Duke Energy Florida
 FPL: Florida Power and Light
 GCPD: Public Utility District No. 2 of Grant County
+GLHB: GridLiance
 GRID: Gridforce Energy Management
 GRIF: Griffith Energy
-GRIS: N/A
 GRMA: Gila  River Power
 GVL: Gainesville Regional Utilities
 GWA: NaturEner Power Watch
-HECO: N/A
+HGMA: New Harquahala Generating Company
 HST: City of Homestead
 IID: Imperial Irrigation District
 IPCO: Idaho Power Company
@@ -36,7 +34,6 @@ JEA: JEA
 LDWP: Los Angeles Department of Water and Power
 LGEE: Louisville Gas and Electric Company and Kentucky Utilities Company
 MISO: Midcontinent Independent System Operator
-NBSO: New Brunswick System Operator
 NEVP: Nevada Power Company
 NSB: Utilities Commission of New Smyrna Beach
 NWMT: NorthWestern Corporation
@@ -66,7 +63,6 @@ TPWR: City of Tacoma Department of Public Utilities
 TVA: Tennessee Valley Authority
 WACM: Western Area Power Administration - Rocky Mountain Region
 WALC: Western Area Power Administration - Desert Southwest Region
-WAUE: Western Area Power Administration - Upper Great Plains East
 WAUW: Western Area Power Administration - Upper Great Plains West
 WWA: NaturEner Wind Watch
 YAD: Alcoa Power Generating - Yadkin Division

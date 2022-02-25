@@ -202,7 +202,7 @@ def ba_pop_interpolate(map_input_dir: str, pop_input_dir: str, pop_output_dir: s
 
     # Loop over BA names to write each BA population to csv
     for name in BA_name:
-        df_interp.to_csv(os.path.join(pop_output_dir, f'{name}_hourly_population.csv'),
+        df_interp.to_csv(os.path.join(pop_output_dir, f'{name}_hourly_population_data.csv'),
                          index=False,
                          columns=['Year', 'Month', 'Day', 'Hour', f'{name}'],
-                         header=['Year', 'Month', 'Day', 'Hour', 'Pop'])
+                         header=['Year', 'Month', 'Day', 'Hour', 'Total_Population'])

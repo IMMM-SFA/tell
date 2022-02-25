@@ -56,11 +56,12 @@ def eia_data_subset(file_string: str, output_dir: str):
 
     # extract date (Year, Month, Day, Hour), 'Forecast_Demand_MWh', 'Adjusted_Demand_MWh', 'Adjusted_Generation_MWh',
     # 'Adjusted_Interchange_MWh'
-    df.rename(columns={"DF": "Forecast_Demand_MWh'",
+    df.rename(columns={"DF": "Forecast_Demand_MWh",
                        "Adjusted D": "Adjusted_Demand_MWh",
                        "Adjusted NG": "Adjusted_Generation_MWh",
                        "Adjusted TI": "Adjusted_Interchange_MWh"}, inplace=True)
 
+    # extract the BA name and write the output to a .csv file:
     BA_name = os.path.splitext(os.path.basename(file_string))[0]
     df.to_csv(os.path.join(output_dir, f'{BA_name}_hourly_load_data.csv'), index=False, header=True)
 

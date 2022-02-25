@@ -482,7 +482,7 @@ def map_ba_service_territory(start_year: int, end_year: int, raw_data_dir: str, 
     """
 
     # Directory containing the outputs
-    output_dir = os.path.join(current_dir, r'outputs', r'ba_service_territory_files')
+    output_dir = os.path.join(current_dir, r'outputs', r'ba_service_territory')
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
