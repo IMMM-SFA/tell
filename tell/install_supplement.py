@@ -4,6 +4,7 @@ import tempfile
 import zipfile
 from io import BytesIO as BytesIO
 from pkg_resources import get_distribution
+from tqdm import tqdm
 
 import requests
 
@@ -64,17 +65,17 @@ class InstallSupplement:
                     # implement progress bar via tqdm
                     with tqdm.wrapattr(r.raw, "read", total=total_length, desc="")as raw:
 
-                    # extract to a temporary directory to be able to only keep the file out of the dir structure
-                    with tempfile.TemporaryDirectory() as tdir:
+                         # extract to a temporary directory to be able to only keep the file out of the dir structure
+                         with tempfile.TemporaryDirectory() as tdir:
 
-                        # extract file to temporary directory
-                        zipped.extract(f, tdir)
+                              # extract file to temporary directory
+                              zipped.extract(f, tdir)
 
-                        # construct temporary file full path with name
-                        tfile = os.path.join(tdir, f)
+                              # construct temporary file full path with name
+                              file = os.path.join(tdir, f)
 
-                        # transfer only the file sans the parent directory to the data package
-                        shutil.copy(tfile, out_file)
+                              # transfer only the file sans the parent directory to the data package
+                              hutil.copy(tfile, out_file)
 
         print(f"Done!")
 

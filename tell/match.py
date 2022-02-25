@@ -423,12 +423,6 @@ def process_data(target_year: int, fips_file: str, service_area_file: str, sales
     logging.info("Identifying unmatched data...")
     unmatched_counties = df_nan['county_lower_x'].unique()
 
-    # report possible matches for the county
-    for i in unmatched_counties:
-        possible_matches = df_nan.loc[df_nan['county_lower_x'] == i]['matches'].values[0]
-
-        logging.info(f'Possible matches for unmatched county "{i}": from FIPS file: {possible_matches}')
-
     # keep only the variables that are used in downstream applications:
     df_valid = df_valid[['year',
                          'state_fips',
@@ -447,14 +441,17 @@ def process_data(target_year: int, fips_file: str, service_area_file: str, sales
                              "ba_number": "BA_Number",
                              "ba_abbreviation": "BA_Code"}, inplace=True)
 
-    # sort the dataframe by BA number and then county fips code:
-    df_valid = df_valid.sort_values(by=["BA_Number", "County_FIPS"])
-
     # drop the duplicates that result from more than one utility-BA combination per county:
     df_valid = df_valid.drop_duplicates()
 
+    # drop rows with missing values for the BA:
+    df_valid = df_valid.dropna(axis = 0, how = 'any', subset=['BA_Number'])
+
+    # sort the dataframe by BA number and then county fips code:
+    df_valid = df_valid.sort_values(by=["BA_Number", "County_FIPS"])
+
     # write to CSV
-    output_file = os.path.join(output_dir, f'fips_service_match_{target_year}.csv')
+    output_file = os.path.join(output_dir, f'ba_service_territory_{target_year}.csv')
     logging.info(f"Writing output file to:  {output_file}")
     df_valid.to_csv(output_file, sep=',', index=False)
 
@@ -465,7 +462,7 @@ def process_data(target_year: int, fips_file: str, service_area_file: str, sales
     logger.close_logger()
 
 
-def map_fips_codes(start_year: int, end_year: int, raw_data_dir: str, current_dir: str):
+def map_ba_service_territory(start_year: int, end_year: int, raw_data_dir: str, current_dir: str):
     """Workflow function to run "process_data" function for all years to process.
 
     :param start_year:                         Year to start process; four digit year (e.g., 1990)
@@ -485,7 +482,7 @@ def map_fips_codes(start_year: int, end_year: int, raw_data_dir: str, current_di
     """
 
     # Directory containing the outputs
-    output_dir = os.path.join(current_dir, r'outputs', r'fips_mapping_files')
+    output_dir = os.path.join(current_dir, r'outputs', r'ba_service_territory_files')
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -500,10 +497,3 @@ def map_fips_codes(start_year: int, end_year: int, raw_data_dir: str, current_di
 
         # Run the process_data function
         process_data(target_year, fips_file, service_area_file, sales_ult_file, bal_auth_file, output_dir)
-
-        # Drop duplicates from output file
-        output = os.path.join(output_dir, f'fips_service_match_{target_year}.csv')
-        output = pd.read_csv(output)
-        output2 = output.drop_duplicates()
-        output_file = os.path.join(output_dir, f'fips_service_match_{target_year}.csv')
-        output2.to_csv(output_file, sep=',', index=False)
