@@ -1,10 +1,9 @@
 import os
 
 import pandas as pd
+
 from pandas import DataFrame
 from joblib import Parallel, delayed
-
-
 from .package_data import get_ba_abbreviations
 
 
@@ -23,7 +22,7 @@ def list_EIA_930_files(input_dir: str) -> list:
 
     path_list = []
     for i in ba_name:
-        path_to_check = os.path.join(input_dir, f'{i}.xlsx')
+        path_to_check = os.path.join(input_dir, r'EIA_930', r'Balancing_Authority', f'{i}.xlsx')
         path_list.append(path_to_check)
 
     return path_list

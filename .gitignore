@@ -1,6 +1,6 @@
 inputs/
 outputs/
-raw_data/
+tell_raw_data/
 sample_weather_data/
 
 # package
