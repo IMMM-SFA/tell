@@ -1,4 +1,4 @@
-from .match import *
+from .spatial_mapping import *
 from .metadata_eia import *
 from .states_fips_function import *
 from .install_supplement import install_package_data
