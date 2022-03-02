@@ -4,8 +4,8 @@ import time
 
 import numpy as np
 import pandas as pd
-from pandas import DataFrame
 
+from pandas import DataFrame
 from tell.logger import Logger
 
 
@@ -482,7 +482,7 @@ def map_ba_service_territory(start_year: int, end_year: int, raw_data_dir: str, 
     """
 
     # Directory containing the outputs
-    output_dir = os.path.join(current_dir, r'outputs', r'ba_service_territory')
+    output_dir = os.path.join(current_dir, r'tell_data', r'outputs', r'ba_service_territory')
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -490,10 +490,10 @@ def map_ba_service_territory(start_year: int, end_year: int, raw_data_dir: str, 
 
     for target_year in years_to_process:
         # Set paths to files
-        fips_file = os.path.join(raw_data_dir, 'state_and_county_fips_codes.csv')
-        service_area_file = os.path.join(raw_data_dir, r'EIA_861', f'{target_year}', f'Service_Territory_{target_year}.xlsx')
-        sales_ult_file = os.path.join(raw_data_dir, r'EIA_861', f'{target_year}', f'Sales_Ult_Cust_{target_year}.xlsx')
-        bal_auth_file = os.path.join(raw_data_dir, r'EIA_861', f'{target_year}', f'Balancing_Authority_{target_year}.xlsx')
+        fips_file = os.path.join(raw_data_dir, r'tell_raw_data', 'state_and_county_fips_codes.csv')
+        service_area_file = os.path.join(raw_data_dir, r'tell_raw_data', r'EIA_861', f'{target_year}', f'Service_Territory_{target_year}.xlsx')
+        sales_ult_file = os.path.join(raw_data_dir, r'tell_raw_data', r'EIA_861', f'{target_year}', f'Sales_Ult_Cust_{target_year}.xlsx')
+        bal_auth_file = os.path.join(raw_data_dir, r'tell_raw_data', r'EIA_861', f'{target_year}', f'Balancing_Authority_{target_year}.xlsx')
 
         # Run the process_data function
         process_data(target_year, fips_file, service_area_file, sales_ult_file, bal_auth_file, output_dir)
