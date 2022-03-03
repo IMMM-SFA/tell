@@ -9,6 +9,19 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
 def plot_ba_service_territory(ba_to_plot: str, year_to_plot: str, data_input_dir: str):
+    """Plot maps of the service territory for a given BA in a given year
+
+    :param ba_to_plot:          Code for the BA you want to plot
+    :type ba_to_plot:           str
+
+    :param year_to_plot:        Year you want to plot (valid 2015-2019)
+    :type year_to_plot:         str
+
+    :param data_input_dir:      Top-level data directory for TELL
+    :type data_input_dir:       str
+
+    """
+
     # Set the input directories based on the 'data_input_dir' variable:
     shapefile_input_dir = os.path.join(data_input_dir, r'tell_raw_data', r'County_Shapefiles')
     population_input_dir = os.path.join(data_input_dir, r'tell_raw_data', r'Population')

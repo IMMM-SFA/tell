@@ -462,8 +462,8 @@ def process_data(target_year: int, fips_file: str, service_area_file: str, sales
     logger.close_logger()
 
 
-def map_ba_service_territory(start_year: int, end_year: int, raw_data_dir: str, current_dir: str):
-    """Workflow function to run "process_data" function for all years to process.
+def map_ba_service_territory(start_year: int, end_year: int, data_input_dir: str):
+    """Workflow function to run the "process_data" function to map BAs to counties
 
     :param start_year:                         Year to start process; four digit year (e.g., 1990)
     :type start_year:                          int
@@ -471,29 +471,28 @@ def map_ba_service_territory(start_year: int, end_year: int, raw_data_dir: str, 
     :param end_year:                           Year to end process; four digit year (e.g., 1990)
     :type end_year:                            int
 
-    :param raw_data_dir:                       Directory where raw data is download via install_supplement.py
-    :type raw_data_dir:                        str
-
-    :param current_dir:                        Directory where TELL package is downloaded
-    :type current_dir:                         str
-
-    :return:                                   DataFrame of valid FIPS matched data merged with BA code
+    :param data_input_dir:                     Top-level data directory for TELL
+    :type data_input_dir:                      str
 
     """
 
-    # Directory containing the outputs
-    output_dir = os.path.join(current_dir, r'tell_data', r'outputs', r'ba_service_territory')
+    # Set the output directory based on the "raw_data_dir" variable:
+    output_dir = os.path.join(data_input_dir, r'outputs', r'ba_service_territory')
+
+    # If the output directory doesn't exist then create it:
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
+    # Create a vector of years to process:
     years_to_process = range(start_year, end_year + 1)
 
+    # Loop over the range of years to process:
     for target_year in years_to_process:
-        # Set paths to files
-        fips_file = os.path.join(raw_data_dir, r'tell_raw_data', 'state_and_county_fips_codes.csv')
-        service_area_file = os.path.join(raw_data_dir, r'tell_raw_data', r'EIA_861', f'{target_year}', f'Service_Territory_{target_year}.xlsx')
-        sales_ult_file = os.path.join(raw_data_dir, r'tell_raw_data', r'EIA_861', f'{target_year}', f'Sales_Ult_Cust_{target_year}.xlsx')
-        bal_auth_file = os.path.join(raw_data_dir, r'tell_raw_data', r'EIA_861', f'{target_year}', f'Balancing_Authority_{target_year}.xlsx')
+        # Set paths to files:
+        fips_file = os.path.join(data_input_dir, r'tell_raw_data', 'state_and_county_fips_codes.csv')
+        service_area_file = os.path.join(data_input_dir, r'tell_raw_data', r'EIA_861', f'{target_year}', f'Service_Territory_{target_year}.xlsx')
+        sales_ult_file = os.path.join(data_input_dir, r'tell_raw_data', r'EIA_861', f'{target_year}', f'Sales_Ult_Cust_{target_year}.xlsx')
+        bal_auth_file = os.path.join(data_input_dir, r'tell_raw_data', r'EIA_861', f'{target_year}', f'Balancing_Authority_{target_year}.xlsx')
 
-        # Run the process_data function
+        # Run the "process_data" function for that year:
         process_data(target_year, fips_file, service_area_file, sales_ult_file, bal_auth_file, output_dir)
