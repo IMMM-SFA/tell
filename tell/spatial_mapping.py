@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 
 from pandas import DataFrame
-from tell.logger import Logger
 
 
 def count_matches(states_key: str, fips_key: str, ignore=('and', 'if', 'on', 'an', 'a', 'the')) -> dict:
@@ -430,27 +429,20 @@ def process_spatial_mapping(target_year: int, fips_file: str, service_area_file:
 
     """
 
-    # Initialize the logger in the "output_dir":
-    logger = Logger(output_directory=output_dir)
-    logger.initialize_logger()
-
-    # Report the start time:
-    logging.info("Start time: {}".format(time.strftime("%Y-%m-%d %H:%M:%S")))
-
     # Run the "prepare_data" function:
-    logging.info("Preparing data...")
+    print(f"Preparing data...")
     df_fips, df_states, df_ult, df_ba = prepare_data(fips_file, service_area_file, sales_ult_file, bal_auth_file)
 
     # Run the "filter_one" function to drop invalid matches:
-    logging.info("Applying filter one...")
+    print(f"Applying filter one...")
     df_valid, df_nan = filter_one(df_fips, df_states, df_ult, df_ba)
 
     # Run the "filter_two" function to try to find new valid matches:
-    logging.info("Applying filter two...")
+    print(f"Applying filter two...")
     df_valid, df_nan = filter_two(df_fips, df_nan, df_valid)
 
     # Format the "df_valid" dataframe to clean up its naming conventions:
-    logging.info("Formatting output data...")
+    print(f"Formatting output data...")
     df_valid = data_format(df_valid)
 
     # Drop the duplicates that result from more than one utility-BA combination per county:
@@ -464,14 +456,8 @@ def process_spatial_mapping(target_year: int, fips_file: str, service_area_file:
 
     # Write the spatial mapping output to a .csv file:
     output_file = os.path.join(output_dir, f'ba_service_territory_{target_year}.csv')
-    logging.info(f"Writing output file to:  {output_file}")
+    print(f"Writing output file to:  {output_file}")
     df_valid.to_csv(output_file, sep=',', index=False)
-
-    # Report the end time:
-    logging.info("End time: {}".format(time.strftime("%Y-%m-%d %H:%M:%S")))
-
-    # Close the logger:
-    logger.close_logger()
 
 
 def map_ba_service_territory(start_year: int, end_year: int, data_input_dir: str):
