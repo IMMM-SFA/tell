@@ -1,8 +1,70 @@
+import os
+
 import numpy as np
 import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
+
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+
+def plot_ba_service_territory(ba_to_plot: str, year_to_plot: str, data_input_dir: str):
+    """Plot maps of the service territory for a given BA in a given year
+
+    :param ba_to_plot:          Code for the BA you want to plot
+    :type ba_to_plot:           str
+
+    :param year_to_plot:        Year you want to plot (valid 2015-2019)
+    :type year_to_plot:         str
+
+    :param data_input_dir:      Top-level data directory for TELL
+    :type data_input_dir:       str
+
+    """
+
+    # Set the input directories based on the 'data_input_dir' variable:
+    shapefile_input_dir = os.path.join(data_input_dir, r'tell_raw_data', r'County_Shapefiles')
+    population_input_dir = os.path.join(data_input_dir, r'tell_raw_data', r'Population')
+    ba_service_territory_input_dir = os.path.join(data_input_dir, r'outputs', r'ba_service_territory')
+
+    # Read in the county shapefile and reassign the 'FIPS' variable as integers:
+    counties_df = gpd.read_file(os.path.join(shapefile_input_dir, r'tl_2020_us_county.shp')).rename(columns={'GEOID': 'County_FIPS'})
+    counties_df['County_FIPS'] = counties_df['County_FIPS'].astype(int)
+
+    # Read in county populations file:
+    population_df = pd.read_csv(os.path.join(population_input_dir, r'county_populations_2000_to_2019.csv'))
+
+    # Keep only the columns we need:
+    population_df = population_df[['county_FIPS', ('pop_' + year_to_plot)]].copy(deep=False)
+
+    # Rename the columns:
+    population_df.rename(columns={"county_FIPS": "County_FIPS", ('pop_' + year_to_plot): "Population"}, inplace=True)
+
+    # Read in the BA mapping file:
+    ba_mapping_df = pd.read_csv((os.path.join(ba_service_territory_input_dir, f'ba_service_territory_{str(year_to_plot)}.csv')), index_col=None, header=0)
+
+    # Merge the ba_mapping_df and population_df together using county FIPS codes to join them:
+    ba_mapping_df = ba_mapping_df.merge(population_df, on='County_FIPS', how='left')
+
+    # Merge the ba_mapping_df and counties_df together using county FIPS codes to join them:
+    counties_df = counties_df.merge(ba_mapping_df, on='County_FIPS', how='left')
+
+    # Subset to only the BA you want to plot:
+    counties_subset_df = counties_df.loc[counties_df['BA_Code'] == ba_to_plot]
+
+    # Create the figure:
+    fig, ax = plt.subplots(1, 1, figsize=(25, 10))
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="3%", pad=0.1)
+    ax1 = counties_subset_df.plot(column='Population',
+                                  cmap='GnBu',
+                                  ax=ax,
+                                  cax=cax,
+                                  edgecolor='grey',
+                                  linewidth=0.5,
+                                  legend=True,
+                                  legend_kwds={'label': ('County Population in ' + year_to_plot), 'orientation': 'vertical'})
+    ax1.set_title((ba_to_plot + ' Service Territory in ' + year_to_plot))
 
 
 def plot_state_scaling_factors(shapefile_input_dir: str, data_input_dir: str, year_to_plot: str, image_resolution: int,

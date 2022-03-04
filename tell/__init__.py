@@ -1,24 +1,24 @@
-from .match import *
+# Metadata:
 from .metadata_eia import *
 from .states_fips_function import *
-from .install_supplement import install_package_data
 from .logger import *
 
-# data processing steps
+# Data pre-processing steps:
 from .data_process_eia_930 import *
-from .data_process_pop_interp import *
-from .install_weather_forcing_sample import install_sample_data
-from .data_process_wrf import process_wrf
-from .data_process_compile_df import compile_data
+from .data_process_population import *
+from .data_spatial_mapping import *
+from .data_process_compile import compile_data
+from .install_raw_data import install_tell_raw_data
+from .install_weather_data import install_sample_weather_data
 
-# mlp steps
+# MLP steps:
 from .mlp_predict import *
 
-# model forward execution step
+# Model forward execution steps:
 from .execute_forward import *
 
-# model visualization and evaluation
+# Visualization steps:
 from .visualization import *
 
-
+# Set the current version of TELL:
 __version__ = '0.0.1'
