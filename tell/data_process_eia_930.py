@@ -76,7 +76,7 @@ def eia_data_subset(file_string: str, data_input_dir: str):
     df.to_csv(os.path.join(output_dir, f'{BA_name}_hourly_load_data.csv'), index=False, header=True)
 
 
-def process_eia_930(data_input_dir: str, n_jobs: int):
+def process_eia_930_data(data_input_dir: str, n_jobs: int):
     """Read in list of EIA 930 files, subset the data, and save the output as a .csv file
 
     :param data_input_dir:         Top-level data directory for TELL

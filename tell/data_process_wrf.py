@@ -1,9 +1,9 @@
 import os
 
 import pandas as pd
+
 from joblib import Parallel, delayed
 from pandas import DataFrame
-
 from .package_data import get_ba_abbreviations
 
 
@@ -63,31 +63,36 @@ def wrf_data_date(file_string: str, output_dir: str):
     df.to_csv(os.path.join(output_dir, f'{BA_name}_hourly_wrf_data.csv'), index=False, header=True)
 
 
-def process_wrf(input_dir: str, output_dir: DataFrame, target_year: int, n_jobs: int):
-    """Read in list of EIA 930 files, subset files and save as csv in new file name
+def process_wrf(data_input_dir: str, n_jobs: int, process_historical=False, process_future=False):
+    """Process the sample weather dataset into cleaned .csv files for input to the MLP model training
 
-    :param input_dir:             Directory where WRF data is stored from im3_components library (wrf_to_tell)
-    :type input_dir:              str
+    :param process_historical:    If 'process_historical' = True process the historical weather data
+    :type process_historical:     bool
 
-    :param output_dir:            Directory to store the modified WRF data
-    :type output_dir:             DataFrame
-    
-    :param target_year:           Year of which wrf sample data is needed (Zenodo package includes 2019, 2059, 2099)
-    :type target_year:            int
+    :param process_future:        If 'process_future' = True process the future weather data
+    :type process_future:         bool
+
+    :param data_input_dir:        Top-level data directory for TELL
+    :type data_input_dir:         str
 
     :param n_jobs:                Number of jobs to process
     :type n_jobs:                 int
 
-    :return:                      DataFrame
+    """
+    if process_historical:
+       input_dir = os.path.join(data_input_dir, r'sample_weather_data', r'historical_weather')
+    elif process_future:
+       input_dir = os.path.join(data_input_dir, r'sample_weather_data', r'future_weather')
 
-     """
-    # run the list function for the EIA files
-    list_of_files = list_wrf_files(input_dir, target_year)
+    print(input_dir)
 
-    # run all files in parallel
-    Parallel(n_jobs=n_jobs)(
-        delayed(wrf_data_date)(
-            file_string=i,
-            output_dir=output_dir
-        ) for i in list_of_files
-    )
+    # Create a list of all of the WRF output files in the 'input_dir':
+    # list_of_files = list_wrf_files(input_dir)
+
+    # Process the list of WRF output files in parallel using the
+    #Parallel(n_jobs=n_jobs)(
+        #delayed(wrf_data_date)(
+            #file_string=i,
+            #output_dir=output_dir
+        #) for i in list_of_files
+    #)
