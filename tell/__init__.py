@@ -8,7 +8,7 @@ from .data_process_eia_930 import *
 from .data_process_population import *
 from .data_spatial_mapping import *
 from .data_process_wrf import process_wrf
-from .data_process_compile_df import compile_data
+from .data_process_compile import compile_data
 from .install_raw_data import install_tell_raw_data
 from .install_weather_data import install_sample_weather_data
 
