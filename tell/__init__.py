@@ -19,6 +19,7 @@ from .execute_forward import *
 
 # Visualization steps:
 from .visualization import *
+from .install_output_data import install_sample_output_data
 
 # Set the current version of TELL:
 __version__ = '0.0.1'
