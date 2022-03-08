@@ -2,6 +2,7 @@ import unittest
 
 from tell.metadata_eia import metadata_eia
 
+
 class TestMetadataEIA(unittest.TestCase):
     """Tests for functionality within metadata_eia.py"""
 
@@ -16,7 +17,6 @@ class TestMetadataEIA(unittest.TestCase):
 
         # ensure BA name column is object in df are object
         self.assertEqual(True, all(isinstance(i, object) for i in metadata_df['BA_Name']))
-
 
 
 if __name__ == '__main__':

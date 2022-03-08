@@ -10,6 +10,5 @@ class TestCompileData(unittest.TestCase):
         compile_data(start_year, end_year, data_input_dir)
 
 
-
 if __name__ == '__main__':
     unittest.main()

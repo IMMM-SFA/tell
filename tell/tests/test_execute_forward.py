@@ -11,5 +11,6 @@ class TestExecuteForward(unittest.TestCase):
         execute_forward(year_to_process, mlp_input_dir, ba_geolocation_input_dir, pop_input_dir, gcam_usa_input_dir,
                         data_output_dir)
 
+
 if __name__ == '__main__':
     unittest.main()
