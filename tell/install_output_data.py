@@ -1,6 +1,5 @@
 import os
 import shutil
-#import tempfile
 import zipfile
 import requests
 
@@ -25,16 +24,17 @@ class InstallOutputSample:
         self.data_dir = data_dir
 
     def fetch_zenodo(self):
-        """Download the TELL sample weather data package from Zenodo"""
+        """Download the TELL sample output data package from Zenodo"""
 
-        # full path to the root directory where the example dir will be stored
+        # Full path to the root directory where the data will be stored:
         data_directory = self.data_dir
 
         # Get the current version of TELL that is installed:
         current_version = get_distribution('tell').version
 
+        # Try to download the data:
         try:
-            data_link = InstallSample.DATA_VERSION_URLS[current_version]
+            data_link = InstallOutputSample.DATA_VERSION_URLS[current_version]
 
         except KeyError:
             msg = f"Link to data missing for current version: {current_version}. Please contact an administrator."
