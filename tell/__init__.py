@@ -1,5 +1,6 @@
 # Metadata:
 from .metadata_eia import *
+from .package_data import *
 from .states_fips_function import *
 from .logger import *
 
