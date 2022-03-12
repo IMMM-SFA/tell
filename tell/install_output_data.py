@@ -58,9 +58,12 @@ class InstallOutputSample:
 
 def install_sample_output_data(data_dir=None):
     """Download the TELL sample output data package from Zenodo that matches the current installed tell distribution
+
     :param data_dir:                    Optional. Full path to the directory you wish to store the data in. Default is
                                         to install it in data directory of the package.
+
     :type data_dir:                     str
+
     """
 
     zen = InstallOutputSample(data_dir=data_dir)

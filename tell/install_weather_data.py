@@ -1,12 +1,10 @@
 import os
 import shutil
-import tempfile
 import zipfile
 import requests
 
 from io import BytesIO as BytesIO
 from pkg_resources import get_distribution
-from tqdm import tqdm
 
 
 class InstallSample:
@@ -14,6 +12,7 @@ class InstallSample:
 
     :param data_dir:                    Optional. Full path to the directory you wish to store the data in. Default is
                                         to install it in data directory of the package.
+
     :type data_dir:                     str
 
     """
@@ -59,8 +58,10 @@ class InstallSample:
 
 def install_sample_weather_data(data_dir=None):
     """Download the TELL sample weather data package from Zenodo that matches the current installed tell distribution
+
     :param data_dir:                    Optional. Full path to the directory you wish to store the data in. Default is
                                         to install it in data directory of the package.
+
     :type data_dir:                     str
     """
 
