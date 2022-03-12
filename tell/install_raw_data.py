@@ -1,19 +1,20 @@
 import os
 import shutil
-import tempfile
 import zipfile
 import requests
 
 from io import BytesIO as BytesIO
 from pkg_resources import get_distribution
-from tqdm import tqdm
 
 
 class InstallSupplement:
     """Download the TELL raw data package from Zenodo that matches the current installed tell distribution.
+
     :param data_dir:                    Optional. Full path to the directory you wish to store the data in. Default is
                                         to install it in data directory of the package.
+
     :type data_dir:                     str
+
     """
 
     # URL for DOI-minted TELL raw data data package hosted on Zenodo:
@@ -56,9 +57,12 @@ class InstallSupplement:
 def install_tell_raw_data(data_dir=None):
     """Download and unpack the raw TELL data package from Zenodo that matches the current installed
     tell distribution.
+
     :param data_dir:                    Optional. Full path to the directory you wish to store the data in. Default is
                                         to install it in data directory of the package.
+
     :type data_dir:                     str
+
     """
 
     zen = InstallSupplement(data_dir=data_dir)
