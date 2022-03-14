@@ -44,10 +44,6 @@ The Total ELectricity Load (TELL) model provides a framework that integrates asp
 
 The TELL model will generate predictions of hourly total electricity load for every county in the Continental United States (CONUS). Predictions from TELL will be scaled to match the annual state-level total electricity loads predicted by the U.S. version of the Global Change Analysis Model [GCAM-USA; @iyer2017measuring; @iyer2019improving].
 
-`tell` was implemented to
-
-`tell` is offers the following features...
-
 `tell` can be accessed on GitHub (https://github.com/IMMM-SFA/tell). We provide an walkthrough of some key functionality in a step-by-step tutorial in our website here: [Tutorial](https://immm-sfa.github.io/tell/tell_quickstarter.html).
 
 # Acknowledgements
