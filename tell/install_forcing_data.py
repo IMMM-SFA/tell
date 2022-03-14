@@ -7,8 +7,8 @@ from io import BytesIO as BytesIO
 from pkg_resources import get_distribution
 
 
-class InstallSample:
-    """Download the TELL sample weather data package from Zenodo that matches the current installed tell distribution
+class Install_Forcing_Sample:
+    """Download the TELL sample forcing data package from Zenodo that matches the current installed tell distribution
 
     :param data_dir:                    Optional. Full path to the directory you wish to store the data in. Default is
                                         to install it in data directory of the package.
@@ -18,17 +18,13 @@ class InstallSample:
     """
 
     # URL for DOI minted example data hosted on Zenodo
-    DATA_VERSION_URLS = {'0.0.1': 'https://zenodo.org/record/6326507/files/sample_weather_data.zip?download=1'}
+    DATA_VERSION_URLS = {'0.0.1': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1'}
 
     def __init__(self, data_dir=None):
-
         self.data_dir = data_dir
 
     def fetch_zenodo(self):
-        """Download the TELL sample weather data package from Zenodo"""
-
-        # full path to the root directory where the example dir will be stored
-        data_directory = self.data_dir
+        """Download the TELL sample forcing data package from Zenodo"""
 
         # Get the current version of TELL that is installed:
         current_version = get_distribution('tell').version
@@ -42,7 +38,7 @@ class InstallSample:
             raise KeyError(msg)
 
         # Retrieve content from the URL:
-        print(f"Downloading the sample weather data package for tell version {current_version}...")
+        print(f"Downloading the sample forcing data package for tell version {current_version}...")
         r = requests.get(data_link)
 
         # Extract the data from the .zip format:
@@ -56,8 +52,8 @@ class InstallSample:
         print(f"Done!")
 
 
-def install_sample_weather_data(data_dir=None):
-    """Download the TELL sample weather data package from Zenodo that matches the current installed tell distribution
+def install_sample_forcing_data(data_dir=None):
+    """Download the tell sample forcing data package from Zenodo that matches the current installed tell distribution
 
     :param data_dir:                    Optional. Full path to the directory you wish to store the data in. Default is
                                         to install it in data directory of the package.
@@ -65,6 +61,6 @@ def install_sample_weather_data(data_dir=None):
     :type data_dir:                     str
     """
 
-    zen = InstallSample(data_dir=data_dir)
+    zen = Install_Forcing_Sample(data_dir=data_dir)
 
     zen.fetch_zenodo()

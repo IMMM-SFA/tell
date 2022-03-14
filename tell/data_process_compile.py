@@ -3,7 +3,6 @@ import os
 import pandas as pd
 import numpy as np
 
-from pandas import DataFrame
 from .package_data import get_ba_abbreviations
 
 
@@ -27,7 +26,7 @@ def compile_data(start_year: int, end_year: int, data_input_dir: str):
     # Set the input directories for each variable:
     load_dir = os.path.join(data_input_dir, r'outputs', r'historical_ba_load')
     population_dir = os.path.join(data_input_dir, r'outputs', r'historical_population')
-    weather_dir = os.path.join(data_input_dir, r'sample_weather_data', r'historical_weather')
+    weather_dir = os.path.join(data_input_dir, r'sample_forcing_data', r'historical_weather')
 
     # Set the output directory based on the "data_input_dir" variable:
     output_dir = os.path.join(data_input_dir, r'outputs', r'compiled_historical_data')

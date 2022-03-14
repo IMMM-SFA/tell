@@ -26,9 +26,6 @@ class InstallOutputSample:
     def fetch_zenodo(self):
         """Download the TELL sample output data package from Zenodo"""
 
-        # Full path to the root directory where the data will be stored:
-        data_directory = self.data_dir
-
         # Get the current version of TELL that is installed:
         current_version = get_distribution('tell').version
 

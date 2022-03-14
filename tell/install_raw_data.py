@@ -7,7 +7,7 @@ from io import BytesIO as BytesIO
 from pkg_resources import get_distribution
 
 
-class InstallSupplement:
+class InstallRawData:
     """Download the TELL raw data package from Zenodo that matches the current installed tell distribution.
 
     :param data_dir:                    Optional. Full path to the directory you wish to store the data in. Default is
@@ -18,8 +18,7 @@ class InstallSupplement:
     """
 
     # URL for DOI-minted TELL raw data data package hosted on Zenodo:
-    DATA_VERSION_URLS = {'0.0.1': 'https://zenodo.org/record/5714756/files/tell_raw_data.zip?download=1',
-                         '0.1.0': 'https://zenodo.org/record/5714756/files/tell_raw_data.zip?download=1'}
+    DATA_VERSION_URLS = {'0.0.1': 'https://zenodo.org/record/5714756/files/tell_raw_data.zip?download=1'}
 
     def __init__(self, data_dir=None):
 
@@ -65,6 +64,6 @@ def install_tell_raw_data(data_dir=None):
 
     """
 
-    zen = InstallSupplement(data_dir=data_dir)
+    zen = InstallRawData(data_dir=data_dir)
 
     zen.fetch_zenodo()
