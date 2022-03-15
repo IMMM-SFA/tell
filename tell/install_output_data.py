@@ -24,10 +24,7 @@ class InstallOutputSample:
         self.data_dir = data_dir
 
     def fetch_zenodo(self):
-        """Download the TELL sample output data package from Zenodo"""
-
-        # Full path to the root directory where the data will be stored:
-        data_directory = self.data_dir
+        """Download the TELL sample output data package from Zenodo that matches the current installed tell distribution"""
 
         # Get the current version of TELL that is installed:
         current_version = get_distribution('tell').version
@@ -45,7 +42,7 @@ class InstallOutputSample:
         print(f"Downloading the sample output data package for tell version {current_version}...")
         r = requests.get(data_link)
 
-        # Extract the data from the .zip format:
+        # Extract the data from the .zip file:
         with zipfile.ZipFile(BytesIO(r.content)) as zipped:
             zipped.extractall(self.data_dir)
 
@@ -57,10 +54,13 @@ class InstallOutputSample:
 
 
 def install_sample_output_data(data_dir=None):
-    """Download the TELL sample output data package from Zenodo that matches the current installed tell distribution
+    """Download the TELL sample output data package from Zenodo
+
     :param data_dir:                    Optional. Full path to the directory you wish to store the data in. Default is
                                         to install it in data directory of the package.
+
     :type data_dir:                     str
+
     """
 
     zen = InstallOutputSample(data_dir=data_dir)
