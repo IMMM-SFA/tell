@@ -4,11 +4,11 @@ from setuptools import setup, find_packages
 
 def readme():
     """Return the contents of the project README file."""
-    with open('README.md') as f:
+    with open('tell/README.md') as f:
         return f.read()
 
 
-version = re.search(r"__version__ = ['\"]([^'\"]*)['\"]", open('tell/__init__.py').read(), re.M).group(1)
+version = re.search(r"__version__ = ['\"]([^'\"]*)['\"]", open('tell/tell/__init__.py').read(), re.M).group(1)
 
 
 setup(
