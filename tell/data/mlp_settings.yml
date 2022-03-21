@@ -1,0 +1,27 @@
+mlp_hidden_layer_sizes: 256
+mlp_max_iter: 500
+mlp_validation_fraction: 0.1
+mlp_linear_adjustment: True
+
+
+data_column_rename_dict: {
+    Adjusted_Demand_MWh: Demand,
+    Pop: Population,
+    T2: Temperature,
+    SWDOWN: Shortwave_Radiation,
+    GLW: Longwave_Radiation,
+    WSPD: Wind_Speed,
+    Q2: Specific_Humidity
+}
+
+expected_datetime_columns: [Day, Month, Year, Hour]
+hour_field_name: Hour
+month_field_name: Month
+x_variables: [Hour, Month, Temperature, Specific_Humidity, Wind_Speed, Longwave_Radiation, Shortwave_Radiation]
+add_dayofweek_xvars: True
+y_variables: [Demand]
+day_list: [Mon, Tue, Wed, Thu, Fri, Sat, Sun]
+start_time: 2016-01-01 00:00:00
+end_time: 2019-12-31 23:00:00
+split_datetime: 2018-12-31 23:00:00
+nodata_value: -9999
