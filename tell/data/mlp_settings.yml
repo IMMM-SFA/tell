@@ -25,7 +25,7 @@ apply_sine_function: False
 # code expects them to be (values).
 data_column_rename_dict: {
     "Adjusted_Demand_MWh": "Demand",
-    "Pop": "Population",
+    "Total_Population": "Population",
     "T2": "Temperature",
     "SWDOWN": "Shortwave_Radiation",
     "GLW": "Longwave_Radiation",

@@ -176,13 +176,14 @@ class Dataset(DefaultSettings):
                          **kwargs)
 
         # populate class attributes for data
-        self.df_train, self.df_test = self.generate_data()
+        self.df_train, self.df_test, self.df_test_comp = self.generate_data()
 
         # break out training and testing targets and features into individual data frames
-        self.x_train = self.df_train[self.x_variables].copy()
-        self.x_test = self.df_test[self.x_variables].copy()
-        self.y_train = self.df_train[self.y_variables].copy()
-        self.y_test = self.df_test[self.y_variables].copy()
+        self.x_train = self.df_train[self.x_variables].values
+        self.x_test = self.df_test[self.x_variables].values
+        self.y_train = self.df_train[self.y_variables].values
+        self.y_test = self.df_test[self.y_variables].values
+        self.y_comp = self.df_test_comp[self.y_variables].values
 
         # reset index for test data
         self.df_test.reset_index(drop=True, inplace=True)
@@ -214,12 +215,15 @@ class Dataset(DefaultSettings):
         df_test_clean = self.clean_data(df_test_raw, drop_records=False)
 
         # extract the targets and features from the cleaned training data
-        df_train_extract = self.extract_targets_features(df_train_clean)
+        df_train_extract_clean = self.extract_targets_features(df_train_clean)
 
         # extract the targets and features from the test data
-        df_test_extract = self.extract_targets_features(df_test_raw)
+        df_test_extract_raw = self.extract_targets_features(df_test_raw)
 
-        return df_train_extract, df_test_extract
+        # extract the targets and features from the cleaned test data
+        df_test_extract_clean = self.extract_targets_features(df_test_clean)
+
+        return df_train_extract_clean, df_test_extract_raw, df_test_extract_clean
 
     def fetch_read_file(self) -> pd.DataFrame:
         """Get the input file from the data directory matching the region name and read it into a pandas data frame."""
@@ -374,6 +378,10 @@ class Dataset(DefaultSettings):
             # drop nodata value if so desired
             df.drop(df.index[np.where(df == self.nodata_value)[0]], inplace=True)
 
+            # drop records containing any native np.nan
+            # TODO:  account for this condition in else
+            df.drop(df.index[np.where(np.isnan(df))[0]], inplace=True)
+
             # drop and records where demand is zero which is not feasible if desired
             df.drop(df.index[np.where(df["Demand"] == 0)[0]], inplace=True)
 
@@ -385,13 +393,18 @@ class Dataset(DefaultSettings):
             # alter records where demand is zero which is not feasible if desired
             df.loc[df["Demand"] == 0, "Demand"] = self.nodata_value
 
-            # alter exterme value that lie outside + / - 5*sigma
+            # alter extreme value that lie outside + / - 5*sigma
             df.loc[(lower_bound | upper_bound), "Demand"] = self.nodata_value
 
         return df
 
-    def extract_targets_features(self, df):
-        """asdf"""
+    def extract_targets_features(self, df) -> pd.DataFrame:
+        """Keep datetime, target, and feature fields.
+
+        :param df:                         Input data frame for the target region.
+        :type df:                          pd.DataFrame
+
+        """
 
         # generate a list of field names to keep
         keep_fields = ["Datetime"] + self.x_variables + self.y_variables

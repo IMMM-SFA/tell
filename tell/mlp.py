@@ -14,7 +14,7 @@ from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_percenta
 from sklearn.neural_network import MLPRegressor as MLP
 from sklearn.model_selection import GridSearchCV
 
-from .mlp_prepare_data import Dataset, DefaultSettings
+from tell.mlp_prepare_data import Dataset, DefaultSettings
 
 
 def scale_features(x_train: np.ndarray,
@@ -67,6 +67,23 @@ def scale_features(x_train: np.ndarray,
     }
 
     return dict_out
+
+
+def denormlaize(normalized_dict: dict,
+                y_predicted_normalized: np.ndarray) -> np.ndarray:
+    """Function to denormlaize the predictions of the model.
+
+    :param normalized_dict:                         Dictionary output from normalization function.
+    :type normalized_dict:                          dict
+
+    :param y_predicted_normalized:                  Normalized predictions over the test set.
+    :type y_predicted_normalized:                   np.ndarray
+
+    :return:                                        Denormalized predictions
+
+    """
+
+    return y_predicted_normalized * normalized_dict["sigma_y_train"] + normalized_dict["mu_y_train"]
 
 
 def run_linear_model(x_train: np.ndarray,
@@ -177,6 +194,57 @@ def run_mlp_model(x_train: np.ndarray,
         y_p += epsilon_e
 
     return y_p
+
+
+def validation(region: str,
+               y_predicted: np.ndarray,
+               y_comparison: np.ndarray,
+               nodata_value: int) -> pd.DataFrame:
+    """Validation of model performance using the predicted compared to the test data.
+
+    :param region:                      Indicating region / balancing authority we want to train and test on.
+                                        Must match with string in CSV files.
+    :type region:                       str
+
+    :param y_predicted:                 Predicted Y result array.
+    :type y_predicted:                  np.ndarray
+
+    :param y_comparison:                Comparison test data for Y array.
+    :type y_comparison:                 np.ndarray
+
+    :param nodata_value:                No data value in the input CSV file.
+    :type nodata_value:                 int
+
+    :return:                            Data frame of stats.
+
+    """
+
+    # remove all the no data values in the comparison test data
+    y_comp_clean_idx = np.where(y_comparison != nodata_value)
+    y_comp = y_comparison[y_comp_clean_idx[0]].squeeze()
+
+    # get matching predicted data
+    y_pred = y_predicted[y_comp_clean_idx[0]]
+
+    # first the absolute root-mean-squared error
+    rms_abs = np.sqrt(mean_squared_error(y_pred, y_comp))
+
+    # RMSE normalized
+    rms_norm = rms_abs / np.mean(y_comp)
+
+    # mean absolute percentage error
+    mape = mean_absolute_percentage_error(y_pred, y_comp)
+
+    # R2
+    r2_val = r2_score(y_pred, y_comp)
+
+    stats_dict = {"region": [region],
+                  "RMS_ABS": [rms_abs],
+                  "RMS_NORM": [rms_norm],
+                  "MAPE": [mape],
+                  "R2": [r2_val]}
+
+    return pd.DataFrame(stats_dict)
 
 
 def predict(region: str,
@@ -303,14 +371,24 @@ def predict(region: str,
     x_test_norm = normalized_dict.get("x_test_norm")
 
     # run the MLP model with the linear correction if desired
-    y_p = run_mlp_model(x_train=x_train_norm,
-                        y_train=y_train_norm.squeeze(),
-                        x_test=x_test_norm,
-                        mlp_hidden_layer_sizes=settings.mlp_hidden_layer_sizes,
-                        mlp_max_iter=settings.mlp_max_iter,
-                        mlp_validation_fraction=settings.mlp_validation_fraction,
-                        mlp_linear_adjustment=settings.mlp_linear_adjustment,
-                        x_linear_train=x_linear_train,
-                        x_linear_test=x_linear_test)
-    return y_p
+    y_predicted_normalized = run_mlp_model(x_train=x_train_norm,
+                                           y_train=y_train_norm.squeeze(),
+                                           x_test=x_test_norm,
+                                           mlp_hidden_layer_sizes=settings.mlp_hidden_layer_sizes,
+                                           mlp_max_iter=settings.mlp_max_iter,
+                                           mlp_validation_fraction=settings.mlp_validation_fraction,
+                                           mlp_linear_adjustment=settings.mlp_linear_adjustment,
+                                           x_linear_train=x_linear_train,
+                                           x_linear_test=x_linear_test)
 
+    # denormalize predicted data
+    y_predicted = denormlaize(normalized_dict=normalized_dict,
+                              y_predicted_normalized=y_predicted_normalized)
+
+    # generate validation stats
+    validation_df = validation(region=region,
+                               y_predicted=y_predicted,
+                               y_comparison=data_mlp.y_comp,
+                               nodata_value=settings.nodata_value)
+
+    return y_predicted, validation_df
