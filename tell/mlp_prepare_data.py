@@ -9,8 +9,8 @@ import pandas as pd
 import yaml
 
 
-class Dataset:
-    """Clean and format input data for use in predictive models.
+class DefaultSettings:
+    """Default settings for the MLP model. Updates any settings passed in from via kwargs from the user.
 
     :param region:                      Indicating region / balancing authority we want to train and test on.
                                         Must match with string in CSV files.
@@ -32,9 +32,13 @@ class Dataset:
                                         stopping. Must be between 0 and 1.
     :type mlp_validation_fraction:      Optional[float]
 
-    :param mlp_linear_adjustment:       True if a linear model will be run and will cause the application of the
-                                        sine function for hour and month fields if they are present in the data.
+    :param mlp_linear_adjustment:       True if you want to correct the MLP model using a linear model.
     :type mlp_linear_adjustment:        Optional[bool]
+
+    :param apply_sine_function:         True if setting up data for a linear model that will be run and will cause
+                                        the application of the sine function for hour and month fields if they
+                                        are present in the data.
+    :type apply_sine_function:          Optional[bool]
 
     :param data_column_rename_dict:     Dictionary for the field names present in the input CSV file (keys) to what the
                                         code expects them to be (values).
@@ -79,6 +83,12 @@ class Dataset:
     :param seed_value:                  Seed value to reproduce randomization.
     :type seed_value:                   Optional[int]
 
+    :param x_variables_linear:          Target variable list for the linear model.
+    :type x_variables_linear:           Optional[list[str]]
+
+    :param y_variables_linear:          Feature variable list for the linear model.
+    :type y_variables_linear:           Optional[list[str]]
+
     """
 
     def __init__(self,
@@ -93,12 +103,16 @@ class Dataset:
         self.settings_dict = self.update_default_settings(kwargs)
 
         # get argument defaults or custom settings
+        self.mlp_hidden_layer_sizes = self.settings_dict.get("mlp_hidden_layer_sizes")
+        self.mlp_max_iter = self.settings_dict.get("mlp_max_iter")
+        self.mlp_validation_fraction = self.settings_dict.get("mlp_validation_fraction")
         self.expected_datetime_columns = self.settings_dict.get("expected_datetime_columns")
         self.data_column_rename_dict = self.settings_dict.get("data_column_rename_dict")
         self.x_variables = self.settings_dict.get("x_variables")
         self.y_variables = self.settings_dict.get("y_variables")
         self.add_dayofweek_xvars = self.settings_dict.get("add_dayofweek_xvars")
         self.mlp_linear_adjustment = self.settings_dict.get("mlp_linear_adjustment")
+        self.apply_sine_function = self.settings_dict.get("apply_sine_function")
         self.hour_field_name = self.settings_dict.get("hour_field_name")
         self.month_field_name = self.settings_dict.get("month_field_name")
         self.day_list = self.settings_dict.get("day_list")
@@ -107,23 +121,16 @@ class Dataset:
         self.split_datetime = str(self.settings_dict.get("split_datetime"))
         self.nodata_value = self.settings_dict.get("nodata_value")
         self.seed_value = self.settings_dict.get("seed_value")
+        self.x_variables_linear = self.settings_dict.get("x_variables_linear")
+        self.y_variables_linear = self.settings_dict.get("y_variables_linear")
         self.verbose = self.settings_dict.get("verbose")
-
-        # populate class attributes for data
-        self.df_train, self.df_test = self.generate_data()
-
-        # break out training and testing targets and features into individual data frames
-        self.X_train = self.df_train[self.x_variables].copy()
-        self.X_test = self.df_test[self.x_variables].copy()
-        self.Y_train = self.df_train[self.y_variables].copy()
-        self.Y_test = self.df_test[self.y_variables].copy()
 
     @staticmethod
     def update_default_settings(kwargs) -> dict:
-        """Read the default settings YAML file into a dictionary.  Update any settings passed in from a
-        settings dictionary or via kwargs.
+        """Read the default settings YAML file into a dictionary.  Updates any settings passed in from via kwargs
+        from the user.
 
-        :param kwargs:                      Keyword argument dictonary from user.
+        :param kwargs:                      Keyword argument dictionary from user.
         :type kwargs:                       dict
 
         :return:                            A dictionary of updated default settings.
@@ -141,6 +148,44 @@ class Dataset:
         default_settings_dict.update(kwargs)
 
         return default_settings_dict
+
+
+class Dataset(DefaultSettings):
+    """Clean and format input data for use in predictive models.
+
+    :param region:                      Indicating region / balancing authority we want to train and test on.
+                                        Must match with string in CSV files.
+    :type region:                       str
+
+    :param data_dir:                    Full path to the directory that houses the input CSV files.
+    :type data_dir:                     str
+
+    """
+
+    def __init__(self,
+                 region: str,
+                 data_dir: str,
+                 **kwargs):
+
+        self.region = region
+        self.data_dir = data_dir
+
+        # get the parent class attributes and methods
+        super().__init__(region=region,
+                         data_dir=data_dir,
+                         **kwargs)
+
+        # populate class attributes for data
+        self.df_train, self.df_test = self.generate_data()
+
+        # break out training and testing targets and features into individual data frames
+        self.x_train = self.df_train[self.x_variables].copy()
+        self.x_test = self.df_test[self.x_variables].copy()
+        self.y_train = self.df_train[self.y_variables].copy()
+        self.y_test = self.df_test[self.y_variables].copy()
+
+        # reset index for test data
+        self.df_test.reset_index(drop=True, inplace=True)
 
     def generate_data(self):
         """Workhorse function to clean and format input data for use in the predictive model."""
@@ -238,11 +283,11 @@ class Dataset:
         """
 
         # if a linear model will be ran and an hour field is present in the data frame apply the sine function
-        if self.mlp_linear_adjustment and self.hour_field_name in df.columns:
+        if self.apply_sine_function and self.hour_field_name in df.columns:
             df[self.hour_field_name] = np.sin(df[self.hour_field_name] * np.pi / 24)
 
             # if a linear model will be ran and an month field is present in the data frame apply the sine function
-        if self.mlp_linear_adjustment and self.month_field_name in df.columns:
+        if self.apply_sine_function and self.month_field_name in df.columns:
             df[self.month_field_name] = np.sin(df[self.month_field_name] * np.pi / 12)
 
         return df
