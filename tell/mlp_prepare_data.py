@@ -1,7 +1,7 @@
 import os
 import glob
 import pkg_resources
-from typing import Optional, Tuple
+from typing import Optional
 
 import holidays
 import numpy as np
@@ -20,7 +20,7 @@ class Dataset:
     :type data_dir:                     str
 
     :param mlp_hidden_layer_sizes:      The ith element represents the number of neurons in the ith hidden layer.
-    :type mlp_hidden_layer_sizes:       Optional[Tuple[int]]
+    :type mlp_hidden_layer_sizes:       Optional[int]
 
     :param mlp_max_iter:                Maximum number of iterations. The solver iterates until convergence
                                         (determined by ‘tol’) or this number of iterations. For stochastic solvers
@@ -87,7 +87,6 @@ class Dataset:
         self.data_dir = data_dir
 
         # update the default settings with what the user provides
-        self.kwargs = kwargs
         self.settings_dict = self.update_default_settings(kwargs)
 
         # get argument defaults or custom settings
@@ -135,7 +134,7 @@ class Dataset:
             default_settings_dict = yaml.load(yml, Loader=yaml.FullLoader)
 
         # update base on any data passed in through keyword arguments
-        default_settings_dict = default_settings_dict.update(kwargs)
+        default_settings_dict.update(kwargs)
 
         return default_settings_dict
 
@@ -154,8 +153,7 @@ class Dataset:
         # add fields for weekday, each day of the week, and holidays to the data frame; also adds "Weekday" and
         # "Holidays" as fields to the x_variables list
         if self.add_dayofweek_xvars:
-            df_smooth, x_variables_extended = self.breakout_day_designation(df_smooth)
-            self.x_variables = x_variables_extended
+            df_smooth = self.breakout_day_designation(df_smooth)
 
         # split the data frame into test and training data based on a datetime
         df_train_raw, df_test_raw = self.split_train_test(df_smooth)
@@ -216,7 +214,7 @@ class Dataset:
         df["Datetime"] = pd.to_datetime(df[self.expected_datetime_columns])
 
         # filter by date range
-        df = df.loc[(df["Datetime"] >= self.start_time) & (df["Datetime"] <= self.end_time)]
+        df = df.loc[(df["Datetime"] >= self.start_time) & (df["Datetime"] <= self.end_time)].copy()
 
         # sort values by timestamp
         df.sort_values(by=["Datetime"], inplace=True)
@@ -280,9 +278,9 @@ class Dataset:
         df["Holidays"] = df["Datetime"].dt.date.isin(holiday_list) * 1
 
         # extend the x_variables list to include the new predictive fields
-        x_variables_extended = self.x_variables.extend(["Weekday", "Holidays"])
+        self.x_variables.extend(["Weekday", "Holidays"])
 
-        return df, x_variables_extended
+        return df
 
     def split_train_test(self, df: pd.DataFrame):
         """Split the data frame into test and training data based on a datetime.
@@ -303,7 +301,7 @@ class Dataset:
 
         return df_train, df_test
 
-    def clean_data(self, df: pd.DataFrame, drop_records: bool=True) -> pd.DataFrame:
+    def clean_data(self, df: pd.DataFrame, drop_records: bool = True) -> pd.DataFrame:
         """Clean data based on criteria for handling NoData and extreme values.
 
         :param df:                         Input data frame for the target region.
