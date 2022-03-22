@@ -76,6 +76,9 @@ class Dataset:
     :param nodata_value:                No data value in the input CSV file.
     :type nodata_value:                 Optional[int]
 
+    :param seed_value:                  Seed value to reproduce randomization.
+    :type seed_value:                   Optional[int]
+
     """
 
     def __init__(self,
@@ -103,6 +106,7 @@ class Dataset:
         self.end_time = str(self.settings_dict.get("end_time"))
         self.split_datetime = str(self.settings_dict.get("split_datetime"))
         self.nodata_value = self.settings_dict.get("nodata_value")
+        self.seed_value = self.settings_dict.get("seed_value")
         self.verbose = self.settings_dict.get("verbose")
 
         # populate class attributes for data

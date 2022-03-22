@@ -1,7 +1,7 @@
 # default settings for the MLP module of TELL
 
 # The ith element represents the number of neurons in the ith hidden layer.
-mlp_hidden_layer_sizes: (256)
+mlp_hidden_layer_sizes: 256
 
 # Maximum number of iterations. The solver iterates until convergence
 # (determined by ‘tol’) or this number of iterations. For stochastic solvers
@@ -61,3 +61,6 @@ split_datetime: 2018-12-31 23:00:00
 
 # No data value in the input CSV file.
 nodata_value: -9999
+
+# Seed value to reproduce randomization
+seed_value: 391
