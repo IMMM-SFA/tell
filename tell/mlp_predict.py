@@ -335,9 +335,9 @@ def validation(region: str,
     return pd.DataFrame(stats_dict)
 
 
-def predict(region: str,
-            data_dir: str,
-            **kwargs):
+def train(region: str,
+          data_dir: str,
+          **kwargs):
     """Generate predictions for MLP model for a target region from an input CSV file.
 
     :param region:                      Indicating region / balancing authority we want to train and test on.
@@ -496,10 +496,10 @@ def predict(region: str,
     return prediction_df, validation_df
 
 
-def predict_batch(target_region_list: list,
-                  data_dir: str,
-                  n_jobs: int = -1,
-                  **kwargs):
+def train_batch(target_region_list: list,
+                data_dir: str,
+                n_jobs: int = -1,
+                **kwargs):
     """Generate predictions for MLP model for a target region from an input CSV file.
 
     :param target_region_list:          List of names indicating region / balancing authority we want to train and test
