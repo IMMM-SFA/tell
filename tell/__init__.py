@@ -12,8 +12,8 @@ from .install_raw_data import install_tell_raw_data
 from .install_forcing_data import install_sample_forcing_data
 
 # MLP steps:
-from .mlp_train import train, train_batch, validation
-from .mlp_predict import load_model
+from .mlp_train import train, train_batch
+from .mlp_utils import validate, load_model
 
 # Model forward execution steps:
 from .execute_forward import *
