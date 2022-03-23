@@ -74,3 +74,12 @@ x_variables_linear: ["Population", "Hour", "Month", "Year"]
 
 # Feature variable list for the linear model.
 y_variables_linear: ["Demand"]
+
+# Choice to write ML models to a pickled file via joblib.
+save_model: False
+
+# Full path to output directory where model file will be written.
+output_directory: ""
+
+# Choice to see logged outputs.
+verbose: False

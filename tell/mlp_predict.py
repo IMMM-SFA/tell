@@ -1,7 +1,10 @@
+import os
 from typing import Union
 
 import numpy as np
 import pandas as pd
+import sklearn
+import joblib
 from joblib import Parallel, delayed
 from sklearn.linear_model import LinearRegression as LR
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_percentage_error
@@ -97,10 +100,48 @@ def denormlaize(region: str,
     return df
 
 
-def run_linear_model(x_train: np.ndarray,
+def pickle_model(region: str,
+                 model_object: object,
+                 model_name: str,
+                 output_directory: str):
+    """Pickle model to file using joblib.  Version of scikit-learn is included in the file name as a compatible
+    version is required to reload the data safely.
+
+    :param region:                      Indicating region / balancing authority we want to train and test on.
+                                        Must match with string in CSV files.
+    :type region:                       str
+
+    :param model_object:                    scikit-learn model object.
+    :type model_object:                     object
+
+    :param model_name:                      Name of sklearn model.
+    :type model_name:                       str
+
+    :param output_directory:                Full path to output directory where model file will be written.
+    :type output_directory:                 str
+
+    """
+
+    # build output file name
+    basename = f"{region}_{model_name}_scikit-learn-version-{sklearn.__version__}.joblib"
+    output_file = os.path.join(output_directory, basename)
+
+    # dump model to file
+    joblib.dump(model_object, output_file)
+
+
+def run_linear_model(region: str,
+                     x_train: np.ndarray,
                      y_train: np.ndarray,
-                     x_test: np.ndarray):
-    """Training and test data of a linear model. Can be used for either the main model or the residual model.
+                     x_test: np.ndarray,
+                     save_model: bool = False,
+                     output_directory: Union[str, None] = None):
+    """Training and test data of an ordinary least squares linear regression model. Can be used for either the main
+    model or the residual model.
+
+    :param region:                          Indicating region / balancing authority we want to train and test on.
+                                            Must match with string in CSV files.
+    :type region:                           str
 
     :param x_train:                         Training features
     :type x_train:                          np.ndarray
@@ -110,6 +151,12 @@ def run_linear_model(x_train: np.ndarray,
 
     :param x_test:                          Test features
     :type x_test:                           np.ndarray
+
+    :param save_model:                      Choice to write ML models to a pickled file via joblib.
+    :type save_model:                       bool
+
+    :param output_directory:                Full path to output directory where model file will be written.
+    :type output_directory:                 Union[str, None]
 
     :return:                                [0] y_p: predictions over test set
                                             [1] reg.coef_: regression coefficients of a linear model
@@ -125,10 +172,18 @@ def run_linear_model(x_train: np.ndarray,
     # get predictions using test features
     y_p = reg.predict(x_test)
 
+    # write the model to file if desired
+    if save_model:
+        pickle_model(region=region,
+                     model_object=linear_mod,
+                     model_name="ordinary-least-squares-linear-regression",
+                     output_directory=output_directory)
+
     return y_p, reg.coef_
 
 
-def run_mlp_model(x_train: np.ndarray,
+def run_mlp_model(region: str,
+                  x_train: np.ndarray,
                   y_train: np.ndarray,
                   x_test: np.ndarray,
                   mlp_hidden_layer_sizes: int,
@@ -136,8 +191,14 @@ def run_mlp_model(x_train: np.ndarray,
                   mlp_validation_fraction: float,
                   mlp_linear_adjustment: bool,
                   x_linear_train: Union[np.ndarray, None] = None,
-                  x_linear_test: Union[np.ndarray, None] = None) -> np.ndarray:
+                  x_linear_test: Union[np.ndarray, None] = None,
+                  save_model: bool = False,
+                  output_directory: Union[str, None] = None) -> np.ndarray:
     """Trains the MLP model. also calls the linear residual model to adjust for population correction.
+
+    :param region:                          Indicating region / balancing authority we want to train and test on.
+                                            Must match with string in CSV files.
+    :type region:                           str
 
     :param x_train:                         Training features
     :type x_train:                          np.ndarray
@@ -172,6 +233,12 @@ def run_mlp_model(x_train: np.ndarray,
     :param x_linear_test:                   Testing data for features from the linear model if using correction.
     :type x_linear_test:                    Union[np.ndarray, None]
 
+    :param save_model:                      Choice to write ML models to a pickled file via joblib.
+    :type save_model:                       bool
+
+    :param output_directory:                Full path to output directory where model file will be written.
+    :type output_directory:                 Union[str, None]
+
     :return:                                y_p: np.ndarray -> predictions over test set
 
     """
@@ -197,12 +264,22 @@ def run_mlp_model(x_train: np.ndarray,
         epsilon = y_train - y_tmp
 
         # train the linear model to find residuals
-        epsilon_e, regression_coeff = run_linear_model(x_train=x_linear_train,
+        epsilon_e, regression_coeff = run_linear_model(region=region,
+                                                       x_train=x_linear_train,
                                                        y_train=epsilon,
-                                                       x_test=x_linear_test)
+                                                       x_test=x_linear_test,
+                                                       save_model=save_model,
+                                                       output_directory=output_directory)
 
         # apply the adjustment
         y_p += epsilon_e
+
+    # write the model to file if desired
+    if save_model:
+        pickle_model(region=region,
+                     model_object=mlp,
+                     model_name="multi-layer-perceptron-regressor",
+                     output_directory=output_directory)
 
     return y_p
 
@@ -340,6 +417,15 @@ def predict(region: str,
     :param y_variables_linear:          Feature variable list for the linear model.
     :type y_variables_linear:           Optional[list[str]]
 
+    :param save_model:                  Choice to write ML models to a pickled file via joblib.
+    :type save_model:                   bool
+
+    :param output_directory:            Full path to output directory where model file will be written.
+    :type output_directory:             Union[str, None]
+
+    :param verbose:                     Choice to see logged outputs.
+    :type verbose:                      bool
+
     """
 
     # get project level settings data
@@ -382,7 +468,8 @@ def predict(region: str,
     x_test_norm = normalized_dict.get("x_test_norm")
 
     # run the MLP model with the linear correction if desired
-    y_predicted_normalized = run_mlp_model(x_train=x_train_norm,
+    y_predicted_normalized = run_mlp_model(region=region,
+                                           x_train=x_train_norm,
                                            y_train=y_train_norm.squeeze(),
                                            x_test=x_test_norm,
                                            mlp_hidden_layer_sizes=settings.mlp_hidden_layer_sizes,
@@ -390,7 +477,9 @@ def predict(region: str,
                                            mlp_validation_fraction=settings.mlp_validation_fraction,
                                            mlp_linear_adjustment=settings.mlp_linear_adjustment,
                                            x_linear_train=x_linear_train,
-                                           x_linear_test=x_linear_test)
+                                           x_linear_test=x_linear_test,
+                                           save_model=settings.save_model,
+                                           output_directory=settings.output_directory)
 
     # denormalize predicted data
     prediction_df = denormlaize(region=region,
@@ -499,6 +588,15 @@ def predict_batch(target_region_list: list,
 
     :param y_variables_linear:          Feature variable list for the linear model.
     :type y_variables_linear:           Optional[list[str]]
+
+    :param save_model:                  Choice to write ML models to a pickled file via joblib.
+    :type save_model:                   bool
+
+    :param output_directory:            Full path to output directory where model file will be written.
+    :type output_directory:             Union[str, None]
+
+    :param verbose:                     Choice to see logged outputs.
+    :type verbose:                      bool
 
     """
 

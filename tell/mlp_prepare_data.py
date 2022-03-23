@@ -89,6 +89,15 @@ class DefaultSettings:
     :param y_variables_linear:          Feature variable list for the linear model.
     :type y_variables_linear:           Optional[list[str]]
 
+    :param save_model:                  Choice to write ML models to a pickled file via joblib.
+    :type save_model:                   bool
+
+    :param output_directory:            Full path to output directory where model file will be written.
+    :type output_directory:             Union[str, None]
+
+    :param verbose:                     Choice to see logged outputs.
+    :type verbose:                      bool
+
     """
 
     def __init__(self,
@@ -123,6 +132,8 @@ class DefaultSettings:
         self.seed_value = self.settings_dict.get("seed_value")
         self.x_variables_linear = self.settings_dict.get("x_variables_linear")
         self.y_variables_linear = self.settings_dict.get("y_variables_linear")
+        self.save_model = self.settings_dict.get("save_model")
+        self.output_directory = self.settings_dict.get("output_directory")
         self.verbose = self.settings_dict.get("verbose")
 
     @staticmethod
