@@ -2,7 +2,6 @@ import os
 
 import pandas as pd
 
-from pandas import DataFrame
 from joblib import Parallel, delayed
 from .package_data import get_ba_abbreviations
 

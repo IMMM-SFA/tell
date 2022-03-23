@@ -1,6 +1,6 @@
 import unittest
 
-from tell.metadata_eia import metadata_eia
+from tell.tell.metadata_eia import metadata_eia
 
 
 class TestMetadataEIA(unittest.TestCase):

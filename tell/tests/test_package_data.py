@@ -1,6 +1,6 @@
 import unittest
 
-from tell.package_data import get_ba_abbreviations
+from tell.tell.package_data import get_ba_abbreviations
 
 
 class TestPackageData(unittest.TestCase):
