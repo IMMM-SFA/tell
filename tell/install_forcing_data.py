@@ -7,7 +7,7 @@ from io import BytesIO as BytesIO
 from pkg_resources import get_distribution
 
 
-class Install_Forcing_Sample:
+class InstallForcingSample:
     """Download the TELL sample forcing data package from Zenodo that matches the current installed tell distribution
 
     :param data_dir:                    Optional. Full path to the directory you wish to store the data in. Default is
@@ -30,7 +30,7 @@ class Install_Forcing_Sample:
         current_version = get_distribution('tell').version
 
         try:
-            data_link = Install_Forcing_Sample.DATA_VERSION_URLS[current_version]
+            data_link = InstallForcingSample.DATA_VERSION_URLS[current_version]
 
         except KeyError:
             msg = f"Link to data missing for current version: {current_version}. Please contact an administrator."
@@ -61,6 +61,6 @@ def install_sample_forcing_data(data_dir=None):
     :type data_dir:                     str
     """
 
-    zen = Install_Forcing_Sample(data_dir=data_dir)
+    zen = InstallForcingSample(data_dir=data_dir)
 
     zen.fetch_zenodo()
