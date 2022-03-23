@@ -1,13 +1,14 @@
+import os
 import unittest
 
 from tell.tell.data_spatial_mapping import map_ba_service_territory
 
 
 class TestSpatialMapping(unittest.TestCase):
-    """Tests for functionality within match.py"""
+    """Tests for functionality within data_spatial_mapping.py"""
 
     def test_spatial_mapping(self):
-        """Test to ensure high level functionality of data_spatial_mapping.py"""
+        """Test to ensure high level functionality of data_spatial_mapping.py()"""
 
         start_year = 2018
         end_year = 2019

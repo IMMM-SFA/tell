@@ -4,10 +4,10 @@ from tell.tell.states_fips_function import state_metadata_from_state_abbreviatio
 
 
 class TestStateFIPS(unittest.TestCase):
-    """Tests for functionality within metadata_eia.py"""
+    """Tests for functionality within state_fips_function.py"""
 
     def test_state_fips(self):
-        """Test to ensure high level functionality of metadata_eia.py()"""
+        """Test to ensure high level functionality of state_fips_function.py()"""
 
         num = ['WA', 'VA', 'NC', 'RI']
         state_fips_df = state_metadata_from_state_abbreviation(num)

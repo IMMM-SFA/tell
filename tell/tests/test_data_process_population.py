@@ -5,10 +5,10 @@ from tell.tell.data_process_population import process_ba_population_data
 
 
 class TestPopulation(unittest.TestCase):
-    """Tests for functionality within data_process_compile_df.py"""
+    """Tests for functionality within data_process_population.py"""
 
     def test_population(self):
-        """Test to ensure high level functionality of data_process_compile_df.py()"""
+        """Test to ensure high level functionality of data_process_population.py()"""
 
         start_year = 2018
         end_year = 2019
