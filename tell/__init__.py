@@ -12,7 +12,7 @@ from .install_raw_data import install_tell_raw_data
 from .install_forcing_data import install_sample_forcing_data
 
 # MLP steps:
-from .mlp_predict import *
+from .mlp_predict import predict, predict_batch
 
 # Model forward execution steps:
 from .execute_forward import *
