@@ -13,6 +13,7 @@ from .install_forcing_data import install_sample_forcing_data
 
 # MLP steps:
 from .mlp_train import train, train_batch, validation
+from .mlp_predict import load_model
 
 # Model forward execution steps:
 from .execute_forward import *
