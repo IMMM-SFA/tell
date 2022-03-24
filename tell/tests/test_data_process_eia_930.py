@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from tell.tell.data_process_eia_930 import process_eia_930_data
+from tell.data_process_eia_930 import process_eia_930_data
 
 
 class TestEIA930Data(unittest.TestCase):

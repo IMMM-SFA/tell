@@ -1,6 +1,6 @@
 import unittest
 
-from tell.tell.visualization import plot_ba_load_time_series
+from tell.visualization import plot_ba_load_time_series
 
 class TestVisualization(unittest.TestCase):
     """Tests for functionality within visualization.py"""

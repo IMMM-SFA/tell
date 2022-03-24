@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from tell.tell.data_process_population import process_ba_population_data
+from tell.data_process_population import process_ba_population_data
 
 
 class TestPopulation(unittest.TestCase):
