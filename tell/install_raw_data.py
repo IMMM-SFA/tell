@@ -31,7 +31,7 @@ class InstallRawData:
         current_version = get_distribution('tell').version
 
         try:
-            data_link = InstallSupplement.DATA_VERSION_URLS[current_version]
+            data_link = InstallRawData.DATA_VERSION_URLS[current_version]
 
         except KeyError:
             msg = f"Link to data missing for current version: {current_version}. Please contact an administrator."
