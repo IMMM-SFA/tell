@@ -1,2 +1,3 @@
 include tell/data/balancing_authority_names.yml
 include tell/data/mlp_settings.yml
+include tell/data/models/*

@@ -1,5 +1,7 @@
 import os
+import pkg_resources
 import warnings
+from typing import Union
 
 import joblib
 import numpy as np
@@ -63,6 +65,7 @@ def scale_features(x_train: np.ndarray,
 def unscale_features(region: str,
                      normalized_dict: dict,
                      y_predicted_normalized: np.ndarray,
+                     y_comparison: np.ndarray,
                      datetime_arr: np.ndarray) -> pd.DataFrame:
     """Function to denormlaize the predictions of the model.
 
@@ -76,6 +79,9 @@ def unscale_features(region: str,
     :param y_predicted_normalized:              Normalized predictions over the test set.
     :type y_predicted_normalized:               np.ndarray
 
+    :param y_comparison:                        Testing data to compare predictions to.
+    :type y_comparison:                         np.ndarray
+
     :param datetime_arr:                        Array of datetimes corresponding to the predictions.
     :type datetime_arr:                         np.ndarray
 
@@ -87,7 +93,7 @@ def unscale_features(region: str,
     y_p = y_predicted_normalized * normalized_dict["sigma_y_train"] + normalized_dict["mu_y_train"]
 
     # create data frame with datetime attached
-    df = pd.DataFrame({"Datetime": datetime_arr, "Predictions": y_p})
+    df = pd.DataFrame({"datetime": datetime_arr, "predictions": y_p, "ground_truth": np.squeeze(y_comparison)})
 
     # add in region field
     df["region"] = region
@@ -98,13 +104,13 @@ def unscale_features(region: str,
 def pickle_model(region: str,
                  model_object: object,
                  model_name: str,
-                 output_directory: str):
+                 model_output_directory: Union[str, None]):
     """Pickle model to file using joblib.  Version of scikit-learn is included in the file name as a compatible
     version is required to reload the data safely.
 
-    :param region:                      Indicating region / balancing authority we want to train and test on.
-                                        Must match with string in CSV files.
-    :type region:                       str
+    :param region:                          Indicating region / balancing authority we want to train and test on.
+                                            Must match with string in CSV files.
+    :type region:                           str
 
     :param model_object:                    scikit-learn model object.
     :type model_object:                     object
@@ -112,14 +118,14 @@ def pickle_model(region: str,
     :param model_name:                      Name of sklearn model.
     :type model_name:                       str
 
-    :param output_directory:                Full path to output directory where model file will be written.
-    :type output_directory:                 str
+    :param model_output_directory:          Full path to output directory where model file will be written.
+    :type model_output_directory:           str
 
     """
 
     # build output file name
     basename = f"{region}_{model_name}_scikit-learn-version-{sklearn.__version__}.joblib"
-    output_file = os.path.join(output_directory, basename)
+    output_file = os.path.join(model_output_directory, basename)
 
     # dump model to file
     joblib.dump(model_object, output_file)
@@ -148,6 +154,74 @@ def load_model(model_file: str) -> object:
 
     # load model from
     return joblib.load(model_file)
+
+
+def load_predictive_models(region: str,
+                           model_output_directory: Union[str, None],
+                           mlp_linear_adjustment: bool):
+    """Load predictive models based off of what is stored in the package or from a user provided directory.
+    The scikit-learn version being used must match the one the model was generated with.
+
+    :param region:                          Indicating region / balancing authority we want to train and test on.
+                                            Must match with string in CSV files.
+    :type region:                           str
+
+    :param model_output_directory:          Full path to output directory where model file will be written.
+    :type model_output_directory:           Union[str, None]
+
+    :param mlp_linear_adjustment:           True if you want to correct the MLP model using a linear model.
+    :type mlp_linear_adjustment:            Optional[bool]
+
+    :return:                                [0] MLP model
+                                            [1] linear model or None
+
+    """
+
+    # current scikit-learn version
+    sk_version = sklearn.__version__
+
+    # load the models from the package data if no alternate directory is passed
+    if len(model_output_directory) == 0:
+
+        # get default model file
+        mlp_model_id = "multi-layer-perceptron-regressor"
+        mlp_model_file = os.path.join("data", "models", f"{region}_{mlp_model_id}_scikit-learn-version-{sk_version}.joblib")
+        mlp_model_path = pkg_resources.resource_filename("tell", mlp_model_file)
+
+        if mlp_linear_adjustment:
+
+            # get default model file
+            linear_model_id = "ordinary-least-squares-linear-regression"
+            linear_model_file = os.path.join("data", "models", f"{region}_{linear_model_id}_scikit-learn-version-{sk_version}.joblib")
+            linear_model_path = pkg_resources.resource_filename("tell", linear_model_file)
+
+    else:
+
+        # get provided model file
+        mlp_model_id = "multi-layer-perceptron-regressor"
+        mlp_model_file = f"{region}_{mlp_model_id}_scikit-learn-version-{sk_version}.joblib"
+        mlp_model_path = os.path.join(model_output_directory, mlp_model_file)
+
+        if mlp_linear_adjustment:
+
+            # get provided model file
+            linear_model_id = "ordinary-least-squares-linear-regression"
+            linear_model_file = f"{region}_{linear_model_id}*.joblib"
+            linear_model_path = os.path.join(model_output_directory, linear_model_file)
+
+    # load the mlp model
+    mlp_model = load_model(model_file=mlp_model_path)
+
+    if mlp_linear_adjustment:
+
+        # load the linear model
+        linear_model = load_model(model_file=linear_model_path)
+
+    else:
+
+        linear_model = None
+
+    return mlp_model, linear_model
 
 
 def validate(region: str,

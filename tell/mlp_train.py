@@ -6,7 +6,7 @@ from joblib import Parallel, delayed
 from sklearn.linear_model import LinearRegression as LR
 from sklearn.neural_network import MLPRegressor as MLP
 
-from .mlp_prepare_data import Dataset, DefaultSettings
+from .mlp_prepare_data import DatasetTrain, DefaultSettings
 from .mlp_utils import scale_features, unscale_features, pickle_model, validate
 
 
@@ -15,7 +15,7 @@ def train_linear_model(region: str,
                        y_train: np.ndarray,
                        x_test: np.ndarray,
                        save_model: bool = False,
-                       output_directory: Union[str, None] = None):
+                       model_output_directory: Union[str, None] = None):
     """Train the ordinary least squares linear regression model. Can be used for either the main
     model or the residual model.
 
@@ -35,8 +35,8 @@ def train_linear_model(region: str,
     :param save_model:                      Choice to write ML models to a pickled file via joblib.
     :type save_model:                       bool
 
-    :param output_directory:                Full path to output directory where model file will be written.
-    :type output_directory:                 Union[str, None]
+    :param model_output_directory:          Full path to output directory where model file will be written.
+    :type model_output_directory:           Union[str, None]
 
     :return:                                [0] y_p: predictions over test set
                                             [1] reg.coef_: regression coefficients of a linear model
@@ -57,7 +57,7 @@ def train_linear_model(region: str,
         pickle_model(region=region,
                      model_object=linear_mod,
                      model_name="ordinary-least-squares-linear-regression",
-                     output_directory=output_directory)
+                     model_output_directory=model_output_directory)
 
     return y_p, reg.coef_
 
@@ -73,7 +73,7 @@ def train_mlp_model(region: str,
                     x_linear_train: Union[np.ndarray, None] = None,
                     x_linear_test: Union[np.ndarray, None] = None,
                     save_model: bool = False,
-                    output_directory: Union[str, None] = None) -> np.ndarray:
+                    model_output_directory: Union[str, None] = None) -> np.ndarray:
     """Trains the MLP model. also calls the linear residual model to adjust for population correction.
 
     :param region:                          Indicating region / balancing authority we want to train and test on.
@@ -116,8 +116,8 @@ def train_mlp_model(region: str,
     :param save_model:                      Choice to write ML models to a pickled file via joblib.
     :type save_model:                       bool
 
-    :param output_directory:                Full path to output directory where model file will be written.
-    :type output_directory:                 Union[str, None]
+    :param model_output_directory:          Full path to output directory where model file will be written.
+    :type model_output_directory:           Union[str, None]
 
     :return:                                y_p: np.ndarray -> predictions over test set
 
@@ -149,7 +149,7 @@ def train_mlp_model(region: str,
                                                          y_train=epsilon,
                                                          x_test=x_linear_test,
                                                          save_model=save_model,
-                                                         output_directory=output_directory)
+                                                         model_output_directory=model_output_directory)
 
         # apply the adjustment
         y_p += epsilon_e
@@ -159,7 +159,7 @@ def train_mlp_model(region: str,
         pickle_model(region=region,
                      model_object=mlp,
                      model_name="multi-layer-perceptron-regressor",
-                     output_directory=output_directory)
+                     model_output_directory=model_output_directory)
 
     return y_p
 
@@ -249,8 +249,8 @@ def train(region: str,
     :param save_model:                  Choice to write ML models to a pickled file via joblib.
     :type save_model:                   bool
 
-    :param output_directory:            Full path to output directory where model file will be written.
-    :type output_directory:             Union[str, None]
+    :param model_output_directory:      Full path to output directory where model file will be written.
+    :type model_output_directory:       Union[str, None]
 
     :param verbose:                     Choice to see logged outputs.
     :type verbose:                      bool
@@ -266,17 +266,17 @@ def train(region: str,
     np.random.seed(settings.seed_value)
 
     # prepare data for MLP model
-    data_mlp = Dataset(region=region,
-                       data_dir=data_dir,
-                       **kwargs)
+    data_mlp = DatasetTrain(region=region,
+                            data_dir=data_dir,
+                            **kwargs)
 
     # prepare data for linear model if adjustment is desired
     if settings.mlp_linear_adjustment:
-        data_linear = Dataset(region,
-                              data_dir,
-                              x_variables=settings.x_variables_linear,
-                              apply_sine_function=True,
-                              **kwargs)
+        data_linear = DatasetTrain(region,
+                                   data_dir,
+                                   x_variables=settings.x_variables_linear,
+                                   apply_sine_function=True,
+                                   **kwargs)
 
         x_linear_train = data_linear.x_train
         x_linear_test = data_linear.x_test
@@ -308,17 +308,18 @@ def train(region: str,
                                              x_linear_train=x_linear_train,
                                              x_linear_test=x_linear_test,
                                              save_model=settings.save_model,
-                                             output_directory=settings.output_directory)
+                                             model_output_directory=settings.model_output_directory)
 
     # denormalize predicted data
     prediction_df = unscale_features(region=region,
                                      normalized_dict=normalized_dict,
                                      y_predicted_normalized=y_predicted_normalized,
-                                     datetime_arr=data_mlp.df_test["Datetime"].values)
+                                     y_comparison=data_mlp.y_comp,
+                                     datetime_arr=data_mlp.df_test[settings.DATETIME_FIELD].values)
 
     # generate validation stats
     validation_df = validate(region=region,
-                             y_predicted=prediction_df["Predictions"].values,
+                             y_predicted=prediction_df["predictions"].values,
                              y_comparison=data_mlp.y_comp,
                              nodata_value=settings.nodata_value)
 
@@ -421,8 +422,8 @@ def train_batch(target_region_list: list,
     :param save_model:                  Choice to write ML models to a pickled file via joblib.
     :type save_model:                   bool
 
-    :param output_directory:            Full path to output directory where model file will be written.
-    :type output_directory:             Union[str, None]
+    :param model_output_directory:      Full path to output directory where model file will be written.
+    :type model_output_directory:       Union[str, None]
 
     :param verbose:                     Choice to see logged outputs.
     :type verbose:                      bool

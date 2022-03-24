@@ -79,7 +79,7 @@ y_variables_linear: ["Demand"]
 save_model: False
 
 # Full path to output directory where model file will be written.
-output_directory: ""
+model_output_directory: ""
 
 # Choice to see logged outputs.
 verbose: False

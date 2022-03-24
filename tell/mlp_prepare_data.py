@@ -92,13 +92,18 @@ class DefaultSettings:
     :param save_model:                  Choice to write ML models to a pickled file via joblib.
     :type save_model:                   bool
 
-    :param output_directory:            Full path to output directory where model file will be written.
-    :type output_directory:             Union[str, None]
+    :param model_output_directory:      Full path to output directory where model file will be written.
+    :type model_output_directory:       Union[str, None]
 
     :param verbose:                     Choice to see logged outputs.
     :type verbose:                      bool
 
     """
+
+    # internally generated field names
+    DATETIME_FIELD = "Datetime"
+    WEEKDAY_FIELD = "Weekday"
+    HOLIDAY_FIELD = "Holidays"
 
     def __init__(self,
                  region: str,
@@ -133,7 +138,7 @@ class DefaultSettings:
         self.x_variables_linear = self.settings_dict.get("x_variables_linear")
         self.y_variables_linear = self.settings_dict.get("y_variables_linear")
         self.save_model = self.settings_dict.get("save_model")
-        self.output_directory = self.settings_dict.get("output_directory")
+        self.model_output_directory = self.settings_dict.get("model_output_directory")
         self.verbose = self.settings_dict.get("verbose")
 
     @staticmethod
@@ -161,8 +166,8 @@ class DefaultSettings:
         return default_settings_dict
 
 
-class Dataset(DefaultSettings):
-    """Clean and format input data for use in predictive models.
+class DatasetTrain(DefaultSettings):
+    """Clean and format input data for use in training predictive models.
 
     :param region:                      Indicating region / balancing authority we want to train and test on.
                                         Must match with string in CSV files.
@@ -275,13 +280,13 @@ class Dataset(DefaultSettings):
         df.rename(columns=self.data_column_rename_dict, inplace=True)
 
         # generate datetime timestamp field
-        df["Datetime"] = pd.to_datetime(df[self.expected_datetime_columns])
+        df[self.DATETIME_FIELD] = pd.to_datetime(df[self.expected_datetime_columns])
 
         # filter by date range
-        df = df.loc[(df["Datetime"] >= self.start_time) & (df["Datetime"] <= self.end_time)].copy()
+        df = df.loc[(df[self.DATETIME_FIELD] >= self.start_time) & (df[self.DATETIME_FIELD] <= self.end_time)].copy()
 
         # sort values by timestamp
-        df.sort_values(by=["Datetime"], inplace=True)
+        df.sort_values(by=[self.DATETIME_FIELD], inplace=True)
 
         # reset and drop index
         df.reset_index(drop=True, inplace=True)
@@ -323,26 +328,26 @@ class Dataset(DefaultSettings):
         """
 
         # create an array of day of the week values from the timestamp; 0 = Monday ... 6 = Sunday
-        day_of_week_arr = df["Datetime"].dt.dayofweek.values
+        day_of_week_arr = df[self.DATETIME_FIELD].dt.dayofweek.values
 
         # adjust to specify weekdays (Mon through Fri) as 1 and weekends (Sat and Sun) as 0
-        df["Weekday"] = np.where(day_of_week_arr <= 4, 1, 0)
+        df[self.WEEKDAY_FIELD] = np.where(day_of_week_arr <= 4, 1, 0)
 
         # add a field for each day of the week and populate with 1 if the record is the day and 0 if not
         for index, i in enumerate(self.day_list):
             df[i] = np.where(day_of_week_arr == index, 1, 0)
 
         # build a sorted range of years in the data frame
-        years_arr = np.sort(df["Datetime"].dt.year.unique())
+        years_arr = np.sort(df[self.DATETIME_FIELD].dt.year.unique())
 
         # identify the US holidays for the years in the data frame
         holiday_list = holidays.US(years=years_arr)
 
         # add a field designating whether the day is a US holiday where 1 == yes and 0 == no
-        df["Holidays"] = df["Datetime"].dt.date.isin(holiday_list) * 1
+        df[self.HOLIDAY_FIELD] = df[self.DATETIME_FIELD].dt.date.isin(holiday_list) * 1
 
         # extend the x_variables list to include the new predictive fields
-        self.x_variables.extend(["Weekday", "Holidays"])
+        self.x_variables.extend([self.WEEKDAY_FIELD, self.HOLIDAY_FIELD])
 
         return df
 
@@ -358,10 +363,10 @@ class Dataset(DefaultSettings):
         """
 
         # extract datetime less than or equal to the user provided split datetime as training data
-        df_train = df.loc[df["Datetime"] <= self.split_datetime].copy()
+        df_train = df.loc[df[self.DATETIME_FIELD] <= self.split_datetime].copy()
 
         # extract datetime greater than the user provided split datetime as test data
-        df_test = df.loc[df["Datetime"] > self.split_datetime].copy()
+        df_test = df.loc[df[self.DATETIME_FIELD] > self.split_datetime].copy()
 
         return df_train, df_test
 
@@ -378,11 +383,14 @@ class Dataset(DefaultSettings):
 
         """
 
+        # get feature field name
+        feature_name = self.y_variables[0]
+
         # calculate error bounds
-        mu_y = df["Demand"].mean()
-        sigma_y = df["Demand"].std()
-        lower_bound = (df["Demand"] <= mu_y - 5 * sigma_y)
-        upper_bound = (df["Demand"] >= mu_y + 5 * sigma_y)
+        mu_y = df[feature_name].mean()
+        sigma_y = df[feature_name].std()
+        lower_bound = (df[feature_name] <= mu_y - 5 * sigma_y)
+        upper_bound = (df[feature_name] >= mu_y + 5 * sigma_y)
 
         if drop_records:
 
@@ -390,11 +398,10 @@ class Dataset(DefaultSettings):
             df.drop(df.index[np.where(df == self.nodata_value)[0]], inplace=True)
 
             # drop records containing any native np.nan
-            # TODO:  account for this condition in else
             df.drop(df.index[np.where(np.isnan(df))[0]], inplace=True)
 
             # drop and records where demand is zero which is not feasible if desired
-            df.drop(df.index[np.where(df["Demand"] == 0)[0]], inplace=True)
+            df.drop(df.index[np.where(df[feature_name] == 0)[0]], inplace=True)
 
             # drop extreme value that lie outside + / - 5*sigma
             df.drop(df.index[np.where(lower_bound | upper_bound)], inplace=True)
@@ -402,10 +409,10 @@ class Dataset(DefaultSettings):
         else:
 
             # alter records where demand is zero which is not feasible if desired
-            df.loc[df["Demand"] == 0, "Demand"] = self.nodata_value
+            df.loc[df[feature_name] == 0, feature_name] = self.nodata_value
 
             # alter extreme value that lie outside + / - 5*sigma
-            df.loc[(lower_bound | upper_bound), "Demand"] = self.nodata_value
+            df.loc[(lower_bound | upper_bound), feature_name] = self.nodata_value
 
         return df
 
@@ -418,7 +425,227 @@ class Dataset(DefaultSettings):
         """
 
         # generate a list of field names to keep
-        keep_fields = ["Datetime"] + self.x_variables + self.y_variables
+        keep_fields = [self.DATETIME_FIELD] + self.x_variables + self.y_variables
+
+        # extract desired fields
+        return df[keep_fields]
+
+
+class DatasetPredict(DefaultSettings):
+    """Clean and format input weather data for use in predictive models.
+
+    :param region:                      Indicating region / balancing authority we want to train and test on.
+                                        Must match with string in CSV files.
+    :type region:                       str
+
+    :param year:                        Target year to use in YYYY format.
+    :type year:                         int
+
+    :param data_dir:                    Full path to the directory that houses the input CSV files.
+    :type data_dir:                     str
+
+    :param datetime_field_name:         Name of the datetime field.
+    :type datetime_field_name:          str
+
+    """
+
+    def __init__(self,
+                 region: str,
+                 year: int,
+                 data_dir: str,
+                 datetime_field_name: str = "Time_UTC",
+                 **kwargs):
+
+        self.region = region
+        self.year = year
+        self.data_dir = data_dir
+        self.datetime_field_name = datetime_field_name
+
+        # get the parent class attributes and methods
+        super().__init__(region=region,
+                         data_dir=data_dir,
+                         **kwargs)
+
+        # populate class attributes for data
+        self.df_data = self.generate_data()
+
+        # break out training and testing targets and features into individual data frames
+        self.x_data = self.df_data[self.x_variables].values
+
+        # reset index for test data
+        self.df_data.reset_index(drop=True, inplace=True)
+
+    def generate_data(self):
+        """Workhorse function to clean and format input data for use in the predictive model."""
+
+        # get the input file from the data directory matching the region name and read it into a data frame
+        df = self.fetch_read_file()
+
+        # format the input data file
+        df_filtered = self.format_filter_data(df)
+
+        # apply sine to hour and month fields if present and if using a linear model
+        df_smooth = self.apply_sine_for_linear_model(df_filtered)
+
+        # add fields for weekday, each day of the week, and holidays to the data frame; also adds "Weekday" and
+        # "Holidays" as fields to the x_variables list
+        if self.add_dayofweek_xvars:
+            df_smooth = self.breakout_day_designation(df_smooth)
+
+        # clean data to alter no data records, non-feasible, and extreme values
+        df_test_clean = self.clean_data(df_smooth, drop_records=False)
+
+        # extract the targets and features from the cleaned test data
+        df_test_extract_clean = self.extract_targets_features(df_test_clean)
+
+        return df_test_extract_clean
+
+    def fetch_read_file(self) -> pd.DataFrame:
+        """Get the input file from the data directory matching the region name and year
+        and read it into a pandas data frame.
+
+        """
+
+        file_pattern = os.path.join(self.data_dir, f"{self.region}*{self.year}.csv")
+
+        # get file list from the data directory using the pattern
+        file_list = glob.glob(file_pattern)
+
+        # raise error if no files are found
+        if len(file_list) == 0:
+            msg = f"No data files were found for region '{self.region}' and year '{self.year}' in directory '{self.data_dir}'."
+            raise FileNotFoundError(msg)
+
+        # raise error if more than one file was found
+        if len(file_list) > 1:
+            msg = f"More than one data files were found for region '{self.region}' and year '{self.year}' in directory '{self.data_dir}'."
+            raise ValueError(msg)
+
+        # log feedback to user if desired
+        if self.verbose:
+            print(f"Processing file:  {file_list[0]}")
+
+        return pd.read_csv(file_list[0])
+
+    def format_filter_data(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Format the input data file.  Filter data by user provided date range and sort in
+        ascending order by the timestamp.
+
+        :param df:               Data frame for the target region
+        :type df:                pd.DataFrame
+
+        :return:                 Formatted data frame
+
+        """
+
+        # rename columns to default or user desired
+        df.rename(columns=self.data_column_rename_dict, inplace=True)
+
+        # generate datetime timestamp field
+        df[self.DATETIME_FIELD] = pd.to_datetime(df[self.datetime_field_name])
+
+        # break out date time fields
+        df[self.month_field_name] = df[self.DATETIME_FIELD].dt.month
+        df[self.hour_field_name] = df[self.DATETIME_FIELD].dt.hour
+
+        # sort values by timestamp
+        df.sort_values(by=[self.DATETIME_FIELD], inplace=True)
+
+        # reset and drop index
+        df.reset_index(drop=True, inplace=True)
+
+        return df
+
+    def apply_sine_for_linear_model(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Apply the sine function to the hour and month fields for use in a linear model as predictive variables.
+
+        :param df:               Data frame for the target region
+        :type df:                pd.DataFrame
+
+        """
+
+        # if a linear model will be run and an hour field is present in the data frame apply the sine function
+        if self.apply_sine_function and self.hour_field_name in df.columns:
+            df[self.hour_field_name] = np.sin(df[self.hour_field_name] * np.pi / 24)
+
+        # if a linear model will be run and a month field is present in the data frame apply the sine function
+        if self.apply_sine_function and self.month_field_name in df.columns:
+            df[self.month_field_name] = np.sin(df[self.month_field_name] * np.pi / 12)
+
+        return df
+
+    def breakout_day_designation(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add a field for weekday, each day of the week, and holidays to the data frame.
+
+        Weekdays are designated as 1 for weekdays (Mon through Fri) and weekends are designated as 0 (Sat and Sun).
+        Each day of the week is given its own field which has a 1 if the record is in that day and a 0 if not.
+        Holidays are set to 1 to indicate a US Federal holiday and 0 if not.
+
+        :param df:                          Data frame for the target region.
+        :type df:                           pd.DataFrame
+
+        :return:                            [0] Formatted data frame
+                                            [1] List of extended x_variables
+
+        """
+
+        # create an array of day of the week values from the timestamp; 0 = Monday ... 6 = Sunday
+        day_of_week_arr = df[self.DATETIME_FIELD].dt.dayofweek.values
+
+        # adjust to specify weekdays (Mon through Fri) as 1 and weekends (Sat and Sun) as 0
+        df[self.WEEKDAY_FIELD] = np.where(day_of_week_arr <= 4, 1, 0)
+
+        # add a field for each day of the week and populate with 1 if the record is the day and 0 if not
+        for index, i in enumerate(self.day_list):
+            df[i] = np.where(day_of_week_arr == index, 1, 0)
+
+        # build a sorted range of years in the data frame
+        years_arr = np.sort(df[self.DATETIME_FIELD].dt.year.unique())
+
+        # identify the US holidays for the years in the data frame
+        holiday_list = holidays.US(years=years_arr)
+
+        # add a field designating whether the day is a US holiday where 1 == yes and 0 == no
+        df[self.HOLIDAY_FIELD] = df[self.DATETIME_FIELD].dt.date.isin(holiday_list) * 1
+
+        # extend the x_variables list to include the new predictive fields
+        self.x_variables.extend([self.WEEKDAY_FIELD, self.HOLIDAY_FIELD])
+
+        return df
+
+    def clean_data(self, df: pd.DataFrame, drop_records: bool = True) -> pd.DataFrame:
+        """Clean data based on criteria for handling NoData and extreme values.
+
+        :param df:                         Input data frame for the target region.
+        :type df:                          pd.DataFrame
+
+        :param drop_records:               If True, drop records; else, alter records
+        :type drop_records:                bool
+
+        :return:                           Processed data frame
+
+        """
+
+        if drop_records:
+
+            # drop nodata value if so desired
+            df.drop(df.index[np.where(df == self.nodata_value)[0]], inplace=True)
+
+            # drop records containing any native np.nan
+            df.drop(df.index[np.where(np.isnan(df))[0]], inplace=True)
+
+        return df
+
+    def extract_targets_features(self, df) -> pd.DataFrame:
+        """Keep datetime, target, and feature fields.
+
+        :param df:                         Input data frame for the target region.
+        :type df:                          pd.DataFrame
+
+        """
+
+        # generate a list of field names to keep
+        keep_fields = [self.DATETIME_FIELD] + self.x_variables
 
         # extract desired fields
         return df[keep_fields]
