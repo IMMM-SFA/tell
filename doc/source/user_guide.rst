@@ -517,8 +517,12 @@ residential, commercial, and transportation sectors.
 
 In order to reflect technology change in a given sector you need a detailed understanding of that sector as well as an ability
 to simulate future changes due to specific technologies. While **tell** was not designed for this level of detail, other detailed
-sectoral models are.
+sectoral models are. We built **tell** to incorporate technological changes by partnering with these detailed sectoral models. The
+figure below shows how this might work conceptually.
 
+.. image:: _static/Load_Perturbation_Incorporation_Example.png
+   :width: 900
+   :align: center
 
 Scenarios
 ~~~~~~~~~
