@@ -402,7 +402,7 @@ This figure shows the number of BAs that **tell** identifies as operating within
 of four different BAs reported operating in Brevard County, FL. While the majority of counties only have one BA identified, some counties
 have as many as five. Note that a handful of counties had zero BAs identified as operating within them in 2019. Because we think these
 BA-to-county mappings may be useful to many others the output files from the mapping process are included below. They can be reproduced
-within the **tell** package by running the "tell.map_ba_service_territory" function.
+within the **tell** package by running the ``tell.map_ba_service_territory`` function.
 
 .. list-table::
     :header-rows: 1
@@ -492,13 +492,13 @@ Research and Forecasting (WRF) model. In the production version of the **tell** 
       - m s :sup:`-1`
     * - Population
       - Total population in the counties covered by the BA
-      - NA
+      - #
     * - Day of the week
-      - Day of the week
+      - Is the day a weekday or weekend?
       - Weekdays (1) or weekends (0)
     * - Hour of the day
       - Hour of the day in UTC
-      - 00-23
+      - 00-23 UTC
     * - Federal holiday
       - Is the day a federal holiday?
       - Yes (1) or No (0)
@@ -570,7 +570,7 @@ Filename: *TELL_State_Summary_Data_YYYY.csv*
       - Name of the state
       - NA
     * - State_FIPS
-      - `FIPS <https://www.census.gov/library/reference/code-lists/ansi.html>`_ code of the state
+      - FIPS code of the state
       - NA
     * - State_Scaling_Factor
       - Scaling factor to force agreement between **tell** and GCAM-USA annual total loads
@@ -602,7 +602,7 @@ Filename: *TELL_State_Hourly_Load_Data_YYYY.csv*
       - Name of the state
       - NA
     * - State_FIPS
-      - `FIPS <https://www.census.gov/library/reference/code-lists/ansi.html>`_ code of the state
+      - FIPS code of the state
       - NA
     * - Time_UTC
       - Hour of the load in UTC
@@ -661,13 +661,13 @@ Filename Format: *TELL_statename_countyname_Hourly_Load_Data_YYYY.csv*
       - Name of the county
       - NA
     * - County_FIPS
-      - `FIPS <https://www.census.gov/library/reference/code-lists/ansi.html>`_ code of the county
+      - FIPS code of the county
       - NA
     * - State_Name
       - Name of the state the county is in
       - NA
     * - State_FIPS
-      - `FIPS <https://www.census.gov/library/reference/code-lists/ansi.html>`_ code of the state
+      - FIPS code of the state
       - NA
     * - Time_UTC
       - Hour of the load in UTC
