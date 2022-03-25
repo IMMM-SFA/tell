@@ -18,7 +18,7 @@ class InstallRawData:
     """
 
     # URL for DOI-minted TELL raw data data package hosted on Zenodo:
-    DATA_VERSION_URLS = {'0.0.1': 'https://zenodo.org/record/5714756/files/tell_raw_data.zip?download=1'}
+    DATA_VERSION_URLS = {'0.0.1': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1'}
 
     def __init__(self, data_dir=None):
 
