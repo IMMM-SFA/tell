@@ -15,7 +15,7 @@ Jupyter Notebooks
 
 Quickstarter
 ~~~~~~~~~~~~
-The following is a link to a Jupyter Notebook to run **tell**:  `quickstarter <https://github.com/IMMM-SFA/cerf/blob/main/notebooks/quickstarter.ipynb>`_
+The following is a link to a Jupyter Notebook to run **tell**:  `quickstarter <https://https://github.com/IMMM-SFA/tell/blob/review/crvernon/notebooks/tell_quickstarter.ipynb>`_
 
 
 Fundamental Concepts
@@ -400,7 +400,9 @@ summarized graphically in the map. The spatial extent of each BA in 2019 is show
 
 This figure shows the number of BAs that **tell** identifies as operating within each county in 2019. The bottom panel shows an example
 of four different BAs reported operating in Brevard County, FL. While the majority of counties only have one BA identified, some counties
-have as many as five. Note that a handful of counties had zero BAs identified as operating within them in 2019.
+have as many as five. Note that a handful of counties had zero BAs identified as operating within them in 2019. As we think these
+BA-to-county mappings may be useful to many others the output files from the mapping process are included below. They can be reproduced
+within the **tell** package by running the `tell.map_ba_service_territory` function.
 
 .. list-table::
     :header-rows: 1
@@ -408,15 +410,17 @@ have as many as five. Note that a handful of counties had zero BAs identified as
     * - Year
       - Mapping File
     * - 2015
-      - `Mapping <user_guide_data/fips_service_match_2015.csv>`_
+      - `Mapping <_static/User_Guide_Data/ba_service_territory_2015.csv>`_
     * - 2016
-      - `Mapping <user_guide_data/fips_service_match_2016.csv>`_
+      - `Mapping <_static/User_Guide_Data/ba_service_territory_2016.csv>`_
     * - 2017
-      - `Mapping <user_guide_data/fips_service_match_2017.csv>`_
+      - `Mapping <_static/User_Guide_Data/ba_service_territory_2017.csv>`_
     * - 2018
-      - `Mapping <user_guide_data/fips_service_match_2018.csv>`_
+      - `Mapping <_static/User_Guide_Data/ba_service_territory_2018.csv>`_
     * - 2019
-      - `Mapping <user_guide_data/fips_service_match_2019.csv>`_
+      - `Mapping <_static/User_Guide_Data/ba_service_territory_2019.csv>`_
+    * - 2020
+      - `Mapping <_static/User_Guide_Data/ba_service_territory_2020.csv>`_
 
 
 Load Disaggregation and Reaggregation
