@@ -32,7 +32,7 @@ def plot_ba_service_territory(ba_to_plot: str, year_to_plot: str, data_input_dir
     counties_df['County_FIPS'] = counties_df['County_FIPS'].astype(int)
 
     # Read in county populations file:
-    population_df = pd.read_csv(os.path.join(population_input_dir, r'county_populations_2000_to_2019.csv'))
+    population_df = pd.read_csv(os.path.join(population_input_dir, r'county_populations_2000_to_2020.csv'))
 
     # Keep only the columns we need:
     population_df = population_df[['county_FIPS', ('pop_' + year_to_plot)]].copy(deep=False)
