@@ -519,22 +519,24 @@ understanding of that sector as well as an ability to simulate future changes du
 While **tell** was not designed for this level of detail, other detailed sectoral models are. We built **tell** to incorporate
 technological changes by partnering with these detailed sectoral models. The figure below shows how this might work conceptually.
 The top row reflects information that might come out of a detailed residential energy model. In panel (a) we show the base diurnal
-load profiles for residential customers in an unspecified region. The load profile reflects a typical springtime load profile
+load profiles for residential customers in a given region. The load profile reflects a typical springtime load profile
 in residential buildings. Now imagine that you wanted to simulate the impact of widespread rooftop solar adoption within that
-region. Panel (b) shows the potential solar energy simulated by the detailed model. The curve follows a typical sinusoidal pattern
-that peaks at solar noon. Finally, panel (c) shows the impact of rooftop solar on the residential demand profile.
+region. Panel (b) shows the potential solar energy supply simulated by the detailed model. The solar energy curve follows a typical
+sinusoidal pattern that peaks at solar noon. Finally, panel (c) shows the impact of rooftop solar on the residential demand profile.
 
 .. image:: _static/Load_Perturbation_Incorporation_Example.png
    :width: 900
    :align: center
 
-**tell** is designed to take the output of the detailed residential buildings sector model and use it to modify the time-series
+**tell** can take the output of the detailed residential buildings sector model and use it to modify the time-series
 of *total* load that the model projects. The way to do this is to take the difference values produced by the detailed sectoral
 model (i.e., the difference between the base and modified residential load profiles) and add those perturbations directly on top
 of the *total* load time-series produced by **tell**. In this way **tell** doesn't need to know anything about the residential
-energy sector or the fraction of the total load it represents. All **tell** cares about is how the perturbation you want to explore
+energy sector or the fraction of the total load it represents. All **tell** cares about is how the intervention you want to explore
 will translate into changes in the *total* load time-series. Note that in order to do this the detailed sectoral model needs to
-produce output at a minimum of one of the spatial scales in **tell** (e.g., counties, states, or BAs).
+produce output in at least one of the spatial scales in **tell** (e.g., counties, states, or BAs). This approach allows users of
+detailed sectoral models to explore how specific interventions will impact future demands at the grid-scale without having to have
+complementary sectoral models of all sectors.
 
 
 Scenarios
