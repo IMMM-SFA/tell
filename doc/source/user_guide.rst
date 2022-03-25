@@ -57,7 +57,7 @@ The **tell** model was designed using the following conceptual constraints:
 Balancing Authorities
 ~~~~~~~~~~~~~~~~~~~~~
 The core projections of **tell** occur at the scale of Balancing Authorities (BAs). BAs are responsible for the real-time balancing of electricity supply and demand within a given region of the electric grid.
-For **tell**, BAs are useful because they represent the finest scale for which historical hourly load data is uniformly available across the U.S. This allows us to build an electric load forecasting
+For **tell**, BAs are useful because they represent the finest scale for which historical hourly load data is uniformly available across the U.S. This allows us to build an electric load projection
 model that works across the entire country. **tell** uses historical (2015-2019) hourly load data from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_ dataset for BAs across the U.S. We note
 that some smaller BAs are not included in the EIA-930 dataset. Other BAs are generation only or we were unable to geolocate them. Eight BAs (CISO, ERCO, MISO, ISNE, NYIS, PJM, PNM, and SWPP) started
 reporting subregional loads in the EIA-930 dataset in 2018. Because we were unable to uniformly and objectively geolocate each of these subregions we opted to use the aggregate total loads for those BAs.
