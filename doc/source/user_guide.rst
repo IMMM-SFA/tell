@@ -400,15 +400,15 @@ summarized graphically in the map. The spatial extent of each BA in 2019 is show
 
 This figure shows the number of BAs that **tell** identifies as operating within each county in 2019. The bottom panel shows an example
 of four different BAs reported operating in Brevard County, FL. While the majority of counties only have one BA identified, some counties
-have as many as five. Note that a handful of counties had zero BAs identified as operating within them in 2019. As we think these
+have as many as five. Note that a handful of counties had zero BAs identified as operating within them in 2019. Because we think these
 BA-to-county mappings may be useful to many others the output files from the mapping process are included below. They can be reproduced
-within the **tell** package by running the `tell.map_ba_service_territory` function.
+within the **tell** package by running the "tell.map_ba_service_territory" function.
 
 .. list-table::
     :header-rows: 1
 
     * - Year
-      - Mapping File
+      - File
     * - 2015
       - `Mapping <_static/User_Guide_Data/ba_service_territory_2015.csv>`_
     * - 2016
@@ -467,8 +467,7 @@ within the BA service territory to predict the residuals from the actual MLP mod
 evaluated independently. Hyperparameter tuning for the models is done using grid search. The MLP models are trained on historical load data
 from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_ dataset and weather from IM3's historical runs using the Weather
 Research and Forecasting (WRF) model. In the production version of the **tell** model the MLP models for each BA were trained on data from
-2016-2018 and evaluated against observed loads from 2019. For the **tell** quickstarter notebook the MLP models are trained and evaluated against data
-from 2019 only in order to improve the timeliness of the training process. Details of the MLP predictive variables are included in the table below.
+2016-2018 and evaluated against observed loads from 2019. Details of the MLP predictive variables are included in the table below.
 
 .. list-table::
     :header-rows: 1
@@ -496,13 +495,13 @@ from 2019 only in order to improve the timeliness of the training process. Detai
       - NA
     * - Day of the week
       - Day of the week
-      - Weekday or weekend
+      - Weekdays (1) or weekends (0)
     * - Hour of the day
       - Hour of the day in UTC
       - 00-23
     * - Federal holiday
       - Is the day a federal holiday?
-      - Yes/No
+      - Yes (1) or No (0)
 
 
 Scenarios
