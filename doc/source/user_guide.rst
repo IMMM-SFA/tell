@@ -504,6 +504,22 @@ Research and Forecasting (WRF) model. In the production version of the **tell** 
       - Yes (1) or No (0)
 
 
+Incorporating Detailed Sectoral Models
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+By design **tell** projects future time-series of the *total* hourly load at different spatial scales. These *total* loads
+are responsive to variations in population and climate. It is important to note that **tell** does not resolve the
+load profiles for individual sectors of the electric industry (e.g., residential, commercial, industrial, and commercial).
+However, the model is designed so that it can be modified to reflect changes in these individual sectors in a relatively
+straightforward way. We know that technologies in each of these sectors are currently and are likely to continue to evolve
+quickly. For example, the rapid penetration of rooftop solar will modify future grid-scale electricity demand from residential
+customers. Similarly, widespread adoption of electric vehicles will impact the magnitude and shape of the load profiles in the
+residential, commercial, and transportation sectors.
+
+In order to reflect technology change in a given sector you need a detailed understanding of that sector as well as an ability
+to simulate future changes due to specific technologies. While **tell** was not designed for this level of detail, other detailed
+sectoral models are.
+
+
 Scenarios
 ~~~~~~~~~
 **tell** is designed to work in conjunction with the United States version of the Global Change Analysis Model (GCAM-USA)
