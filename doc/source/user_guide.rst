@@ -536,7 +536,7 @@ the **tell** hourly *total* load time-series before the intervention and the red
 rooftop solar difference values from the residential model were added.
 
 This approach means that **tell** doesn't need to know anything about the residential energy sector or the fraction of the total
-load it represents. All **tell** cares about is how the intervention you want to explore will translate into changes in the *total*
+load it represents. All **tell** cares about is how the intervention you want to explore will translate into changes in the *residential*
 load time-series. Note that in order to do this the detailed sectoral model needs to produce output at at least one of the spatial
 scales in **tell** (e.g., counties, states, or BAs). This approach allows users of detailed sectoral models to explore how specific
 interventions will impact future demands at the grid-scale without having to have complementary sectoral models of all other sectors.
