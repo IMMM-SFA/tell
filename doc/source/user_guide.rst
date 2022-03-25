@@ -647,7 +647,9 @@ Filename: *TELL_Balancing_Authority_Hourly_Load_Data_YYYY.csv*
 County Hourly Load Data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 This collection of output files gives the hourly time-series of total loads for each county in the CONUS and the District of Columbia.
-These output files are stored in a subdirectory of ``output_directory`` named ``County_Level_Data``.
+These output files are stored in a subdirectory of the output directory named ``County_Level_Data``. Note that since it takes a while to
+write out the county-level output data this output is optional. To output county-level load projections just set the ``save_county_data``
+flag to True when calling the ``tell.execute_forward`` function.
 
 Filename Format: *TELL_statename_countyname_Hourly_Load_Data_YYYY.csv*
 
