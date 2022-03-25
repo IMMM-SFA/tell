@@ -545,8 +545,8 @@ and Shared Socioeconomic Pathways (`SSPs <https://en.wikipedia.org/wiki/Shared_S
 
 Key Outputs
 -----------
-**tell** produces four types of output files. Each type of output is written out as a .csv file or series of .csv files in the ``output_directory``.
-Each type of output file can be suppressed by commenting out the relevant line in ``execute_forward.py``. Missing values in each output file are
+**tell** produces four types of output files. Each type of output is written out as a .csv file or series of .csv files in ``tell_data/outputs/tell_output/scenario_name``.
+Each type of output file can be suppressed by commenting out the relevant output function in ``execute_forward.py``. Missing values in each output file are
 coded as -9999. All times are in UTC.
 
 
