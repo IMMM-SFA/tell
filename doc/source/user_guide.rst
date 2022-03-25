@@ -30,7 +30,7 @@ want to conduct a simulation using **tell**.
 
 #. Formulate empirical models that relate the historical observed meteorology and population to the hourly time-series of total electricity demand for each of the balancing authorities (BA) that report their hourly loads in the EIA-930 dataset.
 
-#. Use the empirical models to predict future hourly loads for each BA based on IM3’s climate and population forcing scenarios.
+#. Use the empirical models to project future hourly loads for each BA based on IM3’s climate and population forcing scenarios.
 
 #. Distribute the hourly loads for each BA to the counties that BA operates in and then aggregate the county-level hourly loads from all BAs into annual state-level loads.
 
@@ -64,9 +64,9 @@ The **tell** model was designed using the following conceptual constraints:
 
 Balancing Authorities
 ~~~~~~~~~~~~~~~~~~~~~
-The core predictions of **tell** occur at the scale of Balancing Authorities (BAs). BAs are responsible for the real-time balancing of electricity supply and demand within a given region of the electric grid.
+The core projections of **tell** occur at the scale of Balancing Authorities (BAs). BAs are responsible for the real-time balancing of electricity supply and demand within a given region of the electric grid.
 For **tell**, BAs are useful because they represent the finest scale for which historical hourly load data is uniformly available across the U.S. This allows us to build an electric load forecasting
-model that works across the entire country. **tell** uses historical (2015-2020) hourly load data from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_ dataset for BAs across the U.S. We note
+model that works across the entire country. **tell** uses historical (2015-2019) hourly load data from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_ dataset for BAs across the U.S. We note
 that some smaller BAs are not included in the EIA-930 dataset. Other BAs are generation only or we were unable to geolocate them. Eight BAs (CISO, ERCO, MISO, ISNE, NYIS, PJM, PNM, and SWPP) started
 reporting subregional loads in the EIA-930 dataset in 2018. Because we were unable to uniformly and objectively geolocate each of these subregions we opted to use the aggregate total loads for those BAs.
 In total, we formulated a multi-layer perceptron (MLP) model for 55 out of the 68 BAs in the EIA-930 dataset.
@@ -354,7 +354,7 @@ In total, we formulated a multi-layer perceptron (MLP) model for 55 out of the 6
 
 Geolocating Balancing Authorities
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-As a spatially-explicit model, **tell** needs the ability to geolocate the loads it predicts. Since the fundamental predictions
+As a spatially-explicit model, **tell** needs the ability to geolocate the loads it projects. Since the fundamental projections
 in **tell** occur at the spatial scale of BAs, we needed to devise a way to determine where each BA operated within the U.S.
 For **tell**, being able to do  this geolocation using county boundaries has a number of benefits in terms of load disaggregation
 and reaggregation - so we focused on techniques to map BAs to the counties they operate in. While there are multiple maps
@@ -391,8 +391,8 @@ data that are critical to **tell**:
 Using these two datasets in combination, **tell** reverse engineers the counties that each BA likely operated in within a given year. In
 addition to being completely objective and reproducible, this method overcomes the limitations described above because it allows
 more than one BA to be mapped to a single county and also allows the geolocation of BAs to evolve over time. **tell**
-maps BA service territory annually from 2015-2019. The results of that mapping are contained in the .csv files below and are
-summarized graphically in the map. The spatial extent of each BA in 2019 is shown in the link for each BA in the table above.
+maps BA service territory annually from 2015-2020. The results of that mapping are summarized graphically in the map below.
+The spatial extent of each BA in 2019 is shown in the link for each BA in the table above.
 
 .. image:: _static/Overlapping_Balancing_Authorities_Map.png
    :width: 900
@@ -401,8 +401,8 @@ summarized graphically in the map. The spatial extent of each BA in 2019 is show
 This figure shows the number of BAs that **tell** identifies as operating within each county in 2019. The bottom panel shows an example
 of four different BAs reported operating in Brevard County, FL. While the majority of counties only have one BA identified, some counties
 have as many as five. Note that a handful of counties had zero BAs identified as operating within them in 2019. Because we think these
-BA-to-county mappings may be useful to many others the output files from the mapping process are included below. They can be reproduced
-within the **tell** package by running the ``tell.map_ba_service_territory`` function.
+BA-to-county mappings may be useful to many others the output files from the mapping process are included as .csv files below. They can be
+reproduced within the **tell** package by running the ``tell.map_ba_service_territory`` function.
 
 .. list-table::
     :header-rows: 1
@@ -426,9 +426,9 @@ within the **tell** package by running the ``tell.map_ba_service_territory`` fun
 Load Disaggregation and Reaggregation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **tell** uses multiple instances of load disaggregation and reaggregation in order to cross spatiotemporal scales. The fundamental
-predictions in **tell** occur at the spatial scale of BAs. In order to compare those hourly load values at the BA-level with the
-annual state-level load values produced by GCAM-USA we first disaggregate the hourly predicted BA-level loads to the county-level
-and then reaggregate those hourly county-level loads to an annual total load prediction for each state. For each BA we identify
+projections in **tell** occur at the spatial scale of BAs. In order to compare those hourly load values at the BA-level with the
+annual state-level load values produced by GCAM-USA we first disaggregate the hourly projected BA-level loads to the county-level
+and then reaggregate those hourly county-level loads to an annual total load projection for each state. For each BA we identify
 the counties that BA operates in using the methodology described above. We then use the
 county-level populations for those counties to determine the fraction of the BA's total load that should be assigned to each county. A
 graphical depiction of this for the ISNE BA is shown below. Using this approach, the load received by each county in a BA's service territory has the
@@ -455,7 +455,7 @@ hourly load profile for California as a whole.
 
 Multi-Layer Perceptron (MLP) Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-**tell** uses a series of multilayer perceptron (MLP) models to predict future loads. There is one unique MLP model for each BA. The
+**tell** uses a series of multilayer perceptron (MLP) models to project future loads. There is one unique MLP model for each BA. The
 general form of each MLP model is:
 
 .. math::
@@ -463,7 +463,7 @@ general form of each MLP model is:
    y_{pred} = y_{MLP} + `\epsilon`
 
 where y :subscript:`MLP` is the actual MLP model and epsilon represents a linear model that uses the annual evolution of total population
-within the BA service territory to predict the residuals from the actual MLP model for a given BA. The MLP model for each BA is trained and
+within the BA service territory to predict the residuals from the original MLP model for a given BA. The MLP model for each BA is trained and
 evaluated independently. Hyperparameter tuning for the models is done using grid search. The MLP models are trained on historical load data
 from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_ dataset and weather from IM3's historical runs using the Weather
 Research and Forecasting (WRF) model. In the production version of the **tell** model the MLP models for each BA were trained on data from
@@ -495,7 +495,7 @@ Research and Forecasting (WRF) model. In the production version of the **tell** 
       - #
     * - Day of the week
       - Is the day a weekday or weekend?
-      - Weekdays (1) or weekends (0)
+      - Weekdays (1) or Weekends (0)
     * - Hour of the day
       - Hour of the day in UTC
       - 00-23 UTC
