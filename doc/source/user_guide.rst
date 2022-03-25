@@ -513,16 +513,29 @@ However, the model is designed so that it can be modified to reflect changes in 
 straightforward way. We know that technologies in each of these sectors are currently and are likely to continue to evolve
 quickly. For example, the rapid penetration of rooftop solar will modify future grid-scale electricity demand from residential
 customers. Similarly, widespread adoption of electric vehicles will impact the magnitude and shape of the load profiles in the
-residential, commercial, and transportation sectors.
+residential, commercial, and transportation sectors. In order to reflect technology change in a given sector you need a detailed
+understanding of that sector as well as an ability to simulate future changes due to specific technologies.
 
-In order to reflect technology change in a given sector you need a detailed understanding of that sector as well as an ability
-to simulate future changes due to specific technologies. While **tell** was not designed for this level of detail, other detailed
-sectoral models are. We built **tell** to incorporate technological changes by partnering with these detailed sectoral models. The
-figure below shows how this might work conceptually.
+While **tell** was not designed for this level of detail, other detailed sectoral models are. We built **tell** to incorporate
+technological changes by partnering with these detailed sectoral models. The figure below shows how this might work conceptually.
+The top row reflects information that might come out of a detailed residential energy model. In panel (a) we show the base diurnal
+load profiles for residential customers in an unspecified region. The load profile reflects a typical springtime load profile
+in residential buildings. Now imagine that you wanted to simulate the impact of widespread rooftop solar adoption within that
+region. Panel (b) shows the potential solar energy simulated by the detailed model. The curve follows a typical sinusoidal pattern
+that peaks at solar noon. Finally, panel (c) shows the impact of rooftop solar on the residential demand profile.
 
 .. image:: _static/Load_Perturbation_Incorporation_Example.png
    :width: 900
    :align: center
+
+**tell** is designed to take the output of the detailed residential buildings sector model and use it to modify the time-series
+of *total* load that the model projects. The way to do this is to take the difference values produced by the detailed sectoral
+model (i.e., the difference between the base and modified residential load profiles) and add those perturbations directly on top
+of the *total* load time-series produced by **tell**. In this way **tell** doesn't need to know anything about the residential
+energy sector or the fraction of the total load it represents. All **tell** cares about is how the perturbation you want to explore
+will translate into changes in the *total* load time-series. Note that in order to do this the detailed sectoral model needs to
+produce output at a minimum of one of the spatial scales in **tell** (e.g., counties, states, or BAs).
+
 
 Scenarios
 ~~~~~~~~~
