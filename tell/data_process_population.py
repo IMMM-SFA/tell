@@ -26,7 +26,7 @@ def fips_pop_yearly(pop_input_dir: str, start_year: int, end_year: int) -> DataF
     """
 
     # Read in the raw county-level population .csv file from the U.S. Census Bureau:
-    df_pop = pd.read_csv(pop_input_dir + '/county_populations_2000_to_2019.csv')
+    df_pop = pd.read_csv(pop_input_dir + '/county_populations_2000_to_2020.csv')
 
     # Loop over the range of years defined by the 'start_year' and 'end_year' variables:
     for y in range(start_year, end_year + 1):
@@ -190,7 +190,7 @@ def process_ba_population_data(start_year: int, end_year: int, data_input_dir: s
     # Transpose the interpolated dataframe:
     df_interp = df_interp.T
 
-    # Resent the index variable:
+    # Reset the index variable:
     df_interp.reset_index(level=0, inplace=True)
 
     # Extract the year, month, day, and hour for each date:
