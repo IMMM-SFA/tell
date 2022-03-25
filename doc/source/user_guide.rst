@@ -15,7 +15,7 @@ Jupyter Notebooks
 
 Quickstarter
 ~~~~~~~~~~~~
-The following is a link to a Jupyter Notebook to run **tell**:  `quickstarter <https://https://github.com/IMMM-SFA/tell/blob/review/crvernon/notebooks/tell_quickstarter.ipynb>`_
+The following is a link to a Jupyter Notebook to run **tell**:  `quickstarter <https://github.com/IMMM-SFA/tell/blob/review/crvernon/notebooks/tell_quickstarter.ipynb>`_
 
 
 Fundamental Concepts
