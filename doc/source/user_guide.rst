@@ -531,12 +531,15 @@ sinusoidal pattern that peaks at solar noon. Finally, panel (c) shows the impact
 **tell** can take the output of the detailed residential buildings sector model and use it to modify the time-series
 of *total* load that the model projects. The way to do this is to take the difference values produced by the detailed sectoral
 model (i.e., the difference between the base and modified residential load profiles) and add those perturbations directly on top
-of the *total* load time-series produced by **tell**. In this way **tell** doesn't need to know anything about the residential
-energy sector or the fraction of the total load it represents. All **tell** cares about is how the intervention you want to explore
-will translate into changes in the *total* load time-series. Note that in order to do this the detailed sectoral model needs to
-produce output in at least one of the spatial scales in **tell** (e.g., counties, states, or BAs). This approach allows users of
-detailed sectoral models to explore how specific interventions will impact future demands at the grid-scale without having to have
-complementary sectoral models of all sectors.
+of the *total* load time-series produced by **tell**. Panel (d) shows how this would play out in **tell**. The black line represents
+the **tell** hourly *total* load time-series before the intervention and the red line shows the *total* load time-series after the
+rooftop solar difference values from the residential model were added.
+
+This approach means that **tell** doesn't need to know anything about the residential energy sector or the fraction of the total
+load it represents. All **tell** cares about is how the intervention you want to explore will translate into changes in the *total*
+load time-series. Note that in order to do this the detailed sectoral model needs to produce output at at least one of the spatial
+scales in **tell** (e.g., counties, states, or BAs). This approach allows users of detailed sectoral models to explore how specific
+interventions will impact future demands at the grid-scale without having to have complementary sectoral models of all other sectors.
 
 
 Scenarios
