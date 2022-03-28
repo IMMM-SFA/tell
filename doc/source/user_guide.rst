@@ -6,20 +6,20 @@ run the model can be found in the **tell** `quickstarter <https://github.com/IMM
 notebook that contains detailed step-by-step instructions on how to run **tell**:
 
 
-About `tell`
+About **tell**
 ------------
 The Total ELectricity Load (TELL) model projects the short- and long-term evoluation of hourly electricity demand in response to future climate
-and population changes. The purpose of `tell` is to generate end-of-century hourly profiles of electricity demand across the entire United States
+and population changes. The purpose of **tell** is to generate end-of-century hourly profiles of electricity demand across the entire United States
 (U.S.) at a spatial resolution adequate for input to a unit commitment/economic dispatch (UC/ED) model while also maintaining consistency with the
-long-term growth and evolution of annual state-level electricity demand projected by an economically driven human-Earth system model. `tell` takes
+long-term growth and evolution of annual state-level electricity demand projected by an economically driven human-Earth system model. **tell** takes
 as input future projections of the hourly time-series of meteorology and decadal populations and uses the temporal variations in weather to project
-hourly profiles of total electricity demand. The core predictions in `tell` are based on a series of multilayer perceptron (MLP) models for individual
-Balancing Authorities (BAs). Those MLP models are trained on historical observations of weather and electricity demand. Hourly projections from `tell`
+hourly profiles of total electricity demand. The core predictions in **tell** are based on a series of multilayer perceptron (MLP) models for individual
+Balancing Authorities (BAs). Those MLP models are trained on historical observations of weather and electricity demand. Hourly projections from **tell**
 are scaled to match the annual state-level total electricity loads projected by the U.S. version of the Global Change Analysis Model (GCAM-USA).
-GCAM-USA captures the long-term co-evolution of the human-Earth system. Using this unique approach allows `tell` to reflect both changes in the shape
+GCAM-USA captures the long-term co-evolution of the human-Earth system. Using this unique approach allows **tell** to reflect both changes in the shape
 of the load profile due to variations in weather and the long-term evolution of energy demand due to changes in population, technology, and economics.
 `tell` is unique from other probabilistic load forecasting models in that it features an explicit spatial component that allows us to relate projected
-loads to where they would occur spatially within a grid operations model. The output of `tell` is a series of hourly projections for future electricity
+loads to where they would occur spatially within a grid operations model. The output of **tell** is a series of hourly projections for future electricity
 demand at the county, state, and BA scale that are quantitatively and conceptually consistent with one another.
 
 
@@ -38,12 +38,12 @@ want to conduct a simulation using **tell**.
 
 #. Apply the state-level scaling factors to each county-level time-series of hourly total electricity loads.
 
-#. Output yearly time-series of total electricity demand at the state, county, and BA level that are conceptually and quantitatively consistent with each other.
+#. Output yearly time-series of total electricity demand at the state, county, and BA scale that are conceptually and quantitatively consistent with each other.
 
 
 Design Constraints
 ------------------
-The **tell** model was designed using the following conceptual constraints:
+The **tell** model was designed around the following conceptual constraints:
 
 .. list-table::
     :header-rows: 1
@@ -51,15 +51,15 @@ The **tell** model was designed using the following conceptual constraints:
     * - Topic
       - Requirement
     * - Spatial resolution and scope
-      - Should cover the entire U.S. (excluding Alaska and Hawaii) and produce demands at an appropriately high spatial resolution for input into a nodal unit commitment/economic dispath (UC/ED) model
+      - Should cover the entire U.S. (excluding Alaska and Hawaii) and produce demands at an appropriately high spatial resolution for input into a nodal UC/ED model
     * - Temporal resolution and scope
       - Should produce hourly projections of total electricity demand in one-year increments through the year 2100.
     * - Forcing factors
       - Projections should respond to changes in meteorology/climate and population.
     * - Multiscale consistency
-      - Should produce hourly total electricity demand at the county, state, and balancing authority scale that are conceptually and quantitatively consistent.
+      - Should produce hourly total electricity demand at the county, state, and BA scale that are conceptually and quantitatively consistent.
     * - Open-source
-      - Should be based entirely on publicly available data and be made available as an open-source model.
+      - Should be based entirely on publicly available data and be made available as an extensively-documented open-source model.
 
 
 Fundamental Concepts
@@ -445,15 +445,16 @@ in the BA's service territory. As there are spatial overlaps in BAs, many counti
    :align: center
 
 Once the load projections from all BAs in **tell** have been disaggregated to the county-level, we next sum up the loads from all
-counties in a given state to get annual total state-level loads which are scaled to match the projections from GCAM-USA. The scaling
+counties in a given state to get annual state-level total loads which are scaled to match the projections from GCAM-USA. The scaling
 factors for each state are then applied to all county-level hourly load values in that state. The final output of **tell** is thus
 a series of 8760-hr time series of total electricity loads at the state-, county-, and BA-level that are conceptually and quantitatively
 consistent with one another.
 
 It is important to note that the future evolution of population is also taken into account in **tell**. Projected annual changes in
-population for each county and state are generated using the SSP scenarios. Those future populations are used in post-processing the
+population for each county and state are generated using the Shared Socioeconomic Pathways (`SSPs <https://en.wikipedia.org/wiki/Shared_Socioeconomic_Pathways>`_)
+scenarios. Those future populations are used in post-processing the
 MLP models and to derive new weighting factors to be used in disaggregating and reaggregating future **tell** loads.
-Thus, in an example scenario where lots of people move to Southern California, the counties there would not only receive a higher
+Thus, in an scenario where lots of people move to, for example, Southern California, the counties there would not only receive a higher
 proportion of the BA-level loads for BAs operating there, but would also have an incrementally larger impact on the future total
 hourly load profile for California as a whole.
 
@@ -468,7 +469,7 @@ general form of each MLP model is:
    y_{pred} = y_{MLP} + `\epsilon`
 
 where y :subscript:`MLP` is the actual MLP model and epsilon represents a linear model that uses the annual evolution of total population
-within the BA service territory to predict the residuals from the original MLP model for a given BA. The MLP model for each BA is trained and
+within the BA service territory to predict the residuals from the MLP model for a given BA. The MLP model for each BA is trained and
 evaluated independently. Hyperparameter tuning for the models is done using grid search. The MLP models are trained on historical load data
 from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_ dataset and weather from IM3's historical runs using the Weather
 Research and Forecasting (WRF) model. In the production version of the **tell** model the MLP models for each BA were trained on data from
@@ -498,19 +499,19 @@ Research and Forecasting (WRF) model. In the production version of the **tell** 
     * - Population
       - Total population in the counties covered by the BA
       - #
-    * - Day of the week
-      - Is the day a weekday or weekend?
-      - Weekdays (1) or Weekends (0)
     * - Hour of the day
       - Hour of the day in UTC
       - 00-23 UTC
+    * - Day of the week
+      - Is the day a weekday or weekend?
+      - Weekdays (1) or Weekends (0)
     * - Federal holiday
       - Is the day a federal holiday?
       - Yes (1) or No (0)
 
 
 Incorporating Detailed Sectoral Models
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 By design **tell** projects future time-series of the *total* hourly load at different spatial scales. These *total* loads
 are responsive to variations in population and climate. It is important to note that **tell** does not resolve the
 load profiles for individual sectors of the electric industry (e.g., residential, commercial, industrial, and commercial).
@@ -523,7 +524,7 @@ understanding of that sector as well as an ability to simulate future changes du
 
 While **tell** was not designed for this level of detail, other detailed sectoral models are. We built **tell** to incorporate
 technological changes by partnering with these detailed sectoral models. The figure below shows how this might work conceptually.
-The top row reflects information that might come out of a detailed residential energy model. In panel (a) we show the base diurnal
+The top row reflects information that might come out of a detailed residential energy model. In panel (a) we show the diurnal
 load profiles for residential customers in a given region. The load profile reflects a typical springtime load profile
 in residential buildings. Now imagine that you wanted to simulate the impact of widespread rooftop solar adoption within that
 region. Panel (b) shows the potential solar energy supply simulated by the detailed model. The solar energy curve follows a typical
@@ -541,15 +542,18 @@ the **tell** hourly *total* load time-series before the intervention and the red
 rooftop solar difference values from the residential model were added.
 
 This approach means that **tell** doesn't need to know anything about the residential energy sector or the fraction of the total
-load it represents. All **tell** cares about is how the intervention you want to explore will translate into changes in the *residential*
+load it represents. All **tell** cares about is how the intervention you want to explore will translate into changes in the sectoral
 load time-series. Note that in order to do this the detailed sectoral model needs to produce output at at least one of the spatial
 scales in **tell** (e.g., counties, states, or BAs). This approach allows users of detailed sectoral models to explore how specific
 interventions will impact future demands at the grid-scale without having to have complementary sectoral models of all other sectors.
+Finally, if the detailed sectoral model projects changes in the load shape but doesn't resolve the magnitude at a given spatial scale,
+it should be possible to use year-over-year changes from the GCAM-USA sectoral models to scale the load shape changes before they are
+passed on to **tell**.
 
 
 Scenarios
 ~~~~~~~~~
-**tell** is designed to work in conjunction with the United States version of the Global Change Analysis Model (GCAM-USA)
+**tell** is designed to work in conjunction with the U.S. version of the Global Change Analysis Model (GCAM-USA)
 to explore different future scenarios of population and climate change. The models are configured to run the following
 combinations of Representative Concentration Pathways (`RCPs <https://en.wikipedia.org/wiki/Representative_Concentration_Pathway>`_)
 and Shared Socioeconomic Pathways (`SSPs <https://en.wikipedia.org/wiki/Shared_Socioeconomic_Pathways>`_):
@@ -595,7 +599,7 @@ coded as -9999. All times are in UTC.
 
 State Summary Data
 ~~~~~~~~~~~~~~~~~~
-This output file gives the annual total loads for each of the 48 states in the CONUS and the District of Columbia. It also contains the scaling factor for
+This output file gives the annual total loads for each of the 48 states in the CONUS as well as the District of Columbia. It also contains the scaling factor for
 each state that force the aggregate annual total loads from  **tell** to agree with those produced by GCAM-USA.
 
 Filename: *TELL_State_Summary_Data_YYYY.csv*
@@ -688,7 +692,7 @@ Filename: *TELL_Balancing_Authority_Hourly_Load_Data_YYYY.csv*
 
 
 County Hourly Load Data
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 This collection of output files gives the hourly time-series of total loads for each county in the CONUS and the District of Columbia.
 These output files are stored in a subdirectory of the output directory named ``County_Level_Data``. Note that since it takes a while to
 write out the county-level output data this output is optional. To output county-level load projections just set the ``save_county_data``
