@@ -2,12 +2,8 @@
 User Guide
 ==========
 This user guide is meant to explain how **tell** works and the concepts that it is built upon. More information about how to
-run the model can be found in the **tell** quickstarter notebook.
-
-
-Tutorial
----------
-The following is a link to a Jupyter notebook with detailed step-by-step instructions on how to run **tell**: `quickstarter <https://github.com/IMMM-SFA/tell/blob/review/crvernon/notebooks/tell_quickstarter.ipynb>`_
+run the model can be found in the **tell** `quickstarter <https://github.com/IMMM-SFA/tell/blob/review/crvernon/notebooks/tell_quickstarter.ipynb>`_
+notebook that contains detailed step-by-step instructions on how to run **tell**:
 
 
 Fundamental Concepts
