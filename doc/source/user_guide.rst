@@ -6,31 +6,43 @@ run the model can be found in the **tell** `quickstarter <https://github.com/IMM
 notebook that contains detailed step-by-step instructions on how to run **tell**:
 
 
-Fundamental Concepts
---------------------
-The following are the building blocks of how **tell** projects future loads.
+About `tell`
+------------
+The Total ELectricity Load (TELL) model projects the short- and long-term evoluation of hourly electricity demand in response to future climate
+and population changes. The purpose of `tell` is to generate end-of-century hourly profiles of electricity demand across the entire United States
+(U.S.) at a spatial resolution adequate for input to a unit commitment/economic dispatch (UC/ED) model while also maintaining consistency with the
+long-term growth and evolution of annual state-level electricity demand projected by an economically driven human-Earth system model. `tell` takes
+as input future projections of the hourly time-series of meteorology and decadal populations and uses the temporal variations in weather to project
+hourly profiles of total electricity demand. The core predictions in `tell` are based on a series of multilayer perceptron (MLP) models for individual
+Balancing Authorities (BAs). Those MLP models are trained on historical observations of weather and electricity demand. Hourly projections from `tell`
+are scaled to match the annual state-level total electricity loads projected by the U.S. version of the Global Change Analysis Model (GCAM-USA).
+GCAM-USA captures the long-term co-evolution of the human-Earth system. Using this unique approach allows `tell` to reflect both changes in the shape
+of the load profile due to variations in weather and the long-term evolution of energy demand due to changes in population, technology, and economics.
+`tell` is unique from other probabilistic load forecasting models in that it features an explicit spatial component that allows us to relate projected
+loads to where they would occur spatially within a grid operations model. The output of `tell` is a series of hourly projections for future electricity
+demand at the county, state, and BA scale that are quantitatively and conceptually consistent with one another.
 
 
 How It Works
-~~~~~~~~~~~~
+------------
 The basic logic for **tell** proceeds in six sequential steps. Note that you may not need to repeat each step (e.g., training the empirical models) each time you
 want to conduct a simulation using **tell**.
 
-#. Formulate empirical models that relate the historical observed meteorology and population to the hourly time-series of total electricity demand for each of the balancing authorities (BA) that report their hourly loads in the EIA-930 dataset.
+#. Formulate empirical models that relate the historical observed meteorology and population to the hourly time-series of total electricity demand for each of the BAs that report their hourly loads in the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_ dataset.
 
-#. Use the empirical models to project future hourly loads for each BA based on IM3’s climate and population forcing scenarios.
+#. Use the empirical models to project future hourly loads for each BA based on IM3’s climate and population scenarios.
 
 #. Distribute the hourly loads for each BA to the counties that BA operates in and then aggregate the county-level hourly loads from all BAs into annual state-level loads.
 
-#. Calculate state-level scaling factors that force the bottom-up annual state-level total loads from **tell** to match the future annual state-level total loads from GCAM-USA.
+#. Calculate annual state-level scaling factors that force the bottom-up annual state-level total loads from **tell** to match the annual state-level total loads from GCAM-USA.
 
-#. Apply the state scaling factors to each county-level time-series of hourly total electricity loads.
+#. Apply the state-level scaling factors to each county-level time-series of hourly total electricity loads.
 
 #. Output yearly time-series of total electricity demand at the state, county, and BA level that are conceptually and quantitatively consistent with each other.
 
 
 Design Constraints
-~~~~~~~~~~~~~~~~~~
+------------------
 The **tell** model was designed using the following conceptual constraints:
 
 .. list-table::
@@ -41,13 +53,18 @@ The **tell** model was designed using the following conceptual constraints:
     * - Spatial resolution and scope
       - Should cover the entire U.S. (excluding Alaska and Hawaii) and produce demands at an appropriately high spatial resolution for input into a nodal unit commitment/economic dispath (UC/ED) model
     * - Temporal resolution and scope
-      - Should produce hourly projections of total electricity demand in one-year incremenets through the year 2100.
+      - Should produce hourly projections of total electricity demand in one-year increments through the year 2100.
     * - Forcing factors
       - Projections should respond to changes in meteorology/climate and population.
     * - Multiscale consistency
       - Should produce hourly total electricity demand at the county, state, and balancing authority scale that are conceptually and quantitatively consistent.
     * - Open-source
       - Should be based entirely on publicly available data and be made available as an open-source model.
+
+
+Fundamental Concepts
+--------------------
+The following are the building blocks of how **tell** projects future loads.
 
 
 Balancing Authorities
