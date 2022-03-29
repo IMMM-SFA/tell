@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
-def plot_ba_service_territory(ba_to_plot: str, year_to_plot: str, data_input_dir: str):
+def plot_ba_service_territory(ba_to_plot: str, year_to_plot: str, data_input_dir: str, image_output_dir: str,
+                              image_resolution: int, save_images=False):
     """Plot maps of the service territory for a given BA in a given year
 
     :param ba_to_plot:          Code for the BA you want to plot
@@ -19,6 +20,15 @@ def plot_ba_service_territory(ba_to_plot: str, year_to_plot: str, data_input_dir
 
     :param data_input_dir:      Top-level data directory for TELL
     :type data_input_dir:       str
+
+    :param image_output_dir:    Directory to store the images
+    :type image_output_dir:     str
+
+    :param image_resolution:    Resolution at which you want to save the images in DPI
+    :type image_resolution:     int
+
+    :param save_images:         Set to True if you want to save the images after they're generated
+    :type save_images:          bool
 
     """
 
@@ -65,6 +75,11 @@ def plot_ba_service_territory(ba_to_plot: str, year_to_plot: str, data_input_dir
                                   legend=True,
                                   legend_kwds={'label': ('County Population in ' + year_to_plot), 'orientation': 'vertical'})
     ax1.set_title((ba_to_plot + ' Service Territory in ' + year_to_plot))
+
+    # If the "save_images" flag is set to true then save the plot to a .png file:
+    if save_images == True:
+       filename = (ba_to_plot + '_Service_Territory_' + year_to_plot + '.png')
+       plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
 
 
 def plot_state_scaling_factors(year_to_plot: str, data_input_dir: str, image_output_dir: str,
