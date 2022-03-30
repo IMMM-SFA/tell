@@ -82,6 +82,81 @@ def plot_ba_service_territory(ba_to_plot: str, year_to_plot: str, data_input_dir
        plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
 
 
+def plot_mlp_summary_statistics(year_to_plot: str, data_input_dir: str, image_output_dir: str,
+                                image_resolution: int, save_images=False):
+    """Plot the summary statistics of the MLP evaluation data across BAs
+
+    :param year_to_plot:        Year you want to plot (valid 2015-2019)
+    :type year_to_plot:         str
+
+    :param data_input_dir:      Top-level data directory for TELL
+    :type data_input_dir:       str
+
+    :param image_output_dir:    Directory to store the images
+    :type image_output_dir:     str
+
+    :param image_resolution:    Resolution at which you want to save the images in DPI
+    :type image_resolution:     int
+
+    :param save_images:         Set to True if you want to save the images after they're generated
+    :type save_images:          bool
+
+    """
+
+    # Set the input directory based on the 'data_input_dir' and 'year_to_plot' variables:
+    mlp_input_dir = os.path.join(data_input_dir, r'outputs', r'mlp_output', year_to_plot)
+
+    # Read in summary statistics file:
+    statistics_df = pd.read_csv(os.path.join(mlp_input_dir, r'summary.csv'))
+
+    # Sort the statistics by R2 value:
+    statistics_df_sorted = statistics_df.sort_values(by=['R2'], ascending=True)
+
+    # Create an x-axis the length of the dataframe to be used in plotting:
+    x_axis = np.arange(len(statistics_df_sorted))
+
+    # Make the plot:
+    plt.figure(figsize=(25, 10))
+    plt.bar(x_axis, statistics_df_sorted['R2'], 0.75, label='Correlation')
+    plt.xticks(x_axis, statistics_df_sorted['BA'])
+    plt.xticks(rotation=90)
+    plt.ylim([0, 1])
+    plt.legend()
+    plt.xlabel("Balancing Authority")
+    plt.ylabel("Correlation with Observed Loads")
+    plt.title(('Correlation Between Observed and MLP Predicted Loads in ' + year_to_plot))
+
+    # If the "save_images" flag is set to true then save the plot to a .png file:
+    if save_images == True:
+       filename = ('MLP_Correlations_by_BA_' + year_to_plot + '.png')
+       plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
+
+    # Multiply the MAPE values by 100 to conver them to percentages:
+    statistics_df['MAPE'] = statistics_df['MAPE'] * 100
+
+    # Sort the statistics by R2 value:
+    statistics_df_sorted = statistics_df.sort_values(by=['MAPE'], ascending=True)
+
+    # Create an x-axis the length of the dataframe to be used in plotting:
+    x_axis = np.arange(len(statistics_df_sorted))
+
+    # Make the plot:
+    plt.figure(figsize=(25, 10))
+    plt.bar(x_axis, statistics_df_sorted['MAPE'], 0.75, label='MAPE')
+    plt.xticks(x_axis, statistics_df_sorted['BA'])
+    plt.xticks(rotation=90)
+    # plt.ylim([0, 1])
+    plt.legend()
+    plt.xlabel("Balancing Authority")
+    plt.ylabel("Mean Absolute Percentage Error [%]")
+    plt.title(('Mean Absolute Percentage Error Between Observed and MLP Predicted Loads in ' + year_to_plot))
+
+    # If the "save_images" flag is set to true then save the plot to a .png file:
+    if save_images == True:
+       filename = ('MLP_MAPE_by_BA_' + year_to_plot + '.png')
+       plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
+
+
 def plot_state_scaling_factors(year_to_plot: str, data_input_dir: str, image_output_dir: str,
                                image_resolution: int, save_images=False):
     """Plot the scaling factor that force TELL annual total state loads to agree with GCAM-USA

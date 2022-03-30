@@ -473,8 +473,8 @@ within the BA service territory to predict the residuals from the MLP model for 
 evaluated independently. The MLP models are trained on historical load data from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_
 dataset and weather from IM3's historical runs using the Weather Research and Forecasting (WRF) model. In the production version of **tell**
 the MLP models for each BA were trained on data from 2016-2018 and evaluated against observed loads from 2019. While the EIA-930 data extends past
-the year 2019, COVID-19 induced significant changes in the diurnal profile of electricity demand (e.g., `Burleyson et al. 2021 <https://www.sciencedirect.com/science/article/pii/S0306261921010631>`_
-so we opted not to use 2020 data in the MLP model training or evaluation. In the future, **tell** could be retrained repeatedly as more and
+the year 2019, COVID-19 induced significant changes in the diurnal profile of electricity demand (e.g., `Burleyson et al. 2021 <https://www.sciencedirect.com/science/article/pii/S0306261921010631>`_)
+so we opted not to use 2020+ data in the MLP model training or evaluation. In the future, **tell** could be retrained repeatedly as more and
 more EIA-930 data becomes available.
 
 Details of the MLP predictive variables are included in the table below. The default parameter settings for training the MLP models are stored
