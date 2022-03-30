@@ -7,7 +7,7 @@ notebook that contains detailed step-by-step instructions on how to run **tell**
 
 
 About **tell**
-------------
+--------------
 The Total ELectricity Load (TELL) model projects the short- and long-term evoluation of hourly electricity demand in response to future climate
 and population changes. The purpose of **tell** is to generate end-of-century hourly profiles of electricity demand across the entire United States
 (U.S.) at a spatial resolution adequate for input to a unit commitment/economic dispatch (UC/ED) model while also maintaining consistency with the
@@ -468,12 +468,17 @@ general form of each MLP model is:
 
    y_{pred} = y_{MLP} + `\epsilon`
 
-where y :subscript:`MLP` is the actual MLP model and epsilon represents a linear model that uses the annual evolution of total population
+where y :subscript:`MLP` is the actual MLP model and epsilon represents a linear model that uses the annual change in total population
 within the BA service territory to predict the residuals from the MLP model for a given BA. The MLP model for each BA is trained and
-evaluated independently. Hyperparameter tuning for the models is done using grid search. The MLP models are trained on historical load data
-from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_ dataset and weather from IM3's historical runs using the Weather
-Research and Forecasting (WRF) model. In the production version of the **tell** model the MLP models for each BA were trained on data from
-2016-2018 and evaluated against observed loads from 2019. Details of the MLP predictive variables are included in the table below.
+evaluated independently. The MLP models are trained on historical load data from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_
+dataset and weather from IM3's historical runs using the Weather Research and Forecasting (WRF) model. In the production version of **tell**
+the MLP models for each BA were trained on data from 2016-2018 and evaluated against observed loads from 2019. While the EIA-930 data extends past
+the year 2019, COVID-19 induced significant changes in the diurnal profile of electricity demand (e.g., `Burleyson et al. 2021 <https://www.sciencedirect.com/science/article/pii/S0306261921010631>`_
+so we opted not to use 2020 data in the MLP model training or evaluation. In the future, **tell** could be retrained repeatedly as more and
+more EIA-930 data becomes available.
+
+Details of the MLP predictive variables are included in the table below. The default parameter settings for training the MLP models are stored
+in the `mlp_settings.yml <https://github.com/IMMM-SFA/tell/blob/review/crvernon/tell/data/mlp_settings.yml>`_ file in the **tell** repository.
 
 .. list-table::
     :header-rows: 1
@@ -590,8 +595,8 @@ and Shared Socioeconomic Pathways (`SSPs <https://en.wikipedia.org/wiki/Shared_S
       - rcp85hotter_ssp5
 
 
-Key Outputs
------------
+Outputs
+-------
 **tell** produces four types of output files. Each type of output is written out as a .csv file or series of .csv files in ``tell_data/outputs/tell_output/scenario_name``.
 Each type of output file can be suppressed by commenting out the relevant output function in ``execute_forward.py``. Missing values in each output file are
 coded as -9999. All times are in UTC.
