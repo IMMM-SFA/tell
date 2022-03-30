@@ -446,13 +446,12 @@ in the BA's service territory. As there are spatial overlaps in BAs, many counti
 Once the load projections from all BAs in **tell** have been disaggregated to the county-level, we next sum up the loads from all
 counties in a given state to get annual state-level total loads which are scaled to match the projections from GCAM-USA. The scaling
 factors for each state are then applied to all county-level hourly load values in that state. The final output of **tell** is thus
-a series of 8760-hr time series of total electricity loads at the state-, county-, and BA-level that are conceptually and quantitatively
-consistent with one another.
+a series of 8760-hr time series of total electricity loads at the state, county, and BA scale that are conceptually and quantitatively
+consistent with each other.
 
 It is important to note that the future evolution of population is also taken into account in **tell**. Projected annual changes in
 population for each county and state are generated using the Shared Socioeconomic Pathways (`SSPs <https://en.wikipedia.org/wiki/Shared_Socioeconomic_Pathways>`_)
-scenarios. Those future populations are used in post-processing the
-MLP models and to derive new weighting factors to be used in disaggregating and reaggregating future **tell** loads.
+scenarios. Those future populations are used to derive new weighting factors to be used in disaggregating and reaggregating future **tell** loads.
 Thus, in an scenario where lots of people move to, for example, Southern California, the counties there would not only receive a higher
 proportion of the BA-level loads for BAs operating there, but would also have an incrementally larger impact on the future total
 hourly load profile for California as a whole.
