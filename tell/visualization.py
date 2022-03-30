@@ -145,7 +145,6 @@ def plot_mlp_summary_statistics(year_to_plot: str, data_input_dir: str, image_ou
     plt.bar(x_axis, statistics_df_sorted['MAPE'], 0.75, label='MAPE')
     plt.xticks(x_axis, statistics_df_sorted['BA'])
     plt.xticks(rotation=90)
-    # plt.ylim([0, 1])
     plt.legend()
     plt.xlabel("Balancing Authority")
     plt.ylabel("Mean Absolute Percentage Error [%]")
