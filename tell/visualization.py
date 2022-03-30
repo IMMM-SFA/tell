@@ -121,7 +121,6 @@ def plot_mlp_summary_statistics(year_to_plot: str, data_input_dir: str, image_ou
     plt.xticks(x_axis, statistics_df_sorted['BA'])
     plt.xticks(rotation=90)
     plt.ylim([0, 1])
-    plt.legend()
     plt.xlabel("Balancing Authority")
     plt.ylabel("Correlation with Observed Loads")
     plt.title(('Correlation Between Observed and MLP Predicted Loads in ' + year_to_plot))
@@ -131,10 +130,10 @@ def plot_mlp_summary_statistics(year_to_plot: str, data_input_dir: str, image_ou
        filename = ('MLP_Correlations_by_BA_' + year_to_plot + '.png')
        plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
 
-    # Multiply the MAPE values by 100 to conver them to percentages:
+    # Multiply the MAPE values by 100 to convert them to percentages:
     statistics_df['MAPE'] = statistics_df['MAPE'] * 100
 
-    # Sort the statistics by R2 value:
+    # Sort the statistics by MAPE value:
     statistics_df_sorted = statistics_df.sort_values(by=['MAPE'], ascending=True)
 
     # Create an x-axis the length of the dataframe to be used in plotting:
@@ -145,7 +144,6 @@ def plot_mlp_summary_statistics(year_to_plot: str, data_input_dir: str, image_ou
     plt.bar(x_axis, statistics_df_sorted['MAPE'], 0.75, label='MAPE')
     plt.xticks(x_axis, statistics_df_sorted['BA'])
     plt.xticks(rotation=90)
-    plt.legend()
     plt.xlabel("Balancing Authority")
     plt.ylabel("Mean Absolute Percentage Error [%]")
     plt.title(('Mean Absolute Percentage Error Between Observed and MLP Predicted Loads in ' + year_to_plot))
