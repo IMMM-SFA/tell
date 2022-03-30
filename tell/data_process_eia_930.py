@@ -81,7 +81,14 @@ def process_eia_930_data(data_input_dir: str, n_jobs: int):
     :param data_input_dir:         Top-level data directory for TELL
     :type data_input_dir:          str
 
-    :param n_jobs:                 Number of jobs to process
+    :param n_jobs:                 The maximum number of concurrently running jobs, such as the number of Python
+                                   worker processes when backend=”multiprocessing” or the size of the thread-pool
+                                   when backend=”threading”. If -1 all CPUs are used. If 1 is given, no parallel
+                                   computing code is used at all, which is useful for debugging. For n_jobs
+                                   below -1, (n_cpus + 1 + n_jobs) are used. Thus for n_jobs = -2, all CPUs
+                                   but one are used. None is a marker for ‘unset’ that will be interpreted as
+                                   n_jobs=1 (sequential execution) unless the call is performed under a
+                                   parallel_backend context manager that sets another value for n_jobs.
     :type n_jobs:                  int
 
     """
