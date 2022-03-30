@@ -15,18 +15,17 @@ long-term growth and evolution of annual state-level electricity demand projecte
 as input future projections of the hourly time-series of meteorology and decadal populations and uses the temporal variations in weather to project
 hourly profiles of total electricity demand. The core predictions in **tell** are based on a series of multilayer perceptron (MLP) models for individual
 Balancing Authorities (BAs). Those MLP models are trained on historical observations of weather and electricity demand. Hourly projections from **tell**
-are scaled to match the annual state-level total electricity loads projected by the U.S. version of the Global Change Analysis Model (GCAM-USA).
-GCAM-USA captures the long-term co-evolution of the human-Earth system. Using this unique approach allows **tell** to reflect both changes in the shape
+are scaled to match the annual state-level total electricity loads projected by the U.S. version of the Global Change Analysis Model (GCAM-USA) which
+captures the long-term co-evolution of the human-Earth system. Using this unique approach allows **tell** to reflect both changes in the shape
 of the load profile due to variations in weather and the long-term evolution of energy demand due to changes in population, technology, and economics.
-`tell` is unique from other probabilistic load forecasting models in that it features an explicit spatial component that allows us to relate projected
+**tell** is unique from other load forecasting models in that it features an explicit spatial component that allows us to relate projected
 loads to where they would occur spatially within a grid operations model. The output of **tell** is a series of hourly projections for future electricity
-demand at the county, state, and BA scale that are quantitatively and conceptually consistent with one another.
+demand at the county, state, and BA scale that are conceptually and quantitatively consistent with one another.
 
 
 How It Works
 ------------
-The basic logic for **tell** proceeds in six sequential steps. Note that you may not need to repeat each step (e.g., training the empirical models) each time you
-want to conduct a simulation using **tell**.
+The basic workflow for **tell** proceeds in six sequential steps:
 
 #. Formulate empirical models that relate the historical observed meteorology and population to the hourly time-series of total electricity demand for each of the BAs that report their hourly loads in the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_ dataset.
 
@@ -43,7 +42,7 @@ want to conduct a simulation using **tell**.
 
 Design Constraints
 ------------------
-The **tell** model was designed around the following conceptual constraints:
+**tell** was designed with the following constraints:
 
 .. list-table::
     :header-rows: 1
@@ -57,7 +56,7 @@ The **tell** model was designed around the following conceptual constraints:
     * - Forcing factors
       - Projections should respond to changes in meteorology/climate and population.
     * - Multiscale consistency
-      - Should produce hourly total electricity demand at the county, state, and BA scale that are conceptually and quantitatively consistent.
+      - Should produce hourly total electricity demand at the county, state, and BA scale that are conceptually and quantitatively consistent with each other.
     * - Open-source
       - Should be based entirely on publicly available data and be made available as an extensively-documented open-source model.
 
