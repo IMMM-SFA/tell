@@ -6,8 +6,8 @@ from joblib import Parallel, delayed
 from sklearn.linear_model import LinearRegression as LR
 from sklearn.neural_network import MLPRegressor as MLP
 
-from .mlp_prepare_data import DatasetTrain, DefaultSettings
-from .mlp_utils import scale_features, unscale_features, pickle_model, validate
+from tell.mlp_prepare_data import DatasetTrain, DefaultSettings
+from tell.mlp_utils import scale_features, unscale_features, pickle_model, validate
 
 
 def train_linear_model(region: str,
@@ -446,3 +446,9 @@ def train_batch(target_region_list: list,
             validation_df = pd.concat([validation_df, i[1]])
 
     return prediction_df, validation_df
+
+
+if __name__ == "__main__":
+
+    pdf, vdf = train(region="PJM",
+                     data_dir="/Users/d3y010/repos/github/tell/tell_data/outputs/compiled_historical_data")

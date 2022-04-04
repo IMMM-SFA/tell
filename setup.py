@@ -4,11 +4,11 @@ from setuptools import setup, find_packages
 
 def readme():
     """Return the contents of the project README file."""
-    with open('tell/README.md') as f:
+    with open('README.md') as f:
         return f.read()
 
 
-version = re.search(r"__version__ = ['\"]([^'\"]*)['\"]", open('tell/tell/__init__.py').read(), re.M).group(1)
+version = re.search(r"__version__ = ['\"]([^'\"]*)['\"]", open('tell/__init__.py').read(), re.M).group(1)
 
 
 setup(
@@ -46,6 +46,7 @@ setup(
         'matplotlib>=3.5.1',
         'munch>=2.5.0',
         'numpy>=1.21.5',
+        'openpyxl>=3.0.9',
         'packaging>=21.3',
         'pandas>=1.3.5',
         'Pillow>=9.0.1',

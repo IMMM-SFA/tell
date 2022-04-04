@@ -59,6 +59,10 @@ def scale_features(x_train: np.ndarray,
         "y_test_norm": y_test_norm,
     }
 
+    import pickle
+
+    pickle.dump(dict_out, open("/Users/d3y010/Desktop/train_dict.pkl", 'wb'))
+
     return dict_out
 
 
