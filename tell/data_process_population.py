@@ -284,11 +284,6 @@ def extract_future_ba_population(year: int, ba_code: str, scenario: str, data_in
     # Set the start and end times for the interpolation:
     rng_start = f'{year}-01-01 00:00:00'
     rng_end = f'{year}-12-31 23:00:00'
-    datetime.strptime(rng_start, "%Y-%m-%d %H:%M:%S")
-    datetime.strptime(rng_end, "%Y-%m-%d %H:%M:%S")
-
-    # Get a range of dates to interpolate to:
-    rng = pd.date_range(rng_start, rng_end, freq='H')
 
     # Linearly interpolate from an decadal to an hourly resolution:
     df_interp = df.set_index('Year').resample('H').interpolate('linear')
