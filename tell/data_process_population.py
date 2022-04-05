@@ -225,3 +225,107 @@ def process_ba_population_data(start_year: int, end_year: int, data_input_dir: s
                          index=False,
                          columns=['Year', 'Month', 'Day', 'Hour', f'{name}'],
                          header=['Year', 'Month', 'Day', 'Hour', 'Total_Population'])
+
+
+def extract_future_ba_population(year: int, ba_code: str, scenario: str, data_input_dir: str) -> pd.DataFrame:
+    """Calculate the total population living within a BA's service territory in a given year under
+    a given SSP scenario.
+
+    :param year:                               Year to process; four digit year (e.g., 1990)
+    :type year:                                int
+
+    :param ba_code:                            Code for the BA you want to process (e.g., 'PJM' or 'CISO')
+    :type ba_code:                             str
+
+    :param scenario:                           Code for the SSP scenario you want to process (either 'ssp3' or 'ssp5')
+    :type scenario:                            str
+
+    :param data_input_dir:                     Top-level data directory for TELL
+    :type data_input_dir:                      str
+
+    :return:                                   Hourly total population living within the BA's service territory
+
+    """
+
+    # Set the input directories based on the "data_input_dir" variable:
+    map_input_dir = os.path.join(data_input_dir, r'outputs', r'ba_service_territory')
+    pop_input_dir = os.path.join(data_input_dir, r'sample_forcing_data', r'sample_population_projections')
+
+    # Read in the BA mapping .csv file:
+    mapping_df = pd.read_csv(os.path.join(map_input_dir, 'ba_service_territory_2019.csv'))
+
+    # Only keep the columns that are needed:
+    mapping_df = mapping_df[['County_FIPS', 'BA_Code']].copy()
+
+    # Subset to only the BA you want to process:
+    mapping_df = mapping_df[mapping_df["BA_Code"] == ba_code]
+
+    # Read in the population projection file for the scenario you want to process:
+    pop_df = pd.read_csv(os.path.join(pop_input_dir, f'{scenario}_county_population.csv'))
+
+    # Rename some columns for consistency:
+    pop_df.rename(columns={"FIPS": "County_FIPS"}, inplace=True)
+
+    # Merge the mapping dataframe to the the population dataframe based on county FIPS code:
+    mapping_df = mapping_df.merge(pop_df, on=['County_FIPS'])
+
+    # Only keep the columns that are needed:
+    df = mapping_df[['2020', '2030', '2040', '2050', '2060', '2070', '2080', '2090', '2100']].copy()
+
+    # Sum the population across all counties:
+    df_sum = df.sum(axis=0)
+
+    # Convert the series to a dataframe:
+    df = pd.DataFrame({'Year': df_sum.index, 'Population': df_sum.values})
+
+    # Convert the year to a datetime variable:
+    df['Year'] = pd.to_datetime(df['Year'], format='%Y')
+
+    # Set the start and end times for the interpolation:
+    rng_start = f'{year}-01-01 00:00:00'
+    rng_end = f'{year}-12-31 23:00:00'
+    datetime.strptime(rng_start, "%Y-%m-%d %H:%M:%S")
+    datetime.strptime(rng_end, "%Y-%m-%d %H:%M:%S")
+
+    # Get a range of dates to interpolate to:
+    rng = pd.date_range(rng_start, rng_end, freq='H')
+
+    # Linearly interpolate from an decadal to an hourly resolution:
+    df_interp = df.set_index('Year').resample('H').interpolate('linear')
+
+    # Reset the index variable:
+    df_interp.reset_index(level=0, inplace=True)
+
+    # Subset to only the year you want to process:
+    df_interp = df_interp[df_interp["Year"] >= (datetime.strptime(rng_start, "%Y-%m-%d %H:%M:%S"))]
+    df_interp = df_interp[df_interp["Year"] <= (datetime.strptime(rng_end, "%Y-%m-%d %H:%M:%S"))]
+
+    # Rename some columns for consistency:
+    df_interp.rename(columns={"Year": "Time"}, inplace=True)
+
+    # Extract the year, month, day, and hour for each date:
+    df_interp['Year'] = df_interp['Time'].dt.strftime('%Y')
+    df_interp['Month'] = df_interp['Time'].dt.strftime('%m')
+    df_interp['Day'] = df_interp['Time'].dt.strftime('%d')
+    df_interp['Hour'] = df_interp['Time'].dt.strftime('%H')
+
+    # Reorder the columns and remove the datestring variable:
+    col = df_interp.pop("Year")
+    df_interp.insert(0, col.name, col)
+
+    col = df_interp.pop("Month")
+    df_interp.insert(1, col.name, col)
+
+    col = df_interp.pop("Day")
+    df_interp.insert(2, col.name, col)
+
+    col = df_interp.pop("Hour")
+    df_interp.insert(3, col.name, col)
+
+    col = df_interp.pop("Population")
+    df_interp.insert(4, col.name, col)
+
+    # Drop the index variable:
+    df_interp = df_interp.drop(columns='Time')
+
+    return df_interp
