@@ -176,10 +176,10 @@ def process_ba_population_data(start_year: int, end_year: int, data_input_dir: s
     df = df.pivot(index='name', columns='year', values='pop')
 
     # Set the start and end times for the interpolation:
-    rng_start = f'{start_year}-01-01'
-    rng_end = f'{end_year}-12-31'
-    datetime.strptime(rng_start, "%Y-%m-%d")
-    datetime.strptime(rng_end, "%Y-%m-%d")
+    rng_start = f'{start_year}-01-01 00:00:00'
+    rng_end = f'{end_year}-12-31 23:00:00'
+    datetime.strptime(rng_start, "%Y-%m-%d %H:%M:%S")
+    datetime.strptime(rng_end, "%Y-%m-%d %H:%M:%S")
 
     # Get a range of dates to interpolate to:
     rng = pd.date_range(rng_start, rng_end, freq='H')
