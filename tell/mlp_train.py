@@ -7,7 +7,7 @@ from sklearn.linear_model import LinearRegression as LR
 from sklearn.neural_network import MLPRegressor as MLP
 
 from tell.mlp_prepare_data import DatasetTrain, DefaultSettings
-from tell.mlp_utils import scale_features, unscale_features, pickle_model, validate
+from tell.mlp_utils import normalize_features, denormalize_features, pickle_model, evaluate
 
 
 def train_linear_model(region: str,
@@ -286,10 +286,10 @@ def train(region: str,
         x_linear_test = None
 
     # scale model features and targets for the MLP model
-    normalized_dict = scale_features(x_train=data_mlp.x_train,
-                                     x_test=data_mlp.x_test,
-                                     y_train=data_mlp.y_train,
-                                     y_test=data_mlp.y_test)
+    normalized_dict = normalize_features(x_train=data_mlp.x_train,
+                                         x_test=data_mlp.x_test,
+                                         y_train=data_mlp.y_train,
+                                         y_test=data_mlp.y_test)
 
     # unpack normalized data needed to run the MLP model
     x_train_norm = normalized_dict.get("x_train_norm")
@@ -311,19 +311,19 @@ def train(region: str,
                                              model_output_directory=settings.model_output_directory)
 
     # denormalize predicted data
-    prediction_df = unscale_features(region=region,
-                                     normalized_dict=normalized_dict,
-                                     y_predicted_normalized=y_predicted_normalized,
-                                     y_comparison=data_mlp.y_comp,
-                                     datetime_arr=data_mlp.df_test[settings.DATETIME_FIELD].values)
+    prediction_df = denormalize_features(region=region,
+                                         normalized_dict=normalized_dict,
+                                         y_predicted_normalized=y_predicted_normalized,
+                                         y_comparison=data_mlp.y_test,
+                                         datetime_arr=data_mlp.df_test[settings.DATETIME_FIELD].values)
 
-    # generate validation stats
-    validation_df = validate(region=region,
-                             y_predicted=prediction_df["predictions"].values,
-                             y_comparison=data_mlp.y_comp,
-                             nodata_value=settings.nodata_value)
+    # generate evaluation stats
+    performance_df = evaluate(region=region,
+                              y_predicted=prediction_df["predictions"].values,
+                              y_comparison=data_mlp.y_comp,
+                              nodata_value=settings.nodata_value)
 
-    return prediction_df, validation_df
+    return prediction_df, performance_df
 
 
 def train_batch(target_region_list: list,
@@ -431,24 +431,18 @@ def train_batch(target_region_list: list,
     """
 
     # run all regions in target list in parallel
-    results = Parallel(n_jobs=n_jobs)(delayed(train)(region=region,
-                                                     data_dir=data_dir,
-                                                     **kwargs) for region in target_region_list)
+    results = Parallel(n_jobs=n_jobs, backend="loky")(delayed(train)(region=region,
+                                                                     data_dir=data_dir,
+                                                                     **kwargs) for region in target_region_list)
 
     # aggregate outputs
     for index, i in enumerate(results):
 
         if index == 0:
             prediction_df = i[0]
-            validation_df = i[1]
+            performance_df = i[1]
         else:
             prediction_df = pd.concat([prediction_df, i[0]])
-            validation_df = pd.concat([validation_df, i[1]])
+            performance_df = pd.concat([performance_df, i[1]])
 
-    return prediction_df, validation_df
-
-
-if __name__ == "__main__":
-
-    pdf, vdf = train(region="PJM",
-                     data_dir="/Users/d3y010/repos/github/tell/tell_data/outputs/compiled_historical_data")
+    return prediction_df, performance_df
