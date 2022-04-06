@@ -7,7 +7,7 @@ from sklearn.linear_model import LinearRegression as LR
 from sklearn.neural_network import MLPRegressor as MLP
 
 from tell.mlp_prepare_data import DatasetTrain, DefaultSettings
-from tell.mlp_utils import normalize_features, denormalize_features, pickle_model, evaluate
+from tell.mlp_utils import normalize_features, denormalize_features, pickle_model, evaluate, pickle_normalization_dict
 
 
 def train_linear_model(region: str,
@@ -291,6 +291,11 @@ def train(region: str,
                                          y_train=data_mlp.y_train,
                                          y_test=data_mlp.y_test)
 
+    if settings.save_model:
+        pickle_normalization_dict(region=region,
+                                  normalization_dict=normalized_dict,
+                                  model_output_directory=settings.model_output_directory)
+
     # unpack normalized data needed to run the MLP model
     x_train_norm = normalized_dict.get("x_train_norm")
     y_train_norm = normalized_dict.get("y_train_norm")
@@ -320,8 +325,7 @@ def train(region: str,
     # generate evaluation stats
     performance_df = evaluate(region=region,
                               y_predicted=prediction_df["predictions"].values,
-                              y_comparison=data_mlp.y_comp,
-                              nodata_value=settings.nodata_value)
+                              y_comparison=data_mlp.y_comp)
 
     return prediction_df, performance_df
 
