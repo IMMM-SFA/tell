@@ -1,6 +1,5 @@
 import os
 import pkg_resources
-import warnings
 from typing import Union
 
 import joblib
@@ -142,9 +141,8 @@ def pickle_model(region: str,
     joblib.dump(model_object, output_file)
 
 
-# TODO:  fail on load if violates rather than warn
 def load_model(model_file: str) -> object:
-    """Pickle model to file using joblib.  Version of scikit-learn is included in the file name as a compatible
+    """Load pickled model from file using joblib.  Version of scikit-learn is included in the file name as a compatible
     version is required to reload the data safely.
 
     :param model_file:                  Full path with filename an extension to the joblib pickled model file.
@@ -234,6 +232,53 @@ def load_predictive_models(region: str,
         linear_model = None
 
     return mlp_model, linear_model
+
+
+def pickle_normalization_dict(region: str,
+                              normalization_dict: dict,
+                              model_output_directory: Union[str, None]):
+    """Pickle model to file using joblib.  Version of scikit-learn is included in the file name as a compatible
+    version is required to reload the data safely.
+
+    :param region:                          Indicating region / balancing authority we want to train and test on.
+                                            Must match with string in CSV files.
+    :type region:                           str
+
+    :param normalization_dict:              Dictionary of normalization data
+    :type normalization_dict:               dict
+
+    :param model_output_directory:          Full path to output directory where model file will be written.
+    :type model_output_directory:           str
+
+    """
+
+    # build output file name
+    basename = f"{region}_normalization_dict.joblib"
+    output_file = os.path.join(model_output_directory, basename)
+
+    # dump model to file
+    joblib.dump(normalization_dict, output_file)
+
+
+def load_normalization_dict(region: str,
+                            model_output_directory: str) -> dict:
+    """Load pickled model from file using joblib.
+
+    :param region:                          Indicating region / balancing authority we want to train and test on.
+                                            Must match with string in CSV files.
+    :type region:                           str
+
+    :param model_output_directory:          Full path to output directory where model file will be written.
+    :type model_output_directory:           str
+
+    :return:                                Normalization dictionary
+
+    """
+
+    basename = os.path.join(model_output_directory, f"{region}_normalization_dict.joblib")
+    file = os.path.join(model_output_directory, basename)
+
+    return joblib.load(file)
 
 
 def evaluate(region: str,
