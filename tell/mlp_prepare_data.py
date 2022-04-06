@@ -77,9 +77,6 @@ class DefaultSettings:
                                         (e.g., 2018-12-31 23:00:00).
     :type split_datetime:               Optional[str]
 
-    :param nodata_value:                No data value in the input CSV file.
-    :type nodata_value:                 Optional[int]
-
     :param seed_value:                  Seed value to reproduce randomization.
     :type seed_value:                   Optional[int]
 
@@ -104,6 +101,9 @@ class DefaultSettings:
     DATETIME_FIELD = "Datetime"
     WEEKDAY_FIELD = "Weekday"
     HOLIDAY_FIELD = "Holidays"
+
+    # default no data value
+    NODATA_VALUE = np.nan
 
     def __init__(self,
                  region: str,
@@ -133,12 +133,13 @@ class DefaultSettings:
         self.start_time = str(self.settings_dict.get("start_time"))
         self.end_time = str(self.settings_dict.get("end_time"))
         self.split_datetime = str(self.settings_dict.get("split_datetime"))
-        self.nodata_value = self.settings_dict.get("nodata_value")
+        self.nodata_value = self.NODATA_VALUE
         self.seed_value = self.settings_dict.get("seed_value")
         self.x_variables_linear = self.settings_dict.get("x_variables_linear")
         self.y_variables_linear = self.settings_dict.get("y_variables_linear")
         self.save_model = self.settings_dict.get("save_model")
-        self.model_output_directory = self.settings_dict.get("model_output_directory")
+        self.model_output_directory = self.settings_dict.get("model_output_directory",
+                                                             pkg_resources.resource_filename("tell", "data/models"))
         self.verbose = self.settings_dict.get("verbose")
 
     @staticmethod
@@ -302,11 +303,11 @@ class DatasetTrain(DefaultSettings):
 
         """
 
-        # if a linear model will be ran and an hour field is present in the data frame apply the sine function
+        # if a linear model will be run and an hour field is present in the data frame apply the sine function
         if self.apply_sine_function and self.hour_field_name in df.columns:
             df[self.hour_field_name] = np.sin(df[self.hour_field_name] * np.pi / 24)
 
-            # if a linear model will be ran and an month field is present in the data frame apply the sine function
+            # if a linear model will be run and a month field is present in the data frame apply the sine function
         if self.apply_sine_function and self.month_field_name in df.columns:
             df[self.month_field_name] = np.sin(df[self.month_field_name] * np.pi / 12)
 
@@ -370,7 +371,72 @@ class DatasetTrain(DefaultSettings):
 
         return df_train, df_test
 
-    def clean_data(self, df: pd.DataFrame, drop_records: bool = True) -> pd.DataFrame:
+    def iqr_outlier_detection(self,
+                              df: pd.DataFrame,
+                              drop_records: bool = True,
+                              scale_constant: float = 3.5) -> pd.DataFrame:
+        """Outlier detection using interquartile range (IQR).  Drops or adjusts outliers that are outside
+        the acceptable range, NaN, or at or below 0.
+
+        :param df:                          Input data frame for the target region.
+        :type df:                           pd.DataFrame
+
+        :param drop_records:                If True, drop records; else, alter records
+        :type drop_records:                 bool
+
+        :param scale_constant:              Scale factor controlling the sensitivity of the IQR to outliers
+        :type scale_constant:               float
+
+        :return:                            Processed data frame
+
+        """
+
+        # prediction variable name
+        feature_field = self.y_variables[0]
+
+        # drop nan rows and above 0 rows to calculate IQR
+        dfx = df.loc[(~df[feature_field].isnull()) & (df[feature_field] > 0)].copy()
+
+        # extract an array of values for the target field
+        arr = dfx[feature_field].values
+
+        # sort values
+        arr_sort = np.sort(arr)
+
+        # get first and third quartile
+        q1, q3 = np.percentile(arr_sort, [25, 75])
+
+        # calc IQR
+        iqr = q3 - q1
+
+        # calculate upper and lower bounds
+        lower_bound = q1 - (scale_constant * iqr)
+        upper_bound = q3 + (scale_constant * iqr)
+
+        if self.verbose:
+            print(f"Q1: {q1}, Q3: {q3}, IQR: {iqr}")
+            print(f"Lower: {lower_bound}, Upper: {upper_bound}")
+
+        if drop_records:
+            return df.loc[(df[feature_field] >= lower_bound) &
+                          (df[feature_field] <= upper_bound) &
+                          (~df[feature_field].isnull()) &
+                          (df[feature_field] > 0)].copy()
+
+        else:
+            df[feature_field] = np.where((df[feature_field] <= lower_bound) |
+                                         (df[feature_field] >= upper_bound) |
+                                         (df[feature_field].isnull()) |
+                                         (df[feature_field] <= 0),
+                                         self.nodata_value,
+                                         df[feature_field])
+
+            return df
+
+    def clean_data(self,
+                   df: pd.DataFrame,
+                   drop_records: bool = True,
+                   iqr_scale_constant: float = 3.5) -> pd.DataFrame:
         """Clean data based on criteria for handling NoData and extreme values.
 
         :param df:                         Input data frame for the target region.
@@ -379,40 +445,30 @@ class DatasetTrain(DefaultSettings):
         :param drop_records:               If True, drop records; else, alter records
         :type drop_records:                bool
 
+        :param iqr_scale_constant:         Scale factor controlling the sensitivity of the IQR to outliers
+        :type iqr_scale_constant:          float
+
         :return:                           Processed data frame
 
         """
 
-        # get feature field name
-        feature_name = self.y_variables[0]
+        # generate a copy of the input data frame
+        dfx = df.copy()
 
-        # calculate error bounds
-        mu_y = df[feature_name].mean()
-        sigma_y = df[feature_name].std()
-        lower_bound = (df[feature_name] <= mu_y - 5 * sigma_y)
-        upper_bound = (df[feature_name] >= mu_y + 5 * sigma_y)
+        # number of rows in the data frame
+        pre_drop_n = df.shape[0]
 
         if drop_records:
 
-            # drop nodata value if so desired
-            df.drop(df.index[np.where(df == self.nodata_value)[0]], inplace=True)
+            # drop any outliers
+            df = self.iqr_outlier_detection(df=dfx, drop_records=drop_records, scale_constant=iqr_scale_constant)
 
-            # drop records containing any native np.nan
-            df.drop(df.index[np.where(np.isnan(df))[0]], inplace=True)
-
-            # drop and records where demand is zero which is not feasible if desired
-            df.drop(df.index[np.where(df[feature_name] == 0)[0]], inplace=True)
-
-            # drop extreme value that lie outside + / - 5*sigma
-            df.drop(df.index[np.where(lower_bound | upper_bound)], inplace=True)
+            if self.verbose:
+                print(f"Dropped {pre_drop_n - dfx.shape[0]} row(s)")
 
         else:
 
-            # alter records where demand is zero which is not feasible if desired
-            df.loc[df[feature_name] == 0, feature_name] = self.nodata_value
-
-            # alter extreme value that lie outside + / - 5*sigma
-            df.loc[(lower_bound | upper_bound), feature_name] = self.nodata_value
+            df = self.iqr_outlier_detection(df=dfx, drop_records=drop_records, scale_constant=iqr_scale_constant)
 
         return df
 
@@ -627,9 +683,6 @@ class DatasetPredict(DefaultSettings):
         """
 
         if drop_records:
-
-            # drop nodata value if so desired
-            df.drop(df.index[np.where(df == self.nodata_value)[0]], inplace=True)
 
             # drop records containing any native np.nan
             df.drop(df.index[np.where(np.isnan(df))[0]], inplace=True)
