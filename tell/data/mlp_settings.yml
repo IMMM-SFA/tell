@@ -63,9 +63,6 @@ end_time: "2019-12-31 23:00:00"
 # Timestamp showing the datetime to split the train and test data by
 split_datetime: "2018-12-31 23:00:00"
 
-# No data value in the input CSV file.
-nodata_value: -9999
-
 # Seed value to reproduce randomization.
 seed_value: 391
 
@@ -77,9 +74,6 @@ y_variables_linear: ["Demand"]
 
 # Choice to write ML models to a pickled file via joblib.
 save_model: False
-
-# Full path to output directory where model file will be written.
-model_output_directory: ""
 
 # Choice to see logged outputs.
 verbose: False
