@@ -7,13 +7,24 @@ import joblib
 import numpy as np
 import pandas as pd
 import sklearn
+import yaml
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_percentage_error
 
 
-def scale_features(x_train: np.ndarray,
-                   x_test: np.ndarray,
-                   y_train: np.ndarray,
-                   y_test: np.ndarray) -> dict:
+def get_balancing_authority_to_model_dict():
+    """Return a list of balancing authority abbreviations."""
+
+    ba_file = pkg_resources.resource_filename("tell", "data/balancing_authority_modeled.yml")
+
+    # read into a dictionary
+    with open(ba_file, 'r') as yml:
+        return yaml.load(yml, Loader=yaml.FullLoader)
+
+
+def normalize_features(x_train: np.ndarray,
+                       x_test: np.ndarray,
+                       y_train: np.ndarray,
+                       y_test: np.ndarray) -> dict:
     """Normalize the features and targets of the model.
 
     :param x_train:                         Training features
@@ -32,45 +43,41 @@ def scale_features(x_train: np.ndarray,
 
     """
 
-    # get the mean and std of training set
-    mu_x_train = np.mean(x_train)
-    sigma_x_train = np.std(x_train)
-    mu_y_train = np.mean(y_train)
-    sigma_y_train = np.std(y_train)
+    # get the min and max of each variable in each array
+    min_x_train = np.min(x_train, axis=0)
+    max_x_train = np.max(x_train, axis=0)
+    min_y_train = np.min(y_train, axis=0)
+    max_y_train = np.max(y_train, axis=0)
 
     # normalize
-    x_train_norm = np.divide((x_train - mu_x_train), sigma_x_train)
-    x_test_norm = np.divide((x_test - mu_x_train), sigma_x_train)
-    y_train_norm = np.divide((y_train - mu_y_train), sigma_y_train)
+    x_train_norm = np.divide((x_train - min_x_train), (max_x_train - min_x_train))
+    x_test_norm = np.divide((x_test - min_x_train), (max_x_train - min_x_train))
+    y_train_norm = np.divide((y_train - min_y_train), (max_y_train - min_y_train))
 
     if y_test is not None:
-        y_test_norm = np.divide((y_test - mu_y_train), sigma_y_train)
+        y_test_norm = np.divide((y_test - min_y_train), (max_y_train - min_y_train))
     else:
         y_test_norm = None
 
     dict_out = {
-        "mu_x_train": mu_x_train,
-        "mu_y_train": mu_y_train,
-        "sigma_x_train": sigma_x_train,
-        "sigma_y_train": sigma_y_train,
+        "min_x_train": min_x_train,
+        "max_x_train": max_x_train,
+        "min_y_train": min_y_train,
+        "max_y_train": max_y_train,
         "x_train_norm": x_train_norm,
         "y_train_norm": y_train_norm,
         "x_test_norm": x_test_norm,
-        "y_test_norm": y_test_norm,
+        "y_test_norm": y_test_norm
     }
-
-    import pickle
-
-    pickle.dump(dict_out, open("/Users/d3y010/Desktop/train_dict.pkl", 'wb'))
 
     return dict_out
 
 
-def unscale_features(region: str,
-                     normalized_dict: dict,
-                     y_predicted_normalized: np.ndarray,
-                     y_comparison: np.ndarray,
-                     datetime_arr: np.ndarray) -> pd.DataFrame:
+def denormalize_features(region: str,
+                         normalized_dict: dict,
+                         y_predicted_normalized: np.ndarray,
+                         y_comparison: np.ndarray,
+                         datetime_arr: np.ndarray) -> pd.DataFrame:
     """Function to denormlaize the predictions of the model.
 
     :param region:                              Indicating region / balancing authority we want to train and test on.
@@ -94,7 +101,7 @@ def unscale_features(region: str,
     """
 
     # denormalize predicted Y
-    y_p = y_predicted_normalized * normalized_dict["sigma_y_train"] + normalized_dict["mu_y_train"]
+    y_p = y_predicted_normalized * (normalized_dict["max_y_train"] - normalized_dict["min_y_train"]) + normalized_dict["min_y_train"]
 
     # create data frame with datetime attached
     df = pd.DataFrame({"datetime": datetime_arr, "predictions": y_p, "ground_truth": np.squeeze(y_comparison)})
@@ -135,6 +142,7 @@ def pickle_model(region: str,
     joblib.dump(model_object, output_file)
 
 
+# TODO:  fail on load if violates rather than warn
 def load_model(model_file: str) -> object:
     """Pickle model to file using joblib.  Version of scikit-learn is included in the file name as a compatible
     version is required to reload the data safely.
@@ -228,11 +236,10 @@ def load_predictive_models(region: str,
     return mlp_model, linear_model
 
 
-def validate(region: str,
+def evaluate(region: str,
              y_predicted: np.ndarray,
-             y_comparison: np.ndarray,
-             nodata_value: int) -> pd.DataFrame:
-    """Validation of model performance using the predicted compared to the test data.
+             y_comparison: np.ndarray) -> pd.DataFrame:
+    """Evaluation of model performance using the predicted compared to the test data.
 
     :param region:                      Indicating region / balancing authority we want to train and test on.
                                         Must match with string in CSV files.
@@ -244,21 +251,20 @@ def validate(region: str,
     :param y_comparison:                Comparison test data for Y array.
     :type y_comparison:                 np.ndarray
 
-    :param nodata_value:                No data value in the input CSV file.
-    :type nodata_value:                 int
-
     :return:                            Data frame of stats.
 
     """
 
     # remove all the no data values in the comparison test data
-    y_comp_clean_idx = np.where(y_comparison != nodata_value)
-    y_comp = y_comparison[y_comp_clean_idx[0]].squeeze()
+    y_comparison = y_comparison.squeeze()
+    y_comp_clean_idx = np.where(~np.isnan(y_comparison))
+
+    y_comp = y_comparison[y_comp_clean_idx].squeeze()
 
     # get matching predicted data
-    y_pred = y_predicted[y_comp_clean_idx[0]]
+    y_pred = y_predicted[y_comp_clean_idx]
 
-    # first the absolute root-mean-squared error
+    # absolute RMSE
     rms_abs = np.sqrt(mean_squared_error(y_pred, y_comp))
 
     # RMSE normalized
