@@ -161,8 +161,8 @@ def load_model(model_file: str) -> object:
     sk_run_version = sklearn.__version__
 
     if sk_model_version != sk_run_version:
-        msg = f"WARNING: Incompatible scikit-learn version for saved model ({sk_model_version}) and current version ({sk_run_version})."
-        warnings.warn(msg)
+        msg = f"Incompatible scikit-learn version for saved model ({sk_model_version}) and current version ({sk_run_version})."
+        raise AssertionError(msg)
 
     # load model from
     return joblib.load(model_file)
