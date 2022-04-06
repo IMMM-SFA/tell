@@ -281,15 +281,15 @@ def extract_future_ba_population(year: int, ba_code: str, scenario: str, data_in
     # Convert the year to a datetime variable:
     df['Year'] = pd.to_datetime(df['Year'], format='%Y')
 
-    # Set the start and end times for the interpolation:
-    rng_start = f'{year}-01-01 00:00:00'
-    rng_end = f'{year}-12-31 23:00:00'
-
     # Linearly interpolate from an decadal to an hourly resolution:
     df_interp = df.set_index('Year').resample('H').interpolate('linear')
 
     # Reset the index variable:
     df_interp.reset_index(level=0, inplace=True)
+
+    # Set the start and end times for the year you want to process:
+    rng_start = f'{year}-01-01 00:00:00'
+    rng_end = f'{year}-12-31 23:00:00'
 
     # Subset to only the year you want to process:
     df_interp = df_interp[df_interp["Year"] >= (datetime.strptime(rng_start, "%Y-%m-%d %H:%M:%S"))]
@@ -304,7 +304,7 @@ def extract_future_ba_population(year: int, ba_code: str, scenario: str, data_in
     df_interp['Day'] = df_interp['Time'].dt.strftime('%d')
     df_interp['Hour'] = df_interp['Time'].dt.strftime('%H')
 
-    # Reorder the columns and remove the datestring variable:
+    # Reorder the columns:
     col = df_interp.pop("Year")
     df_interp.insert(0, col.name, col)
 
@@ -323,4 +323,5 @@ def extract_future_ba_population(year: int, ba_code: str, scenario: str, data_in
     # Drop the index variable:
     df_interp = df_interp.drop(columns='Time')
 
+    # Return the output as a dataframe:
     return df_interp
