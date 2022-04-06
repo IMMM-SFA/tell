@@ -257,7 +257,7 @@ def pickle_normalization_dict(region: str,
     output_file = os.path.join(model_output_directory, basename)
 
     # dump dictionary to file
-    joblib.dump(normalization_dict, output_file)
+    joblib.dump(value=normalization_dict, filename=output_file, compress=5)
 
 
 def load_normalization_dict(region: str,
