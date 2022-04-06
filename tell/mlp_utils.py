@@ -20,6 +20,27 @@ def get_balancing_authority_to_model_dict():
         return yaml.load(yml, Loader=yaml.FullLoader)
 
 
+def normalize_prediction_data(data_arr: np.ndarray,
+                              min_train_arr: np.ndarray,
+                              max_train_arr: np.ndarray) -> np.ndarray:
+    """Normalize target data using exising min, max for training data.
+
+    :param data_arr:                        Array of target data
+    :type data_arr:                         np.ndarray
+
+    :param min_train_arr:                   Array of previously trained minimum target data
+    :type min_train_arr:                    np.ndarray
+
+    :param max_train_arr:                   Array of previously trained minimum target data
+    :type max_train_arr:                    np.ndarray
+
+    """
+
+    return np.divide((data_arr - min_train_arr), (max_train_arr - min_train_arr))
+
+
+
+
 def normalize_features(x_train: np.ndarray,
                        x_test: np.ndarray,
                        y_train: np.ndarray,
@@ -169,8 +190,8 @@ def load_model(model_file: str) -> object:
 def load_predictive_models(region: str,
                            model_output_directory: Union[str, None],
                            mlp_linear_adjustment: bool):
-    """Load predictive models based off of what is stored in the package or from a user provided directory.
-    The scikit-learn version being used must match the one the model was generated with.
+    """Load predictive models and the normalization dictionary based off of what is stored in the package or from a
+    user provided directory. The scikit-learn version being used must match the one the model was generated with.
 
     :param region:                          Indicating region / balancing authority we want to train and test on.
                                             Must match with string in CSV files.
@@ -184,6 +205,7 @@ def load_predictive_models(region: str,
 
     :return:                                [0] MLP model
                                             [1] linear model or None
+                                            [2] normalization dictionary
 
     """
 
@@ -231,7 +253,11 @@ def load_predictive_models(region: str,
 
         linear_model = None
 
-    return mlp_model, linear_model
+    # load the normalization dictionary
+    normalized_dict_file = os.path.join(model_output_directory, f"{region}_normalization_dict.joblib")
+    normalization_dict = load_normalization_dict(normalized_dict_file)
+
+    return mlp_model, linear_model, normalization_dict
 
 
 def pickle_normalization_dict(region: str,
@@ -260,23 +286,16 @@ def pickle_normalization_dict(region: str,
     joblib.dump(value=normalization_dict, filename=output_file, compress=5)
 
 
-def load_normalization_dict(region: str,
-                            model_output_directory: str) -> dict:
+def load_normalization_dict(file: str) -> dict:
     """Load pickled model from file using joblib.
 
-    :param region:                          Indicating region / balancing authority we want to train and test on.
-                                            Must match with string in CSV files.
-    :type region:                           str
-
-    :param model_output_directory:          Full path to output directory where model file will be written.
-    :type model_output_directory:           str
+    :param file:                            Full path with file name and extension to the pickled normalization
+                                            dictionary
+    :type file:                             str
 
     :return:                                Normalization dictionary
 
     """
-
-    basename = os.path.join(model_output_directory, f"{region}_normalization_dict.joblib")
-    file = os.path.join(model_output_directory, basename)
 
     return joblib.load(file)
 

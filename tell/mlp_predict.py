@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 from .mlp_prepare_data import DatasetPredict, DefaultSettings
-from .mlp_utils import scale_features, unscale_features, load_predictive_models
+from .mlp_utils import normalize_prediction_data, denormalize_features, load_predictive_models, load_normalization_dict
 
 
 def predict(region: str,
@@ -123,6 +123,11 @@ def predict(region: str,
                               datetime_field_name=datetime_field_name,
                               **kwargs)
 
+    # load models and the normalization dictionary from file
+    mlp_model, linear_model, normalized_dict = load_predictive_models(region=region,
+                                                                model_output_directory=settings.model_output_directory,
+                                                                mlp_linear_adjustment=settings.mlp_linear_adjustment)
+
     # prepare data for linear model if adjustment is desired
     if settings.mlp_linear_adjustment:
         data_linear = DatasetPredict(region,
@@ -139,10 +144,9 @@ def predict(region: str,
         x_linear_data = None
 
     # scale model features and targets for the MLP model
-    normalized_dict = scale_features(x_train=data_mlp.x_data,
-                                     x_test=data_mlp.x_data,
-                                     y_train=data_mlp.x_data,
-                                     y_test=data_mlp.x_data)
+    normalized_dict = normalize_prediction_data(data_arr=data_mlp.x_data,
+                                                min_train_arr=normalized_dict["min_x_train"],
+                                                max_train_arr=normalized_dict["max_x_train"])
 
     # # unpack normalized data needed to run the MLP model
     # x_train_norm = normalized_dict.get("x_train_norm")
