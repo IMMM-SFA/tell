@@ -1,10 +1,8 @@
-from typing import Union
-
 import numpy as np
 import pandas as pd
 
 from .mlp_prepare_data import DatasetPredict, DefaultSettings
-from .mlp_utils import normalize_prediction_data, denormalize_features, load_predictive_models, load_normalization_dict
+from .mlp_utils import normalize_prediction_data, load_predictive_models
 
 
 def predict(region: str,
@@ -26,19 +24,6 @@ def predict(region: str,
 
     :param datetime_field_name:         Name of the datetime field.
     :type datetime_field_name:          str
-
-    :param mlp_hidden_layer_sizes:      The ith element represents the number of neurons in the ith hidden layer.
-    :type mlp_hidden_layer_sizes:       Optional[int]
-
-    :param mlp_max_iter:                Maximum number of iterations. The solver iterates until convergence
-                                        (determined by ‘tol’) or this number of iterations. For stochastic solvers
-                                        (‘sgd’, ‘adam’), note that this determines the number of epochs (how many
-                                        times each data point will be used), not the number of gradient steps.
-    :type mlp_max_iter:                 Optional[int]
-
-    :param mlp_validation_fraction:     The proportion of training data to set aside as validation set for early
-                                        stopping. Must be between 0 and 1.
-    :type mlp_validation_fraction:      Optional[float]
 
     :param mlp_linear_adjustment:       True if you want to correct the MLP model using a linear model.
     :type mlp_linear_adjustment:        Optional[bool]
@@ -73,21 +58,6 @@ def predict(region: str,
     :param day_list:                    List of day abbreviations and their order.
     :type day_list:                     Optional[list[str]]
 
-    :param start_time:                  Timestamp showing the datetime of for the run to start
-                                        (e.g., 2016-01-01 00:00:00).
-    :type start_time:                   Optional[str]
-
-    :param end_time:                    Timestamp showing the datetime of for the run to end
-                                        (e.g., 2019-12-31 23:00:00).
-    :type end_time:                     Optional[str]
-
-    :param split_datetime:              Timestamp showing the datetime to split the train and test data by
-                                        (e.g., 2018-12-31 23:00:00).
-    :type split_datetime:               Optional[str]
-
-    :param nodata_value:                No data value in the input CSV file.
-    :type nodata_value:                 Optional[int]
-
     :param seed_value:                  Seed value to reproduce randomization.
     :type seed_value:                   Optional[int]
 
@@ -96,12 +66,6 @@ def predict(region: str,
 
     :param y_variables_linear:          Feature variable list for the linear model.
     :type y_variables_linear:           Optional[list[str]]
-
-    :param save_model:                  Choice to write ML models to a pickled file via joblib.
-    :type save_model:                   bool
-
-    :param model_output_directory:      Full path to output directory where model file will be written.
-    :type model_output_directory:       Union[str, None]
 
     :param verbose:                     Choice to see logged outputs.
     :type verbose:                      bool
@@ -143,28 +107,26 @@ def predict(region: str,
                                                                       model_output_directory=settings.model_output_directory,
                                                                       mlp_linear_adjustment=settings.mlp_linear_adjustment)
 
-    # scale model features and targets for the MLP model
-    x_data_norm = normalize_prediction_data(data_arr=data_mlp.x_data,
-                                            min_train_arr=normalized_dict["min_x_train"],
-                                            max_train_arr=normalized_dict["max_x_train"])
-    # run the MLP model
-    y_predicted_norm = mlp_model.predict(x_data_norm)
+    # normalize model features and targets for the MLP model
+    x_mlp_norm = normalize_prediction_data(data_arr=data_mlp.x_data,
+                                           min_train_arr=normalized_dict["min_x_train"],
+                                           max_train_arr=normalized_dict["max_x_train"])
+
+    # run the MLP model with normalized data
+    y_predicted_norm = mlp_model.predict(x_mlp_norm)
 
     if settings.mlp_linear_adjustment:
         y_predicted_linear = linear_model.predict(x_linear_data)
 
-    # denormalize predicted Y
-    y_p = y_predicted * normalized_dict["sigma_y_train"] + normalized_dict["mu_y_train"]
+        # apply the linear adjustment to the MLP predictions
+        y_predicted_norm += y_predicted_linear
 
+    # denormalize predicted data
+    y_predicted = y_predicted_norm * (normalized_dict["max_y_train"] - normalized_dict["min_y_train"]) + normalized_dict["min_y_train"]
+
+    # generate output data frame
     prediction_df = pd.DataFrame({"datetime": data_mlp.df_data[settings.DATETIME_FIELD].values,
-                                  "predictions": y_p})
-
-    # # denormalize predicted data
-    # prediction_df = unscale_features(region=region,
-    #                                  normalized_dict=normalized_dict,
-    #                                  y_predicted_normalized=y_predicted,
-    #                                  datetime_arr=data_mlp.df_test[settings.DATETIME_FIELD].values)
-
-
+                                  "predictions": y_predicted,
+                                  "region": region})
 
     return prediction_df

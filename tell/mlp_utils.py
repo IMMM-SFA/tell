@@ -39,8 +39,6 @@ def normalize_prediction_data(data_arr: np.ndarray,
     return np.divide((data_arr - min_train_arr), (max_train_arr - min_train_arr))
 
 
-
-
 def normalize_features(x_train: np.ndarray,
                        x_test: np.ndarray,
                        y_train: np.ndarray,
@@ -98,7 +96,7 @@ def denormalize_features(region: str,
                          y_predicted_normalized: np.ndarray,
                          y_comparison: np.ndarray,
                          datetime_arr: np.ndarray) -> pd.DataFrame:
-    """Function to denormlaize the predictions of the model.
+    """Function to denormalize the predictions of the model.
 
     :param region:                              Indicating region / balancing authority we want to train and test on.
                                                 Must match with string in CSV files.
@@ -238,7 +236,7 @@ def load_predictive_models(region: str,
 
             # get provided model file
             linear_model_id = "ordinary-least-squares-linear-regression"
-            linear_model_file = f"{region}_{linear_model_id}*.joblib"
+            linear_model_file = f"{region}_{linear_model_id}_scikit-learn-version-{sk_version}.joblib"
             linear_model_path = os.path.join(model_output_directory, linear_model_file)
 
     # load the mlp model
