@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from joblib import Parallel, delayed
 
 from .mlp_prepare_data import DatasetPredict, DefaultSettings
 from .mlp_utils import normalize_prediction_data, load_predictive_models
@@ -70,6 +71,8 @@ def predict(region: str,
     :param verbose:                     Choice to see logged outputs.
     :type verbose:                      bool
 
+    :return:                            Prediction data frame
+
     """
 
     # get project level settings data
@@ -128,5 +131,104 @@ def predict(region: str,
     prediction_df = pd.DataFrame({"datetime": data_mlp.df_data[settings.DATETIME_FIELD].values,
                                   "predictions": y_predicted,
                                   "region": region})
+
+    return prediction_df
+
+
+def predict_batch(target_region_list: list,
+                  year: int,
+                  data_dir: str,
+                  n_jobs: int = -1,
+                  datetime_field_name: str = "Time_UTC",
+                  **kwargs):
+    """Generate predictions for MLP model for a target region from an input CSV file for all regions
+    in input list in parallel.
+
+    :param target_region_list:          List of names indicating region / balancing authority we want to train and test
+                                        on. Must match with string in CSV files.
+    :type target_region_list:           list
+
+    :param year:                        Target year to use in YYYY format.
+    :type year:                         int
+
+    :param data_dir:                    Full path to the directory that houses the input CSV files.
+    :type data_dir:                     str
+
+    :param n_jobs:                      The maximum number of concurrently running jobs, such as the number of Python
+                                        worker processes when backend=”multiprocessing” or the size of the thread-pool
+                                        when backend=”threading”. If -1 all CPUs are used. If 1 is given, no parallel
+                                        computing code is used at all, which is useful for debugging. For n_jobs
+                                        below -1, (n_cpus + 1 + n_jobs) are used. Thus for n_jobs = -2, all CPUs
+                                        but one are used. None is a marker for ‘unset’ that will be interpreted as
+                                        n_jobs=1 (sequential execution) unless the call is performed under a
+                                        parallel_backend context manager that sets another value for n_jobs.
+    :type n_jobs:                       int
+
+    :param datetime_field_name:         Name of the datetime field.
+    :type datetime_field_name:          str
+
+    :param mlp_linear_adjustment:       True if you want to correct the MLP model using a linear model.
+    :type mlp_linear_adjustment:        Optional[bool]
+
+    :param apply_sine_function:         True if setting up data for a linear model that will be run and will cause
+                                        the application of the sine function for hour and month fields if they
+                                        are present in the data.
+    :type apply_sine_function:          Optional[bool]
+
+    :param data_column_rename_dict:     Dictionary for the field names present in the input CSV file (keys) to what the
+                                        code expects them to be (values).
+    :type data_column_rename_dict:      Optional[dict[str]]
+
+    :param expected_datetime_columns:   Expected names of the date time columns in the input CSV file.
+    :type expected_datetime_columns:    Optional[list[str]]
+
+    :param hour_field_name:             Field name of the hour field in the input CSV file.
+    :type hour_field_name:              Optional[str]
+
+    :param month_field_name:            Field name of the month field in the input CSV file.
+    :type month_field_name:             Optional[str]
+
+    :param x_variables:                 Target variable list.
+    :type x_variables:                  Optional[list[str]]
+
+    :param add_dayofweek_xvars:         True if the user wishes to add weekday and holiday targets to the x variables.
+    :type add_dayofweek_xvars:          Optional[bool]
+
+    :param y_variables:                 Feature variable list.
+    :type y_variables:                  Optional[list[str]]
+
+    :param day_list:                    List of day abbreviations and their order.
+    :type day_list:                     Optional[list[str]]
+
+    :param seed_value:                  Seed value to reproduce randomization.
+    :type seed_value:                   Optional[int]
+
+    :param x_variables_linear:          Target variable list for the linear model.
+    :type x_variables_linear:           Optional[list[str]]
+
+    :param y_variables_linear:          Feature variable list for the linear model.
+    :type y_variables_linear:           Optional[list[str]]
+
+    :param verbose:                     Choice to see logged outputs.
+    :type verbose:                      bool
+
+    :return:                            Prediction data frame
+
+    """
+
+    # run all regions in target list in parallel
+    results = Parallel(n_jobs=n_jobs, backend="loky")(delayed(predict)(region=region,
+                                                                       year=year,
+                                                                       data_dir=data_dir,
+                                                                       datetime_field_name=datetime_field_name,
+                                                                       **kwargs) for region in target_region_list)
+
+    # aggregate outputs
+    for index, i in enumerate(results):
+
+        if index == 0:
+            prediction_df = i
+        else:
+            prediction_df = pd.concat([prediction_df, i])
 
     return prediction_df

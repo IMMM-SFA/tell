@@ -14,7 +14,7 @@ from .install_forcing_data import install_sample_forcing_data
 # ml modeling
 from .mlp_train import train, train_batch
 from .mlp_utils import *
-from .mlp_predict import predict
+from .mlp_predict import predict, predict_batch
 
 # Model forward execution steps:
 from .execute_forward import *
