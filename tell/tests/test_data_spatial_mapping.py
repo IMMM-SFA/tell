@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from tell.tell.data_spatial_mapping import map_ba_service_territory
+from tell.data_spatial_mapping import map_ba_service_territory
 
 
 class TestSpatialMapping(unittest.TestCase):

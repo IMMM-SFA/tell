@@ -1,6 +1,6 @@
 import unittest
 
-from tell.tell.execute_forward import execute_forward
+from tell.execute_forward import execute_forward
 
 class TestExecuteForward(unittest.TestCase):
     """Tests for functionality within execute_forward.py"""

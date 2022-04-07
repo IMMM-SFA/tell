@@ -42,6 +42,9 @@ hour_field_name: "Hour"
 # Field name of the month field in the input CSV file.
 month_field_name: "Month"
 
+# Field name of the year field in the input CSV file.
+year_field_name: "Year"
+
 # Target variable list.
 x_variables: ["Hour", "Month", "Temperature", "Specific_Humidity", "Wind_Speed", "Longwave_Radiation", "Shortwave_Radiation"]
 
@@ -63,9 +66,6 @@ end_time: "2019-12-31 23:00:00"
 # Timestamp showing the datetime to split the train and test data by
 split_datetime: "2018-12-31 23:00:00"
 
-# No data value in the input CSV file.
-nodata_value: -9999
-
 # Seed value to reproduce randomization.
 seed_value: 391
 
@@ -74,3 +74,12 @@ x_variables_linear: ["Population", "Hour", "Month", "Year"]
 
 # Feature variable list for the linear model.
 y_variables_linear: ["Demand"]
+
+# Choice to write ML models to a pickled file via joblib.
+save_model: False
+
+# Full path to output directory where model file will be written. Default uses package data.
+model_output_directory: "Default"
+
+# Choice to see logged outputs.
+verbose: False

@@ -2,7 +2,7 @@ import os
 import unittest
 import pandas as pd
 
-from tell.tell.data_process_compile import compile_data
+from tell.data_process_compile import compile_data
 
 
 class TestCompileData(unittest.TestCase):

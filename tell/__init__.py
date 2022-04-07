@@ -11,7 +11,9 @@ from .data_process_compile import compile_data
 from .install_raw_data import install_tell_raw_data
 from .install_forcing_data import install_sample_forcing_data
 
-# MLP steps:
+# ml modeling
+from .mlp_train import train, train_batch
+from .mlp_utils import *
 from .mlp_predict import predict, predict_batch
 
 # Model forward execution steps:

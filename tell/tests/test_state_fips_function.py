@@ -1,6 +1,6 @@
 import unittest
 
-from tell.tell.states_fips_function import state_metadata_from_state_abbreviation
+from tell.states_fips_function import state_metadata_from_state_abbreviation
 
 
 class TestStateFIPS(unittest.TestCase):
