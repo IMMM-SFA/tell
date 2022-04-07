@@ -7,7 +7,7 @@ notebook that contains detailed step-by-step instructions on how to run **tell**
 
 
 About **tell**
-------------
+--------------
 The Total ELectricity Load (TELL) model projects the short- and long-term evoluation of hourly electricity demand in response to future climate
 and population changes. The purpose of **tell** is to generate end-of-century hourly profiles of electricity demand across the entire United States
 (U.S.) at a spatial resolution adequate for input to a unit commitment/economic dispatch (UC/ED) model while also maintaining consistency with the
@@ -15,18 +15,17 @@ long-term growth and evolution of annual state-level electricity demand projecte
 as input future projections of the hourly time-series of meteorology and decadal populations and uses the temporal variations in weather to project
 hourly profiles of total electricity demand. The core predictions in **tell** are based on a series of multilayer perceptron (MLP) models for individual
 Balancing Authorities (BAs). Those MLP models are trained on historical observations of weather and electricity demand. Hourly projections from **tell**
-are scaled to match the annual state-level total electricity loads projected by the U.S. version of the Global Change Analysis Model (GCAM-USA).
-GCAM-USA captures the long-term co-evolution of the human-Earth system. Using this unique approach allows **tell** to reflect both changes in the shape
+are scaled to match the annual state-level total electricity loads projected by the U.S. version of the Global Change Analysis Model (GCAM-USA) which
+captures the long-term co-evolution of the human-Earth system. Using this unique approach allows **tell** to reflect both changes in the shape
 of the load profile due to variations in weather and the long-term evolution of energy demand due to changes in population, technology, and economics.
-`tell` is unique from other probabilistic load forecasting models in that it features an explicit spatial component that allows us to relate projected
+**tell** is unique from other load forecasting models in that it features an explicit spatial component that allows us to relate projected
 loads to where they would occur spatially within a grid operations model. The output of **tell** is a series of hourly projections for future electricity
-demand at the county, state, and BA scale that are quantitatively and conceptually consistent with one another.
+demand at the county, state, and BA scale that are conceptually and quantitatively consistent with one another.
 
 
 How It Works
 ------------
-The basic logic for **tell** proceeds in six sequential steps. Note that you may not need to repeat each step (e.g., training the empirical models) each time you
-want to conduct a simulation using **tell**.
+The basic workflow for **tell** proceeds in six sequential steps:
 
 #. Formulate empirical models that relate the historical observed meteorology and population to the hourly time-series of total electricity demand for each of the BAs that report their hourly loads in the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_ dataset.
 
@@ -43,7 +42,7 @@ want to conduct a simulation using **tell**.
 
 Design Constraints
 ------------------
-The **tell** model was designed around the following conceptual constraints:
+**tell** was designed with the following constraints:
 
 .. list-table::
     :header-rows: 1
@@ -57,7 +56,7 @@ The **tell** model was designed around the following conceptual constraints:
     * - Forcing factors
       - Projections should respond to changes in meteorology/climate and population.
     * - Multiscale consistency
-      - Should produce hourly total electricity demand at the county, state, and BA scale that are conceptually and quantitatively consistent.
+      - Should produce hourly total electricity demand at the county, state, and BA scale that are conceptually and quantitatively consistent with each other.
     * - Open-source
       - Should be based entirely on publicly available data and be made available as an extensively-documented open-source model.
 
@@ -447,13 +446,12 @@ in the BA's service territory. As there are spatial overlaps in BAs, many counti
 Once the load projections from all BAs in **tell** have been disaggregated to the county-level, we next sum up the loads from all
 counties in a given state to get annual state-level total loads which are scaled to match the projections from GCAM-USA. The scaling
 factors for each state are then applied to all county-level hourly load values in that state. The final output of **tell** is thus
-a series of 8760-hr time series of total electricity loads at the state-, county-, and BA-level that are conceptually and quantitatively
-consistent with one another.
+a series of 8760-hr time series of total electricity loads at the state, county, and BA scale that are conceptually and quantitatively
+consistent with each other.
 
 It is important to note that the future evolution of population is also taken into account in **tell**. Projected annual changes in
 population for each county and state are generated using the Shared Socioeconomic Pathways (`SSPs <https://en.wikipedia.org/wiki/Shared_Socioeconomic_Pathways>`_)
-scenarios. Those future populations are used in post-processing the
-MLP models and to derive new weighting factors to be used in disaggregating and reaggregating future **tell** loads.
+scenarios. Those future populations are used to derive new weighting factors to be used in disaggregating and reaggregating future **tell** loads.
 Thus, in an scenario where lots of people move to, for example, Southern California, the counties there would not only receive a higher
 proportion of the BA-level loads for BAs operating there, but would also have an incrementally larger impact on the future total
 hourly load profile for California as a whole.
@@ -468,12 +466,17 @@ general form of each MLP model is:
 
    y_{pred} = y_{MLP} + `\epsilon`
 
-where y :subscript:`MLP` is the actual MLP model and epsilon represents a linear model that uses the annual evolution of total population
+where y :subscript:`MLP` is the actual MLP model and epsilon represents a linear model that uses the annual change in total population
 within the BA service territory to predict the residuals from the MLP model for a given BA. The MLP model for each BA is trained and
-evaluated independently. Hyperparameter tuning for the models is done using grid search. The MLP models are trained on historical load data
-from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_ dataset and weather from IM3's historical runs using the Weather
-Research and Forecasting (WRF) model. In the production version of the **tell** model the MLP models for each BA were trained on data from
-2016-2018 and evaluated against observed loads from 2019. Details of the MLP predictive variables are included in the table below.
+evaluated independently. The MLP models are trained on historical load data from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_
+dataset and weather from IM3's historical runs using the Weather Research and Forecasting (WRF) model. In the production version of **tell**
+the MLP models for each BA were trained on data from 2016-2018 and evaluated against observed loads from 2019. While the EIA-930 data extends past
+the year 2019, COVID-19 induced significant changes in the diurnal profile of electricity demand (e.g., `Burleyson et al. 2021 <https://www.sciencedirect.com/science/article/pii/S0306261921010631>`_)
+so we opted not to use 2020+ data in the MLP model training or evaluation. In the future, **tell** could be retrained repeatedly as more and
+more EIA-930 data becomes available.
+
+Details of the MLP predictive variables are included in the table below. The default parameter settings for training the MLP models are stored
+in the `mlp_settings.yml <https://github.com/IMMM-SFA/tell/blob/review/crvernon/tell/data/mlp_settings.yml>`_ file in the **tell** repository.
 
 .. list-table::
     :header-rows: 1
@@ -590,8 +593,8 @@ and Shared Socioeconomic Pathways (`SSPs <https://en.wikipedia.org/wiki/Shared_S
       - rcp85hotter_ssp5
 
 
-Key Outputs
------------
+Outputs
+-------
 **tell** produces four types of output files. Each type of output is written out as a .csv file or series of .csv files in ``tell_data/outputs/tell_output/scenario_name``.
 Each type of output file can be suppressed by commenting out the relevant output function in ``execute_forward.py``. Missing values in each output file are
 coded as -9999. All times are in UTC.

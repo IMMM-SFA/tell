@@ -5,10 +5,12 @@ import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
 
+from glob import glob
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
-def plot_ba_service_territory(ba_to_plot: str, year_to_plot: str, data_input_dir: str):
+def plot_ba_service_territory(ba_to_plot: str, year_to_plot: str, data_input_dir: str, image_output_dir: str,
+                              image_resolution: int, save_images=False):
     """Plot maps of the service territory for a given BA in a given year
 
     :param ba_to_plot:          Code for the BA you want to plot
@@ -19,6 +21,15 @@ def plot_ba_service_territory(ba_to_plot: str, year_to_plot: str, data_input_dir
 
     :param data_input_dir:      Top-level data directory for TELL
     :type data_input_dir:       str
+
+    :param image_output_dir:    Directory to store the images
+    :type image_output_dir:     str
+
+    :param image_resolution:    Resolution at which you want to save the images in DPI
+    :type image_resolution:     int
+
+    :param save_images:         Set to True if you want to save the images after they're generated
+    :type save_images:          bool
 
     """
 
@@ -65,6 +76,83 @@ def plot_ba_service_territory(ba_to_plot: str, year_to_plot: str, data_input_dir
                                   legend=True,
                                   legend_kwds={'label': ('County Population in ' + year_to_plot), 'orientation': 'vertical'})
     ax1.set_title((ba_to_plot + ' Service Territory in ' + year_to_plot))
+
+    # If the "save_images" flag is set to true then save the plot to a .png file:
+    if save_images == True:
+       filename = (ba_to_plot + '_Service_Territory_' + year_to_plot + '.png')
+       plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
+
+
+def plot_mlp_summary_statistics(year_to_plot: str, data_input_dir: str, image_output_dir: str,
+                                image_resolution: int, save_images=False):
+    """Plot the summary statistics of the MLP evaluation data across BAs
+
+    :param year_to_plot:        Year you want to plot (valid 2015-2019)
+    :type year_to_plot:         str
+
+    :param data_input_dir:      Top-level data directory for TELL
+    :type data_input_dir:       str
+
+    :param image_output_dir:    Directory to store the images
+    :type image_output_dir:     str
+
+    :param image_resolution:    Resolution at which you want to save the images in DPI
+    :type image_resolution:     int
+
+    :param save_images:         Set to True if you want to save the images after they're generated
+    :type save_images:          bool
+
+    """
+
+    # Set the input directory based on the 'data_input_dir' and 'year_to_plot' variables:
+    mlp_input_dir = os.path.join(data_input_dir, r'outputs', r'mlp_output', year_to_plot)
+
+    # Read in summary statistics file:
+    statistics_df = pd.read_csv(os.path.join(mlp_input_dir, r'summary.csv'))
+
+    # Sort the statistics by R2 value:
+    statistics_df_sorted = statistics_df.sort_values(by=['R2'], ascending=True)
+
+    # Create an x-axis the length of the dataframe to be used in plotting:
+    x_axis = np.arange(len(statistics_df_sorted))
+
+    # Make the plot:
+    plt.figure(figsize=(25, 10))
+    plt.bar(x_axis, statistics_df_sorted['R2'], 0.75, label='Correlation')
+    plt.xticks(x_axis, statistics_df_sorted['BA'])
+    plt.xticks(rotation=90)
+    plt.ylim([0, 1])
+    plt.xlabel("Balancing Authority")
+    plt.ylabel("Correlation with Observed Loads")
+    plt.title(('Correlation Between Observed and MLP Predicted Loads in ' + year_to_plot))
+
+    # If the "save_images" flag is set to true then save the plot to a .png file:
+    if save_images == True:
+       filename = ('MLP_Correlations_by_BA_' + year_to_plot + '.png')
+       plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
+
+    # Multiply the MAPE values by 100 to convert them to percentages:
+    statistics_df['MAPE'] = statistics_df['MAPE'] * 100
+
+    # Sort the statistics by MAPE value:
+    statistics_df_sorted = statistics_df.sort_values(by=['MAPE'], ascending=True)
+
+    # Create an x-axis the length of the dataframe to be used in plotting:
+    x_axis = np.arange(len(statistics_df_sorted))
+
+    # Make the plot:
+    plt.figure(figsize=(25, 10))
+    plt.bar(x_axis, statistics_df_sorted['MAPE'], 0.75, label='MAPE')
+    plt.xticks(x_axis, statistics_df_sorted['BA'])
+    plt.xticks(rotation=90)
+    plt.xlabel("Balancing Authority")
+    plt.ylabel("Mean Absolute Percentage Error [%]")
+    plt.title(('Mean Absolute Percentage Error Between Observed and MLP Predicted Loads in ' + year_to_plot))
+
+    # If the "save_images" flag is set to true then save the plot to a .png file:
+    if save_images == True:
+       filename = ('MLP_MAPE_by_BA_' + year_to_plot + '.png')
+       plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
 
 
 def plot_state_scaling_factors(year_to_plot: str, data_input_dir: str, image_output_dir: str,
@@ -322,4 +410,99 @@ def plot_ba_load_time_series(ba_to_plot: str, year_to_plot: str, data_input_dir:
     # If the "save_images" flag is set to true then save the plot to a .png file:
     if save_images == True:
         filename = ('TELL_BA_Hourly_Loads_' + ba_to_plot + '_' + year_to_plot + '.png')
+        plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
+
+
+def plot_ba_variable_correlations(ba_to_plot: str, data_input_dir: str, image_output_dir: str, image_resolution: int,
+                                  save_images=False):
+    """Plot the correlation matrix between predictive variables and observed demand for individual or all BAs.
+
+    :param ba_to_plot:          BA code for the BA you want to plot. Set to "All" to plot the average
+                                correlation across all BAs.
+    :type ba_to_plot:           str
+
+    :param data_input_dir:      Top-level data directory for TELL
+    :type data_input_dir:       str
+
+    :param image_output_dir:    Directory to store the images
+    :type image_output_dir:     str
+
+    :param image_resolution:    Resolution at which you want to save the images in DPI
+    :type image_resolution:     int
+
+    :param save_images:         Set to True if you want to save the images after they're generated
+    :type save_images:          bool
+
+    """
+
+    # Set the input directory based on the 'data_input_dir' variable:
+    compiled_data_input_dir = os.path.join(data_input_dir, r'outputs', r'compiled_historical_data')
+
+    if ba_to_plot != 'All':
+        # Read in compiled historical data file for the BA you want to plot:
+        df = pd.read_csv(os.path.join(compiled_data_input_dir, f'{ba_to_plot}_historical_data.csv'))
+
+        # Rename the a few columns for simplicity:
+        df.rename(columns={"Adjusted_Demand_MWh": "Demand"}, inplace=True)
+        df.rename(columns={"Total_Population": "Population"}, inplace=True)
+
+        # Drop out the columns we don't need anymore:
+        df.drop(['Forecast_Demand_MWh', 'Adjusted_Generation_MWh', 'Adjusted_Interchange_MWh'], axis=1, inplace=True)
+
+        # Calculate the correlation matrix of the dataframe:
+        corr = df.corr()
+    else:
+        # Loop over the compiled historical data files in the input directory:
+        for idx, file in enumerate(glob(f'{compiled_data_input_dir}/*.csv')):
+
+            # Read in the .csv file:
+            dfx = pd.read_csv(os.path.join(compiled_data_input_dir, file))
+
+            # Rename the a few columns for simplicity:
+            dfx.rename(columns={"Adjusted_Demand_MWh": "Demand"}, inplace=True)
+            dfx.rename(columns={"Total_Population": "Population"}, inplace=True)
+
+            # Drop out the columns we don't need anymore:
+            dfx.drop(['Forecast_Demand_MWh', 'Adjusted_Generation_MWh', 'Adjusted_Interchange_MWh'], axis=1,
+                     inplace=True)
+
+            # Calculate the correlation matrix of the dataframe:
+            corrx = dfx.corr()
+
+            # Concatenate the correlation matrix across BAs:
+            if idx == 0:
+                corrall = corrx.copy()
+            else:
+                corrall = np.dstack((corrall, corrx))
+
+            del dfx, corrx
+
+        # Calculate the average correlation matrix across all BAs and convert that value to a pd dataframe for plotting:
+        corr = pd.DataFrame(np.nanmean(corrall, axis=2),
+                            columns=['Year', 'Month', 'Day', 'Hour', 'Demand', 'Population', 'T2', 'Q2', 'SWDOWN',
+                                     'GLW', 'WSPD'])
+
+    # Fill diagonal and upper half with NaNs
+    mask = np.zeros_like(corr, dtype=bool)
+    mask[np.triu_indices_from(mask)] = True
+    corr[mask] = np.nan
+
+    f = plt.figure(figsize=(25, 10))
+    plt.matshow(corr,
+                fignum=f.number,
+                cmap='RdBu_r',
+                vmin=-1,
+                vmax=1)
+    cb = plt.colorbar()
+    cb.ax.tick_params(labelsize=14)
+    if ba_to_plot != 'All':
+        plt.title('Correlation Matrix in the ' + ba_to_plot + ' Balancing Authority', fontsize=16);
+    else:
+        plt.title('Average Correlation Matrix Across All Balancing Authorities in TELL', fontsize=16);
+    plt.xticks(range(len(corr.columns)), corr.columns, rotation='vertical')
+    plt.yticks(range(len(corr.columns)), corr.columns)
+
+    # If the "save_images" flag is set to true then save the plot to a .png file:
+    if save_images == True:
+        filename = (ba_to_plot + '_Correlation_Matrix.png')
         plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
