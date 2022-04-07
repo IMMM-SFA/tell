@@ -53,6 +53,9 @@ class DefaultSettings:
     :param month_field_name:            Field name of the month field in the input CSV file.
     :type month_field_name:             Optional[str]
 
+    :param year_field_name:             Field name of the year field in the input CSV file.
+    :type year_field_name:              Optional[str]
+
     :param x_variables:                 Target variable list.
     :type x_variables:                  Optional[list[str]]
 
@@ -129,6 +132,7 @@ class DefaultSettings:
         self.apply_sine_function = self.settings_dict.get("apply_sine_function")
         self.hour_field_name = self.settings_dict.get("hour_field_name")
         self.month_field_name = self.settings_dict.get("month_field_name")
+        self.year_field_name = self.settings_dict.get("year_field_name")
         self.day_list = self.settings_dict.get("day_list")
         self.start_time = str(self.settings_dict.get("start_time"))
         self.end_time = str(self.settings_dict.get("end_time"))
@@ -138,9 +142,12 @@ class DefaultSettings:
         self.x_variables_linear = self.settings_dict.get("x_variables_linear")
         self.y_variables_linear = self.settings_dict.get("y_variables_linear")
         self.save_model = self.settings_dict.get("save_model")
-        self.model_output_directory = self.settings_dict.get("model_output_directory",
-                                                             pkg_resources.resource_filename("tell", "data/models"))
         self.verbose = self.settings_dict.get("verbose")
+        self.model_output_directory = self.settings_dict.get("model_output_directory")
+
+        # set to default package data if not provided
+        if self.model_output_directory == "Default":
+            self.model_output_directory = pkg_resources.resource_filename("tell", "data/models")
 
     @staticmethod
     def update_default_settings(kwargs) -> dict:
@@ -601,6 +608,7 @@ class DatasetPredict(DefaultSettings):
         df[self.DATETIME_FIELD] = pd.to_datetime(df[self.datetime_field_name])
 
         # break out date time fields
+        df[self.year_field_name] = df[self.DATETIME_FIELD].dt.year
         df[self.month_field_name] = df[self.DATETIME_FIELD].dt.month
         df[self.hour_field_name] = df[self.DATETIME_FIELD].dt.hour
 
