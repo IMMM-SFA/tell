@@ -123,11 +123,6 @@ def predict(region: str,
                               datetime_field_name=datetime_field_name,
                               **kwargs)
 
-    # load models and the normalization dictionary from file
-    mlp_model, linear_model, normalized_dict = load_predictive_models(region=region,
-                                                                model_output_directory=settings.model_output_directory,
-                                                                mlp_linear_adjustment=settings.mlp_linear_adjustment)
-
     # prepare data for linear model if adjustment is desired
     if settings.mlp_linear_adjustment:
         data_linear = DatasetPredict(region,
@@ -143,23 +138,20 @@ def predict(region: str,
     else:
         x_linear_data = None
 
+    # load models and the normalization dictionary from file
+    mlp_model, linear_model, normalized_dict = load_predictive_models(region=region,
+                                                                      model_output_directory=settings.model_output_directory,
+                                                                      mlp_linear_adjustment=settings.mlp_linear_adjustment)
+
     # scale model features and targets for the MLP model
-    normalized_dict = normalize_prediction_data(data_arr=data_mlp.x_data,
-                                                min_train_arr=normalized_dict["min_x_train"],
-                                                max_train_arr=normalized_dict["max_x_train"])
+    x_data_norm = normalize_prediction_data(data_arr=data_mlp.x_data,
+                                            min_train_arr=normalized_dict["min_x_train"],
+                                            max_train_arr=normalized_dict["max_x_train"])
+    # run the MLP model
+    y_predicted_norm = mlp_model.predict(x_data_norm)
 
-    # # unpack normalized data needed to run the MLP model
-    # x_train_norm = normalized_dict.get("x_train_norm")
-    # y_train_norm = normalized_dict.get("y_train_norm")
-    # x_test_norm = normalized_dict.get("x_test_norm")
-
-    # load predictive model
-    mlp_model, linear_model = load_predictive_models(region=region,
-                                                     mlp_linear_adjustment=settings.mlp_linear_adjustment,
-                                                     model_output_directory=settings.model_output_directory)
-
-    # run the MLP model with the linear correction if desired
-    y_predicted = mlp_model.predict(data_mlp.x_data)
+    if settings.mlp_linear_adjustment:
+        y_predicted_linear = linear_model.predict(x_linear_data)
 
     # denormalize predicted Y
     y_p = y_predicted * normalized_dict["sigma_y_train"] + normalized_dict["mu_y_train"]
