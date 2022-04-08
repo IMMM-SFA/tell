@@ -1,4 +1,4 @@
-# default settings for the MLP module of TELL
+# Default settings for the MLP module of TELL
 
 # The ith element represents the number of neurons in the ith hidden layer.
 mlp_hidden_layer_sizes: 256

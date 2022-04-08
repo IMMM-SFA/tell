@@ -83,15 +83,12 @@ def plot_ba_service_territory(ba_to_plot: str, year_to_plot: str, data_input_dir
        plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
 
 
-def plot_mlp_summary_statistics(year_to_plot: str, data_input_dir: str, image_output_dir: str,
+def plot_mlp_summary_statistics(validation_df, image_output_dir: str,
                                 image_resolution: int, save_images=False):
     """Plot the summary statistics of the MLP evaluation data across BAs
 
-    :param year_to_plot:        Year you want to plot (valid 2015-2019)
-    :type year_to_plot:         str
-
-    :param data_input_dir:      Top-level data directory for TELL
-    :type data_input_dir:       str
+    :param validation_df:       Validation dataframe produced by the batch training of MLP models for all BAs
+    :type validation_dft:       df
 
     :param image_output_dir:    Directory to store the images
     :type image_output_dir:     str
@@ -104,54 +101,48 @@ def plot_mlp_summary_statistics(year_to_plot: str, data_input_dir: str, image_ou
 
     """
 
-    # Set the input directory based on the 'data_input_dir' and 'year_to_plot' variables:
-    mlp_input_dir = os.path.join(data_input_dir, r'outputs', r'mlp_output', year_to_plot)
-
-    # Read in summary statistics file:
-    statistics_df = pd.read_csv(os.path.join(mlp_input_dir, r'summary.csv'))
-
     # Sort the statistics by R2 value:
-    statistics_df_sorted = statistics_df.sort_values(by=['R2'], ascending=True)
+    validation_df_sorted = validation_df.sort_values(by=['R2'], ascending=True)
 
     # Create an x-axis the length of the dataframe to be used in plotting:
-    x_axis = np.arange(len(statistics_df_sorted))
+    x_axis = np.arange(len(validation_df_sorted))
 
     # Make the plot:
     plt.figure(figsize=(25, 10))
-    plt.bar(x_axis, statistics_df_sorted['R2'], 0.75, label='Correlation')
-    plt.xticks(x_axis, statistics_df_sorted['BA'])
+    plt.bar(x_axis, validation_df_sorted['R2'], 0.75, label='Correlation')
+    plt.xticks(x_axis, validation_df_sorted['region'])
     plt.xticks(rotation=90)
-    plt.ylim([0, 1])
+    #plt.ylim([0, 1])
     plt.xlabel("Balancing Authority")
-    plt.ylabel("Correlation with Observed Loads")
-    plt.title(('Correlation Between Observed and MLP Predicted Loads in ' + year_to_plot))
+    plt.ylabel("R2 Score")
+    plt.title('Coefficient of Determination Between Observed and TELL Predicted Loads')
 
     # If the "save_images" flag is set to true then save the plot to a .png file:
     if save_images == True:
-       filename = ('MLP_Correlations_by_BA_' + year_to_plot + '.png')
+       filename = ('MLP_R2_by_BA.png')
        plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
 
     # Multiply the MAPE values by 100 to convert them to percentages:
-    statistics_df['MAPE'] = statistics_df['MAPE'] * 100
+    validation_df['MAPE'] = validation_df['MAPE'] * 100
 
     # Sort the statistics by MAPE value:
-    statistics_df_sorted = statistics_df.sort_values(by=['MAPE'], ascending=True)
+    validation_df_sorted = validation_df.sort_values(by=['MAPE'], ascending=True)
 
     # Create an x-axis the length of the dataframe to be used in plotting:
-    x_axis = np.arange(len(statistics_df_sorted))
+    x_axis = np.arange(len(validation_df_sorted))
 
     # Make the plot:
     plt.figure(figsize=(25, 10))
-    plt.bar(x_axis, statistics_df_sorted['MAPE'], 0.75, label='MAPE')
-    plt.xticks(x_axis, statistics_df_sorted['BA'])
+    plt.bar(x_axis, validation_df_sorted['MAPE'], 0.75, label='MAPE')
+    plt.xticks(x_axis, validation_df_sorted['region'])
     plt.xticks(rotation=90)
     plt.xlabel("Balancing Authority")
-    plt.ylabel("Mean Absolute Percentage Error [%]")
-    plt.title(('Mean Absolute Percentage Error Between Observed and MLP Predicted Loads in ' + year_to_plot))
+    plt.ylabel("MAPE [%]")
+    plt.title('Mean Absolute Percentage Error Between Observed and TELL Predicted Loads')
 
     # If the "save_images" flag is set to true then save the plot to a .png file:
     if save_images == True:
-       filename = ('MLP_MAPE_by_BA_' + year_to_plot + '.png')
+       filename = ('MLP_MAPE_by_BA.png')
        plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
 
 
