@@ -110,7 +110,7 @@ def plot_mlp_summary_statistics(validation_df, image_output_dir: str,
     # Make the plot:
     plt.figure(figsize=(25, 10))
     plt.bar(x_axis, validation_df_sorted['R2'], 0.75, label='Correlation')
-    plt.xticks(x_axis, validation_df_sorted['region'])
+    plt.xticks(x_axis, validation_df_sorted['BA'])
     plt.xticks(rotation=90)
     #plt.ylim([0, 1])
     plt.xlabel("Balancing Authority")
@@ -134,7 +134,7 @@ def plot_mlp_summary_statistics(validation_df, image_output_dir: str,
     # Make the plot:
     plt.figure(figsize=(25, 10))
     plt.bar(x_axis, validation_df_sorted['MAPE'], 0.75, label='MAPE')
-    plt.xticks(x_axis, validation_df_sorted['region'])
+    plt.xticks(x_axis, validation_df_sorted['BA'])
     plt.xticks(rotation=90)
     plt.xlabel("Balancing Authority")
     plt.ylabel("MAPE [%]")

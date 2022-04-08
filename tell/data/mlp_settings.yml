@@ -81,5 +81,11 @@ save_model: False
 # Full path to output directory where model file will be written. Default uses package data.
 model_output_directory: "Default"
 
+# Choice to write predictions to a .csv file.
+save_prediction: False
+
+# Full path to output directory where prediction files will be written.
+prediction_output_directory: None
+
 # Choice to see logged outputs.
 verbose: False
