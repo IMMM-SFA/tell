@@ -55,7 +55,6 @@ def extract_gcam_usa_loads(filename: str) -> DataFrame:
         # Aggregate the output into a new dataframe:
         if i == 0:
             gcam_usa_output_df = state_df
-
         else:
             gcam_usa_output_df = gcam_usa_output_df.append(state_df)
 
@@ -155,11 +154,11 @@ def aggregate_mlp_output_files(list_of_files: list) -> DataFrame:
         # Read in the .csv file and replace missing values with nan:
         mlp_data = pd.read_csv(list_of_files[file]).replace(-9999, np.nan)
 
-        # Pull out the BA code from the filename:
-        mlp_data['BA_Code'] = extract_ba_code(list_of_files[file])
+        # Rename the "BA" variable:
+        mlp_data.rename(columns={'BA': 'BA_Code'}, inplace=True)
 
-        # Rename the "Predictions" variable:
-        mlp_data.rename(columns={'Predictions': 'Total_BA_Load_MWh'}, inplace=True)
+        # Rename the "Load" variable:
+        mlp_data.rename(columns={'Load': 'Total_BA_Load_MWh'}, inplace=True)
 
         # Aggregate the output into a new dataframe:
         if file == 0:
@@ -168,22 +167,6 @@ def aggregate_mlp_output_files(list_of_files: list) -> DataFrame:
             mlp_output_df = mlp_output_df.append(mlp_data)
 
     return mlp_output_df
-
-
-def extract_ba_code(filename: str) -> str:
-    """
-    Extracts the balancing authority code from an MLP output filename.
-
-    :param filename:            Name of the MLP output file
-    :type filename:             str
-
-    :return:                    String code of the balancing authority
-
-    """
-
-    ba_code = filename[filename.rindex(os.sep) + 1:].rstrip('_mlp_predictions.csv')
-
-    return ba_code
 
 
 def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, data_output_dir: str):
@@ -220,9 +203,9 @@ def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, data
 
     # Round off the values to make the output file more readable:
     output_df['State_FIPS'] = output_df['State_FIPS'].round(0)
-    output_df['Raw_TELL_Load_TWh'] = output_df['Raw_TELL_Load_TWh'].round(5)
-    output_df['GCAM_USA_Load_TWh'] = output_df['GCAM_USA_Load_TWh'].round(5)
-    output_df['Scaled_TELL_Load_TWh'] = output_df['Scaled_TELL_Load_TWh'].round(5)
+    output_df['Raw_TELL_Load_TWh'] = output_df['Raw_TELL_Load_TWh'].round(2)
+    output_df['GCAM_USA_Load_TWh'] = output_df['GCAM_USA_Load_TWh'].round(2)
+    output_df['Scaled_TELL_Load_TWh'] = output_df['Scaled_TELL_Load_TWh'].round(2)
     output_df['Scaling_Factor'] = output_df['Scaling_Factor'].round(5)
 
     # Reorder the columns, fill in missing values, and sort alphabetically by state name:
@@ -256,7 +239,7 @@ def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, data_outp
 
     # Make a copy of the necessary variables:
     ba_output_df = joint_mlp_df[
-        {'Datetime', 'BA_Code', 'BA_Number', 'County_BA_Load_MWh', 'County_BA_Load_MWh_Scaled'}].copy(deep=False)
+        {'Time_UTC', 'BA_Code', 'BA_Number', 'County_BA_Load_MWh', 'County_BA_Load_MWh_Scaled'}].copy(deep=False)
 
     # Make a list of all of the BAs in "ba_output_df":
     bas = ba_output_df['BA_Code'].unique()
@@ -268,22 +251,19 @@ def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, data_outp
         output_df = ba_output_df[ba_output_df['BA_Code'].isin([bas[i]])]
 
         # Sum the county loads as a function of time:
-        output_df['Raw_TELL_BA_Load_MWh'] = output_df.groupby('Datetime')['County_BA_Load_MWh'].transform('sum')
-        output_df['Scaled_TELL_BA_Load_MWh'] = output_df.groupby('Datetime')['County_BA_Load_MWh_Scaled'].transform('sum')
+        output_df['Raw_TELL_BA_Load_MWh'] = output_df.groupby('Time_UTC')['County_BA_Load_MWh'].transform('sum')
+        output_df['Scaled_TELL_BA_Load_MWh'] = output_df.groupby('Time_UTC')['County_BA_Load_MWh_Scaled'].transform('sum')
 
         # Subset and reorder the columns, drop duplicates, fill in missing values, and sort chronologically:
-        output_df = output_df[['BA_Code', 'BA_Number', 'Datetime', 'Raw_TELL_BA_Load_MWh', 'Scaled_TELL_BA_Load_MWh']]
+        output_df = output_df[['BA_Code', 'BA_Number', 'Time_UTC', 'Raw_TELL_BA_Load_MWh', 'Scaled_TELL_BA_Load_MWh']]
         output_df = output_df.drop_duplicates()
         output_df = output_df.fillna(-9999)
-        output_df = output_df.sort_values("Datetime")
-
-        # Rename the "Datetime" variable:
-        output_df.rename(columns={"Datetime": "Time_UTC"}, inplace=True)
+        output_df = output_df.sort_values("Time_UTC")
 
         # Round off the values to make the output file more readable:
         output_df['BA_Number'] = output_df['BA_Number'].round(0)
-        output_df['Raw_TELL_BA_Load_MWh'] = output_df['Raw_TELL_BA_Load_MWh'].round(3)
-        output_df['Scaled_TELL_BA_Load_MWh'] = output_df['Scaled_TELL_BA_Load_MWh'].round(3)
+        output_df['Raw_TELL_BA_Load_MWh'] = output_df['Raw_TELL_BA_Load_MWh'].round(2)
+        output_df['Scaled_TELL_BA_Load_MWh'] = output_df['Scaled_TELL_BA_Load_MWh'].round(2)
 
         # Aggregate the output into a new dataframe:
         if i == 0:
@@ -319,7 +299,7 @@ def output_tell_state_data(joint_mlp_df: DataFrame, year_to_process: str, data_o
 
     # Make a copy of the necessary variables:
     state_output_df = joint_mlp_df[
-        {'Datetime', 'State_FIPS', 'State_Name', 'State_Scaling_Factor', 'County_BA_Load_MWh',
+        {'Time_UTC', 'State_FIPS', 'State_Name', 'State_Scaling_Factor', 'County_BA_Load_MWh',
          'County_BA_Load_MWh_Scaled'}].copy(deep=False)
 
     # Make a list of all of the states in "state_output_df":
@@ -332,29 +312,25 @@ def output_tell_state_data(joint_mlp_df: DataFrame, year_to_process: str, data_o
         output_df = state_output_df[state_output_df['State_Name'].isin([states[i]])]
 
         # Sum the county loads as a function of time:
-        output_df['Raw_TELL_State_Load_MWh'] = output_df.groupby('Datetime')['County_BA_Load_MWh'].transform('sum')
-        output_df['Scaled_TELL_State_Load_MWh'] = output_df.groupby('Datetime')['County_BA_Load_MWh_Scaled'].transform(
+        output_df['Raw_TELL_State_Load_MWh'] = output_df.groupby('Time_UTC')['County_BA_Load_MWh'].transform('sum')
+        output_df['Scaled_TELL_State_Load_MWh'] = output_df.groupby('Time_UTC')['County_BA_Load_MWh_Scaled'].transform(
             'sum')
 
         # Subset and reorder the columns, drop duplicates, fill in missing values, and sort chronologically:
         output_df = output_df[
-            ['State_Name', 'State_FIPS', 'Datetime', 'Raw_TELL_State_Load_MWh', 'Scaled_TELL_State_Load_MWh']]
+            ['State_Name', 'State_FIPS', 'Time_UTC', 'Raw_TELL_State_Load_MWh', 'Scaled_TELL_State_Load_MWh']]
         output_df = output_df.drop_duplicates()
         output_df = output_df.fillna(-9999)
-        output_df = output_df.sort_values('Datetime')
-
-        # Rename the "Datetime" variable:
-        output_df.rename(columns={'Datetime': 'Time_UTC'}, inplace=True)
+        output_df = output_df.sort_values('Time_UTC')
 
         # Round off the values to make the output file more readable:
         output_df['State_FIPS'] = output_df['State_FIPS'].round(0)
-        output_df['Raw_TELL_State_Load_MWh'] = output_df['Raw_TELL_State_Load_MWh'].round(5)
-        output_df['Scaled_TELL_State_Load_MWh'] = output_df['Scaled_TELL_State_Load_MWh'].round(5)
+        output_df['Raw_TELL_State_Load_MWh'] = output_df['Raw_TELL_State_Load_MWh'].round(2)
+        output_df['Scaled_TELL_State_Load_MWh'] = output_df['Scaled_TELL_State_Load_MWh'].round(2)
 
         # Aggregate the output into a new dataframe:
         if i == 0:
             aggregate_output_df = output_df
-
         else:
             aggregate_output_df = aggregate_output_df.append(output_df)
 
@@ -385,7 +361,7 @@ def output_tell_county_data(joint_mlp_df: DataFrame, year_to_process: str, data_
 
     # Make a copy of the necessary variables:
     county_output_df = joint_mlp_df[
-        {'Datetime', 'County_FIPS', 'County_Name', 'State_Name', 'State_FIPS', 'County_BA_Load_MWh',
+        {'Time_UTC', 'County_FIPS', 'County_Name', 'State_Name', 'State_FIPS', 'County_BA_Load_MWh',
          'County_BA_Load_MWh_Scaled'}].copy(deep=False)
 
     # Make a list of all of the counties in "county_output_df":
@@ -398,26 +374,23 @@ def output_tell_county_data(joint_mlp_df: DataFrame, year_to_process: str, data_
         output_df = county_output_df[county_output_df['County_FIPS'] == counties[i]]
 
         # Sum the county loads as a function of time:
-        output_df['Raw_TELL_County_Load_MWh'] = output_df.groupby('Datetime')['County_BA_Load_MWh'].transform('sum')
-        output_df['Scaled_TELL_County_Load_MWh'] = output_df.groupby('Datetime')['County_BA_Load_MWh_Scaled'].transform(
+        output_df['Raw_TELL_County_Load_MWh'] = output_df.groupby('Time_UTC')['County_BA_Load_MWh'].transform('sum')
+        output_df['Scaled_TELL_County_Load_MWh'] = output_df.groupby('Time_UTC')['County_BA_Load_MWh_Scaled'].transform(
             'sum')
 
         # Subset and reorder the columns, drop duplicates, fill in missing values, and sort chronologically:
         output_df = output_df[
-            ['County_Name', 'County_FIPS', 'State_Name', 'State_FIPS', 'Datetime', 'Raw_TELL_County_Load_MWh',
+            ['County_Name', 'County_FIPS', 'State_Name', 'State_FIPS', 'Time_UTC', 'Raw_TELL_County_Load_MWh',
              'Scaled_TELL_County_Load_MWh']]
         output_df = output_df.drop_duplicates()
         output_df = output_df.fillna(-9999)
-        output_df = output_df.sort_values("Datetime")
-
-        # Rename the "Datetime" variable:
-        output_df.rename(columns={"Datetime": "Time_UTC"}, inplace=True)
+        output_df = output_df.sort_values("Time_UTC")
 
         # Round off the values to make the output file more readable:
         output_df['County_FIPS'] = output_df['County_FIPS'].round(0)
         output_df['State_FIPS'] = output_df['State_FIPS'].round(0)
-        output_df['Raw_TELL_County_Load_MWh'] = output_df['Raw_TELL_County_Load_MWh'].round(5)
-        output_df['Scaled_TELL_County_Load_MWh'] = output_df['Scaled_TELL_County_Load_MWh'].round(5)
+        output_df['Raw_TELL_County_Load_MWh'] = output_df['Raw_TELL_County_Load_MWh'].round(2)
+        output_df['Scaled_TELL_County_Load_MWh'] = output_df['Scaled_TELL_County_Load_MWh'].round(2)
 
         # Generate the .csv output file name:
         county_name = output_df['County_Name'].unique()[0]
@@ -463,11 +436,10 @@ def execute_forward(year_to_process: str, scenario_to_process: str, data_input_d
     print('Start time = ', begin_time)
 
     # Set the data input directories:
-    gcam_usa_input_dir = os.path.join(data_input_dir, r'sample_weather_data', r'sample_gcam_usa_data',
-                                      scenario_to_process)
+    gcam_usa_input_dir = os.path.join(data_input_dir, r'sample_forcing_data', r'sample_gcam_usa_data', scenario_to_process)
     map_input_dir = os.path.join(data_input_dir, r'outputs', r'ba_service_territory')
     mlp_input_dir = os.path.join(data_input_dir, r'outputs', r'mlp_output', scenario_to_process, year_to_process)
-    pop_input_dir = os.path.join(data_input_dir, r'sample_weather_data', r'sample_population_projections')
+    pop_input_dir = os.path.join(data_input_dir, r'sample_forcing_data', r'sample_population_projections')
 
     # Set the data output directory:
     data_output_dir = os.path.join(data_input_dir, 'outputs', r'tell_output', scenario_to_process, year_to_process)
@@ -475,8 +447,9 @@ def execute_forward(year_to_process: str, scenario_to_process: str, data_input_d
     # Check if the data output directory exists and if not then create it:
     if os.path.exists(data_output_dir) is False:
         os.makedirs(data_output_dir)
-    if os.path.exists(os.path.join(data_output_dir, 'County_Level_Data')) is False:
-        os.mkdir(os.path.join(data_output_dir, 'County_Level_Data'))
+    if save_county_data:
+        if os.path.exists(os.path.join(data_output_dir, 'County_Level_Data')) is False:
+            os.mkdir(os.path.join(data_output_dir, 'County_Level_Data'))
 
     # Load in the sample GCAM-USA output file and subset the data to only the "year_to_process":
     gcam_usa_df = extract_gcam_usa_loads(os.path.join(gcam_usa_input_dir, 'gcamDataTable_aggParam.csv'))
@@ -504,7 +477,7 @@ def execute_forward(year_to_process: str, scenario_to_process: str, data_input_d
     mapping_df = mapping_df.dropna()
 
     # Create a list of all of the MLP output files in the "mlp_input_dir" and aggregate the files in that list:
-    mlp_filelist = sorted(glob.glob(os.path.join(mlp_input_dir, '*_mlp_predictions.csv')))
+    mlp_filelist = sorted(glob.glob(os.path.join(mlp_input_dir, '*_mlp_output.csv')))
     mlp_output_df = aggregate_mlp_output_files(mlp_filelist)
 
     # Merge the "mapping_df" with "mlp_output_df" using BA codes to merge on:
