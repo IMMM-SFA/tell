@@ -11,8 +11,7 @@ from .states_fips_function import state_metadata_from_state_abbreviation
 
 
 def extract_gcam_usa_loads(filename: str) -> DataFrame:
-    """
-    Extracts the state-level annual loads from a given GCAM-USA output file.
+    """Extracts the state-level annual loads from a given GCAM-USA output file.
 
     :param filename:            Name of the GCAM-USA output file
     :type filename:             str
@@ -128,7 +127,8 @@ def process_population_scenario(scenario_to_process: str, population_data_input_
     population_interp_df['Year'] = population_interp_df['yr'].dt.year
     population_interp_df.drop(columns=['yr'], inplace=True)
 
-    # Reorder the columns, convert the FIPS values from strings to integeers, round the population projections to whole numbers, and sort the dataframe by FIPS code then year:
+    # Reorder the columns, convert the FIPS values from strings to integeers, round the population projections
+    # to whole numbers, and sort the dataframe by FIPS code then year:
     population_interp_df = population_interp_df[['County_FIPS', 'Year', 'Population']]
     population_interp_df['County_FIPS'] = population_interp_df['County_FIPS'].astype(int)
     population_interp_df['Population'] = population_interp_df['Population'].round(0).astype(int)
@@ -138,8 +138,7 @@ def process_population_scenario(scenario_to_process: str, population_data_input_
 
 
 def aggregate_mlp_output_files(list_of_files: list) -> DataFrame:
-    """
-    Aggregates a list of MLP output files into a dataframe.
+    """Aggregates a list of MLP output files into a dataframe.
 
     :param list_of_files:           List of MLP output files
     :type list_of_files:            list
@@ -170,8 +169,7 @@ def aggregate_mlp_output_files(list_of_files: list) -> DataFrame:
 
 
 def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, data_output_dir: str):
-    """
-    Writes a summary file describing state-level annual total loads from TELL and GCAM-USA.
+    """Writes a summary file describing state-level annual total loads from TELL and GCAM-USA.
 
     :param joint_mlp_df:            DataFrame of processed TELL loads
     :type joint_mlp_df:             DataFrame
@@ -282,8 +280,7 @@ def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, data_outp
 
 
 def output_tell_state_data(joint_mlp_df: DataFrame, year_to_process: str, data_output_dir: str):
-    """
-    Writes a file of the time-series of hourly loads for each state.
+    """Writes a file of the time-series of hourly loads for each state.
 
     :param joint_mlp_df:            DataFrame of processed TELL loads
     :type joint_mlp_df:             DataFrame
@@ -344,8 +341,7 @@ def output_tell_state_data(joint_mlp_df: DataFrame, year_to_process: str, data_o
 
 
 def output_tell_county_data(joint_mlp_df: DataFrame, year_to_process: str, data_output_dir: str):
-    """
-    Writes a file of the time-series of hourly loads for each county.
+    """Writes a file of the time-series of hourly loads for each county.
 
     :param joint_mlp_df:            DataFrame of processed TELL loads
     :type joint_mlp_df:             DataFrame
@@ -454,7 +450,7 @@ def execute_forward(year_to_process: str, scenario_to_process: str, data_input_d
     gcam_usa_df = extract_gcam_usa_loads(os.path.join(gcam_usa_input_dir, 'gcamDataTable_aggParam.csv'))
     gcam_usa_df = gcam_usa_df[gcam_usa_df['Year'] == int(year_to_process)]
 
-    # Load in the most recent (e.g., 2019) BA service territory mapping file:
+    # Load in the most recent (i.e., 2019) BA service territory mapping file:
     ba_mapping_df = pd.read_csv((os.path.join(map_input_dir, 'ba_service_territory_2019.csv')),
                                 index_col=None, header=0)
 
@@ -504,7 +500,7 @@ def execute_forward(year_to_process: str, scenario_to_process: str, data_input_d
     output_tell_state_data(joint_mlp_df, year_to_process, data_output_dir)
 
     # If the "save_county_data" flag is set to true then save the time-series of demand for each county:
-    if save_county_data == True:
+    if save_county_data:
         output_tell_county_data(joint_mlp_df, year_to_process, data_output_dir)
 
     # Output the end time and elapsed time in order to benchmark the run time:
