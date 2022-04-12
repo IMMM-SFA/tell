@@ -146,12 +146,15 @@ def plot_mlp_summary_statistics(validation_df, image_output_dir: str,
        plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
 
 
-def plot_state_scaling_factors(year_to_plot: str, data_input_dir: str, image_output_dir: str,
+def plot_state_scaling_factors(year_to_plot: str, scenario_to_plot: str, data_input_dir: str, image_output_dir: str,
                                image_resolution: int, save_images=False):
     """Plot the scaling factor that force TELL annual total state loads to agree with GCAM-USA
 
     :param year_to_plot:        Year you want to plot (valid 2039, 2059, 2079, 2099)
     :type year_to_plot:         str
+
+    :param scenario_to_plot:    Scenario you want to plot
+    :type scenario_to_plot:     str
 
     :param data_input_dir:      Top-level data directory for TELL
     :type data_input_dir:       str
@@ -168,7 +171,7 @@ def plot_state_scaling_factors(year_to_plot: str, data_input_dir: str, image_out
     """
 
     # Set the data input directories for the various variables you need:
-    sample_data_input_dir = os.path.join(data_input_dir, r'sample_output_data', year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the states shapefile and change the geolocation variable name to state FIPS code:
     states_df = gpd.read_file(os.path.join(data_input_dir, r'tell_raw_data', r'State_Shapefiles', r'tl_2020_us_state.shp')).rename(columns={'GEOID': 'State_FIPS'})
@@ -177,7 +180,7 @@ def plot_state_scaling_factors(year_to_plot: str, data_input_dir: str, image_out
     states_df['State_FIPS'] = states_df['State_FIPS'].astype(int) * 1000
 
     # Read in the 'TELL_State_Summary_Data' .csv file and reassign the 'State_FIPS' code as an integer:
-    state_summary_df = pd.read_csv((sample_data_input_dir + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'), dtype={'State_FIPS': int})
+    state_summary_df = pd.read_csv((tell_data_input_dir + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'), dtype={'State_FIPS': int})
 
     # Merge the two dataframes together using state FIPS codes to join them:
     states_df = states_df.merge(state_summary_df, on='State_FIPS', how='left')
@@ -204,12 +207,15 @@ def plot_state_scaling_factors(year_to_plot: str, data_input_dir: str, image_out
         plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
 
 
-def plot_state_annual_total_loads(year_to_plot: str, data_input_dir: str, image_output_dir: str,
+def plot_state_annual_total_loads(year_to_plot: str, scenario_to_plot: str, data_input_dir: str, image_output_dir: str,
                                   image_resolution: int, save_images=False):
     """Plot annual total loads from both GCAM-USA and TELL
 
     :param year_to_plot:        Year you want to plot (valid 2039, 2059, 2079, 2099)
     :type year_to_plot:         str
+
+    :param scenario_to_plot:    Scenario you want to plot
+    :type scenario_to_plot:     str
 
     :param data_input_dir:      Top-level data directory for TELL
     :type data_input_dir:       str
@@ -226,10 +232,10 @@ def plot_state_annual_total_loads(year_to_plot: str, data_input_dir: str, image_
     """
 
     # Set the data input directories for the various variables you need:
-    sample_data_input_dir = os.path.join(data_input_dir, r'sample_output_data', year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the 'TELL_State_Summary_Data' .csv file and reassign the 'State_FIPS' code as an integer:
-    state_summary_df = pd.read_csv((sample_data_input_dir + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'), dtype={'State_FIPS': int})
+    state_summary_df = pd.read_csv((tell_data_input_dir + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'), dtype={'State_FIPS': int})
 
     # Create an x-axis the length of the dataframe to be used in plotting:
     x_axis = np.arange(len(state_summary_df))
@@ -250,8 +256,8 @@ def plot_state_annual_total_loads(year_to_plot: str, data_input_dir: str, image_
         plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
 
 
-def plot_state_load_time_series(state_to_plot: str, year_to_plot: str, data_input_dir: str, image_output_dir: str,
-                                image_resolution: int, save_images=False):
+def plot_state_load_time_series(state_to_plot: str, year_to_plot: str, scenario_to_plot: str,
+                                data_input_dir: str, image_output_dir: str, image_resolution: int, save_images=False):
     """Plot the time series of load for a given state
 
     :param state_to_plot:       State you want to plot
@@ -259,6 +265,9 @@ def plot_state_load_time_series(state_to_plot: str, year_to_plot: str, data_inpu
 
     :param year_to_plot:        Year you want to plot (valid 2039, 2059, 2079, 2099)
     :type year_to_plot:         str
+
+    :param scenario_to_plot:    Scenario you want to plot
+    :type scenario_to_plot:     str
 
     :param data_input_dir:      Top-level data directory for TELL
     :type data_input_dir:       str
@@ -275,10 +284,10 @@ def plot_state_load_time_series(state_to_plot: str, year_to_plot: str, data_inpu
     """
 
     # Set the data input directories for the various variables you need:
-    sample_data_input_dir = os.path.join(data_input_dir, r'sample_output_data', year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the 'TELL_State_Summary_Data' .csv file parse the time variable:
-    state_hourly_load_df = pd.read_csv((sample_data_input_dir + '/' + 'TELL_State_Hourly_Load_Data_' + year_to_plot + '.csv'), parse_dates=["Time_UTC"])
+    state_hourly_load_df = pd.read_csv((tell_data_input_dir + '/' + 'TELL_State_Hourly_Load_Data_' + year_to_plot + '.csv'), parse_dates=["Time_UTC"])
 
     # Subset the dataframe to only the state you want to plot:
     state_subset_df = state_hourly_load_df.loc[state_hourly_load_df['State_Name'] == state_to_plot]
@@ -302,8 +311,8 @@ def plot_state_load_time_series(state_to_plot: str, year_to_plot: str, data_inpu
         plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
 
 
-def plot_state_load_duration_curve(state_to_plot: str, year_to_plot: str, data_input_dir: str, image_output_dir: str,
-                                   image_resolution: int, save_images=False):
+def plot_state_load_duration_curve(state_to_plot: str, year_to_plot: str, scenario_to_plot: str, data_input_dir: str,
+                                   image_output_dir: str, image_resolution: int, save_images=False):
     """Plot the load duration curve for a given state
 
     :param state_to_plot:       State you want to plot
@@ -311,6 +320,9 @@ def plot_state_load_duration_curve(state_to_plot: str, year_to_plot: str, data_i
 
     :param year_to_plot:        Year you want to plot (valid 2039, 2059, 2079, 2099)
     :type year_to_plot:         str
+
+    :param scenario_to_plot:    Scenario you want to plot
+    :type scenario_to_plot:     str
 
     :param data_input_dir:      Top-level data directory for TELL
     :type data_input_dir:       str
@@ -327,10 +339,10 @@ def plot_state_load_duration_curve(state_to_plot: str, year_to_plot: str, data_i
     """
 
     # Set the data input directories for the various variables you need:
-    sample_data_input_dir = os.path.join(data_input_dir, r'sample_output_data', year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the 'TELL_State_Summary_Data' .csv file and parse the time variable:
-    state_hourly_load_df = pd.read_csv((sample_data_input_dir + '/' + 'TELL_State_Hourly_Load_Data_' + year_to_plot + '.csv'), parse_dates=["Time_UTC"])
+    state_hourly_load_df = pd.read_csv((tell_data_input_dir + '/' + 'TELL_State_Hourly_Load_Data_' + year_to_plot + '.csv'), parse_dates=["Time_UTC"])
 
     # Subset the dataframe to only the state you want to plot:
     state_subset_df = state_hourly_load_df.loc[state_hourly_load_df['State_Name'] == state_to_plot]
@@ -355,8 +367,8 @@ def plot_state_load_duration_curve(state_to_plot: str, year_to_plot: str, data_i
         plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
 
 
-def plot_ba_load_time_series(ba_to_plot: str, year_to_plot: str, data_input_dir: str, image_output_dir: str,
-                             image_resolution: int, save_images=False):
+def plot_ba_load_time_series(ba_to_plot: str, year_to_plot: str, scenario_to_plot: str, data_input_dir: str,
+                             image_output_dir: str, image_resolution: int, save_images=False):
     """Plot the time series of load for a given Balancing Authority
 
     :param ba_to_plot:          Balancing Authority code for the BA you want to plot
@@ -364,6 +376,9 @@ def plot_ba_load_time_series(ba_to_plot: str, year_to_plot: str, data_input_dir:
 
     :param year_to_plot:        Year you want to plot (valid 2039, 2059, 2079, 2099)
     :type year_to_plot:         str
+
+    :param scenario_to_plot:    Scenario you want to plot
+    :type scenario_to_plot:     str
 
     :param data_input_dir:      Top-level data directory for TELL
     :type data_input_dir:       str
@@ -380,11 +395,11 @@ def plot_ba_load_time_series(ba_to_plot: str, year_to_plot: str, data_input_dir:
     """
 
     # Set the data input directories for the various variables you need:
-    sample_data_input_dir = os.path.join(data_input_dir, r'sample_output_data', year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the 'TELL_Balancing_Authority_Hourly_Load_Data' .csv file and parse the time variable:
-    ba_hourly_load_df = pd.read_csv((sample_data_input_dir + '/' + 'TELL_Balancing_Authority_Hourly_Load_Data_' + year_to_plot + '.csv'),
-                                    parse_dates=["Time_UTC"])
+    ba_hourly_load_df = pd.read_csv((tell_data_input_dir + '/' + 'TELL_Balancing_Authority_Hourly_Load_Data_' + year_to_plot + '.csv'),
+                                     parse_dates=["Time_UTC"])
 
     # Subset the dataframe to only the BA you want to plot:
     ba_subset_df = ba_hourly_load_df.loc[ba_hourly_load_df['BA_Code'] == ba_to_plot]
