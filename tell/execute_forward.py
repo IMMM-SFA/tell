@@ -223,8 +223,7 @@ def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, data
 
 
 def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, data_output_dir: str):
-    """
-    Writes a file of the time-series of hourly loads for each BA.
+    """Writes a file of the time-series of hourly loads for each BA.
 
     :param joint_mlp_df:            DataFrame of processed TELL loads
     :type joint_mlp_df:             DataFrame
