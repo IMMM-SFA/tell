@@ -83,8 +83,7 @@ def plot_ba_service_territory(ba_to_plot: str, year_to_plot: str, data_input_dir
        plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
 
 
-def plot_mlp_summary_statistics(validation_df, image_output_dir: str,
-                                image_resolution: int, save_images=False):
+def plot_mlp_summary_statistics(validation_df, image_output_dir: str, image_resolution: int, save_images=False):
     """Plot the summary statistics of the MLP evaluation data across BAs
 
     :param validation_df:       Validation dataframe produced by the batch training of MLP models for all BAs
@@ -101,49 +100,53 @@ def plot_mlp_summary_statistics(validation_df, image_output_dir: str,
 
     """
 
-    # Sort the statistics by R2 value:
-    validation_df_sorted = validation_df.sort_values(by=['R2'], ascending=True)
-
-    # Create an x-axis the length of the dataframe to be used in plotting:
-    x_axis = np.arange(len(validation_df_sorted))
-
-    # Make the plot:
-    plt.figure(figsize=(25, 10))
-    plt.bar(x_axis, validation_df_sorted['R2'], 0.75, label='Correlation')
-    plt.xticks(x_axis, validation_df_sorted['BA'])
-    plt.xticks(rotation=90)
-    #plt.ylim([0, 1])
-    plt.xlabel("Balancing Authority")
-    plt.ylabel("R2 Score")
-    plt.title('Coefficient of Determination Between Observed and TELL Predicted Loads')
-
-    # If the "save_images" flag is set to true then save the plot to a .png file:
-    if save_images == True:
-       filename = ('MLP_R2_by_BA.png')
-       plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
-
-    # Multiply the MAPE values by 100 to convert them to percentages:
+    # Multiply the MAPE and RMS_NORM values by 100 to convert them to percentages:
     validation_df['MAPE'] = validation_df['MAPE'] * 100
-
-    # Sort the statistics by MAPE value:
-    validation_df_sorted = validation_df.sort_values(by=['MAPE'], ascending=True)
+    validation_df['RMS_NORM'] = validation_df['RMS_NORM'] * 100
 
     # Create an x-axis the length of the dataframe to be used in plotting:
-    x_axis = np.arange(len(validation_df_sorted))
+    x_axis = np.arange(len(validation_df))
 
     # Make the plot:
     plt.figure(figsize=(25, 10))
-    plt.bar(x_axis, validation_df_sorted['MAPE'], 0.75, label='MAPE')
-    plt.xticks(x_axis, validation_df_sorted['BA'])
-    plt.xticks(rotation=90)
-    plt.xlabel("Balancing Authority")
-    plt.ylabel("MAPE [%]")
-    plt.title('Mean Absolute Percentage Error Between Observed and TELL Predicted Loads')
+    plt.subplot(221)
+    plt.bar(x_axis, validation_df.sort_values(by=['R2'], ascending=True)['R2'], 0.75)
+    plt.xticks(x_axis, validation_df.sort_values(by=['R2'], ascending=True)['BA'], rotation=90)
+    plt.grid(axis='y')
+    plt.xlabel('Balancing Authority')
+    plt.ylabel('R2 Score')
+    plt.title('Coefficient of Determination')
+
+    plt.subplot(222)
+    plt.bar(x_axis, validation_df.sort_values(by=['MAPE'], ascending=True)['MAPE'], 0.75)
+    plt.xticks(x_axis, validation_df.sort_values(by=['MAPE'], ascending=True)['BA'], rotation=90)
+    plt.grid(axis='y')
+    plt.xlabel('Balancing Authority')
+    plt.ylabel('MAPE [%]')
+    plt.title('Mean Absolute Percentage Error')
+
+    plt.subplot(223)
+    plt.bar(x_axis, validation_df.sort_values(by=['RMS_ABS'], ascending=True)['RMS_ABS'], 0.75)
+    plt.xticks(x_axis, validation_df.sort_values(by=['RMS_ABS'], ascending=True)['BA'], rotation=90)
+    plt.grid(axis='y')
+    plt.xlabel('Balancing Authority')
+    plt.ylabel('Absolute RMS Error [MWh]')
+    plt.title('Absolute Root-Mean-Squared Error')
+
+    plt.subplot(224)
+    plt.bar(x_axis, validation_df.sort_values(by=['RMS_NORM'], ascending=True)['RMS_NORM'], 0.75)
+    plt.xticks(x_axis, validation_df.sort_values(by=['RMS_NORM'], ascending=True)['BA'], rotation=90)
+    plt.grid(axis='y')
+    plt.xlabel('Balancing Authority')
+    plt.ylabel('Normalized RMS Error [%]')
+    plt.title('Normalized Root-Mean-Squared Error')
+
+    plt.subplots_adjust(wspace=0.15, hspace=0.4)
 
     # If the "save_images" flag is set to true then save the plot to a .png file:
-    if save_images == True:
-       filename = ('MLP_MAPE_by_BA.png')
-       plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
+    if save_images:
+        plt.savefig(os.path.join(image_output_dir, 'MLP_Summary_Statistics.png'), dpi=image_resolution,
+                    bbox_inches='tight', facecolor='white')
 
 
 def plot_state_scaling_factors(year_to_plot: str, scenario_to_plot: str, data_input_dir: str, image_output_dir: str,
