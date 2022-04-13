@@ -101,8 +101,8 @@ def plot_mlp_summary_statistics(validation_df, image_output_dir: str, image_reso
     """
 
     # Multiply the MAPE and RMS_NORM values by 100 to convert them to percentages:
-    validation_df['MAPE'] = validation_df['MAPE'] * 100
-    validation_df['RMS_NORM'] = validation_df['RMS_NORM'] * 100
+    validation_df['MAPE_Percent'] = validation_df['MAPE'] * 100
+    validation_df['RMS_NORM_Percent'] = validation_df['RMS_NORM'] * 100
 
     # Create an x-axis the length of the dataframe to be used in plotting:
     x_axis = np.arange(len(validation_df))
@@ -118,8 +118,8 @@ def plot_mlp_summary_statistics(validation_df, image_output_dir: str, image_reso
     plt.title('Coefficient of Determination')
 
     plt.subplot(222)
-    plt.bar(x_axis, validation_df.sort_values(by=['MAPE'], ascending=True)['MAPE'], 0.75)
-    plt.xticks(x_axis, validation_df.sort_values(by=['MAPE'], ascending=True)['BA'], rotation=90)
+    plt.bar(x_axis, validation_df.sort_values(by=['MAPE_Percent'], ascending=True)['MAPE'], 0.75)
+    plt.xticks(x_axis, validation_df.sort_values(by=['MAPE_Percent'], ascending=True)['BA'], rotation=90)
     plt.grid(axis='y')
     plt.xlabel('Balancing Authority')
     plt.ylabel('MAPE [%]')
@@ -134,8 +134,8 @@ def plot_mlp_summary_statistics(validation_df, image_output_dir: str, image_reso
     plt.title('Absolute Root-Mean-Squared Error')
 
     plt.subplot(224)
-    plt.bar(x_axis, validation_df.sort_values(by=['RMS_NORM'], ascending=True)['RMS_NORM'], 0.75)
-    plt.xticks(x_axis, validation_df.sort_values(by=['RMS_NORM'], ascending=True)['BA'], rotation=90)
+    plt.bar(x_axis, validation_df.sort_values(by=['RMS_NORM_Percent'], ascending=True)['RMS_NORM'], 0.75)
+    plt.xticks(x_axis, validation_df.sort_values(by=['RMS_NORM_Percent'], ascending=True)['BA'], rotation=90)
     plt.grid(axis='y')
     plt.xlabel('Balancing Authority')
     plt.ylabel('Normalized RMS Error [%]')
@@ -147,6 +147,294 @@ def plot_mlp_summary_statistics(validation_df, image_output_dir: str, image_reso
     if save_images:
         plt.savefig(os.path.join(image_output_dir, 'MLP_Summary_Statistics.png'), dpi=image_resolution,
                     bbox_inches='tight', facecolor='white')
+
+
+def plot_mlp_errors_vs_load(prediction_df, validation_df, image_output_dir: str, image_resolution: int, save_images=False):
+    """Plot the summary statistics of the MLP evaluation data as a function of mean load
+
+    :param prediction_df:       Prediction dataframe produced by the batch training of MLP models for all BAs
+    :type prediction_df:        df
+
+    :param validation_df:       Validation dataframe produced by the batch training of MLP models for all BAs
+    :type validation_df:        df
+
+    :param image_output_dir:    Directory to store the images
+    :type image_output_dir:     str
+
+    :param image_resolution:    Resolution at which you want to save the images in DPI
+    :type image_resolution:     int
+
+    :param save_images:         Set to True if you want to save the images after they're generated
+    :type save_images:          bool
+
+    """
+
+    # Multiply the MAPE and RMS_NORM values by 100 to convert them to percentages:
+    validation_df['MAPE_Percent'] = validation_df['MAPE'] * 100
+    validation_df['RMS_NORM_Percent'] = validation_df['RMS_NORM'] * 100
+
+    # Compute the mean hourly load for each BA:
+    prediction_df['Mean_Load_MWh'] = prediction_df.groupby('region')['predictions'].transform('mean')
+
+    # Rename the region variable:
+    prediction_df.rename(columns={'region': 'BA'}, inplace=True)
+
+    # Keep on the variables we need:
+    mean_load_df = prediction_df[['BA', 'Mean_Load_MWh']].copy().drop_duplicates()
+
+    # Merge the mean load data into the validation dataframe:
+    validation_df = validation_df.merge(mean_load_df, on=['BA'])
+
+    # Make the plot:
+    plt.figure(figsize=(25, 10))
+    plt.subplot(221)
+    plt.scatter(validation_df['Mean_Load_MWh'], validation_df['R2'], s=15, c='blue')
+    plt.grid()
+    plt.xlabel('Mean Hourly Load [MWh]')
+    plt.ylabel('R2 Score')
+    plt.title('Coefficient of Determination')
+
+    plt.subplot(222)
+    plt.scatter(validation_df['Mean_Load_MWh'], validation_df['MAPE_Percent'], s=15, c='blue')
+    plt.grid()
+    plt.xlabel('Mean Hourly Load [MWh]')
+    plt.ylabel('MAPE [%]')
+    plt.title('Mean Absolute Percentage Error')
+
+    plt.subplot(223)
+    plt.scatter(validation_df['Mean_Load_MWh'], validation_df['RMS_ABS'], s=15, c='blue')
+    plt.grid()
+    plt.xlabel('Mean Hourly Load [MWh]')
+    plt.ylabel('Absolute RMS Error [MWh]')
+    plt.title('Absolute Root-Mean-Squared Error')
+
+    plt.subplot(224)
+    plt.scatter(validation_df['Mean_Load_MWh'], validation_df['RMS_NORM_Percent'], s=15, c='blue')
+    plt.grid()
+    plt.xlabel('Mean Hourly Load [MWh]')
+    plt.ylabel('Normalized RMS Error [%]')
+    plt.title('Normalized Root-Mean-Squared Error')
+
+    plt.subplots_adjust(wspace=0.15, hspace=0.4)
+
+    # If the "save_images" flag is set to true then save the plot to a .png file:
+    if save_images:
+        plt.savefig(os.path.join(image_output_dir, 'MLP_Summary_Statistics_vs_Load.png'), dpi=image_resolution,
+                    bbox_inches='tight', facecolor='white')
+
+    return validation_df
+
+
+def plot_mlp_ba_time_series(prediction_df, ba_to_plot: str,
+                            image_output_dir: str, image_resolution: int, save_images=False):
+    """Plot the performance metrics for an individual BA
+
+    :param prediction_df:       Prediction dataframe produced by the batch training of MLP models for all BAs
+    :type prediction_df:        df
+
+    :param ba_to_plot:          Code for the BA you want to plot
+    :type ba_to_plot:           str
+
+    :param image_output_dir:    Directory to store the images
+    :type image_output_dir:     str
+
+    :param image_resolution:    Resolution at which you want to save the images in DPI
+    :type image_resolution:     int
+
+    :param save_images:         Set to True if you want to save the images after they're generated
+    :type save_images:          bool
+
+    """
+
+    # Rename the region variable:
+    prediction_df.rename(columns={'region': 'BA'}, inplace=True)
+
+    # Subset to just the data for the BA you want to plot
+    subset_df = prediction_df[prediction_df['BA'].isin([ba_to_plot])]
+
+    one_to_one = np.arange(0, 200000, 1000)
+
+    # Make the plot:
+    plt.figure(figsize=(25, 10))
+    plt.subplot(211)
+    plt.plot(subset_df['datetime'], subset_df['ground_truth'], 'r', linewidth=0.5, label='Observed')
+    plt.plot(subset_df['datetime'], subset_df['predictions'], 'b', linewidth=0.5, label='Predicted')
+    plt.xlim(subset_df['datetime'].dropna().min(), subset_df['datetime'].dropna().max())
+    plt.legend()
+    plt.xlabel('Time')
+    plt.ylabel('Demand [MWh]')
+    plt.title('Hourly Demand Time Series in ' + ba_to_plot)
+
+    plt.subplot(223)
+    plt.hist(subset_df['ground_truth'], bins=40, density=True, histtype='step', edgecolor = 'r', label='Observed', linewidth=3)
+    plt.hist(subset_df['predictions'], bins=40, density=True, histtype='step', edgecolor = 'b', label='Predicted', linewidth=3)
+    plt.legend()
+    plt.xlabel('Demand [MWh]')
+    plt.ylabel('Frequency')
+    plt.title('Hourly Demand Distribution in ' + ba_to_plot)
+
+    plt.subplot(224)
+    plt.scatter(subset_df['ground_truth'], subset_df['predictions'], s=15, c='blue', label='Hourly Sample')
+    plt.plot(one_to_one,one_to_one,'k', linewidth=3, label = '1:1')
+    plt.plot(one_to_one, (one_to_one*1.1), 'k', linewidth=3, linestyle='--', label = '1:1 - 10%')
+    plt.plot(one_to_one, (one_to_one*0.9), 'k', linewidth=3, linestyle='--', label = '1:1 + 10%')
+    plt.legend()
+    plt.xlim(0.98*subset_df[['ground_truth', 'predictions']].min().min(), 1.02*subset_df[['ground_truth', 'predictions']].max().max())
+    plt.ylim(0.98*subset_df[['ground_truth', 'predictions']].min().min(), 1.02*subset_df[['ground_truth', 'predictions']].max().max())
+    plt.xlabel('Observed Hourly Demand [MWh]')
+    plt.ylabel('Predicted Hourly Demand [MWh]')
+    plt.title('Hourly Demand Relationship in ' + ba_to_plot)
+
+    plt.subplots_adjust(wspace=0.15, hspace=0.4)
+
+    # If the "save_images" flag is set to true then save the plot to a .png file:
+    if save_images:
+        plt.savefig(os.path.join(image_output_dir, ba_to_plot + '_Time_Series.png'), dpi=image_resolution,
+                    bbox_inches='tight', facecolor='white')
+
+
+def plot_mlp_ba_peak_week(prediction_df, ba_to_plot: str,
+                          image_output_dir: str, image_resolution: int, save_images=False):
+    """Plot the time-series of load during the peak week of the year for a given BA.
+
+    :param prediction_df:       Prediction dataframe produced by the batch training of MLP models for all BAs
+    :type prediction_df:        df
+
+    :param ba_to_plot:          Code for the BA you want to plot
+    :type ba_to_plot:           str
+
+    :param image_output_dir:    Directory to store the images
+    :type image_output_dir:     str
+
+    :param image_resolution:    Resolution at which you want to save the images in DPI
+    :type image_resolution:     int
+
+    :param save_images:         Set to True if you want to save the images after they're generated
+    :type save_images:          bool
+
+    """
+
+    # Rename the region variable:
+    prediction_df.rename(columns={'region': 'BA'}, inplace=True)
+
+    # Subset to just the data for the BA you want to plot
+    subset_df = prediction_df[prediction_df['BA'].isin([ba_to_plot])]
+
+    # Smooth the predictions using exponentially-weighted windows:
+    subset_df['Rolling_Mean'] = subset_df['predictions'].ewm(span=168).mean()
+
+    # Find the index of the maximum value of the rolling mean:
+    index = subset_df['Rolling_Mean'].idxmax(axis=0)
+    if index > 84:
+       start = (index -84)
+    else:
+       start = 0
+
+    if index < (len(subset_df)-84):
+       end = (index + 84)
+    else:
+       end = len(subset_df)
+
+    peak_df = subset_df[start:end]
+
+    # Make the plot:
+    plt.figure(figsize=(25, 10))
+    plt.plot(peak_df['datetime'], peak_df['ground_truth'], 'r', linewidth=3, label='Observed')
+    plt.plot(peak_df['datetime'], peak_df['predictions'], 'b', linewidth=3, label='Predicted')
+    plt.xlim(peak_df['datetime'].dropna().min(), peak_df['datetime'].dropna().max())
+    plt.legend()
+    plt.xlabel('Time')
+    plt.ylabel('Demand [MWh]')
+    plt.title('Peak Demand Week in ' + ba_to_plot)
+
+    # If the "save_images" flag is set to true then save the plot to a .png file:
+    if save_images:
+        plt.savefig(os.path.join(image_output_dir, ba_to_plot + '_Peak_Week.png'), dpi=image_resolution,
+                    bbox_inches='tight', facecolor='white')
+
+
+def plot_mlp_linear_model_impact(validation_df, validation_df_nolinear,
+                                 image_output_dir: str, image_resolution: int, save_images=False):
+    """Calculate the mean impact of including a linear model to predict the residuals from TELL's MLP models.
+
+    :param validation_df:           Validation dataframe with the linear model adjustment applied
+    :type validation_df:            df
+
+    :param validation_df_nolinear:  Validation dataframe without the linear model adjustment applied
+    :type validation_df_nolinear:   df
+
+    :param image_output_dir:        Directory to store the images
+    :type image_output_dir:         str
+
+    :param image_resolution:        Resolution at which you want to save the images in DPI
+    :type image_resolution:         int
+
+    :param save_images:             Set to True if you want to save the images after they're generated
+    :type save_images:              bool
+
+    """
+
+    # Rename the variable in the validation_df_nolinear dataframe:
+    validation_df_nolinear.rename(columns={'RMS_ABS': 'RMS_ABS_NL',
+                                           'RMS_NORM': 'RMS_NORM_NL',
+                                           'MAPE': 'MAPE_NL',
+                                           'R2': 'R2_NL'}, inplace=True)
+
+    merged_df = validation_df.merge(validation_df_nolinear, on=['BA'])
+
+    merged_df['RMS_ABS_Diff'] = merged_df['RMS_ABS'] - merged_df['RMS_ABS_NL']
+    merged_df['RMS_NORM_Diff'] = (merged_df['RMS_NORM'] - merged_df['RMS_NORM_NL']) * 100
+    merged_df['MAPE_Diff'] = (merged_df['MAPE'] - merged_df['MAPE_NL']) * 100
+    merged_df['R2_Diff'] = merged_df['R2'] - merged_df['R2_NL']
+
+    # Keep on the variables we need:
+    impact_df = merged_df[['BA', 'RMS_ABS_Diff', 'RMS_NORM_Diff', 'MAPE_Diff', 'R2_Diff']].copy()
+
+    # Create an x-axis the length of the dataframe to be used in plotting:
+    x_axis = np.arange(len(impact_df))
+
+    # Make the plot:
+    plt.figure(figsize=(25, 10))
+    plt.subplot(221)
+    plt.bar(x_axis, impact_df.sort_values(by=['R2_Diff'], ascending=True)['R2_Diff'], 0.75)
+    plt.xticks(x_axis, impact_df.sort_values(by=['R2_Diff'], ascending=True)['BA'], rotation=90)
+    plt.grid(axis='y')
+    plt.xlabel('Balancing Authority')
+    plt.ylabel('R2 Difference (With - Without Linear Model)')
+    plt.title('Coefficient of Determination')
+
+    plt.subplot(222)
+    plt.bar(x_axis, impact_df.sort_values(by=['MAPE_Diff'], ascending=True)['MAPE_Diff'], 0.75)
+    plt.xticks(x_axis, impact_df.sort_values(by=['MAPE_Diff'], ascending=True)['BA'], rotation=90)
+    plt.grid(axis='y')
+    plt.xlabel('Balancing Authority')
+    plt.ylabel('MAPE Difference (With - Without Linear Model) [%]')
+    plt.title('Mean Absolute Percentage Error')
+
+    plt.subplot(223)
+    plt.bar(x_axis, impact_df.sort_values(by=['RMS_ABS_Diff'], ascending=True)['RMS_ABS_Diff'], 0.75)
+    plt.xticks(x_axis, impact_df.sort_values(by=['RMS_ABS_Diff'], ascending=True)['BA'], rotation=90)
+    plt.grid(axis='y')
+    plt.xlabel('Balancing Authority')
+    plt.ylabel('Absolute RMS Error Difference (With - Without Linear Model) [MWh]')
+    plt.title('Absolute RMS Error')
+
+    plt.subplot(224)
+    plt.bar(x_axis, impact_df.sort_values(by=['RMS_NORM_Diff'], ascending=True)['RMS_NORM_Diff'], 0.75)
+    plt.xticks(x_axis, impact_df.sort_values(by=['RMS_NORM_Diff'], ascending=True)['BA'], rotation=90)
+    plt.grid(axis='y')
+    plt.xlabel('Balancing Authority')
+    plt.ylabel('Normalized RMS Error Difference (With - Without Linear Model) [%]')
+    plt.title('Normalized RMS Error')
+
+    plt.subplots_adjust(wspace=0.15, hspace=0.4)
+
+    # If the "save_images" flag is set to true then save the plot to a .png file:
+    if save_images:
+        plt.savefig(os.path.join(image_output_dir, 'MLP_Linear_Model_Impact.png'), dpi=image_resolution,
+                    bbox_inches='tight', facecolor='white')
+
+    return impact_df
 
 
 def plot_state_scaling_factors(year_to_plot: str, scenario_to_plot: str, data_input_dir: str, image_output_dir: str,
