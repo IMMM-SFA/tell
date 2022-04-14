@@ -662,35 +662,6 @@ Filename: *TELL_State_Summary_Data_YYYY.csv*
       - TWh
 
 
-State Hourly Load Data
-~~~~~~~~~~~~~~~~~~~~~~
-This output file gives the hourly time-series of total loads for each of the 48 states in the CONUS and the District of Columbia.
-
-Filename: *TELL_State_Hourly_Load_Data_YYYY.csv*
-
-.. list-table::
-    :header-rows: 1
-
-    * - Name
-      - Description
-      - Units/Format
-    * - State_Name
-      - Name of the state
-      - NA
-    * - State_FIPS
-      - FIPS code of the state
-      - NA
-    * - Time_UTC
-      - Hour of the load in UTC
-      - YYYY-MM-DD HH:MM:SS
-    * - Raw_TELL_State_Load_MWh
-      - Unscaled hourly total load for the state from TELL
-      - MWh
-    * - Scaled_TELL_State_Load_MWh
-      - Scaled hourly total load for the state from TELL
-      - MWh
-
-
 Balancing Authority Hourly Load Data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 This output file gives the hourly time-series of total loads for each of the BAs simulated by **tell**.
@@ -717,6 +688,35 @@ Filename: *TELL_Balancing_Authority_Hourly_Load_Data_YYYY.csv*
       - MWh
     * - Scaled_TELL_BA_Load_MWh
       - Scaled hourly total load for the BA from TELL
+      - MWh
+
+
+State Hourly Load Data
+~~~~~~~~~~~~~~~~~~~~~~
+This output file gives the hourly time-series of total loads for each of the 48 states in the CONUS and the District of Columbia.
+
+Filename: *TELL_State_Hourly_Load_Data_YYYY.csv*
+
+.. list-table::
+    :header-rows: 1
+
+    * - Name
+      - Description
+      - Units/Format
+    * - State_Name
+      - Name of the state
+      - NA
+    * - State_FIPS
+      - FIPS code of the state
+      - NA
+    * - Time_UTC
+      - Hour of the load in UTC
+      - YYYY-MM-DD HH:MM:SS
+    * - Raw_TELL_State_Load_MWh
+      - Unscaled hourly total load for the state from TELL
+      - MWh
+    * - Scaled_TELL_State_Load_MWh
+      - Scaled hourly total load for the state from TELL
       - MWh
 
 

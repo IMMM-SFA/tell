@@ -159,6 +159,9 @@ def aggregate_mlp_output_files(list_of_files: list) -> DataFrame:
         # Rename the "Load" variable:
         mlp_data.rename(columns={'Load': 'Total_BA_Load_MWh'}, inplace=True)
 
+        # Replacing missing or negative loads with NaN:
+        mlp_data.loc[~(mlp_data['Total_BA_Load_MWh'] > 0), 'Total_BA_Load_MWh'] = np.nan
+
         # Aggregate the output into a new dataframe:
         if file == 0:
             mlp_output_df = mlp_data
@@ -179,6 +182,8 @@ def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, data
 
     :param data_output_dir:         Data output directory
     :type data_output_dir:          str
+
+    :return:                        Summary statistics as a dataframe
 
     """
 
@@ -219,6 +224,8 @@ def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, data
     # Write out the dataframe to a .csv file:
     output_df.to_csv(csv_output_filename, sep=',', index=False)
 
+    return output_df
+
 
 def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, data_output_dir: str):
     """Writes a file of the time-series of hourly loads for each BA.
@@ -231,6 +238,8 @@ def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, data_outp
 
     :param data_output_dir:         Data output directory
     :type data_output_dir:          str
+
+    :return:                        BA-level total load time-series as a dataframe
 
     """
 
@@ -278,6 +287,8 @@ def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, data_outp
     # Write out the dataframe to a .csv file:
     aggregate_output_df.to_csv(csv_output_filename, sep=',', index=False)
 
+    return aggregate_output_df
+
 
 def output_tell_state_data(joint_mlp_df: DataFrame, year_to_process: str, data_output_dir: str):
     """Writes a file of the time-series of hourly loads for each state.
@@ -290,6 +301,8 @@ def output_tell_state_data(joint_mlp_df: DataFrame, year_to_process: str, data_o
 
     :param data_output_dir:         Data output directory
     :type data_output_dir:          str
+
+    :return:                        State-level total load time-series as a dataframe
 
     """
 
@@ -338,6 +351,8 @@ def output_tell_state_data(joint_mlp_df: DataFrame, year_to_process: str, data_o
 
     # Write out the dataframe to a .csv file:
     aggregate_output_df.to_csv(csv_output_filename, sep=',', index=False)
+
+    return aggregate_output_df
 
 
 def output_tell_county_data(joint_mlp_df: DataFrame, year_to_process: str, data_output_dir: str):
@@ -424,6 +439,10 @@ def execute_forward(year_to_process: str, scenario_to_process: str, data_input_d
     :param save_county_data:            Set to True if you want to save the time-series of load for each county
     :type save_county_data:             bool
 
+    :return:                            [0] Summary statistics as a dataframe
+                                        [1] BA-level total load time-series as a dataframe
+                                        [2] State-level total load time-series as a dataframe
+
     """
 
     # Print the start time and set a time variable to benchmark the run time:
@@ -485,8 +504,7 @@ def execute_forward(year_to_process: str, scenario_to_process: str, data_input_d
     joint_mlp_df['TELL_State_Annual_Load_TWh'] = (joint_mlp_df.groupby('State_FIPS')['County_BA_Load_MWh'].transform('sum')) / 1000000
 
     # Add a column with the state-level annual total loads from GCAM-USA:
-    joint_mlp_df = pd.merge(joint_mlp_df, gcam_usa_df[['State_FIPS', 'GCAM_USA_State_Annual_Load_TWh']],
-                            on='State_FIPS', how='left')
+    joint_mlp_df = pd.merge(joint_mlp_df, gcam_usa_df[['State_FIPS', 'GCAM_USA_State_Annual_Load_TWh']], on='State_FIPS', how='left')
 
     # Compute the state-level scaling factors that force TELL annual loads to match GCAM-USA annual loads:
     joint_mlp_df['State_Scaling_Factor'] = joint_mlp_df['GCAM_USA_State_Annual_Load_TWh'].div(joint_mlp_df['TELL_State_Annual_Load_TWh'])
@@ -495,9 +513,9 @@ def execute_forward(year_to_process: str, scenario_to_process: str, data_input_d
     joint_mlp_df['County_BA_Load_MWh_Scaled'] = joint_mlp_df['County_BA_Load_MWh'].mul(joint_mlp_df['State_Scaling_Factor'])
 
     # Output the resulting projections using the output functions:
-    output_tell_summary_data(joint_mlp_df, year_to_process, data_output_dir)
-    output_tell_ba_data(joint_mlp_df, year_to_process, data_output_dir)
-    output_tell_state_data(joint_mlp_df, year_to_process, data_output_dir)
+    summary_df = output_tell_summary_data(joint_mlp_df, year_to_process, data_output_dir)
+    ba_time_series_df = output_tell_ba_data(joint_mlp_df, year_to_process, data_output_dir)
+    state_time_series_df = output_tell_state_data(joint_mlp_df, year_to_process, data_output_dir)
 
     # If the "save_county_data" flag is set to true then save the time-series of demand for each county:
     if save_county_data:
@@ -506,3 +524,5 @@ def execute_forward(year_to_process: str, scenario_to_process: str, data_input_d
     # Output the end time and elapsed time in order to benchmark the run time:
     print('End time = ', datetime.datetime.now())
     print('Elapsed time = ', datetime.datetime.now() - begin_time)
+
+    return summary_df, ba_time_series_df, state_time_series_df

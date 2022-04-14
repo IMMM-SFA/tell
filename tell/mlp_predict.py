@@ -143,6 +143,10 @@ def predict(region: str,
                                   "Load": y_predicted,
                                   "BA": region})
 
+    # Set the negative and NaN values to -9999 so that they can be converted to NaN later:
+    prediction_df.loc[~(prediction_df['Load'] > 0), 'Load'] = -9999
+    prediction_df['Load'] = prediction_df['Load'].fillna(-9999)
+
     # Save the prediction to a .csv file
     if save_prediction:
         # If the subdirectory for the year being processed doesn't exist then create it:
