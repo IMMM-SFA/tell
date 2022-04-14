@@ -512,6 +512,12 @@ in the `mlp_settings.yml <https://github.com/IMMM-SFA/tell/blob/review/crvernon/
       - Is the day a federal holiday?
       - Yes (1) or No (0)
 
+In general the **tell** empirical models work quite well. 76% (41/54) of the BAs have an R2 value greater than 0.75
+while 89% (48/54) have a MAPE under 10%.
+
+.. image:: _static/MLP_Summary_Statistics.png
+   :width: 900
+   :align: center
 
 Incorporating Detailed Sectoral Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
