@@ -100,10 +100,6 @@ def plot_mlp_summary_statistics(validation_df, image_output_dir: str, image_reso
 
     """
 
-    # Multiply the MAPE and RMS_NORM values by 100 to convert them to percentages:
-    validation_df['MAPE_Percent'] = validation_df['MAPE'] * 100
-    validation_df['RMS_NORM_Percent'] = validation_df['RMS_NORM'] * 100
-
     # Create an x-axis the length of the dataframe to be used in plotting:
     x_axis = np.arange(len(validation_df))
 
@@ -112,33 +108,33 @@ def plot_mlp_summary_statistics(validation_df, image_output_dir: str, image_reso
     plt.subplot(221)
     plt.bar(x_axis, validation_df.sort_values(by=['R2'], ascending=True)['R2'], 0.75)
     plt.xticks(x_axis, validation_df.sort_values(by=['R2'], ascending=True)['BA'], rotation=90)
-    plt.grid(axis='y')
+    plt.grid()
     plt.xlabel('Balancing Authority')
     plt.ylabel('R2 Score')
     plt.title('Coefficient of Determination')
 
     plt.subplot(222)
-    plt.bar(x_axis, validation_df.sort_values(by=['MAPE_Percent'], ascending=True)['MAPE'], 0.75)
-    plt.xticks(x_axis, validation_df.sort_values(by=['MAPE_Percent'], ascending=True)['BA'], rotation=90)
-    plt.grid(axis='y')
+    plt.bar(x_axis, validation_df.sort_values(by=['MAPE'], ascending=True)['MAPE'], 0.75)
+    plt.xticks(x_axis, validation_df.sort_values(by=['MAPE'], ascending=True)['BA'], rotation=90)
+    plt.grid()
     plt.xlabel('Balancing Authority')
-    plt.ylabel('MAPE [%]')
+    plt.ylabel('MAPE')
     plt.title('Mean Absolute Percentage Error')
 
     plt.subplot(223)
     plt.bar(x_axis, validation_df.sort_values(by=['RMS_ABS'], ascending=True)['RMS_ABS'], 0.75)
     plt.xticks(x_axis, validation_df.sort_values(by=['RMS_ABS'], ascending=True)['BA'], rotation=90)
-    plt.grid(axis='y')
+    plt.grid()
     plt.xlabel('Balancing Authority')
     plt.ylabel('Absolute RMS Error [MWh]')
     plt.title('Absolute Root-Mean-Squared Error')
 
     plt.subplot(224)
-    plt.bar(x_axis, validation_df.sort_values(by=['RMS_NORM_Percent'], ascending=True)['RMS_NORM'], 0.75)
-    plt.xticks(x_axis, validation_df.sort_values(by=['RMS_NORM_Percent'], ascending=True)['BA'], rotation=90)
-    plt.grid(axis='y')
+    plt.bar(x_axis, validation_df.sort_values(by=['RMS_NORM'], ascending=True)['RMS_NORM'], 0.75)
+    plt.xticks(x_axis, validation_df.sort_values(by=['RMS_NORM'], ascending=True)['BA'], rotation=90)
+    plt.grid()
     plt.xlabel('Balancing Authority')
-    plt.ylabel('Normalized RMS Error [%]')
+    plt.ylabel('Normalized RMS Error')
     plt.title('Normalized Root-Mean-Squared Error')
 
     plt.subplots_adjust(wspace=0.15, hspace=0.4)
@@ -169,10 +165,6 @@ def plot_mlp_errors_vs_load(prediction_df, validation_df, image_output_dir: str,
 
     """
 
-    # Multiply the MAPE and RMS_NORM values by 100 to convert them to percentages:
-    validation_df['MAPE_Percent'] = validation_df['MAPE'] * 100
-    validation_df['RMS_NORM_Percent'] = validation_df['RMS_NORM'] * 100
-
     # Compute the mean hourly load for each BA:
     prediction_df['Mean_Load_MWh'] = prediction_df.groupby('region')['predictions'].transform('mean')
 
@@ -195,10 +187,10 @@ def plot_mlp_errors_vs_load(prediction_df, validation_df, image_output_dir: str,
     plt.title('Coefficient of Determination')
 
     plt.subplot(222)
-    plt.scatter(validation_df['Mean_Load_MWh'], validation_df['MAPE_Percent'], s=15, c='blue')
+    plt.scatter(validation_df['Mean_Load_MWh'], validation_df['MAPE'], s=15, c='blue')
     plt.grid()
     plt.xlabel('Mean Hourly Load [MWh]')
-    plt.ylabel('MAPE [%]')
+    plt.ylabel('MAPE')
     plt.title('Mean Absolute Percentage Error')
 
     plt.subplot(223)
@@ -209,10 +201,10 @@ def plot_mlp_errors_vs_load(prediction_df, validation_df, image_output_dir: str,
     plt.title('Absolute Root-Mean-Squared Error')
 
     plt.subplot(224)
-    plt.scatter(validation_df['Mean_Load_MWh'], validation_df['RMS_NORM_Percent'], s=15, c='blue')
+    plt.scatter(validation_df['Mean_Load_MWh'], validation_df['RMS_NORM'], s=15, c='blue')
     plt.grid()
     plt.xlabel('Mean Hourly Load [MWh]')
-    plt.ylabel('Normalized RMS Error [%]')
+    plt.ylabel('Normalized RMS Error')
     plt.title('Normalized Root-Mean-Squared Error')
 
     plt.subplots_adjust(wspace=0.15, hspace=0.4)
@@ -382,50 +374,30 @@ def plot_mlp_linear_model_impact(validation_df, validation_df_nolinear,
 
     merged_df = validation_df.merge(validation_df_nolinear, on=['BA'])
 
-    merged_df['RMS_ABS_Diff'] = merged_df['RMS_ABS'] - merged_df['RMS_ABS_NL']
-    merged_df['RMS_NORM_Diff'] = (merged_df['RMS_NORM'] - merged_df['RMS_NORM_NL']) * 100
-    merged_df['MAPE_Diff'] = (merged_df['MAPE'] - merged_df['MAPE_NL']) * 100
-    merged_df['R2_Diff'] = merged_df['R2'] - merged_df['R2_NL']
-
-    # Keep on the variables we need:
-    impact_df = merged_df[['BA', 'RMS_ABS_Diff', 'RMS_NORM_Diff', 'MAPE_Diff', 'R2_Diff']].copy()
-
     # Create an x-axis the length of the dataframe to be used in plotting:
-    x_axis = np.arange(len(impact_df))
+    x_axis = np.arange(len(merged_df))
 
     # Make the plot:
     plt.figure(figsize=(25, 10))
-    plt.subplot(221)
-    plt.bar(x_axis, impact_df.sort_values(by=['R2_Diff'], ascending=True)['R2_Diff'], 0.75)
-    plt.xticks(x_axis, impact_df.sort_values(by=['R2_Diff'], ascending=True)['BA'], rotation=90)
-    plt.grid(axis='y')
+    plt.subplot(211)
+    plt.bar(x_axis - 0.2, merged_df.sort_values(by=['R2'], ascending=True)['R2'], 0.4, label='With Linear Model')
+    plt.bar(x_axis + 0.2, merged_df.sort_values(by=['R2'], ascending=True)['R2_NL'], 0.4, label='Without Linear Model')
+    plt.legend()
+    plt.xticks(x_axis, merged_df.sort_values(by=['R2'], ascending=True)['BA'], rotation=90)
+    plt.grid()
     plt.xlabel('Balancing Authority')
-    plt.ylabel('R2 Difference (With - Without Linear Model)')
+    plt.ylabel('R2')
     plt.title('Coefficient of Determination')
 
-    plt.subplot(222)
-    plt.bar(x_axis, impact_df.sort_values(by=['MAPE_Diff'], ascending=True)['MAPE_Diff'], 0.75)
-    plt.xticks(x_axis, impact_df.sort_values(by=['MAPE_Diff'], ascending=True)['BA'], rotation=90)
-    plt.grid(axis='y')
+    plt.subplot(212)
+    plt.bar(x_axis - 0.2, merged_df.sort_values(by=['MAPE'], ascending=True)['MAPE'], 0.4, label='With Linear Model')
+    plt.bar(x_axis + 0.2, merged_df.sort_values(by=['MAPE'], ascending=True)['MAPE_NL'], 0.4, label='Without Linear Model')
+    plt.legend()
+    plt.xticks(x_axis, merged_df.sort_values(by=['MAPE'], ascending=True)['BA'], rotation=90)
+    plt.grid()
     plt.xlabel('Balancing Authority')
-    plt.ylabel('MAPE Difference (With - Without Linear Model) [%]')
+    plt.ylabel('MAPE')
     plt.title('Mean Absolute Percentage Error')
-
-    plt.subplot(223)
-    plt.bar(x_axis, impact_df.sort_values(by=['RMS_ABS_Diff'], ascending=True)['RMS_ABS_Diff'], 0.75)
-    plt.xticks(x_axis, impact_df.sort_values(by=['RMS_ABS_Diff'], ascending=True)['BA'], rotation=90)
-    plt.grid(axis='y')
-    plt.xlabel('Balancing Authority')
-    plt.ylabel('Absolute RMS Error Difference (With - Without Linear Model) [MWh]')
-    plt.title('Absolute RMS Error')
-
-    plt.subplot(224)
-    plt.bar(x_axis, impact_df.sort_values(by=['RMS_NORM_Diff'], ascending=True)['RMS_NORM_Diff'], 0.75)
-    plt.xticks(x_axis, impact_df.sort_values(by=['RMS_NORM_Diff'], ascending=True)['BA'], rotation=90)
-    plt.grid(axis='y')
-    plt.xlabel('Balancing Authority')
-    plt.ylabel('Normalized RMS Error Difference (With - Without Linear Model) [%]')
-    plt.title('Normalized RMS Error')
 
     plt.subplots_adjust(wspace=0.15, hspace=0.4)
 
@@ -433,8 +405,6 @@ def plot_mlp_linear_model_impact(validation_df, validation_df_nolinear,
     if save_images:
         plt.savefig(os.path.join(image_output_dir, 'MLP_Linear_Model_Impact.png'), dpi=image_resolution,
                     bbox_inches='tight', facecolor='white')
-
-    return impact_df
 
 
 def plot_state_scaling_factors(year_to_plot: str, scenario_to_plot: str, data_input_dir: str, image_output_dir: str,
