@@ -73,7 +73,7 @@ For **tell**, BAs are useful because they represent the finest scale for which h
 model that works across the entire country. **tell** uses historical (2015-2019) hourly load data from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_ dataset for BAs across the U.S. We note
 that some smaller BAs are not included in the EIA-930 dataset. Other BAs are generation only or we were unable to geolocate them. Eight BAs (CISO, ERCO, MISO, ISNE, NYIS, PJM, PNM, and SWPP) started
 reporting subregional loads in the EIA-930 dataset in 2018. Because we were unable to uniformly and objectively geolocate each of these subregions we opted to use the aggregate total loads for those BAs.
-In total, we formulated a multi-layer perceptron (MLP) model for 55 out of the 68 BAs in the EIA-930 dataset.
+In total, we formulated a multi-layer perceptron (MLP) model for 54 out of the 68 BAs in the EIA-930 dataset.
 
 .. list-table::
     :header-rows: 1
@@ -477,6 +477,8 @@ more EIA-930 data becomes available.
 
 Details of the MLP predictive variables are included in the table below. The default parameter settings for training the MLP models are stored
 in the `mlp_settings.yml <https://github.com/IMMM-SFA/tell/blob/review/crvernon/tell/data/mlp_settings.yml>`_ file in the **tell** repository.
+The hyperparameters for the **tell** MLP models (e.g., hidden layer sizes, maximum iterations, and validation fraction) were determined
+using a grid search approach.
 
 .. list-table::
     :header-rows: 1
@@ -512,7 +514,7 @@ in the `mlp_settings.yml <https://github.com/IMMM-SFA/tell/blob/review/crvernon/
       - Is the day a federal holiday?
       - Yes (1) or No (0)
 
-In general the **tell** empirical models work quite well. 76% (41/54) of the BAs have an R2 value greater than 0.75
+In general, the **tell** empirical models work quite well. 76% (41/54) of the BAs have an R2 value greater than 0.75
 while 89% (48/54) have a MAPE under 10%.
 
 .. image:: _static/MLP_Summary_Statistics.png
