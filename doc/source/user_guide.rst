@@ -3,7 +3,7 @@ User Guide
 ==========
 This user guide is meant to explain how **tell** works and the concepts that it is built upon. More information about how to
 run the model can be found in the **tell** `quickstarter <https://github.com/IMMM-SFA/tell/blob/review/crvernon/notebooks/tell_quickstarter.ipynb>`_
-notebook that contains detailed step-by-step instructions on how to run **tell**:
+notebook that contains detailed step-by-step instructions on how to run **tell**.
 
 
 About **tell**
@@ -518,6 +518,24 @@ while 89% (48/54) have a MAPE under 10%.
 .. image:: _static/MLP_Summary_Statistics.png
    :width: 900
    :align: center
+
+It's illustrative to look at the error metrics as a function of load. To do this, we calculate the mean hourly load
+for each BA during the evaluation year and then plot the error statistics as a function of that mean load. Analyzing
+the data in this way demonstrates that the BAs with the poorly performing emprical models are almost universally the
+smaller BAs. The largest BAs, which are critically important for the overall demand on the grid, generally perform quite
+well. Of the 10 BAs with the largest mean demand, 9/10 have a MAPE value under 5% and an R2 value greater than 0.85.
+Conversely, of the 10 worst performing BAs (judged by their MAPE value), 7/10 have an average hourly load less than
+1200 MWh.
+
+.. image:: _static/MLP_Summary_Statistics_vs_Load.png
+   :width: 900
+   :align: center
+
+Because the empirical models that underpin **tell** are so critically important we created a separate analysis notebook
+where users can explore the model's performance characteristics collectively and for individual BAs. The MLP calibration
+and evaluation notebook can be found
+`here <https://github.com/IMMM-SFA/tell/blob/final_mlp_updates/notebooks/tell_mlp_calibration_evaluation.ipynb>`_.
+
 
 Incorporating Detailed Sectoral Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
