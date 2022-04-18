@@ -155,7 +155,7 @@ def predict(region: str,
 
         prediction_df.to_csv(os.path.join(prediction_output_directory, str(year), f'{region}_'f'{year}_mlp_output.csv'), index=False)
 
-    return a
+    return prediction_df
 
 
 def predict_batch(target_region_list: list,
