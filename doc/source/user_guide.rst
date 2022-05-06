@@ -457,7 +457,7 @@ proportion of the BA-level loads for BAs operating there, but would also have an
 hourly load profile for California as a whole.
 
 
-Multi-Layer Perceptron (MLP) Models
+Multilayer Perceptron (MLP) Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **tell** uses a series of multilayer perceptron (MLP) models to project future loads. There is one unique MLP model for each BA. The MLP model
 for each BA is trained and evaluated independently. The MLP models are trained on historical load data from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_
