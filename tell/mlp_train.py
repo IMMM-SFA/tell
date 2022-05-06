@@ -1,7 +1,7 @@
-from typing import Union
-
 import numpy as np
 import pandas as pd
+
+from typing import Union
 from joblib import Parallel, delayed
 from sklearn.linear_model import LinearRegression as LR
 from sklearn.neural_network import MLPRegressor as MLP

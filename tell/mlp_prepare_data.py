@@ -95,6 +95,12 @@ class DefaultSettings:
     :param model_output_directory:      Full path to output directory where model file will be written.
     :type model_output_directory:       Union[str, None]
 
+    :param save_prediction:             Choice to write predictions to a .csv file
+    :type save_prediction:              bool
+
+    :param prediction_output_directory: Full path to output directory where prediction files will be written.
+    :type prediction_output_directory:  Union[str, None]
+
     :param verbose:                     Choice to see logged outputs.
     :type verbose:                      bool
 
@@ -142,12 +148,16 @@ class DefaultSettings:
         self.x_variables_linear = self.settings_dict.get("x_variables_linear")
         self.y_variables_linear = self.settings_dict.get("y_variables_linear")
         self.save_model = self.settings_dict.get("save_model")
-        self.verbose = self.settings_dict.get("verbose")
         self.model_output_directory = self.settings_dict.get("model_output_directory")
+        self.save_prediction = self.settings_dict.get("save_prediction")
+        self.prediction_output_directory = self.settings_dict.get("prediction_output_directory")
+        self.verbose = self.settings_dict.get("verbose")
+
 
         # set to default package data if not provided
         if self.model_output_directory == "Default":
             self.model_output_directory = pkg_resources.resource_filename("tell", "data/models")
+
 
     @staticmethod
     def update_default_settings(kwargs) -> dict:
@@ -569,7 +579,7 @@ class DatasetPredict(DefaultSettings):
 
         """
 
-        file_pattern = os.path.join(self.data_dir, f"{self.region}*{self.year}.csv")
+        file_pattern = os.path.join(self.data_dir, f"{self.region}_*_{self.year}.csv")
 
         # get file list from the data directory using the pattern
         file_list = glob.glob(file_pattern)

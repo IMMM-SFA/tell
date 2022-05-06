@@ -83,15 +83,11 @@ def plot_ba_service_territory(ba_to_plot: str, year_to_plot: str, data_input_dir
        plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
 
 
-def plot_mlp_summary_statistics(year_to_plot: str, data_input_dir: str, image_output_dir: str,
-                                image_resolution: int, save_images=False):
+def plot_mlp_summary_statistics(validation_df, image_output_dir: str, image_resolution: int, save_images=False):
     """Plot the summary statistics of the MLP evaluation data across BAs
 
-    :param year_to_plot:        Year you want to plot (valid 2015-2019)
-    :type year_to_plot:         str
-
-    :param data_input_dir:      Top-level data directory for TELL
-    :type data_input_dir:       str
+    :param validation_df:       Validation dataframe produced by the batch training of MLP models for all BAs
+    :type validation_dft:       df
 
     :param image_output_dir:    Directory to store the images
     :type image_output_dir:     str
@@ -104,63 +100,322 @@ def plot_mlp_summary_statistics(year_to_plot: str, data_input_dir: str, image_ou
 
     """
 
-    # Set the input directory based on the 'data_input_dir' and 'year_to_plot' variables:
-    mlp_input_dir = os.path.join(data_input_dir, r'outputs', r'mlp_output', year_to_plot)
-
-    # Read in summary statistics file:
-    statistics_df = pd.read_csv(os.path.join(mlp_input_dir, r'summary.csv'))
-
-    # Sort the statistics by R2 value:
-    statistics_df_sorted = statistics_df.sort_values(by=['R2'], ascending=True)
-
     # Create an x-axis the length of the dataframe to be used in plotting:
-    x_axis = np.arange(len(statistics_df_sorted))
+    x_axis = np.arange(len(validation_df))
 
     # Make the plot:
     plt.figure(figsize=(25, 10))
-    plt.bar(x_axis, statistics_df_sorted['R2'], 0.75, label='Correlation')
-    plt.xticks(x_axis, statistics_df_sorted['BA'])
-    plt.xticks(rotation=90)
-    plt.ylim([0, 1])
-    plt.xlabel("Balancing Authority")
-    plt.ylabel("Correlation with Observed Loads")
-    plt.title(('Correlation Between Observed and MLP Predicted Loads in ' + year_to_plot))
+    plt.subplot(221)
+    plt.bar(x_axis, validation_df.sort_values(by=['R2'], ascending=True)['R2'], 0.75)
+    plt.xticks(x_axis, validation_df.sort_values(by=['R2'], ascending=True)['BA'], rotation=90)
+    plt.grid()
+    plt.xlabel('Balancing Authority')
+    plt.ylabel('R2 Score')
+    plt.title('Coefficient of Determination')
+
+    plt.subplot(222)
+    plt.bar(x_axis, validation_df.sort_values(by=['MAPE'], ascending=True)['MAPE'], 0.75)
+    plt.xticks(x_axis, validation_df.sort_values(by=['MAPE'], ascending=True)['BA'], rotation=90)
+    plt.grid()
+    plt.xlabel('Balancing Authority')
+    plt.ylabel('MAPE')
+    plt.title('Mean Absolute Percentage Error')
+
+    plt.subplot(223)
+    plt.bar(x_axis, validation_df.sort_values(by=['RMS_ABS'], ascending=True)['RMS_ABS'], 0.75)
+    plt.xticks(x_axis, validation_df.sort_values(by=['RMS_ABS'], ascending=True)['BA'], rotation=90)
+    plt.grid()
+    plt.xlabel('Balancing Authority')
+    plt.ylabel('Absolute RMS Error [MWh]')
+    plt.title('Absolute Root-Mean-Squared Error')
+
+    plt.subplot(224)
+    plt.bar(x_axis, validation_df.sort_values(by=['RMS_NORM'], ascending=True)['RMS_NORM'], 0.75)
+    plt.xticks(x_axis, validation_df.sort_values(by=['RMS_NORM'], ascending=True)['BA'], rotation=90)
+    plt.grid()
+    plt.xlabel('Balancing Authority')
+    plt.ylabel('Normalized RMS Error')
+    plt.title('Normalized Root-Mean-Squared Error')
+
+    plt.subplots_adjust(wspace=0.15, hspace=0.4)
 
     # If the "save_images" flag is set to true then save the plot to a .png file:
-    if save_images == True:
-       filename = ('MLP_Correlations_by_BA_' + year_to_plot + '.png')
-       plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
+    if save_images:
+        plt.savefig(os.path.join(image_output_dir, 'MLP_Summary_Statistics.png'), dpi=image_resolution,
+                    bbox_inches='tight', facecolor='white')
 
-    # Multiply the MAPE values by 100 to convert them to percentages:
-    statistics_df['MAPE'] = statistics_df['MAPE'] * 100
 
-    # Sort the statistics by MAPE value:
-    statistics_df_sorted = statistics_df.sort_values(by=['MAPE'], ascending=True)
+def plot_mlp_errors_vs_load(prediction_df, validation_df, image_output_dir: str, image_resolution: int, save_images=False):
+    """Plot the summary statistics of the MLP evaluation data as a function of mean load
 
-    # Create an x-axis the length of the dataframe to be used in plotting:
-    x_axis = np.arange(len(statistics_df_sorted))
+    :param prediction_df:       Prediction dataframe produced by the batch training of MLP models for all BAs
+    :type prediction_df:        df
+
+    :param validation_df:       Validation dataframe produced by the batch training of MLP models for all BAs
+    :type validation_df:        df
+
+    :param image_output_dir:    Directory to store the images
+    :type image_output_dir:     str
+
+    :param image_resolution:    Resolution at which you want to save the images in DPI
+    :type image_resolution:     int
+
+    :param save_images:         Set to True if you want to save the images after they're generated
+    :type save_images:          bool
+
+    """
+
+    # Compute the mean hourly load for each BA:
+    prediction_df['Mean_Load_MWh'] = prediction_df.groupby('region')['predictions'].transform('mean')
+
+    # Rename the region variable:
+    prediction_df.rename(columns={'region': 'BA'}, inplace=True)
+
+    # Keep on the variables we need:
+    mean_load_df = prediction_df[['BA', 'Mean_Load_MWh']].copy().drop_duplicates()
+
+    # Merge the mean load data into the validation dataframe:
+    validation_df = validation_df.merge(mean_load_df, on=['BA'])
 
     # Make the plot:
     plt.figure(figsize=(25, 10))
-    plt.bar(x_axis, statistics_df_sorted['MAPE'], 0.75, label='MAPE')
-    plt.xticks(x_axis, statistics_df_sorted['BA'])
-    plt.xticks(rotation=90)
-    plt.xlabel("Balancing Authority")
-    plt.ylabel("Mean Absolute Percentage Error [%]")
-    plt.title(('Mean Absolute Percentage Error Between Observed and MLP Predicted Loads in ' + year_to_plot))
+    plt.subplot(221)
+    plt.scatter(validation_df['Mean_Load_MWh'], validation_df['R2'], s=15, c='blue')
+    plt.grid()
+    plt.xlabel('Mean Hourly Load [MWh]')
+    plt.ylabel('R2 Score')
+    plt.title('Coefficient of Determination')
+
+    plt.subplot(222)
+    plt.scatter(validation_df['Mean_Load_MWh'], validation_df['MAPE'], s=15, c='blue')
+    plt.grid()
+    plt.xlabel('Mean Hourly Load [MWh]')
+    plt.ylabel('MAPE')
+    plt.title('Mean Absolute Percentage Error')
+
+    plt.subplot(223)
+    plt.scatter(validation_df['Mean_Load_MWh'], validation_df['RMS_ABS'], s=15, c='blue')
+    plt.grid()
+    plt.xlabel('Mean Hourly Load [MWh]')
+    plt.ylabel('Absolute RMS Error [MWh]')
+    plt.title('Absolute Root-Mean-Squared Error')
+
+    plt.subplot(224)
+    plt.scatter(validation_df['Mean_Load_MWh'], validation_df['RMS_NORM'], s=15, c='blue')
+    plt.grid()
+    plt.xlabel('Mean Hourly Load [MWh]')
+    plt.ylabel('Normalized RMS Error')
+    plt.title('Normalized Root-Mean-Squared Error')
+
+    plt.subplots_adjust(wspace=0.15, hspace=0.4)
 
     # If the "save_images" flag is set to true then save the plot to a .png file:
-    if save_images == True:
-       filename = ('MLP_MAPE_by_BA_' + year_to_plot + '.png')
-       plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
+    if save_images:
+        plt.savefig(os.path.join(image_output_dir, 'MLP_Summary_Statistics_vs_Load.png'), dpi=image_resolution,
+                    bbox_inches='tight', facecolor='white')
+
+    return validation_df
 
 
-def plot_state_scaling_factors(year_to_plot: str, data_input_dir: str, image_output_dir: str,
+def plot_mlp_ba_time_series(prediction_df, ba_to_plot: str,
+                            image_output_dir: str, image_resolution: int, save_images=False):
+    """Plot the performance metrics for an individual BA
+
+    :param prediction_df:       Prediction dataframe produced by the batch training of MLP models for all BAs
+    :type prediction_df:        df
+
+    :param ba_to_plot:          Code for the BA you want to plot
+    :type ba_to_plot:           str
+
+    :param image_output_dir:    Directory to store the images
+    :type image_output_dir:     str
+
+    :param image_resolution:    Resolution at which you want to save the images in DPI
+    :type image_resolution:     int
+
+    :param save_images:         Set to True if you want to save the images after they're generated
+    :type save_images:          bool
+
+    """
+
+    # Rename the region variable:
+    prediction_df.rename(columns={'region': 'BA'}, inplace=True)
+
+    # Subset to just the data for the BA you want to plot
+    subset_df = prediction_df[prediction_df['BA'].isin([ba_to_plot])]
+
+    one_to_one = np.arange(0, 200000, 1000)
+
+    # Make the plot:
+    plt.figure(figsize=(25, 10))
+    plt.subplot(211)
+    plt.plot(subset_df['datetime'], subset_df['ground_truth'], 'r', linewidth=0.5, label='Observed')
+    plt.plot(subset_df['datetime'], subset_df['predictions'], 'b', linewidth=0.5, label='Predicted')
+    plt.xlim(subset_df['datetime'].dropna().min(), subset_df['datetime'].dropna().max())
+    plt.legend()
+    plt.xlabel('Time')
+    plt.ylabel('Demand [MWh]')
+    plt.title('Hourly Demand Time Series in ' + ba_to_plot)
+
+    plt.subplot(223)
+    plt.hist(subset_df['ground_truth'], bins=40, density=True, histtype='step', edgecolor = 'r', label='Observed', linewidth=3)
+    plt.hist(subset_df['predictions'], bins=40, density=True, histtype='step', edgecolor = 'b', label='Predicted', linewidth=3)
+    plt.legend()
+    plt.xlabel('Demand [MWh]')
+    plt.ylabel('Frequency')
+    plt.title('Hourly Demand Distribution in ' + ba_to_plot)
+
+    plt.subplot(224)
+    plt.scatter(subset_df['ground_truth'], subset_df['predictions'], s=15, c='blue', label='Hourly Sample')
+    plt.plot(one_to_one,one_to_one,'k', linewidth=3, label = '1:1')
+    plt.plot(one_to_one, (one_to_one*1.1), 'k', linewidth=3, linestyle='--', label = '1:1 - 10%')
+    plt.plot(one_to_one, (one_to_one*0.9), 'k', linewidth=3, linestyle='--', label = '1:1 + 10%')
+    plt.legend()
+    plt.xlim(0.98*subset_df[['ground_truth', 'predictions']].min().min(), 1.02*subset_df[['ground_truth', 'predictions']].max().max())
+    plt.ylim(0.98*subset_df[['ground_truth', 'predictions']].min().min(), 1.02*subset_df[['ground_truth', 'predictions']].max().max())
+    plt.xlabel('Observed Hourly Demand [MWh]')
+    plt.ylabel('Predicted Hourly Demand [MWh]')
+    plt.title('Hourly Demand Relationship in ' + ba_to_plot)
+
+    plt.subplots_adjust(wspace=0.15, hspace=0.4)
+
+    # If the "save_images" flag is set to true then save the plot to a .png file:
+    if save_images:
+        plt.savefig(os.path.join(image_output_dir, ba_to_plot + '_Time_Series.png'), dpi=image_resolution,
+                    bbox_inches='tight', facecolor='white')
+
+
+def plot_mlp_ba_peak_week(prediction_df, ba_to_plot: str,
+                          image_output_dir: str, image_resolution: int, save_images=False):
+    """Plot the time-series of load during the peak week of the year for a given BA.
+
+    :param prediction_df:       Prediction dataframe produced by the batch training of MLP models for all BAs
+    :type prediction_df:        df
+
+    :param ba_to_plot:          Code for the BA you want to plot
+    :type ba_to_plot:           str
+
+    :param image_output_dir:    Directory to store the images
+    :type image_output_dir:     str
+
+    :param image_resolution:    Resolution at which you want to save the images in DPI
+    :type image_resolution:     int
+
+    :param save_images:         Set to True if you want to save the images after they're generated
+    :type save_images:          bool
+
+    """
+
+    # Rename the region variable:
+    prediction_df.rename(columns={'region': 'BA'}, inplace=True)
+
+    # Subset to just the data for the BA you want to plot
+    subset_df = prediction_df[prediction_df['BA'].isin([ba_to_plot])]
+
+    # Smooth the predictions using exponentially-weighted windows:
+    subset_df['Rolling_Mean'] = subset_df['predictions'].ewm(span=168).mean()
+
+    # Find the index of the maximum value of the rolling mean:
+    index = subset_df['Rolling_Mean'].idxmax(axis=0)
+    if index > 84:
+       start = (index -84)
+    else:
+       start = 0
+
+    if index < (len(subset_df)-84):
+       end = (index + 84)
+    else:
+       end = len(subset_df)
+
+    peak_df = subset_df[start:end]
+
+    # Make the plot:
+    plt.figure(figsize=(25, 10))
+    plt.plot(peak_df['datetime'], peak_df['ground_truth'], 'r', linewidth=3, label='Observed')
+    plt.plot(peak_df['datetime'], peak_df['predictions'], 'b', linewidth=3, label='Predicted')
+    plt.xlim(peak_df['datetime'].dropna().min(), peak_df['datetime'].dropna().max())
+    plt.legend()
+    plt.xlabel('Time')
+    plt.ylabel('Demand [MWh]')
+    plt.title('Peak Demand Week in ' + ba_to_plot)
+
+    # If the "save_images" flag is set to true then save the plot to a .png file:
+    if save_images:
+        plt.savefig(os.path.join(image_output_dir, ba_to_plot + '_Peak_Week.png'), dpi=image_resolution,
+                    bbox_inches='tight', facecolor='white')
+
+
+def plot_mlp_linear_model_impact(validation_df, validation_df_nolinear,
+                                 image_output_dir: str, image_resolution: int, save_images=False):
+    """Calculate the mean impact of including a linear model to predict the residuals from TELL's MLP models.
+
+    :param validation_df:           Validation dataframe with the linear model adjustment applied
+    :type validation_df:            df
+
+    :param validation_df_nolinear:  Validation dataframe without the linear model adjustment applied
+    :type validation_df_nolinear:   df
+
+    :param image_output_dir:        Directory to store the images
+    :type image_output_dir:         str
+
+    :param image_resolution:        Resolution at which you want to save the images in DPI
+    :type image_resolution:         int
+
+    :param save_images:             Set to True if you want to save the images after they're generated
+    :type save_images:              bool
+
+    """
+
+    # Rename the variable in the validation_df_nolinear dataframe:
+    validation_df_nolinear.rename(columns={'RMS_ABS': 'RMS_ABS_NL',
+                                           'RMS_NORM': 'RMS_NORM_NL',
+                                           'MAPE': 'MAPE_NL',
+                                           'R2': 'R2_NL'}, inplace=True)
+
+    merged_df = validation_df.merge(validation_df_nolinear, on=['BA'])
+
+    # Create an x-axis the length of the dataframe to be used in plotting:
+    x_axis = np.arange(len(merged_df))
+
+    # Make the plot:
+    plt.figure(figsize=(25, 10))
+    plt.subplot(211)
+    plt.bar(x_axis - 0.2, merged_df.sort_values(by=['R2'], ascending=True)['R2'], 0.4, label='With Linear Model')
+    plt.bar(x_axis + 0.2, merged_df.sort_values(by=['R2'], ascending=True)['R2_NL'], 0.4, label='Without Linear Model')
+    plt.legend()
+    plt.xticks(x_axis, merged_df.sort_values(by=['R2'], ascending=True)['BA'], rotation=90)
+    plt.grid()
+    plt.xlabel('Balancing Authority')
+    plt.ylabel('R2')
+    plt.title('Coefficient of Determination')
+
+    plt.subplot(212)
+    plt.bar(x_axis - 0.2, merged_df.sort_values(by=['MAPE'], ascending=True)['MAPE'], 0.4, label='With Linear Model')
+    plt.bar(x_axis + 0.2, merged_df.sort_values(by=['MAPE'], ascending=True)['MAPE_NL'], 0.4, label='Without Linear Model')
+    plt.legend()
+    plt.xticks(x_axis, merged_df.sort_values(by=['MAPE'], ascending=True)['BA'], rotation=90)
+    plt.grid()
+    plt.xlabel('Balancing Authority')
+    plt.ylabel('MAPE')
+    plt.title('Mean Absolute Percentage Error')
+
+    plt.subplots_adjust(wspace=0.15, hspace=0.4)
+
+    # If the "save_images" flag is set to true then save the plot to a .png file:
+    if save_images:
+        plt.savefig(os.path.join(image_output_dir, 'MLP_Linear_Model_Impact.png'), dpi=image_resolution,
+                    bbox_inches='tight', facecolor='white')
+
+
+def plot_state_scaling_factors(year_to_plot: str, scenario_to_plot: str, data_input_dir: str, image_output_dir: str,
                                image_resolution: int, save_images=False):
     """Plot the scaling factor that force TELL annual total state loads to agree with GCAM-USA
 
     :param year_to_plot:        Year you want to plot (valid 2039, 2059, 2079, 2099)
     :type year_to_plot:         str
+
+    :param scenario_to_plot:    Scenario you want to plot
+    :type scenario_to_plot:     str
 
     :param data_input_dir:      Top-level data directory for TELL
     :type data_input_dir:       str
@@ -177,7 +432,7 @@ def plot_state_scaling_factors(year_to_plot: str, data_input_dir: str, image_out
     """
 
     # Set the data input directories for the various variables you need:
-    sample_data_input_dir = os.path.join(data_input_dir, r'sample_output_data', year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the states shapefile and change the geolocation variable name to state FIPS code:
     states_df = gpd.read_file(os.path.join(data_input_dir, r'tell_raw_data', r'State_Shapefiles', r'tl_2020_us_state.shp')).rename(columns={'GEOID': 'State_FIPS'})
@@ -186,7 +441,7 @@ def plot_state_scaling_factors(year_to_plot: str, data_input_dir: str, image_out
     states_df['State_FIPS'] = states_df['State_FIPS'].astype(int) * 1000
 
     # Read in the 'TELL_State_Summary_Data' .csv file and reassign the 'State_FIPS' code as an integer:
-    state_summary_df = pd.read_csv((sample_data_input_dir + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'), dtype={'State_FIPS': int})
+    state_summary_df = pd.read_csv((tell_data_input_dir + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'), dtype={'State_FIPS': int})
 
     # Merge the two dataframes together using state FIPS codes to join them:
     states_df = states_df.merge(state_summary_df, on='State_FIPS', how='left')
@@ -213,12 +468,15 @@ def plot_state_scaling_factors(year_to_plot: str, data_input_dir: str, image_out
         plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
 
 
-def plot_state_annual_total_loads(year_to_plot: str, data_input_dir: str, image_output_dir: str,
+def plot_state_annual_total_loads(year_to_plot: str, scenario_to_plot: str, data_input_dir: str, image_output_dir: str,
                                   image_resolution: int, save_images=False):
     """Plot annual total loads from both GCAM-USA and TELL
 
     :param year_to_plot:        Year you want to plot (valid 2039, 2059, 2079, 2099)
     :type year_to_plot:         str
+
+    :param scenario_to_plot:    Scenario you want to plot
+    :type scenario_to_plot:     str
 
     :param data_input_dir:      Top-level data directory for TELL
     :type data_input_dir:       str
@@ -235,10 +493,10 @@ def plot_state_annual_total_loads(year_to_plot: str, data_input_dir: str, image_
     """
 
     # Set the data input directories for the various variables you need:
-    sample_data_input_dir = os.path.join(data_input_dir, r'sample_output_data', year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the 'TELL_State_Summary_Data' .csv file and reassign the 'State_FIPS' code as an integer:
-    state_summary_df = pd.read_csv((sample_data_input_dir + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'), dtype={'State_FIPS': int})
+    state_summary_df = pd.read_csv((tell_data_input_dir + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'), dtype={'State_FIPS': int})
 
     # Create an x-axis the length of the dataframe to be used in plotting:
     x_axis = np.arange(len(state_summary_df))
@@ -259,8 +517,8 @@ def plot_state_annual_total_loads(year_to_plot: str, data_input_dir: str, image_
         plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
 
 
-def plot_state_load_time_series(state_to_plot: str, year_to_plot: str, data_input_dir: str, image_output_dir: str,
-                                image_resolution: int, save_images=False):
+def plot_state_load_time_series(state_to_plot: str, year_to_plot: str, scenario_to_plot: str,
+                                data_input_dir: str, image_output_dir: str, image_resolution: int, save_images=False):
     """Plot the time series of load for a given state
 
     :param state_to_plot:       State you want to plot
@@ -268,6 +526,9 @@ def plot_state_load_time_series(state_to_plot: str, year_to_plot: str, data_inpu
 
     :param year_to_plot:        Year you want to plot (valid 2039, 2059, 2079, 2099)
     :type year_to_plot:         str
+
+    :param scenario_to_plot:    Scenario you want to plot
+    :type scenario_to_plot:     str
 
     :param data_input_dir:      Top-level data directory for TELL
     :type data_input_dir:       str
@@ -284,10 +545,10 @@ def plot_state_load_time_series(state_to_plot: str, year_to_plot: str, data_inpu
     """
 
     # Set the data input directories for the various variables you need:
-    sample_data_input_dir = os.path.join(data_input_dir, r'sample_output_data', year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the 'TELL_State_Summary_Data' .csv file parse the time variable:
-    state_hourly_load_df = pd.read_csv((sample_data_input_dir + '/' + 'TELL_State_Hourly_Load_Data_' + year_to_plot + '.csv'), parse_dates=["Time_UTC"])
+    state_hourly_load_df = pd.read_csv((tell_data_input_dir + '/' + 'TELL_State_Hourly_Load_Data_' + year_to_plot + '.csv'), parse_dates=["Time_UTC"])
 
     # Subset the dataframe to only the state you want to plot:
     state_subset_df = state_hourly_load_df.loc[state_hourly_load_df['State_Name'] == state_to_plot]
@@ -311,8 +572,8 @@ def plot_state_load_time_series(state_to_plot: str, year_to_plot: str, data_inpu
         plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
 
 
-def plot_state_load_duration_curve(state_to_plot: str, year_to_plot: str, data_input_dir: str, image_output_dir: str,
-                                   image_resolution: int, save_images=False):
+def plot_state_load_duration_curve(state_to_plot: str, year_to_plot: str, scenario_to_plot: str, data_input_dir: str,
+                                   image_output_dir: str, image_resolution: int, save_images=False):
     """Plot the load duration curve for a given state
 
     :param state_to_plot:       State you want to plot
@@ -320,6 +581,9 @@ def plot_state_load_duration_curve(state_to_plot: str, year_to_plot: str, data_i
 
     :param year_to_plot:        Year you want to plot (valid 2039, 2059, 2079, 2099)
     :type year_to_plot:         str
+
+    :param scenario_to_plot:    Scenario you want to plot
+    :type scenario_to_plot:     str
 
     :param data_input_dir:      Top-level data directory for TELL
     :type data_input_dir:       str
@@ -336,10 +600,10 @@ def plot_state_load_duration_curve(state_to_plot: str, year_to_plot: str, data_i
     """
 
     # Set the data input directories for the various variables you need:
-    sample_data_input_dir = os.path.join(data_input_dir, r'sample_output_data', year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the 'TELL_State_Summary_Data' .csv file and parse the time variable:
-    state_hourly_load_df = pd.read_csv((sample_data_input_dir + '/' + 'TELL_State_Hourly_Load_Data_' + year_to_plot + '.csv'), parse_dates=["Time_UTC"])
+    state_hourly_load_df = pd.read_csv((tell_data_input_dir + '/' + 'TELL_State_Hourly_Load_Data_' + year_to_plot + '.csv'), parse_dates=["Time_UTC"])
 
     # Subset the dataframe to only the state you want to plot:
     state_subset_df = state_hourly_load_df.loc[state_hourly_load_df['State_Name'] == state_to_plot]
@@ -364,8 +628,8 @@ def plot_state_load_duration_curve(state_to_plot: str, year_to_plot: str, data_i
         plt.savefig(os.path.join(image_output_dir, filename), dpi=image_resolution, bbox_inches='tight')
 
 
-def plot_ba_load_time_series(ba_to_plot: str, year_to_plot: str, data_input_dir: str, image_output_dir: str,
-                             image_resolution: int, save_images=False):
+def plot_ba_load_time_series(ba_to_plot: str, year_to_plot: str, scenario_to_plot: str, data_input_dir: str,
+                             image_output_dir: str, image_resolution: int, save_images=False):
     """Plot the time series of load for a given Balancing Authority
 
     :param ba_to_plot:          Balancing Authority code for the BA you want to plot
@@ -373,6 +637,9 @@ def plot_ba_load_time_series(ba_to_plot: str, year_to_plot: str, data_input_dir:
 
     :param year_to_plot:        Year you want to plot (valid 2039, 2059, 2079, 2099)
     :type year_to_plot:         str
+
+    :param scenario_to_plot:    Scenario you want to plot
+    :type scenario_to_plot:     str
 
     :param data_input_dir:      Top-level data directory for TELL
     :type data_input_dir:       str
@@ -389,11 +656,11 @@ def plot_ba_load_time_series(ba_to_plot: str, year_to_plot: str, data_input_dir:
     """
 
     # Set the data input directories for the various variables you need:
-    sample_data_input_dir = os.path.join(data_input_dir, r'sample_output_data', year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the 'TELL_Balancing_Authority_Hourly_Load_Data' .csv file and parse the time variable:
-    ba_hourly_load_df = pd.read_csv((sample_data_input_dir + '/' + 'TELL_Balancing_Authority_Hourly_Load_Data_' + year_to_plot + '.csv'),
-                                    parse_dates=["Time_UTC"])
+    ba_hourly_load_df = pd.read_csv((tell_data_input_dir + '/' + 'TELL_Balancing_Authority_Hourly_Load_Data_' + year_to_plot + '.csv'),
+                                     parse_dates=["Time_UTC"])
 
     # Subset the dataframe to only the BA you want to plot:
     ba_subset_df = ba_hourly_load_df.loc[ba_hourly_load_df['BA_Code'] == ba_to_plot]

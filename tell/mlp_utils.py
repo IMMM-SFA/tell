@@ -338,7 +338,7 @@ def evaluate(region: str,
     # R2
     r2_val = r2_score(y_pred, y_comp)
 
-    stats_dict = {"region": [region],
+    stats_dict = {"BA": [region],
                   "RMS_ABS": [rms_abs],
                   "RMS_NORM": [rms_norm],
                   "MAPE": [mape],

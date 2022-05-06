@@ -1,7 +1,10 @@
+import os
+
 import numpy as np
 import pandas as pd
-from joblib import Parallel, delayed
 
+from joblib import Parallel, delayed
+from typing import Union
 from .mlp_prepare_data import DatasetPredict, DefaultSettings
 from .mlp_utils import normalize_prediction_data, load_predictive_models
 
@@ -10,6 +13,8 @@ def predict(region: str,
             year: int,
             data_dir: str,
             datetime_field_name: str = "Time_UTC",
+            save_prediction: bool = False,
+            prediction_output_directory: Union[str, None] = None,
             **kwargs):
     """Generate predictions for MLP model for a target region from an input CSV file.
 
@@ -22,6 +27,12 @@ def predict(region: str,
 
     :param data_dir:                    Full path to the directory that houses the input CSV files.
     :type data_dir:                     str
+
+    :param save_prediction:             Choice to write predictions to a .csv file
+    :type save_prediction:              bool
+
+    :param prediction_output_directory: Full path to output directory where prediction files will be written.
+    :type prediction_output_directory:  Union[str, None]
 
     :param datetime_field_name:         Name of the datetime field.
     :type datetime_field_name:          str
@@ -125,12 +136,24 @@ def predict(region: str,
         y_predicted_norm += y_predicted_linear
 
     # denormalize predicted data
-    y_predicted = y_predicted_norm * (normalized_dict["max_y_train"] - normalized_dict["min_y_train"]) + normalized_dict["min_y_train"]
+    y_predicted = (y_predicted_norm * (normalized_dict["max_y_train"] - normalized_dict["min_y_train"]) + normalized_dict["min_y_train"]).round(2)
 
     # generate output data frame
-    prediction_df = pd.DataFrame({"datetime": data_mlp.df_data[settings.DATETIME_FIELD].values,
-                                  "predictions": y_predicted,
-                                  "region": region})
+    prediction_df = pd.DataFrame({"Time_UTC": data_mlp.df_data[settings.DATETIME_FIELD].values,
+                                  "Load": y_predicted,
+                                  "BA": region})
+
+    # Set the negative and NaN values to -9999 so that they can be converted to NaN later:
+    #prediction_df.loc[~(prediction_df['Load'] > 0), 'Load'] = -9999
+    #prediction_df['Load'] = prediction_df['Load'].fillna(-9999)
+
+    # Save the prediction to a .csv file:
+    if save_prediction:
+        # If the subdirectory for the year being processed doesn't exist then create it:
+        if not os.path.exists(os.path.join(prediction_output_directory, str(year))):
+            os.makedirs(os.path.join(prediction_output_directory, str(year)))
+
+        prediction_df.to_csv(os.path.join(prediction_output_directory, str(year), f'{region}_'f'{year}_mlp_output.csv'), index=False)
 
     return prediction_df
 
@@ -140,6 +163,8 @@ def predict_batch(target_region_list: list,
                   data_dir: str,
                   n_jobs: int = -1,
                   datetime_field_name: str = "Time_UTC",
+                  save_prediction: bool = False,
+                  prediction_output_directory: Union[str, None] = None,
                   **kwargs):
     """Generate predictions for MLP model for a target region from an input CSV file for all regions
     in input list in parallel.
@@ -166,6 +191,12 @@ def predict_batch(target_region_list: list,
 
     :param datetime_field_name:         Name of the datetime field.
     :type datetime_field_name:          str
+
+    :param save_prediction:             Choice to write predictions to a .csv file
+    :type save_prediction:              bool
+
+    :param prediction_output_directory: Full path to output directory where prediction files will be written.
+    :type prediction_output_directory:  Union[str, None]
 
     :param mlp_linear_adjustment:       True if you want to correct the MLP model using a linear model.
     :type mlp_linear_adjustment:        Optional[bool]
@@ -221,6 +252,8 @@ def predict_batch(target_region_list: list,
                                                                        year=year,
                                                                        data_dir=data_dir,
                                                                        datetime_field_name=datetime_field_name,
+                                                                       save_prediction=save_prediction,
+                                                                       prediction_output_directory=prediction_output_directory,
                                                                        **kwargs) for region in target_region_list)
 
     # aggregate outputs
