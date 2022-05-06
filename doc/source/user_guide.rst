@@ -8,26 +8,26 @@ notebook that contains detailed step-by-step instructions on how to run **tell**
 
 About **tell**
 --------------
-The Total ELectricity Load (TELL) model projects the short- and long-term evoluation of hourly electricity demand in response to future climate
-and population changes. The purpose of **tell** is to generate end-of-century hourly profiles of electricity demand across the entire United States
-(U.S.) at a spatial resolution adequate for input to a unit commitment/economic dispatch (UC/ED) model while also maintaining consistency with the
-long-term growth and evolution of annual state-level electricity demand projected by an economically driven human-Earth system model. **tell** takes
+The Total ELectricity Load (**tell**) model projects the short- and long-term evolution of hourly electricity demand in response to future climate
+and population changes. The purpose of **tell** is to generate end-of-century hourly profiles of electricity demand across the entire Conterminous
+United States (CONUS) at a spatial resolution adequate for input to a unit commitment/economic dispatch (UC/ED) model while also maintaining consistency
+with the long-term growth and evolution of annual state-level electricity demand projected by an economically driven human-Earth system model. **tell** takes
 as input future projections of the hourly time-series of meteorology and decadal populations and uses the temporal variations in weather to project
-hourly profiles of total electricity demand. The core predictions in **tell** are based on a series of multilayer perceptron (MLP) models for individual
+hourly profiles of total electricity demand. The core predictions in **tell** are based on a series of multilayer perceptron (MLP) models for 54 independent
 Balancing Authorities (BAs). Those MLP models are trained on historical observations of weather and electricity demand. Hourly projections from **tell**
 are scaled to match the annual state-level total electricity loads projected by the U.S. version of the Global Change Analysis Model (GCAM-USA) which
 captures the long-term co-evolution of the human-Earth system. Using this unique approach allows **tell** to reflect both changes in the shape
 of the load profile due to variations in weather and the long-term evolution of energy demand due to changes in population, technology, and economics.
-**tell** is unique from other load forecasting models in that it features an explicit spatial component that allows us to relate projected
-loads to where they would occur spatially within a grid operations model. The output of **tell** is a series of hourly projections for future electricity
-demand at the county, state, and BA scale that are conceptually and quantitatively consistent with one another.
+**tell** is unique from other load forecasting models in that it features an explicit spatial component that allows it to relate projected
+loads to where they would occur spatially within a grid operations model. The output of **tell** is a series of hourly projections of future electricity
+demand at the county-, state-, and BA-scale that are conceptually and quantitatively consistent with one another.
 
 
 How It Works
 ------------
 The basic workflow for **tell** proceeds in six sequential steps:
 
-#. Formulate empirical models that relate the historical observed meteorology and population to the hourly time-series of total electricity demand for each of the BAs that report their hourly loads in the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_ dataset.
+#. Formulate empirical models that relate the historical observed meteorology to the hourly time-series of total electricity demand for 54 BAs that report their hourly loads in the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_ dataset.
 
 #. Use the empirical models to project future hourly loads for each BA based on IM3’s climate and population scenarios.
 
@@ -35,9 +35,9 @@ The basic workflow for **tell** proceeds in six sequential steps:
 
 #. Calculate annual state-level scaling factors that force the bottom-up annual state-level total loads from **tell** to match the annual state-level total loads from GCAM-USA.
 
-#. Apply the state-level scaling factors to each county-level time-series of hourly total electricity loads.
+#. Apply the state-level scaling factors to each county- and BA-level time-series of hourly total demand.
 
-#. Output yearly time-series of total electricity demand at the state, county, and BA scale that are conceptually and quantitatively consistent with each other.
+#. Output yearly 8760-hr time-series of total electricity demand at the state-, county-, and BA-scale that are conceptually and quantitatively consistent with each other.
 
 
 Design Constraints
@@ -54,9 +54,9 @@ Design Constraints
     * - Temporal resolution and scope
       - Should produce hourly projections of total electricity demand in one-year increments through the year 2100.
     * - Forcing factors
-      - Projections should respond to changes in meteorology/climate and population.
+      - Projections should respond to changes in meteorology and climate.
     * - Multiscale consistency
-      - Should produce hourly total electricity demand at the county, state, and BA scale that are conceptually and quantitatively consistent with each other.
+      - Should produce hourly total electricity demand at the county-, state-, and BA-scale that are conceptually and quantitatively consistent with each other.
     * - Open-source
       - Should be based entirely on publicly available data and be made available as an extensively-documented open-source model.
 
@@ -367,7 +367,7 @@ of BA service territories available online, there are several fundamental challe
 1. The provenance of the data and methodology underpinning most of the maps is unknown. In other words, there is no way to determine
 how the BAs were placed and if the methods used to do so are robust.
 
-2. The maps often depict the BAs as spatially unique and non-overlapping. For county-scale mapping at least, we know this to be
+2. The maps often depict the BAs as spatially unique and non-overlapping. For a county-scale mapping at least, we know this to be
 untrue. Additionally, the maps are typically static representations of how BAs were configured at a single point in time. As the
 actual territory of BAs can and does change over time, this presents challenges for placing BA loads occurring over a range of years.
 
@@ -431,13 +431,13 @@ Load Disaggregation and Reaggregation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **tell** uses multiple instances of load disaggregation and reaggregation in order to cross spatiotemporal scales. The fundamental
 projections in **tell** occur at the spatial scale of BAs. In order to compare those hourly load values at the BA-level with the
-annual state-level load values produced by GCAM-USA we first disaggregate the hourly projected BA-level loads to the county-level
+annual state-level load values produced by GCAM-USA, we first disaggregate the hourly projected BA-level loads to the county-level
 and then reaggregate those hourly county-level loads to an annual total load projection for each state. For each BA we identify
-the counties that BA operates in using the methodology described above. We then use the
-county-level populations for those counties to determine the fraction of the BA's total load that should be assigned to each county. A
-graphical depiction of this for the ISNE BA is shown below. Using this approach, the load received by each county in a BA's service territory has the
-same shape and temporal patterns, but the magnitude varies depending on the population in that county relative to the total population
-in the BA's service territory. As there are spatial overlaps in BAs, many counties receive partial loads from more than one BA.
+the counties that BA operates in using the methodology described above. We then use the county-level populations for those counties
+to determine the fraction of the BA's total load that should be assigned to each county. A graphical depiction of this for the ISNE BA
+is shown below. Using this approach, the load received by each county in a BA's service territory has the same shape and temporal
+patterns, but the magnitude varies depending on the population in that county relative to the total population in the BA's service
+territory. As there are spatial overlaps in BAs, many counties receive partial loads from more than one BA.
 
 .. image:: _static/Load_Projection_Dissagregation_Example_ISNE.png
    :width: 900
@@ -445,8 +445,8 @@ in the BA's service territory. As there are spatial overlaps in BAs, many counti
 
 Once the load projections from all BAs in **tell** have been disaggregated to the county-level, we next sum up the loads from all
 counties in a given state to get annual state-level total loads which are scaled to match the projections from GCAM-USA. The scaling
-factors for each state are then applied to all county-level hourly load values in that state. The final output of **tell** is thus
-a series of 8760-hr time series of total electricity loads at the state, county, and BA scale that are conceptually and quantitatively
+factors for each state are then applied to all county- and BA-level hourly load values in that state. The final output of **tell** is thus
+a series of 8760-hr time series of total electricity loads at the county-, state-, and BA-scale that are conceptually and quantitatively
 consistent with each other.
 
 It is important to note that the future evolution of population is also taken into account in **tell**. Projected annual changes in
@@ -457,18 +457,10 @@ proportion of the BA-level loads for BAs operating there, but would also have an
 hourly load profile for California as a whole.
 
 
-Multi-Layer Perceptron (MLP) Models
+Multilayer Perceptron (MLP) Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-**tell** uses a series of multilayer perceptron (MLP) models to project future loads. There is one unique MLP model for each BA. The
-general form of each MLP model is:
-
-.. math::
-
-   y_{pred} = y_{MLP} + `\epsilon`
-
-where y :subscript:`MLP` is the actual MLP model and epsilon represents a linear model that uses the annual change in total population
-within the BA service territory to predict the residuals from the MLP model for a given BA. The MLP model for each BA is trained and
-evaluated independently. The MLP models are trained on historical load data from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_
+**tell** uses a series of multilayer perceptron (MLP) models to project future loads. There is one unique MLP model for each BA. The MLP model
+for each BA is trained and evaluated independently. The MLP models are trained on historical load data from the `EIA-930 <https://www.eia.gov/electricity/gridmonitor/about>`_
 dataset and weather from IM3's historical runs using the Weather Research and Forecasting (WRF) model. In the production version of **tell**
 the MLP models for each BA were trained on data from 2016-2018 and evaluated against observed loads from 2019. While the EIA-930 data extends past
 the year 2019, COVID-19 induced significant changes in the diurnal profile of electricity demand (e.g., `Burleyson et al. 2021 <https://www.sciencedirect.com/science/article/pii/S0306261921010631>`_)
@@ -478,7 +470,7 @@ more EIA-930 data becomes available.
 Details of the MLP predictive variables are included in the table below. The default parameter settings for training the MLP models are stored
 in the `mlp_settings.yml <https://github.com/IMMM-SFA/tell/blob/review/crvernon/tell/data/mlp_settings.yml>`_ file in the **tell** repository.
 The hyperparameters for the **tell** MLP models (e.g., hidden layer sizes, maximum iterations, and validation fraction) were determined
-using a grid search approach.
+using a grid search approach. Hyperparameters were allowed to vary across BAs.
 
 .. list-table::
     :header-rows: 1
@@ -501,9 +493,6 @@ using a grid search approach.
     * - Wind speed
       - 10-m wind speed derived from the U and V wind components from WRF (U10 and V10)
       - m s :sup:`-1`
-    * - Population
-      - Total population in the counties covered by the BA
-      - #
     * - Hour of the day
       - Hour of the day in UTC
       - 00-23 UTC
@@ -523,7 +512,7 @@ while 89% (48/54) have a MAPE under 10%.
 
 It's illustrative to look at the error metrics as a function of load. To do this, we calculate the mean hourly load
 for each BA during the evaluation year and then plot the error statistics as a function of that mean load. Analyzing
-the data in this way demonstrates that the BAs with the poorly performing emprical models are almost universally the
+the data in this way demonstrates that the BAs with the poorly performing empirical models are almost universally the
 smaller BAs. The largest BAs, which are critically important for the overall demand on the grid, generally perform quite
 well. Of the 10 BAs with the largest mean demand, 9/10 have a MAPE value under 5% and an R2 value greater than 0.85.
 Conversely, of the 10 worst performing BAs (judged by their MAPE value), 7/10 have an average hourly load less than
@@ -573,7 +562,7 @@ rooftop solar difference values from the residential model were added.
 This approach means that **tell** doesn't need to know anything about the residential energy sector or the fraction of the total
 load it represents. All **tell** cares about is how the intervention you want to explore will translate into changes in the sectoral
 load time-series. Note that in order to do this the detailed sectoral model needs to produce output at at least one of the spatial
-scales in **tell** (e.g., counties, states, or BAs). This approach allows users of detailed sectoral models to explore how specific
+scales in **tell** (i.e., counties, states, or BAs). This approach allows users of detailed sectoral models to explore how specific
 interventions will impact future demands at the grid-scale without having to have complementary sectoral models of all other sectors.
 Finally, if the detailed sectoral model projects changes in the load shape but doesn't resolve the magnitude at a given spatial scale,
 it should be possible to use year-over-year changes from the GCAM-USA sectoral models to scale the load shape changes before they are
