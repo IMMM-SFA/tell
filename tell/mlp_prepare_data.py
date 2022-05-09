@@ -135,11 +135,42 @@ class DefaultSettings:
         self.prediction_output_directory = self.settings_dict.get("prediction_output_directory")
         self.verbose = self.settings_dict.get("verbose")
 
-
         # set to default package data if not provided
         if self.model_output_directory == "Default":
             self.model_output_directory = pkg_resources.resource_filename("tell", "data/models")
 
+        # update hyperparameter values from defaults if the user does not provide them
+        self.update_hyperparameters()
+
+    def update_hyperparameters(self):
+        """Update hyperparameter values from defaults if the user does not provide them."""
+
+        # read in default hyperparameters for the target region
+        hyperparams_file = pkg_resources.resource_filename("tell", "data/hyperparameters.csv")
+
+        # read into data frame
+        hdf = pd.read_csv(hyperparams_file)
+
+        # query out target region
+        hidden_layer_sizes = hdf.loc[hdf["region"] == self.region]["hidden_layer_sizes"].values[0]
+        max_iter = hdf.loc[hdf["region"] == self.region]["max_iter"].values[0]
+        validation_fraction = hdf.loc[hdf["region"] == self.region]["validation_fraction"].values[0]
+
+        # update values for hyperparameters if user does not provide
+        if self.mlp_hidden_layer_sizes is None:
+            self.mlp_hidden_layer_sizes = hidden_layer_sizes
+
+        if self.mlp_max_iter is None:
+            self.mlp_max_iter = max_iter
+
+        if self.mlp_validation_fraction is None:
+            self.mlp_validation_fraction = validation_fraction
+
+        if self.verbose:
+            print(f"Using the following hyperparameter values for '{self.region}':")
+            print(f"hidden_layer_sizes: {self.mlp_hidden_layer_sizes}")
+            print(f"max_iter: {self.mlp_max_iter}")
+            print(f"validation_fraction: {self.mlp_validation_fraction}")
 
     @staticmethod
     def update_default_settings(kwargs) -> dict:
