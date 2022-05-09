@@ -151,20 +151,28 @@ class DefaultSettings:
         # read into data frame
         hdf = pd.read_csv(hyperparams_file)
 
-        # query out target region
-        hidden_layer_sizes = hdf.loc[hdf["region"] == self.region]["hidden_layer_sizes"].values[0]
-        max_iter = hdf.loc[hdf["region"] == self.region]["max_iter"].values[0]
-        validation_fraction = hdf.loc[hdf["region"] == self.region]["validation_fraction"].values[0]
+        # if region is in preexisting hyperparameters
+        if self.region in hdf["region"].unique():
 
-        # update values for hyperparameters if user does not provide
-        if self.mlp_hidden_layer_sizes is None:
-            self.mlp_hidden_layer_sizes = hidden_layer_sizes
+            # query out target region
+            hidden_layer_sizes = hdf.loc[hdf["region"] == self.region]["hidden_layer_sizes"].values[0]
+            max_iter = hdf.loc[hdf["region"] == self.region]["max_iter"].values[0]
+            validation_fraction = hdf.loc[hdf["region"] == self.region]["validation_fraction"].values[0]
 
-        if self.mlp_max_iter is None:
-            self.mlp_max_iter = max_iter
+            # update values for hyperparameters if user does not provide
+            if self.mlp_hidden_layer_sizes == 447:
+                self.mlp_hidden_layer_sizes = hidden_layer_sizes
 
-        if self.mlp_validation_fraction is None:
-            self.mlp_validation_fraction = validation_fraction
+            if self.mlp_max_iter == 269:
+                self.mlp_max_iter = max_iter
+
+            if self.mlp_validation_fraction == 0.2:
+                self.mlp_validation_fraction = validation_fraction
+
+        # otherwise use default
+        else:
+            if self.verbose:
+                print(f"No exiting hyperparameters found for region:  '{self.region}'.  Assigning defaults.")
 
         if self.verbose:
             print(f"Using the following hyperparameter values for '{self.region}':")

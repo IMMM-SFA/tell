@@ -1,17 +1,17 @@
 # Default settings for the MLP module of TELL
 
 # The ith element represents the number of neurons in the ith hidden layer.
-mlp_hidden_layer_sizes: None
+mlp_hidden_layer_sizes: 447
 
 # Maximum number of iterations. The solver iterates until convergence
 # (determined by ‘tol’) or this number of iterations. For stochastic solvers
 # (‘sgd’, ‘adam’), note that this determines the number of epochs (how many
 # times each data point will be used), not the number of gradient steps.
-mlp_max_iter: None
+mlp_max_iter: 269
 
 # The proportion of training data to set aside as validation set for early
 # stopping. Must be between 0 and 1.
-mlp_validation_fraction: None
+mlp_validation_fraction: 0.2
 
 # Dictionary for the field names present in the input CSV file (keys) to what the
 # code expects them to be (values).
