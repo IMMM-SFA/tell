@@ -75,12 +75,6 @@ class DefaultSettings:
     :param seed_value:                  Seed value to reproduce randomization.
     :type seed_value:                   Optional[int]
 
-    :param x_variables_linear:          Target variable list for the linear model.
-    :type x_variables_linear:           Optional[list[str]]
-
-    :param y_variables_linear:          Feature variable list for the linear model.
-    :type y_variables_linear:           Optional[list[str]]
-
     :param save_model:                  Choice to write ML models to a pickled file via joblib.
     :type save_model:                   bool
 
@@ -135,8 +129,6 @@ class DefaultSettings:
         self.split_datetime = str(self.settings_dict.get("split_datetime"))
         self.nodata_value = self.NODATA_VALUE
         self.seed_value = self.settings_dict.get("seed_value")
-        self.x_variables_linear = self.settings_dict.get("x_variables_linear")
-        self.y_variables_linear = self.settings_dict.get("y_variables_linear")
         self.save_model = self.settings_dict.get("save_model")
         self.model_output_directory = self.settings_dict.get("model_output_directory")
         self.save_prediction = self.settings_dict.get("save_prediction")

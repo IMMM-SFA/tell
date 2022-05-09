@@ -61,12 +61,6 @@ split_datetime: "2018-12-31 23:00:00"
 # Seed value to reproduce randomization.
 seed_value: 391
 
-# Target variable list for the linear model.
-x_variables_linear: ["Population", "Hour", "Month", "Year"]
-
-# Feature variable list for the linear model.
-y_variables_linear: ["Demand"]
-
 # Choice to write ML models to a pickled file via joblib.
 save_model: False
 

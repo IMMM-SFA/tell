@@ -145,12 +145,6 @@ def train(region: str,
     :param seed_value:                  Seed value to reproduce randomization.
     :type seed_value:                   Optional[int]
 
-    :param x_variables_linear:          Target variable list for the linear model.
-    :type x_variables_linear:           Optional[list[str]]
-
-    :param y_variables_linear:          Feature variable list for the linear model.
-    :type y_variables_linear:           Optional[list[str]]
-
     :param save_model:                  Choice to write ML models to a pickled file via joblib.
     :type save_model:                   bool
 
@@ -191,7 +185,7 @@ def train(region: str,
     y_train_norm = normalized_dict.get("y_train_norm")
     x_test_norm = normalized_dict.get("x_test_norm")
 
-    # run the MLP model with the linear correction if desired
+    # run the MLP model
     y_predicted_normalized = train_mlp_model(region=region,
                                              x_train=x_train_norm,
                                              y_train=y_train_norm.squeeze(),
@@ -295,12 +289,6 @@ def train_batch(target_region_list: list,
 
     :param seed_value:                  Seed value to reproduce randomization.
     :type seed_value:                   Optional[int]
-
-    :param x_variables_linear:          Target variable list for the linear model.
-    :type x_variables_linear:           Optional[list[str]]
-
-    :param y_variables_linear:          Feature variable list for the linear model.
-    :type y_variables_linear:           Optional[list[str]]
 
     :param save_model:                  Choice to write ML models to a pickled file via joblib.
     :type save_model:                   bool
