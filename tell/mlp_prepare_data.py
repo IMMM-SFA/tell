@@ -35,11 +35,6 @@ class DefaultSettings:
     :param mlp_linear_adjustment:       True if you want to correct the MLP model using a linear model.
     :type mlp_linear_adjustment:        Optional[bool]
 
-    :param apply_sine_function:         True if setting up data for a linear model that will be run and will cause
-                                        the application of the sine function for hour and month fields if they
-                                        are present in the data.
-    :type apply_sine_function:          Optional[bool]
-
     :param data_column_rename_dict:     Dictionary for the field names present in the input CSV file (keys) to what the
                                         code expects them to be (values).
     :type data_column_rename_dict:      Optional[dict[str]]
@@ -135,7 +130,6 @@ class DefaultSettings:
         self.y_variables = self.settings_dict.get("y_variables")
         self.add_dayofweek_xvars = self.settings_dict.get("add_dayofweek_xvars")
         self.mlp_linear_adjustment = self.settings_dict.get("mlp_linear_adjustment")
-        self.apply_sine_function = self.settings_dict.get("apply_sine_function")
         self.hour_field_name = self.settings_dict.get("hour_field_name")
         self.month_field_name = self.settings_dict.get("month_field_name")
         self.year_field_name = self.settings_dict.get("year_field_name")
@@ -231,16 +225,13 @@ class DatasetTrain(DefaultSettings):
         # format the input data file
         df_filtered = self.format_filter_data(df)
 
-        # apply sine to hour and month fields if present and if using a linear model
-        df_smooth = self.apply_sine_for_linear_model(df_filtered)
-
         # add fields for weekday, each day of the week, and holidays to the data frame; also adds "Weekday" and
         # "Holidays" as fields to the x_variables list
         if self.add_dayofweek_xvars:
-            df_smooth = self.breakout_day_designation(df_smooth)
+            df_filtered = self.breakout_day_designation(df_filtered)
 
         # split the data frame into test and training data based on a datetime
-        df_train_raw, df_test_raw = self.split_train_test(df_smooth)
+        df_train_raw, df_test_raw = self.split_train_test(df_filtered)
 
         # clean data to drop no data records, non-feasible, and extreme values
         df_train_clean = self.clean_data(df_train_raw, drop_records=True)
@@ -308,25 +299,6 @@ class DatasetTrain(DefaultSettings):
 
         # reset and drop index
         df.reset_index(drop=True, inplace=True)
-
-        return df
-
-    def apply_sine_for_linear_model(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Apply the sine function to the hour and month fields for use in a linear model as predictive variables.
-
-        :param df:               Data frame for the target region
-        :type df:                pd.DataFrame
-
-
-        """
-
-        # if a linear model will be run and an hour field is present in the data frame apply the sine function
-        if self.apply_sine_function and self.hour_field_name in df.columns:
-            df[self.hour_field_name] = np.sin(df[self.hour_field_name] * np.pi / 24)
-
-            # if a linear model will be run and a month field is present in the data frame apply the sine function
-        if self.apply_sine_function and self.month_field_name in df.columns:
-            df[self.month_field_name] = np.sin(df[self.month_field_name] * np.pi / 12)
 
         return df
 
@@ -557,16 +529,13 @@ class DatasetPredict(DefaultSettings):
         # format the input data file
         df_filtered = self.format_filter_data(df)
 
-        # apply sine to hour and month fields if present and if using a linear model
-        df_smooth = self.apply_sine_for_linear_model(df_filtered)
-
         # add fields for weekday, each day of the week, and holidays to the data frame; also adds "Weekday" and
         # "Holidays" as fields to the x_variables list
         if self.add_dayofweek_xvars:
-            df_smooth = self.breakout_day_designation(df_smooth)
+            df_filtered = self.breakout_day_designation(df_filtered)
 
         # clean data to alter no data records, non-feasible, and extreme values
-        df_test_clean = self.clean_data(df_smooth, drop_records=False)
+        df_test_clean = self.clean_data(df_filtered, drop_records=False)
 
         # extract the targets and features from the cleaned test data
         df_test_extract_clean = self.extract_targets_features(df_test_clean)
@@ -627,24 +596,6 @@ class DatasetPredict(DefaultSettings):
 
         # reset and drop index
         df.reset_index(drop=True, inplace=True)
-
-        return df
-
-    def apply_sine_for_linear_model(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Apply the sine function to the hour and month fields for use in a linear model as predictive variables.
-
-        :param df:               Data frame for the target region
-        :type df:                pd.DataFrame
-
-        """
-
-        # if a linear model will be run and an hour field is present in the data frame apply the sine function
-        if self.apply_sine_function and self.hour_field_name in df.columns:
-            df[self.hour_field_name] = np.sin(df[self.hour_field_name] * np.pi / 24)
-
-        # if a linear model will be run and a month field is present in the data frame apply the sine function
-        if self.apply_sine_function and self.month_field_name in df.columns:
-            df[self.month_field_name] = np.sin(df[self.month_field_name] * np.pi / 12)
 
         return df
 

@@ -102,9 +102,7 @@ def train_mlp_model(region: str,
                                             stopping. Must be between 0 and 1.
     :type mlp_validation_fraction:          float
 
-    :param mlp_linear_adjustment:           True if setting up data for a linear model that will be run and will cause
-                                            the application of the sine function for hour and month fields if they
-                                            are present in the data.
+    :param mlp_linear_adjustment:           True if setting up data for a linear model that will be run
     :type mlp_linear_adjustment:            bool
 
     :param x_linear_train:                  Training data for features from the linear model if using correction.
@@ -192,11 +190,6 @@ def train(region: str,
     :param mlp_linear_adjustment:       True if you want to correct the MLP model using a linear model.
     :type mlp_linear_adjustment:        Optional[bool]
 
-    :param apply_sine_function:         True if setting up data for a linear model that will be run and will cause
-                                        the application of the sine function for hour and month fields if they
-                                        are present in the data.
-    :type apply_sine_function:          Optional[bool]
-
     :param data_column_rename_dict:     Dictionary for the field names present in the input CSV file (keys) to what the
                                         code expects them to be (values).
     :type data_column_rename_dict:      Optional[dict[str]]
@@ -275,7 +268,6 @@ def train(region: str,
         data_linear = DatasetTrain(region,
                                    data_dir,
                                    x_variables=settings.x_variables_linear,
-                                   apply_sine_function=True,
                                    **kwargs)
 
         x_linear_train = data_linear.x_train
@@ -368,11 +360,6 @@ def train_batch(target_region_list: list,
 
     :param mlp_linear_adjustment:       True if you want to correct the MLP model using a linear model.
     :type mlp_linear_adjustment:        Optional[bool]
-
-    :param apply_sine_function:         True if setting up data for a linear model that will be run and will cause
-                                        the application of the sine function for hour and month fields if they
-                                        are present in the data.
-    :type apply_sine_function:          Optional[bool]
 
     :param data_column_rename_dict:     Dictionary for the field names present in the input CSV file (keys) to what the
                                         code expects them to be (values).
