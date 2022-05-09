@@ -3,63 +3,10 @@ import pandas as pd
 
 from typing import Union
 from joblib import Parallel, delayed
-from sklearn.linear_model import LinearRegression as LR
 from sklearn.neural_network import MLPRegressor as MLP
 
 from tell.mlp_prepare_data import DatasetTrain, DefaultSettings
 from tell.mlp_utils import normalize_features, denormalize_features, pickle_model, evaluate, pickle_normalization_dict
-
-
-def train_linear_model(region: str,
-                       x_train: np.ndarray,
-                       y_train: np.ndarray,
-                       x_test: np.ndarray,
-                       save_model: bool = False,
-                       model_output_directory: Union[str, None] = None):
-    """Train the ordinary least squares linear regression model. Can be used for either the main
-    model or the residual model.
-
-    :param region:                          Indicating region / balancing authority we want to train and test on.
-                                            Must match with string in CSV files.
-    :type region:                           str
-
-    :param x_train:                         Training features
-    :type x_train:                          np.ndarray
-
-    :param y_train:                         Training targets
-    :type y_train:                          np.ndarray
-
-    :param x_test:                          Test features
-    :type x_test:                           np.ndarray
-
-    :param save_model:                      Choice to write ML models to a pickled file via joblib.
-    :type save_model:                       bool
-
-    :param model_output_directory:          Full path to output directory where model file will be written.
-    :type model_output_directory:           Union[str, None]
-
-    :return:                                [0] y_p: predictions over test set
-                                            [1] reg.coef_: regression coefficients of a linear model
-
-    """
-
-    # instantiate the linear model
-    linear_mod = LR()
-
-    # fit the model
-    reg = linear_mod.fit(x_train, y_train)
-
-    # get predictions using test features
-    y_p = reg.predict(x_test)
-
-    # write the model to file if desired
-    if save_model:
-        pickle_model(region=region,
-                     model_object=linear_mod,
-                     model_name="ordinary-least-squares-linear-regression",
-                     model_output_directory=model_output_directory)
-
-    return y_p, reg.coef_
 
 
 def train_mlp_model(region: str,
@@ -69,12 +16,9 @@ def train_mlp_model(region: str,
                     mlp_hidden_layer_sizes: int,
                     mlp_max_iter: int,
                     mlp_validation_fraction: float,
-                    mlp_linear_adjustment: bool,
-                    x_linear_train: Union[np.ndarray, None] = None,
-                    x_linear_test: Union[np.ndarray, None] = None,
                     save_model: bool = False,
                     model_output_directory: Union[str, None] = None) -> np.ndarray:
-    """Trains the MLP model. also calls the linear residual model to adjust for population correction.
+    """Trains the MLP model.
 
     :param region:                          Indicating region / balancing authority we want to train and test on.
                                             Must match with string in CSV files.
@@ -102,15 +46,6 @@ def train_mlp_model(region: str,
                                             stopping. Must be between 0 and 1.
     :type mlp_validation_fraction:          float
 
-    :param mlp_linear_adjustment:           True if setting up data for a linear model that will be run
-    :type mlp_linear_adjustment:            bool
-
-    :param x_linear_train:                  Training data for features from the linear model if using correction.
-    :type x_linear_train:                   Union[np.ndarray, None]
-
-    :param x_linear_test:                   Testing data for features from the linear model if using correction.
-    :type x_linear_test:                    Union[np.ndarray, None]
-
     :param save_model:                      Choice to write ML models to a pickled file via joblib.
     :type save_model:                       bool
 
@@ -131,26 +66,6 @@ def train_mlp_model(region: str,
 
     # predict using the multi-layer perceptron model using the test features
     y_p = mlp.predict(x_test)
-
-    # if the user desires, adjust the prediction using a linear residual model
-    if mlp_linear_adjustment:
-
-        # predict on training features
-        y_tmp = mlp.predict(x_train)
-
-        # compute the residuals in the training data
-        epsilon = y_train - y_tmp
-
-        # train the linear model to find residuals
-        epsilon_e, regression_coeff = train_linear_model(region=region,
-                                                         x_train=x_linear_train,
-                                                         y_train=epsilon,
-                                                         x_test=x_linear_test,
-                                                         save_model=save_model,
-                                                         model_output_directory=model_output_directory)
-
-        # apply the adjustment
-        y_p += epsilon_e
 
     # write the model to file if desired
     if save_model:
@@ -186,9 +101,6 @@ def train(region: str,
     :param mlp_validation_fraction:     The proportion of training data to set aside as validation set for early
                                         stopping. Must be between 0 and 1.
     :type mlp_validation_fraction:      Optional[float]
-
-    :param mlp_linear_adjustment:       True if you want to correct the MLP model using a linear model.
-    :type mlp_linear_adjustment:        Optional[bool]
 
     :param data_column_rename_dict:     Dictionary for the field names present in the input CSV file (keys) to what the
                                         code expects them to be (values).
@@ -263,20 +175,6 @@ def train(region: str,
                             data_dir=data_dir,
                             **kwargs)
 
-    # prepare data for linear model if adjustment is desired
-    if settings.mlp_linear_adjustment:
-        data_linear = DatasetTrain(region,
-                                   data_dir,
-                                   x_variables=settings.x_variables_linear,
-                                   **kwargs)
-
-        x_linear_train = data_linear.x_train
-        x_linear_test = data_linear.x_test
-
-    else:
-        x_linear_train = None
-        x_linear_test = None
-
     # scale model features and targets for the MLP model
     normalized_dict = normalize_features(x_train=data_mlp.x_train,
                                          x_test=data_mlp.x_test,
@@ -301,9 +199,6 @@ def train(region: str,
                                              mlp_hidden_layer_sizes=settings.mlp_hidden_layer_sizes,
                                              mlp_max_iter=settings.mlp_max_iter,
                                              mlp_validation_fraction=settings.mlp_validation_fraction,
-                                             mlp_linear_adjustment=settings.mlp_linear_adjustment,
-                                             x_linear_train=x_linear_train,
-                                             x_linear_test=x_linear_test,
                                              save_model=settings.save_model,
                                              model_output_directory=settings.model_output_directory)
 
@@ -357,9 +252,6 @@ def train_batch(target_region_list: list,
     :param mlp_validation_fraction:     The proportion of training data to set aside as validation set for early
                                         stopping. Must be between 0 and 1.
     :type mlp_validation_fraction:      Optional[float]
-
-    :param mlp_linear_adjustment:       True if you want to correct the MLP model using a linear model.
-    :type mlp_linear_adjustment:        Optional[bool]
 
     :param data_column_rename_dict:     Dictionary for the field names present in the input CSV file (keys) to what the
                                         code expects them to be (values).

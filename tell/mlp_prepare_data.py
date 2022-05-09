@@ -32,9 +32,6 @@ class DefaultSettings:
                                         stopping. Must be between 0 and 1.
     :type mlp_validation_fraction:      Optional[float]
 
-    :param mlp_linear_adjustment:       True if you want to correct the MLP model using a linear model.
-    :type mlp_linear_adjustment:        Optional[bool]
-
     :param data_column_rename_dict:     Dictionary for the field names present in the input CSV file (keys) to what the
                                         code expects them to be (values).
     :type data_column_rename_dict:      Optional[dict[str]]
@@ -129,7 +126,6 @@ class DefaultSettings:
         self.x_variables = self.settings_dict.get("x_variables")
         self.y_variables = self.settings_dict.get("y_variables")
         self.add_dayofweek_xvars = self.settings_dict.get("add_dayofweek_xvars")
-        self.mlp_linear_adjustment = self.settings_dict.get("mlp_linear_adjustment")
         self.hour_field_name = self.settings_dict.get("hour_field_name")
         self.month_field_name = self.settings_dict.get("month_field_name")
         self.year_field_name = self.settings_dict.get("year_field_name")

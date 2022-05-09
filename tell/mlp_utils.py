@@ -186,8 +186,7 @@ def load_model(model_file: str) -> object:
 
 
 def load_predictive_models(region: str,
-                           model_output_directory: Union[str, None],
-                           mlp_linear_adjustment: bool):
+                           model_output_directory: Union[str, None]):
     """Load predictive models and the normalization dictionary based off of what is stored in the package or from a
     user provided directory. The scikit-learn version being used must match the one the model was generated with.
 
@@ -198,12 +197,8 @@ def load_predictive_models(region: str,
     :param model_output_directory:          Full path to output directory where model file will be written.
     :type model_output_directory:           Union[str, None]
 
-    :param mlp_linear_adjustment:           True if you want to correct the MLP model using a linear model.
-    :type mlp_linear_adjustment:            Optional[bool]
-
     :return:                                [0] MLP model
-                                            [1] linear model or None
-                                            [2] normalization dictionary
+                                            [1] normalization dictionary
 
     """
 
@@ -218,13 +213,6 @@ def load_predictive_models(region: str,
         mlp_model_file = os.path.join("data", "models", f"{region}_{mlp_model_id}_scikit-learn-version-{sk_version}.joblib")
         mlp_model_path = pkg_resources.resource_filename("tell", mlp_model_file)
 
-        if mlp_linear_adjustment:
-
-            # get default model file
-            linear_model_id = "ordinary-least-squares-linear-regression"
-            linear_model_file = os.path.join("data", "models", f"{region}_{linear_model_id}_scikit-learn-version-{sk_version}.joblib")
-            linear_model_path = pkg_resources.resource_filename("tell", linear_model_file)
-
     else:
 
         # get provided model file
@@ -232,30 +220,14 @@ def load_predictive_models(region: str,
         mlp_model_file = f"{region}_{mlp_model_id}_scikit-learn-version-{sk_version}.joblib"
         mlp_model_path = os.path.join(model_output_directory, mlp_model_file)
 
-        if mlp_linear_adjustment:
-
-            # get provided model file
-            linear_model_id = "ordinary-least-squares-linear-regression"
-            linear_model_file = f"{region}_{linear_model_id}_scikit-learn-version-{sk_version}.joblib"
-            linear_model_path = os.path.join(model_output_directory, linear_model_file)
-
     # load the mlp model
     mlp_model = load_model(model_file=mlp_model_path)
-
-    if mlp_linear_adjustment:
-
-        # load the linear model
-        linear_model = load_model(model_file=linear_model_path)
-
-    else:
-
-        linear_model = None
 
     # load the normalization dictionary
     normalized_dict_file = os.path.join(model_output_directory, f"{region}_normalization_dict.joblib")
     normalization_dict = load_normalization_dict(normalized_dict_file)
 
-    return mlp_model, linear_model, normalization_dict
+    return mlp_model, normalization_dict
 
 
 def pickle_normalization_dict(region: str,

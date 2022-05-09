@@ -13,9 +13,6 @@ mlp_max_iter: 500
 # stopping. Must be between 0 and 1.
 mlp_validation_fraction: 0.1
 
-# True if you want to correct the MLP model using a linear model.
-mlp_linear_adjustment: True
-
 # Dictionary for the field names present in the input CSV file (keys) to what the
 # code expects them to be (values).
 data_column_rename_dict: {

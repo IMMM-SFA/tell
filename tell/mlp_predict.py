@@ -37,14 +37,6 @@ def predict(region: str,
     :param datetime_field_name:         Name of the datetime field.
     :type datetime_field_name:          str
 
-    :param mlp_linear_adjustment:       True if you want to correct the MLP model using a linear model.
-    :type mlp_linear_adjustment:        Optional[bool]
-
-    :param apply_sine_function:         True if setting up data for a linear model that will be run and will cause
-                                        the application of the sine function for hour and month fields if they
-                                        are present in the data.
-    :type apply_sine_function:          Optional[bool]
-
     :param data_column_rename_dict:     Dictionary for the field names present in the input CSV file (keys) to what the
                                         code expects them to be (values).
     :type data_column_rename_dict:      Optional[dict[str]]
@@ -73,12 +65,6 @@ def predict(region: str,
     :param seed_value:                  Seed value to reproduce randomization.
     :type seed_value:                   Optional[int]
 
-    :param x_variables_linear:          Target variable list for the linear model.
-    :type x_variables_linear:           Optional[list[str]]
-
-    :param y_variables_linear:          Feature variable list for the linear model.
-    :type y_variables_linear:           Optional[list[str]]
-
     :param verbose:                     Choice to see logged outputs.
     :type verbose:                      bool
 
@@ -101,25 +87,9 @@ def predict(region: str,
                               datetime_field_name=datetime_field_name,
                               **kwargs)
 
-    # prepare data for linear model if adjustment is desired
-    if settings.mlp_linear_adjustment:
-        data_linear = DatasetPredict(region,
-                                     year=year,
-                                     data_dir=data_dir,
-                                     datetime_field_name=datetime_field_name,
-                                     x_variables=settings.x_variables_linear,
-                                     apply_sine_function=True,
-                                     **kwargs)
-
-        x_linear_data = data_linear.x_data
-
-    else:
-        x_linear_data = None
-
     # load models and the normalization dictionary from file
-    mlp_model, linear_model, normalized_dict = load_predictive_models(region=region,
-                                                                      model_output_directory=settings.model_output_directory,
-                                                                      mlp_linear_adjustment=settings.mlp_linear_adjustment)
+    mlp_model, normalized_dict = load_predictive_models(region=region,
+                                                        model_output_directory=settings.model_output_directory)
 
     # normalize model features and targets for the MLP model
     x_mlp_norm = normalize_prediction_data(data_arr=data_mlp.x_data,
@@ -128,12 +98,6 @@ def predict(region: str,
 
     # run the MLP model with normalized data
     y_predicted_norm = mlp_model.predict(x_mlp_norm)
-
-    if settings.mlp_linear_adjustment:
-        y_predicted_linear = linear_model.predict(x_linear_data)
-
-        # apply the linear adjustment to the MLP predictions
-        y_predicted_norm += y_predicted_linear
 
     # denormalize predicted data
     y_predicted = (y_predicted_norm * (normalized_dict["max_y_train"] - normalized_dict["min_y_train"]) + normalized_dict["min_y_train"]).round(2)
@@ -198,14 +162,6 @@ def predict_batch(target_region_list: list,
     :param prediction_output_directory: Full path to output directory where prediction files will be written.
     :type prediction_output_directory:  Union[str, None]
 
-    :param mlp_linear_adjustment:       True if you want to correct the MLP model using a linear model.
-    :type mlp_linear_adjustment:        Optional[bool]
-
-    :param apply_sine_function:         True if setting up data for a linear model that will be run and will cause
-                                        the application of the sine function for hour and month fields if they
-                                        are present in the data.
-    :type apply_sine_function:          Optional[bool]
-
     :param data_column_rename_dict:     Dictionary for the field names present in the input CSV file (keys) to what the
                                         code expects them to be (values).
     :type data_column_rename_dict:      Optional[dict[str]]
@@ -233,12 +189,6 @@ def predict_batch(target_region_list: list,
 
     :param seed_value:                  Seed value to reproduce randomization.
     :type seed_value:                   Optional[int]
-
-    :param x_variables_linear:          Target variable list for the linear model.
-    :type x_variables_linear:           Optional[list[str]]
-
-    :param y_variables_linear:          Feature variable list for the linear model.
-    :type y_variables_linear:           Optional[list[str]]
 
     :param verbose:                     Choice to see logged outputs.
     :type verbose:                      bool
