@@ -57,8 +57,8 @@ def train_mlp_model(region: str,
     """
 
     # instantiate the MLP model
-    mlp = MLP(hidden_layer_sizes=mlp_hidden_layer_sizes,
-              max_iter=mlp_max_iter,
+    mlp = MLP(hidden_layer_sizes=int(mlp_hidden_layer_sizes),
+              max_iter=int(mlp_max_iter),
               validation_fraction=mlp_validation_fraction)
 
     # fit the model to data matrix X (training features) and target Y (training targets)
