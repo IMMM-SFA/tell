@@ -9,14 +9,13 @@ class TestStateFIPS(unittest.TestCase):
     def test_state_fips(self):
         """Test to ensure high level functionality of state_fips_function.py()"""
 
-        num = ['WA', 'VA', 'NC', 'RI']
-        state_fips_df = state_metadata_from_state_abbreviation(num)
+        state_fips, state_name = state_metadata_from_state_abbreviation("WA")
 
-        # check length of list
-        self.assertEqual(4, len(state_fips_df))
+        self.assertEqual(53000, state_fips)
+        self.assertEqual("Washington", state_name)
 
-        # ensure BA name column is object in df are object
-        self.assertEqual(True, all(isinstance(i, object) for i in state_fips_df['state_name']))
+        with self.assertRaises(KeyError):
+            state_fips, state_name = state_metadata_from_state_abbreviation("XX")
 
 
 if __name__ == '__main__':
