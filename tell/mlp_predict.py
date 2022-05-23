@@ -107,7 +107,7 @@ def predict(region: str,
                                   "Load": y_predicted,
                                   "BA": region})
 
-    # Save the prediction to a .csv file:
+    # save the prediction to a .csv file:
     if save_prediction:
 
         # if the subdirectory for the year being processed doesn't exist then create it:
