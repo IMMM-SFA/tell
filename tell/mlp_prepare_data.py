@@ -112,8 +112,8 @@ class DefaultSettings:
         self.settings_dict = self.update_default_settings(kwargs)
 
         # get argument defaults or custom settings
-        self.mlp_hidden_layer_sizes = self.settings_dict.get("mlp_hidden_layer_sizes")
-        self.mlp_max_iter = self.settings_dict.get("mlp_max_iter")
+        self.mlp_hidden_layer_sizes = int(self.settings_dict.get("mlp_hidden_layer_sizes"))
+        self.mlp_max_iter = int(self.settings_dict.get("mlp_max_iter"))
         self.mlp_validation_fraction = self.settings_dict.get("mlp_validation_fraction")
         self.expected_datetime_columns = self.settings_dict.get("expected_datetime_columns")
         self.data_column_rename_dict = self.settings_dict.get("data_column_rename_dict")
