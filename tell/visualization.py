@@ -345,68 +345,6 @@ def plot_mlp_ba_peak_week(prediction_df, ba_to_plot: str,
                     bbox_inches='tight', facecolor='white')
 
 
-def plot_mlp_linear_model_impact(validation_df, validation_df_nolinear,
-                                 image_output_dir: str, image_resolution: int, save_images=False):
-    """Calculate the mean impact of including a linear model to predict the residuals from TELL's MLP models.
-
-    :param validation_df:           Validation dataframe with the linear model adjustment applied
-    :type validation_df:            df
-
-    :param validation_df_nolinear:  Validation dataframe without the linear model adjustment applied
-    :type validation_df_nolinear:   df
-
-    :param image_output_dir:        Directory to store the images
-    :type image_output_dir:         str
-
-    :param image_resolution:        Resolution at which you want to save the images in DPI
-    :type image_resolution:         int
-
-    :param save_images:             Set to True if you want to save the images after they're generated
-    :type save_images:              bool
-
-    """
-
-    # Rename the variable in the validation_df_nolinear dataframe:
-    validation_df_nolinear.rename(columns={'RMS_ABS': 'RMS_ABS_NL',
-                                           'RMS_NORM': 'RMS_NORM_NL',
-                                           'MAPE': 'MAPE_NL',
-                                           'R2': 'R2_NL'}, inplace=True)
-
-    merged_df = validation_df.merge(validation_df_nolinear, on=['BA'])
-
-    # Create an x-axis the length of the dataframe to be used in plotting:
-    x_axis = np.arange(len(merged_df))
-
-    # Make the plot:
-    plt.figure(figsize=(25, 10))
-    plt.subplot(211)
-    plt.bar(x_axis - 0.2, merged_df.sort_values(by=['R2'], ascending=True)['R2'], 0.4, label='With Linear Model')
-    plt.bar(x_axis + 0.2, merged_df.sort_values(by=['R2'], ascending=True)['R2_NL'], 0.4, label='Without Linear Model')
-    plt.legend()
-    plt.xticks(x_axis, merged_df.sort_values(by=['R2'], ascending=True)['BA'], rotation=90)
-    plt.grid()
-    plt.xlabel('Balancing Authority')
-    plt.ylabel('R2')
-    plt.title('Coefficient of Determination')
-
-    plt.subplot(212)
-    plt.bar(x_axis - 0.2, merged_df.sort_values(by=['MAPE'], ascending=True)['MAPE'], 0.4, label='With Linear Model')
-    plt.bar(x_axis + 0.2, merged_df.sort_values(by=['MAPE'], ascending=True)['MAPE_NL'], 0.4, label='Without Linear Model')
-    plt.legend()
-    plt.xticks(x_axis, merged_df.sort_values(by=['MAPE'], ascending=True)['BA'], rotation=90)
-    plt.grid()
-    plt.xlabel('Balancing Authority')
-    plt.ylabel('MAPE')
-    plt.title('Mean Absolute Percentage Error')
-
-    plt.subplots_adjust(wspace=0.15, hspace=0.4)
-
-    # If the "save_images" flag is set to true then save the plot to a .png file:
-    if save_images:
-        plt.savefig(os.path.join(image_output_dir, 'MLP_Linear_Model_Impact.png'), dpi=image_resolution,
-                    bbox_inches='tight', facecolor='white')
-
-
 def plot_state_scaling_factors(year_to_plot: str, scenario_to_plot: str, data_input_dir: str, image_output_dir: str,
                                image_resolution: int, save_images=False):
     """Plot the scaling factor that force TELL annual total state loads to agree with GCAM-USA
