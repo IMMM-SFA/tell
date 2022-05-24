@@ -473,7 +473,7 @@ def map_ba_service_territory(start_year: int, end_year: int, data_input_dir: str
     """
 
     # Set the output directory based on the "raw_data_dir" variable:
-    output_dir = os.path.join(data_input_dir, r'outputs', r'ba_service_territory')
+    output_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'ba_service_territory')
 
     # If the output directory doesn't exist then create it:
     if not os.path.exists(output_dir):

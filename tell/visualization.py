@@ -36,7 +36,7 @@ def plot_ba_service_territory(ba_to_plot: str, year_to_plot: str, data_input_dir
     # Set the input directories based on the 'data_input_dir' variable:
     shapefile_input_dir = os.path.join(data_input_dir, r'tell_raw_data', r'County_Shapefiles')
     population_input_dir = os.path.join(data_input_dir, r'tell_raw_data', r'Population')
-    ba_service_territory_input_dir = os.path.join(data_input_dir, r'outputs', r'ba_service_territory')
+    ba_service_territory_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'ba_service_territory')
 
     # Read in the county shapefile and reassign the 'FIPS' variable as integers:
     counties_df = gpd.read_file(os.path.join(shapefile_input_dir, r'tl_2020_us_county.shp')).rename(columns={'GEOID': 'County_FIPS'})
@@ -370,7 +370,7 @@ def plot_state_scaling_factors(year_to_plot: str, scenario_to_plot: str, data_in
     """
 
     # Set the data input directories for the various variables you need:
-    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the states shapefile and change the geolocation variable name to state FIPS code:
     states_df = gpd.read_file(os.path.join(data_input_dir, r'tell_raw_data', r'State_Shapefiles', r'tl_2020_us_state.shp')).rename(columns={'GEOID': 'State_FIPS'})
@@ -431,7 +431,7 @@ def plot_state_annual_total_loads(year_to_plot: str, scenario_to_plot: str, data
     """
 
     # Set the data input directories for the various variables you need:
-    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the 'TELL_State_Summary_Data' .csv file and reassign the 'State_FIPS' code as an integer:
     state_summary_df = pd.read_csv((tell_data_input_dir + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'), dtype={'State_FIPS': int})
@@ -483,7 +483,7 @@ def plot_state_load_time_series(state_to_plot: str, year_to_plot: str, scenario_
     """
 
     # Set the data input directories for the various variables you need:
-    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the 'TELL_State_Summary_Data' .csv file parse the time variable:
     state_hourly_load_df = pd.read_csv((tell_data_input_dir + '/' + 'TELL_State_Hourly_Load_Data_' + year_to_plot + '.csv'), parse_dates=["Time_UTC"])
@@ -538,7 +538,7 @@ def plot_state_load_duration_curve(state_to_plot: str, year_to_plot: str, scenar
     """
 
     # Set the data input directories for the various variables you need:
-    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the 'TELL_State_Summary_Data' .csv file and parse the time variable:
     state_hourly_load_df = pd.read_csv((tell_data_input_dir + '/' + 'TELL_State_Hourly_Load_Data_' + year_to_plot + '.csv'), parse_dates=["Time_UTC"])
@@ -594,7 +594,7 @@ def plot_ba_load_time_series(ba_to_plot: str, year_to_plot: str, scenario_to_plo
     """
 
     # Set the data input directories for the various variables you need:
-    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the 'TELL_Balancing_Authority_Hourly_Load_Data' .csv file and parse the time variable:
     ba_hourly_load_df = pd.read_csv((tell_data_input_dir + '/' + 'TELL_Balancing_Authority_Hourly_Load_Data_' + year_to_plot + '.csv'),
@@ -641,7 +641,7 @@ def plot_ba_variable_correlations(ba_to_plot: str, data_input_dir: str, image_ou
     """
 
     # Set the input directory based on the 'data_input_dir' variable:
-    compiled_data_input_dir = os.path.join(data_input_dir, r'outputs', r'compiled_historical_data')
+    compiled_data_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'compiled_historical_data')
 
     if ba_to_plot != 'All':
         # Read in compiled historical data file for the BA you want to plot:

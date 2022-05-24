@@ -43,7 +43,7 @@ def eia_data_subset(file_string: str, data_input_dir: str):
     """
 
     # Set the output directory based on the "data_input_dir" variable:
-    output_dir = os.path.join(data_input_dir, r'outputs', r'historical_ba_load')
+    output_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'historical_ba_load')
 
     # If the output directory doesn't exist then create it:
     if not os.path.exists(output_dir):

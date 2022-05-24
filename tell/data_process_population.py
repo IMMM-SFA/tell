@@ -154,7 +154,7 @@ def process_ba_population_data(start_year: int, end_year: int, data_input_dir: s
     """
 
     # Set the output directory based on the "data_input_dir" variable:
-    output_dir = os.path.join(data_input_dir, r'outputs', r'historical_population')
+    output_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'historical_population')
 
     # If the output directory doesn't exist then create it:
     if not os.path.exists(output_dir):
@@ -247,7 +247,7 @@ def extract_future_ba_population(year: int, ba_code: str, scenario: str, data_in
     """
 
     # Set the input directories based on the "data_input_dir" variable:
-    map_input_dir = os.path.join(data_input_dir, r'outputs', r'ba_service_territory')
+    map_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'ba_service_territory')
     pop_input_dir = os.path.join(data_input_dir, r'sample_forcing_data', r'sample_population_projections')
 
     # Read in the BA mapping .csv file:
