@@ -67,7 +67,7 @@ def merge_mapping_data(map_input_dir: str, pop_input_dir: str, start_year: int, 
     :param end_year:                    Year to end process; four digit year (e.g., 1990)
     :type end_year:                     int
 
-    :return:                                   DataFrame
+    :return:                            DataFrame
 
     """
 
@@ -155,6 +155,8 @@ def process_ba_population_data(start_year: int, end_year: int, data_input_dir: s
 
     # Set the output directory based on the "data_input_dir" variable:
     output_dir = os.path.join(data_input_dir, r'outputs', r'historical_population')
+
+    # If the output directory doesn't exist then create it:
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -202,13 +204,10 @@ def process_ba_population_data(start_year: int, end_year: int, data_input_dir: s
     # Reorder the columns and remove the datestring variable:
     col = df_interp.pop("Year")
     df_interp.insert(0, col.name, col)
-
     col = df_interp.pop("Month")
     df_interp.insert(1, col.name, col)
-
     col = df_interp.pop("Day")
     df_interp.insert(2, col.name, col)
-
     col = df_interp.pop("Hour")
     df_interp.insert(3, col.name, col)
 
@@ -307,16 +306,12 @@ def extract_future_ba_population(year: int, ba_code: str, scenario: str, data_in
     # Reorder the columns:
     col = df_interp.pop("Year")
     df_interp.insert(0, col.name, col)
-
     col = df_interp.pop("Month")
     df_interp.insert(1, col.name, col)
-
     col = df_interp.pop("Day")
     df_interp.insert(2, col.name, col)
-
     col = df_interp.pop("Hour")
     df_interp.insert(3, col.name, col)
-
     col = df_interp.pop("Population")
     df_interp.insert(4, col.name, col)
 

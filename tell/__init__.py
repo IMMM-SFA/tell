@@ -10,6 +10,7 @@ from .data_spatial_mapping import *
 from .data_process_compile import compile_data
 from .install_raw_data import install_tell_raw_data
 from .install_forcing_data import install_sample_forcing_data
+from .install_quickstarter_data import install_quickstarter_data
 
 # ml modeling
 from .mlp_prepare_data import *
@@ -22,7 +23,6 @@ from .execute_forward import *
 
 # Visualization steps:
 from .visualization import *
-from .install_output_data import install_sample_output_data
 
 # Set the current version of TELL:
 __version__ = '0.0.1'

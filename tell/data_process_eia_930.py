@@ -12,7 +12,7 @@ def list_EIA_930_files(data_input_dir: str) -> list:
     :param data_input_dir:         Top-level data directory for TELL
     :type data_input_dir:          str
 
-    :return:                        list
+    :return:                       list
 
     """
 
