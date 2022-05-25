@@ -36,7 +36,7 @@ def plot_ba_service_territory(ba_to_plot: str, year_to_plot: str, data_input_dir
     # Set the input directories based on the 'data_input_dir' variable:
     shapefile_input_dir = os.path.join(data_input_dir, r'tell_raw_data', r'County_Shapefiles')
     population_input_dir = os.path.join(data_input_dir, r'tell_raw_data', r'Population')
-    ba_service_territory_input_dir = os.path.join(data_input_dir, r'outputs', r'ba_service_territory')
+    ba_service_territory_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'ba_service_territory')
 
     # Read in the county shapefile and reassign the 'FIPS' variable as integers:
     counties_df = gpd.read_file(os.path.join(shapefile_input_dir, r'tl_2020_us_county.shp')).rename(columns={'GEOID': 'County_FIPS'})
@@ -345,68 +345,6 @@ def plot_mlp_ba_peak_week(prediction_df, ba_to_plot: str,
                     bbox_inches='tight', facecolor='white')
 
 
-def plot_mlp_linear_model_impact(validation_df, validation_df_nolinear,
-                                 image_output_dir: str, image_resolution: int, save_images=False):
-    """Calculate the mean impact of including a linear model to predict the residuals from TELL's MLP models.
-
-    :param validation_df:           Validation dataframe with the linear model adjustment applied
-    :type validation_df:            df
-
-    :param validation_df_nolinear:  Validation dataframe without the linear model adjustment applied
-    :type validation_df_nolinear:   df
-
-    :param image_output_dir:        Directory to store the images
-    :type image_output_dir:         str
-
-    :param image_resolution:        Resolution at which you want to save the images in DPI
-    :type image_resolution:         int
-
-    :param save_images:             Set to True if you want to save the images after they're generated
-    :type save_images:              bool
-
-    """
-
-    # Rename the variable in the validation_df_nolinear dataframe:
-    validation_df_nolinear.rename(columns={'RMS_ABS': 'RMS_ABS_NL',
-                                           'RMS_NORM': 'RMS_NORM_NL',
-                                           'MAPE': 'MAPE_NL',
-                                           'R2': 'R2_NL'}, inplace=True)
-
-    merged_df = validation_df.merge(validation_df_nolinear, on=['BA'])
-
-    # Create an x-axis the length of the dataframe to be used in plotting:
-    x_axis = np.arange(len(merged_df))
-
-    # Make the plot:
-    plt.figure(figsize=(25, 10))
-    plt.subplot(211)
-    plt.bar(x_axis - 0.2, merged_df.sort_values(by=['R2'], ascending=True)['R2'], 0.4, label='With Linear Model')
-    plt.bar(x_axis + 0.2, merged_df.sort_values(by=['R2'], ascending=True)['R2_NL'], 0.4, label='Without Linear Model')
-    plt.legend()
-    plt.xticks(x_axis, merged_df.sort_values(by=['R2'], ascending=True)['BA'], rotation=90)
-    plt.grid()
-    plt.xlabel('Balancing Authority')
-    plt.ylabel('R2')
-    plt.title('Coefficient of Determination')
-
-    plt.subplot(212)
-    plt.bar(x_axis - 0.2, merged_df.sort_values(by=['MAPE'], ascending=True)['MAPE'], 0.4, label='With Linear Model')
-    plt.bar(x_axis + 0.2, merged_df.sort_values(by=['MAPE'], ascending=True)['MAPE_NL'], 0.4, label='Without Linear Model')
-    plt.legend()
-    plt.xticks(x_axis, merged_df.sort_values(by=['MAPE'], ascending=True)['BA'], rotation=90)
-    plt.grid()
-    plt.xlabel('Balancing Authority')
-    plt.ylabel('MAPE')
-    plt.title('Mean Absolute Percentage Error')
-
-    plt.subplots_adjust(wspace=0.15, hspace=0.4)
-
-    # If the "save_images" flag is set to true then save the plot to a .png file:
-    if save_images:
-        plt.savefig(os.path.join(image_output_dir, 'MLP_Linear_Model_Impact.png'), dpi=image_resolution,
-                    bbox_inches='tight', facecolor='white')
-
-
 def plot_state_scaling_factors(year_to_plot: str, scenario_to_plot: str, data_input_dir: str, image_output_dir: str,
                                image_resolution: int, save_images=False):
     """Plot the scaling factor that force TELL annual total state loads to agree with GCAM-USA
@@ -432,7 +370,7 @@ def plot_state_scaling_factors(year_to_plot: str, scenario_to_plot: str, data_in
     """
 
     # Set the data input directories for the various variables you need:
-    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the states shapefile and change the geolocation variable name to state FIPS code:
     states_df = gpd.read_file(os.path.join(data_input_dir, r'tell_raw_data', r'State_Shapefiles', r'tl_2020_us_state.shp')).rename(columns={'GEOID': 'State_FIPS'})
@@ -493,7 +431,7 @@ def plot_state_annual_total_loads(year_to_plot: str, scenario_to_plot: str, data
     """
 
     # Set the data input directories for the various variables you need:
-    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the 'TELL_State_Summary_Data' .csv file and reassign the 'State_FIPS' code as an integer:
     state_summary_df = pd.read_csv((tell_data_input_dir + '/' + 'TELL_State_Summary_Data_' + year_to_plot + '.csv'), dtype={'State_FIPS': int})
@@ -545,7 +483,7 @@ def plot_state_load_time_series(state_to_plot: str, year_to_plot: str, scenario_
     """
 
     # Set the data input directories for the various variables you need:
-    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the 'TELL_State_Summary_Data' .csv file parse the time variable:
     state_hourly_load_df = pd.read_csv((tell_data_input_dir + '/' + 'TELL_State_Hourly_Load_Data_' + year_to_plot + '.csv'), parse_dates=["Time_UTC"])
@@ -600,7 +538,7 @@ def plot_state_load_duration_curve(state_to_plot: str, year_to_plot: str, scenar
     """
 
     # Set the data input directories for the various variables you need:
-    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the 'TELL_State_Summary_Data' .csv file and parse the time variable:
     state_hourly_load_df = pd.read_csv((tell_data_input_dir + '/' + 'TELL_State_Hourly_Load_Data_' + year_to_plot + '.csv'), parse_dates=["Time_UTC"])
@@ -656,7 +594,7 @@ def plot_ba_load_time_series(ba_to_plot: str, year_to_plot: str, scenario_to_plo
     """
 
     # Set the data input directories for the various variables you need:
-    tell_data_input_dir = os.path.join(data_input_dir, r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
+    tell_data_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'tell_output', scenario_to_plot, year_to_plot)
 
     # Read in the 'TELL_Balancing_Authority_Hourly_Load_Data' .csv file and parse the time variable:
     ba_hourly_load_df = pd.read_csv((tell_data_input_dir + '/' + 'TELL_Balancing_Authority_Hourly_Load_Data_' + year_to_plot + '.csv'),
@@ -703,7 +641,7 @@ def plot_ba_variable_correlations(ba_to_plot: str, data_input_dir: str, image_ou
     """
 
     # Set the input directory based on the 'data_input_dir' variable:
-    compiled_data_input_dir = os.path.join(data_input_dir, r'outputs', r'compiled_historical_data')
+    compiled_data_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'compiled_historical_data')
 
     if ba_to_plot != 'All':
         # Read in compiled historical data file for the BA you want to plot:

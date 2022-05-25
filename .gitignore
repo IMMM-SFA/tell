@@ -1,8 +1,8 @@
-inputs/
-outputs/
+# Directories
 tell_raw_data/
+tell_quickstarter_data/
 sample_forcing_data/
-sample_output_data/
+visualizations/
 
 # package
 tell.egg-info

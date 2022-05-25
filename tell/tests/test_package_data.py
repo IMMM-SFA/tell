@@ -12,7 +12,7 @@ class TestPackageData(unittest.TestCase):
         ba_names = get_ba_abbreviations()
 
         # check length of list
-        self.assertEqual(72, len(ba_names))
+        self.assertEqual(68, len(ba_names))
 
         # ensure all values in list are strings
         self.assertEqual(True, all(isinstance(i, str) for i in ba_names))

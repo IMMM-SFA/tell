@@ -451,12 +451,12 @@ def execute_forward(year_to_process: str, scenario_to_process: str, data_input_d
 
     # Set the data input directories:
     gcam_usa_input_dir = os.path.join(data_input_dir, r'sample_forcing_data', r'sample_gcam_usa_data', scenario_to_process)
-    map_input_dir = os.path.join(data_input_dir, r'outputs', r'ba_service_territory')
-    mlp_input_dir = os.path.join(data_input_dir, r'outputs', r'mlp_output', scenario_to_process, year_to_process)
+    map_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'ba_service_territory')
+    mlp_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'mlp_output', scenario_to_process, year_to_process)
     pop_input_dir = os.path.join(data_input_dir, r'sample_forcing_data', r'sample_population_projections')
 
     # Set the data output directory:
-    data_output_dir = os.path.join(data_input_dir, 'outputs', r'tell_output', scenario_to_process, year_to_process)
+    data_output_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', 'outputs', r'tell_output', scenario_to_process, year_to_process)
 
     # Check if the data output directory exists and if not then create it:
     if os.path.exists(data_output_dir) is False:

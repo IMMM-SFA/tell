@@ -1,4 +1,4 @@
-![build](https://github.com/IMMM-SFA/tell/workflows/build/badge.svg) [![codecov](https://codecov.io/gh/IMMM-SFA/tell/branch/package/graph/badge.svg?token=URP1KWRI6U)](https://codecov.io/gh/IMMM-SFA/tell)
+![build](https://github.com/IMMM-SFA/tell/workflows/build/badge.svg) 
 
 # TELL
 

@@ -24,12 +24,12 @@ def compile_data(start_year: int, end_year: int, data_input_dir: str):
     ba_name = get_ba_abbreviations()
 
     # Set the input directories for each variable:
-    load_dir = os.path.join(data_input_dir, r'outputs', r'historical_ba_load')
-    population_dir = os.path.join(data_input_dir, r'outputs', r'historical_population')
+    load_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'historical_ba_load')
+    population_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'historical_population')
     weather_dir = os.path.join(data_input_dir, r'sample_forcing_data', r'historical_weather')
 
     # Set the output directory based on the "data_input_dir" variable:
-    output_dir = os.path.join(data_input_dir, r'outputs', r'compiled_historical_data')
+    output_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'compiled_historical_data')
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 

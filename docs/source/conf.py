@@ -21,7 +21,7 @@ project = 'TELL'
 copyright = '2022, Batelle Memorial Institute'
 author = 'Casey Burleyson, Casey McGrath'
 
-release = 'latest'
+version = 'latest'
 
 
 # -- General configuration ---------------------------------------------------
@@ -77,6 +77,3 @@ autodoc_default_options = {
     'inherited-members': True,
     'no-special-members': True,
 }
-
-import tell
-version = str(tell.__version__)

@@ -10,6 +10,9 @@ def state_metadata_from_state_abbreviation(state_abbreviation: str) -> tuple[int
 
     """
 
+    state_fips = None
+    state_name = None
+
     if state_abbreviation == 'AK': state_fips = 1000;  state_name = 'Alaska'
     if state_abbreviation == 'AL': state_fips = 1000;  state_name = 'Alabama'
     if state_abbreviation == 'AK': state_fips = 2000;  state_name = 'Alaska'
@@ -62,5 +65,8 @@ def state_metadata_from_state_abbreviation(state_abbreviation: str) -> tuple[int
     if state_abbreviation == 'WV': state_fips = 54000; state_name = 'West Virginia'
     if state_abbreviation == 'WI': state_fips = 55000; state_name = 'Wisconsin'
     if state_abbreviation == 'WY': state_fips = 56000; state_name = 'Wyoming'
+
+    if state_fips is None:
+        raise KeyError(f"There are no FIPS codes available for state abbreviation:  '{state_abbreviation}'.")
 
     return state_fips, state_name

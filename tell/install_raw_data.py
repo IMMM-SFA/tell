@@ -30,6 +30,7 @@ class InstallRawData:
         # Get the current version of TELL that is installed:
         current_version = get_distribution('tell').version
 
+        # Try to install the dataset and throw an exception if the URL is not working:
         try:
             data_link = InstallRawData.DATA_VERSION_URLS[current_version]
 

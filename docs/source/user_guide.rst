@@ -504,7 +504,7 @@ using a grid search approach. Hyperparameters were allowed to vary across BAs.
       - Yes (1) or No (0)
 
 In general, the **tell** empirical models work quite well. 76% (41/54) of the BAs have an R2 value greater than 0.75
-while 89% (48/54) have a MAPE under 10%.
+while 83% (45/54) have a MAPE under 10%.
 
 .. image:: _static/MLP_Summary_Statistics.png
    :width: 900
@@ -516,7 +516,7 @@ the data in this way demonstrates that the BAs with the poorly performing empiri
 smaller BAs. The largest BAs, which are critically important for the overall demand on the grid, generally perform quite
 well. Of the 10 BAs with the largest mean demand, 9/10 have a MAPE value under 5% and an R2 value greater than 0.85.
 Conversely, of the 10 worst performing BAs (judged by their MAPE value), 7/10 have an average hourly load less than
-1200 MWh.
+1700 MWh.
 
 .. image:: _static/MLP_Summary_Statistics_vs_Load.png
    :width: 900
