@@ -1,0 +1,77 @@
+# Default settings for the MLP module of TELL
+
+# The ith element represents the number of neurons in the ith hidden layer.
+mlp_hidden_layer_sizes: 447
+
+# Maximum number of iterations. The solver iterates until convergence
+# (determined by ‘tol’) or this number of iterations. For stochastic solvers
+# (‘sgd’, ‘adam’), note that this determines the number of epochs (how many
+# times each data point will be used), not the number of gradient steps.
+mlp_max_iter: 269
+
+# The proportion of training data to set aside as validation set for early
+# stopping. Must be between 0 and 1.
+mlp_validation_fraction: 0.2
+
+# Dictionary for the field names present in the input CSV file (keys) to what the
+# code expects them to be (values).
+data_column_rename_dict: {
+    "Adjusted_Demand_MWh": "Demand",
+    "Total_Population": "Population",
+    "T2": "Temperature",
+    "SWDOWN": "Shortwave_Radiation",
+    "GLW": "Longwave_Radiation",
+    "WSPD": "Wind_Speed",
+    "Q2": "Specific_Humidity"
+}
+
+# Expected names of the date time columns in the input CSV file.
+expected_datetime_columns: ["Day", "Month", "Year", "Hour"]
+
+# Field name of the hour field in the input CSV file.
+hour_field_name: "Hour"
+
+# Field name of the month field in the input CSV file.
+month_field_name: "Month"
+
+# Field name of the year field in the input CSV file.
+year_field_name: "Year"
+
+# Target variable list.
+x_variables: ["Hour", "Month", "Temperature", "Specific_Humidity", "Wind_Speed", "Longwave_Radiation", "Shortwave_Radiation"]
+
+# True if the user wishes to add weekday and holiday targets to the x variables.
+add_dayofweek_xvars: True
+
+# Feature variable list.
+y_variables: ["Demand"]
+
+# List of day abbreviations and their order.
+day_list: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+# Timestamp showing the datetime of for the run to start
+start_time: "2016-01-01 00:00:00"
+
+# Timestamp showing the datetime of for the run to end
+end_time: "2019-12-31 23:00:00"
+
+# Timestamp showing the datetime to split the train and test data by
+split_datetime: "2018-12-31 23:00:00"
+
+# Seed value to reproduce randomization.
+seed_value: 391
+
+# Choice to write ML models to a pickled file via joblib.
+save_model: False
+
+# Full path to output directory where model file will be written. Default uses package data.
+model_output_directory: "Default"
+
+# Choice to write predictions to a .csv file.
+save_prediction: False
+
+# Full path to output directory where prediction files will be written.
+prediction_output_directory: None
+
+# Choice to see logged outputs.
+verbose: False

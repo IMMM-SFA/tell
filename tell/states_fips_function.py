@@ -1,19 +1,18 @@
-# state_fips_functions.py
-# Casey D. Burleyson
-# Pacific Northwest National Laboratory
-# 15-Sep 2021
-
-# This contains multiple functions for looking up the metadata of a state given the state
-# abbreviation, name, or FIPS code.
-
-# Create a function to return the state FIPS code and state name given the state's abbreviation:
-def state_metadata_from_state_abbreviation(state_abbreviation):
+def state_metadata_from_state_abbreviation(state_abbreviation: str) -> tuple[int, str]:
     """
     Define the state FIPS code and state name from a given state abbreviation.
-    :param state_abbreviation: str -> state abbreviation
-    :return: state_fips: num -> state FIPS code
-    :return: state_name: str -> state name
+
+    :param state_abbreviation:          state abbreviation
+    :type state_abbreviation:           str
+
+    :return:                            [0] state FIPS code
+                                        [1] state name
+
     """
+
+    state_fips = None
+    state_name = None
+
     if state_abbreviation == 'AK': state_fips = 1000;  state_name = 'Alaska'
     if state_abbreviation == 'AL': state_fips = 1000;  state_name = 'Alabama'
     if state_abbreviation == 'AK': state_fips = 2000;  state_name = 'Alaska'
@@ -66,5 +65,8 @@ def state_metadata_from_state_abbreviation(state_abbreviation):
     if state_abbreviation == 'WV': state_fips = 54000; state_name = 'West Virginia'
     if state_abbreviation == 'WI': state_fips = 55000; state_name = 'Wisconsin'
     if state_abbreviation == 'WY': state_fips = 56000; state_name = 'Wyoming'
+
+    if state_fips is None:
+        raise KeyError(f"There are no FIPS codes available for state abbreviation:  '{state_abbreviation}'.")
 
     return state_fips, state_name

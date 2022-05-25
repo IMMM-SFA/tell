@@ -1,6 +1,8 @@
-![build](https://github.com/IMMM-SFA/tell/workflows/build/badge.svg) [![codecov](https://codecov.io/gh/IMMM-SFA/tell/branch/package/graph/badge.svg?token=URP1KWRI6U)](https://codecov.io/gh/IMMM-SFA/tell)
+![build](https://github.com/IMMM-SFA/tell/workflows/build/badge.svg) 
 
-### **`tell` is an open-source Python package for predicting future electricty load in the Lower 48 United States.**
+# TELL
+
+`tell` is an open-source Python package for predicting future electricty load in the Lower 48 United States.
 
 ## A little about `tell`
 
@@ -10,11 +12,11 @@ The Total ELectricity Load (TELL) model provides a framework that integrates asp
 
 In this quickstarter we will walk through a subset of the data used in `tell`, starting with importing the package and ending with data visualization. This allows the user to walk through the entire `tell` package in a matter of minutes. If you have more questions please feel free to visit the [Read the Docs](https://immm-sfa.github.io/tell/index.html) site for `tell`.
 
-### Load necessary packages
-```buildoutcfg
-import tell
-import os 
-import time 
+## Installing tell
+`tell` is available via GitHub repository by using the pip install functionality below.
+
+```python
+pip install git+https://github.com/IMMM-SFA/tell.git
 ```
 
 ### Install package data
@@ -22,7 +24,11 @@ import time
 **NOTE: The package data will require approximately 1.4 GB of storage.**
 
 Set the local directory where you would like to store the package data and run the function below:
-```buildoutcfg
+```python
+import tell
+import os 
+import time 
+
 # Create directory to store raw data
 current_dir =  os.path.dirname(os.getcwd())
 current_dir =  os.path.join(os.path.dirname(os.getcwd()), r'tell_valid')
@@ -40,7 +46,7 @@ In the next few code blocks we will load and manipulate the nescessary data for 
 ### 1.0 Spaitally mapping the Balancing Authorities (BAs)
 
 The code chunk below brings in the unique spatial component of <tell>, where we map the Balancing Authorities (BAs) to the Federal Information Processing Standard Publication (FIPS) codes. This allows us to assign load where it occurs spatially within the CONUS.  
-```buildoutcfg
+```python
 ## FIPS to BA code mapping ##
 #Set the start and end year for processing
 start_year = 2015
@@ -52,7 +58,7 @@ tell.map_fips_codes(start_year, end_year,raw_data_dir, current_dir)
 ### 1.1 Hourly load
 
 Here we load in the raw EIA 930 hourly load profiles for all Balancing Authorities (BAs), subset for the wanted columns only and then output the hourly load as csvs to be compiled later with population, and meteorology to be fed to the MLP model downstream for predict future load.  
-```buildoutcfg
+```python
 # Set the data input and output directories:
 eia_930_input_dir = raw_data_dir
 eia_930_output_dir = os.path.join(current_dir, r'outputs', r'hourly_ba_load')
@@ -67,7 +73,7 @@ tell.process_eia_930(eia_930_input_dir, eia_930_output_dir)
 
 For this data processing step we will load in the annual population by FIPS code, merge by FIPS code to get the correspondng BA number, sum by  year and BA number and then interpolate the annual population to hourly population in order to feed it to the MLP model downstream. 
 
-```buildoutcfg
+```python
 # Set the data input and output directories:
 population_input_dir = raw_data_dir
 map_input_dir = os.path.join(current_dir, r'outputs', r'fips_mapping_files')
@@ -82,7 +88,7 @@ tell.ba_pop_interpolate(map_input_dir, pop_input_dir, pop_output_dir, start_year
 
 Here we use the <im3components> package to load in the WRF meterology data, average WRF meteorology by county and then aggregate them into annual hourly time-series of population-weighted meteorology for each balancing authority (BA). All times are in UTC. Missing values are reported as -9999. First we download a subset of the wrf data from the Zenodo package to work with in this quickstarter. For thi subset we choose the target year of 2019.
 
-```buildoutcfg
+```python
 # Create input directory meterology data #
 wrf_input_dir =  os.path.join(current_dir, r'raw_data', r'wrf')
 if not os.path.exists(wrf_input_dir):
@@ -106,7 +112,7 @@ tell.process_wrf(wrf_input_dir, wrf_output_dir, target_yr, n_jobs=-1)
 ### 1.4 Compile hourly load, population and meterology data 
 
 Here we compile all the data processing steps above for hourly load (EIA 930), population (county FIPS) and meteorology (WRF) to get a final cleaned up dataset to use as an input to the MLP model. 
-```buildoutcfg
+```python
 # create directory to store the compiled data
 compile_output_dir =  os.path.join(current_dir, r'outputs', r'compiled_data')
 if not os.path.exists(compile_output_dir):
@@ -122,7 +128,7 @@ tell.compile_data(eia_930_output_dir, population_output_dir, wrf_output_dir, tar
 ## 2. Model training and prediction
 
 This step takes the data processed and compiled above and runs a multilayer perceptron (MLP) model to predict future hourly load. Start-time is the start-time for analysis, end-time is the end time for analysis and start_test_period is the timestamp splitting train and test data.
-```buildoutcfg
+```python
 # create the directory for the mlp output
 mlp_output_dir =  os.path.join(current_dir, r'outputs', r'mlp_output')
 if not os.path.exists(mlp_output_dir):
@@ -154,7 +160,7 @@ This script takes the .csv files produced by the TELL MLP model and distributes 
 
 Please set the directories below to your local machine preferences and run the tell.execute_forward function. 
 
-```buildoutcfg
+```python
 # Set the year to process:
 year_to_process = '2020'
 
@@ -174,7 +180,7 @@ tell.execute_forward(year_to_process, mlp_input_dir, ba_geolocation_input_dir,
 4. Model visualization
 Below are a few select model visualizations to check on model performance for select states and BAs
 
-```buildoutcfg
+```python
 # Set the data input and output directories:
 data_input_dir = data_output_dir
 image_output_dir = os.path.join(current_dir, r'outputs', r'image_output')
@@ -197,23 +203,32 @@ if save_images == 1:
     image_output_dir = os.path.join(image_output_dir, rf'{year_to_plot}')
     if not os.path.exists(image_output_dir):
         os.makedirs(image_output_dir)
+```
 
-# Plot a map of the state scaling factors:
+### Plot a map of the state scaling factors:
+```python
 tell.plot_state_scaling_factors(shapefile_input_dir, data_input_dir, year_to_plot, save_images, image_resolution,
                                 image_output_dir)
+```
 
-# Plot the state annual total loads from GCAM-USA and TELL:
+### Plot a map of the state scaling factors:
+```python
 tell.plot_state_annual_total_loads(state_summary_df, year_to_plot, save_images, image_resolution, image_output_dir)
-
-# Plot the time-series of total hourly loads for a given state by specifying either the state name or FIPS code:
+```
+### Plot the time-series of total hourly loads for a given state by specifying either the state name or FIPS code:
+```python
 tell.plot_state_load_time_series(state, state_hourly_load_df, year_to_plot, save_images, image_resolution,
                                  image_output_dir)
+```
 
-# Plot the load duration curve for a given state by specifying either the state name or FIPS code:
+### Plot the load duration curve for a given state by specifying either the state name or FIPS code:
+```python
 tell.plot_state_load_duration_curve(state, state_hourly_load_df, year_to_plot, save_images, image_resolution,
                                     image_output_dir)
+```
 
-# Plot the time-series of total hourly loads for a given BA by specifying either the BA abbreviation or BA number:
+### Plot the time-series of total hourly loads for a given BA by specifying either the BA abbreviation or BA number:
+```python
 tell.plot_ba_load_time_series(sample_ba, ba_hourly_load_df, year_to_plot, save_images, image_resolution, image_output_dir)
 ```
 
