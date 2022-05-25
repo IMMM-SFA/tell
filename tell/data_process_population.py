@@ -161,7 +161,7 @@ def process_ba_population_data(start_year: int, end_year: int, data_input_dir: s
         os.makedirs(output_dir)
 
     # Set the input directories based on the "data_input_dir" variable:
-    map_input_dir = os.path.join(data_input_dir, r'outputs', r'ba_service_territory')
+    map_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'ba_service_territory')
     pop_input_dir = os.path.join(data_input_dir, r'tell_raw_data', r'Population')
 
     # Sum the populations using the 'ba_pop_sum' function:
