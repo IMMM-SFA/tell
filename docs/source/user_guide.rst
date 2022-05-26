@@ -8,8 +8,8 @@ notebook that contains detailed step-by-step instructions on how to run **tell**
 
 About **tell**
 --------------
-The Total ELectricity Load (**tell**) model projects the short- and long-term evolution of hourly electricity demand in response to future climate
-and population changes. The purpose of **tell** is to generate end-of-century hourly profiles of electricity demand across the entire Conterminous
+The Total ELectricity Load (**tell**) model projects the short- and long-term evolution of hourly electricity demand in response to future changes in
+weather and climate. The purpose of **tell** is to generate end-of-century hourly profiles of electricity demand across the entire Conterminous
 United States (CONUS) at a spatial resolution adequate for input to a unit commitment/economic dispatch (UC/ED) model while also maintaining consistency
 with the long-term growth and evolution of annual state-level electricity demand projected by an economically driven human-Earth system model. **tell** takes
 as input future projections of the hourly time-series of meteorology and decadal populations and uses the temporal variations in weather to project
