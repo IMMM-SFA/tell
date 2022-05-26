@@ -36,8 +36,8 @@ output of ``tell`` is a series of hourly projections for future
 electricity demand at the county, state, and BA scale that are
 quantitatively and conceptually consistent with one another. More
 information about how the model works and how it can be applied are
-available on the `Read the
-Docs <https://immm-sfa.github.io/tell/index.html>`__ site for ``tell``.
+available on the `Read the Docs <https://immm-sfa.github.io/tell/>`__
+site for ``tell``.
 
 Lets get started!
 -----------------
