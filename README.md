@@ -5,9 +5,9 @@
 ### Purpose
 `tell` was created to:
 
-  - Project the short- and long-term evolution of hourly electricity demand in response to changes in weather and climate,
+  - Project the short- and long-term evolution of hourly electricity demand in response to changes in weather and climate.
 
-  - Work at a spatial resolution adequate for input to a unit commitment/economic dispatch (UC/ED) model,
+  - Work at a spatial resolution adequate for input to a unit commitment/economic dispatch (UC/ED) model.
 
   - Maintain consistency with the long-term growth and evolution of annual state-level electricity demand projected by an economically driven human-Earth system model.
 
