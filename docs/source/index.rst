@@ -18,12 +18,11 @@ TELL documentation
 `Source Repository <https://github.com/immm-sfa/tell>`__ |
 `Issues & Ideas <https://github.com/immm-sfa/tell/issues>`__
 
-`tell` is an open-source Python package for predicting future Total ELectricity Loads (TELL) in the Lower 48 United States.
-
 `tell` was created to:
-   1. Predict future hourly electricity demand by blending aspects of short-term (minutes to hours ahead) and long term (months to years ahead) load forecasting methods.
-   2. Include an explicit spatial component that allows users to relate the predicted loads to where they would occur spatially within a grid operations model.
-   3. Be implemented as a nationwide model that can be applied uniformly in any of the three grid interconnections.
+
+  1. Project the short- and long-term evolution of hourly electricity demand in response to changes in weather and climate.
+  2. Work at a spatial resolution adequate for input to a unit commitment/economic dispatch (UC/ED) model.
+  3. Maintain consistency with the long-term growth and evolution of annual state-level electricity demand projected by an economically driven human-Earth system model.
 
 .. panels::
     :card: + intro-card text-center
@@ -92,7 +91,7 @@ TELL documentation
     :titlesonly:
 
     Getting Started<README.md>
-    Quickstarter Notebook<tell_quickstarter.ipynb>
+    Quickstarter Notebook<tell_quickstarter.rst>
     User Guide<user_guide>
     API Reference<modules>
     Contributing<contributing>
