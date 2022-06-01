@@ -33,7 +33,7 @@ def extract_gcam_usa_loads(filename: str) -> DataFrame:
     for i in range(len(states)):
 
         # Subset to just the data for the state being processed:
-        subset_df = gcam_usa_df[gcam_usa_df['region'].isin([states[i]])]
+        subset_df = gcam_usa_df[gcam_usa_df['region'].isin([states[i]])].copy()
 
         # Retrieve the state metadata:
         (state_fips, state_name) = state_metadata_from_state_abbreviation(states[i])
@@ -254,7 +254,7 @@ def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, data_outp
     for i in range(len(bas)):
 
         # Subset to just the data for the BA being processed:
-        output_df = ba_output_df[ba_output_df['BA_Code'].isin([bas[i]])]
+        output_df = ba_output_df[ba_output_df['BA_Code'].isin([bas[i]])].copy()
 
         # Sum the county loads as a function of time:
         output_df['Raw_TELL_BA_Load_MWh'] = output_df.groupby('Time_UTC')['County_BA_Load_MWh'].transform('sum')
@@ -318,7 +318,7 @@ def output_tell_state_data(joint_mlp_df: DataFrame, year_to_process: str, data_o
     for i in range(len(states)):
 
         # Subset to just the data for the state being processed:
-        output_df = state_output_df[state_output_df['State_Name'].isin([states[i]])]
+        output_df = state_output_df[state_output_df['State_Name'].isin([states[i]])].copy()
 
         # Sum the county loads as a function of time:
         output_df['Raw_TELL_State_Load_MWh'] = output_df.groupby('Time_UTC')['County_BA_Load_MWh'].transform('sum')
@@ -381,7 +381,7 @@ def output_tell_county_data(joint_mlp_df: DataFrame, year_to_process: str, data_
     for i in range(len(counties)):
 
         # Subset to just the data for the county being processed:
-        output_df = county_output_df[county_output_df['County_FIPS'] == counties[i]]
+        output_df = county_output_df[county_output_df['County_FIPS'] == counties[i]].copy()
 
         # Sum the county loads as a function of time:
         output_df['Raw_TELL_County_Load_MWh'] = output_df.groupby('Time_UTC')['County_BA_Load_MWh'].transform('sum')

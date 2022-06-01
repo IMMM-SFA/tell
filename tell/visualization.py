@@ -310,7 +310,7 @@ def plot_mlp_ba_peak_week(prediction_df, ba_to_plot: str,
     prediction_df.rename(columns={'region': 'BA'}, inplace=True)
 
     # Subset to just the data for the BA you want to plot
-    subset_df = prediction_df[prediction_df['BA'].isin([ba_to_plot])]
+    subset_df = prediction_df[prediction_df['BA'].isin([ba_to_plot])].copy()
 
     # Smooth the predictions using exponentially-weighted windows:
     subset_df['Rolling_Mean'] = subset_df['predictions'].ewm(span=168).mean()
