@@ -9,8 +9,8 @@ authors:
     orcid: 0000-0002-8808-8312
     affiliation: 1
   - name: Casey D. Burleyson
-    affiliation: 1
     orchid: 0000-0001-6218-9361
+    affiliation: 1
   - name: Zarrar Khan
     orcid: 0000-0002-8147-8553
     affiliation: 2
@@ -27,26 +27,26 @@ authors:
     orcid: 0000-0002-6848-449X
     affiliation: 1
   - name: Jennie S. Rice
-    orcid: 
+    orcid: 0000-0002-7833-9456
     affiliation: 1
 affiliations:
- - name: Pacific Northwest National Laboratory, Richland, WA., USA
-   index: 1
- - name: Joint Global Change Research Institute, PNNL, College Park, MD, USA
-   index: 2
-date: 09 May 2022
+  - name: Pacific Northwest National Laboratory, Richland, WA., USA
+    index: 1
+  - name: Joint Global Change Research Institute, PNNL, College Park, MD, USA
+    index: 2
+date: 02 June 2022
 bibliography: paper.bib
 ---
 # Summary 
 The purpose of the Total ELectricity Load (`tell`) model is to generate 21st century profiles of 
 hourly electricity load (demand) across the Conterminous United States (CONUS) that reflect the 
 impact of climate and socioeconomic change at a spatial and temporal resolution adequate for input
-to an electricity grid operations model. `tell` uses Machine Learning to develop profiles that are 
+to an electricity grid operations model. `tell` uses machine learning to develop profiles that are 
 driven by projections of climate/meteorology and population. `tell` also harmonizes its results with
 United States (U.S.) state-level, annual projections from a national- to global-scale
 energy-economy model. This model accounts for a wide range of other factors affecting 
 electricity demand, including technology change in the building sector, energy prices, and 
-demand elasticities. `tell` was developed as part of the Integrated, Multisector, Multiscale 
+demand elasticities. `tell` was developed as part of the Integrated Multisector Multiscale 
 Modeling (IM3) project. IM3 explores the vulnerability and resilience of interacting energy,
 water, land, and urban systems in response to compound stressors, such as climate trends, 
 extreme events, population, urbanization, energy system transitions, and technology change.
@@ -63,7 +63,7 @@ meteorology/climate as explanatory variables, typically relying on climate trend
 include “macro” variables like the decadal evolution of population or economic indicators 
 [@al-hamadi2005; @hong2014; @lindberg2019]. There is limited research that combines short- 
 and long-term modeling approaches [e.g., @boßmann2015; @lindberg2019; @behm2020]. The most 
-relevant existing approach is Behm et al. [@behm2020], which used an Artificial Neural Network
+relevant existing approach is Behm et al. [@behm2020], which used an artificial neural network
 approach to simulate hourly electricity loads in a handful of European countries based on 
 population-weighted meteorology and date parameters and then used exogenous future annual 
 peak loads to scale their hourly projections. The scaling to future peak loads is analogous 
@@ -72,7 +72,7 @@ to how we use the national to global energy-economy model in `tell`.
 `tell` has a spatial component that allows us to distribute projected loads where they would occur 
 spatially within a high-resolution grid operations model. Most other models are for a specific 
 geographic context (i.e., a single utility or Balancing Authority [BA]) and therefore do not have 
-any spatial element to their projections [@al-hamadi2005; @hong2017; @carvallo2018; @lindberg2019].
+any spatial element to their projections [@al-hamadi2005; @hong2014; @carvallo2018; @lindberg2019].
 In contrast, `tell` is a meta-model made up of an aggregation of individual MLP models for 54 BAs. 
 `tell` covers the entire CONUS so that its output can be flexibly aggregated as input to a grid 
 operations model in any of three U.S. grid interconnections. Finally, `tell` is based entirely on 
@@ -88,7 +88,7 @@ The core predictions in `tell` are based on a series of multilayer perceptron (M
 relate historical meteorology to coincident BA-scale hourly loads for 54 independent BAs. The 
 BA load projections are first disaggregated to the county-level and then summed and scaled to 
 match the annual state-level total electricity demands projected by the U.S. version of the 
-Global Change Analysis Model (GCAM-USA) [@iyer2017; @binsted2021]. GCAM-USA is designed to 
+Global Change Analysis Model (GCAM-USA; [@iyer2017; @binsted2021]). GCAM-USA is designed to 
 capture the long-term co-evolution of energy, water, land, and economic systems. This approach 
 allows `tell` to reflect changes in the shape of the load profile due to variations in weather and 
 climate as well as the long-term evolution of energy demand due to changes in population, 
