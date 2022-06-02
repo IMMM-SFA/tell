@@ -1,3 +1,5 @@
+[![build](https://github.com/IMMM-SFA/tell/actions/workflows/build.yml/badge.svg)](https://github.com/IMMM-SFA/tell/actions/workflows/build.yml)
+
 ## tell
 
 #### `tell` is an open-source Python package to model future hourly total electricity loads.
