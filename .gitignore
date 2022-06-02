@@ -1,3 +1,19 @@
+# Directories
+tell_raw_data/
+tell_quickstarter_data/
+sample_forcing_data/
+visualizations/
+tell_data/
+
+# package
+tell.egg-info
+
+#BA metadata
+EIA_BA_match.csv
+
+# PyCharm
+.idea/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -70,7 +86,7 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+docs/build
 
 # PyBuilder
 target/

@@ -1,18 +1,37 @@
-## TELL
->
-The TELL model will generate predictions of hourly total electricity load for every county in the Continental United States (CONUS). Predictions from TELL will be scaled to match the annual state-level total electricity loads predicted by the U.S. version of the Global Change Analysis Model (GCAM-USA).
->
-## How to Run TELL
-1. Download the input data from PNNL's Institutional Computing (PIC) to your local machine<sup>*</sup>:
->
-    sftp username@constance.pnl.gov
-    cd /projects/im3/tell
-    get -r inputs
-    get -r raw_data
->
-2. Set 'input_data_directory' to point to the directory where you downloaded the data.
->
-3. 
+## tell
 
+#### `tell` is an open-source Python package to model future hourly total electricity loads.
 
-<sup>* </sup>Note that this step will eventually be replaced with instructions for downloading the input dataset from a data repository once the data packaged is finalized.
+### Purpose
+`tell` was created to:
+
+  - Project the short- and long-term evolution of hourly electricity demand in response to changes in weather and climate.
+
+  - Work at a spatial resolution adequate for input to a unit commitment/economic dispatch (UC/ED) model.
+
+  - Maintain consistency with the long-term growth and evolution of annual state-level electricity demand projected by an economically driven human-Earth system model.
+
+### Install `tell`
+
+```bash
+pip install tell
+```
+
+### Check out a quickstarter tutorial to run `tell`
+
+Run `tell` using the quickstarter tutorial: [Quickstarter](https://immm-sfa.github.io/tell/tell_quickstarter.html).
+
+### Getting started
+
+New to `tell`?  Get familiar with what `tell` is all about in our [Getting Started](https://immm-sfa.github.io/tell/index.html#) documentation.
+
+### User guide
+
+Our [User Guide](https://immm-sfa.github.io/tell/user_guide.html) provides in-depth information on the key concepts of `tell` and how the model works. 
+
+### Contributing to `tell`
+
+Whether you find a typo in the documentation, find a bug, or want to develop functionality that you think will make `tell` more robust, you are welcome to contribute. Please see our [Contribution Guidelines](https://immm-sfa.github.io/tell/contributing.html) for more details.
+
+### API reference
+The [API Reference](https://immm-sfa.github.io/tell/modules.html) contains a detailed description of the `tell` API. The reference describes how the methods work and which parameters can be used. It assumes that you have an understanding of the key concepts.
