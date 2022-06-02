@@ -21,7 +21,7 @@ project = 'TELL'
 copyright = '2022, Batelle Memorial Institute'
 author = 'Casey Burleyson, Casey McGrath'
 
-version = 'latest'
+version = 'v0.1.0'
 
 
 # -- General configuration ---------------------------------------------------
