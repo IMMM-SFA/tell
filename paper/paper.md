@@ -9,7 +9,7 @@ authors:
     orcid: 0000-0002-8808-8312
     affiliation: 1
   - name: Casey D. Burleyson
-    orchid: 0000-0001-6218-9361
+    orcid: 0000-0001-6218-9361
     affiliation: 1
   - name: Zarrar Khan
     orcid: 0000-0002-8147-8553
@@ -54,7 +54,7 @@ extreme events, population, urbanization, energy system transitions, and technol
 # Statement of Need
 To understand and plan for the resilience of the electricity system in the U.S., we need load 
 projections that are responsive to compounding anthropogenic and natural stressors and have
-sufficient spatial and temporal resolution for grid stress modeling [@oikonomou2022; @carvallo2018].
+sufficient spatial and temporal resolution for grid stress modeling [@carvallo2018; @oikonomou2022].
 `tell` fills this gap. `tell` is unique from other load projection models in several ways. It 
 coherently blends aspects of short- and long-term load projections. Short- and medium-term load
 models most commonly relate meteorology and day-of-week parameters to loads 
@@ -79,7 +79,6 @@ operations model in any of three U.S. grid interconnections. Finally, `tell` is 
 publicly available data and is being released as an extensively documented open-source code base 
 so that it can be freely and easily reused by others.
 
-
 # Design and Functionality
 `tell` integrates aspects of both short- and long-term projections of electricity demand in a coherent
 and scalable way. `tell` takes time series meteorological data at one-hour resolution as input and
@@ -88,7 +87,7 @@ The core predictions in `tell` are based on a series of multilayer perceptron (M
 relate historical meteorology to coincident BA-scale hourly loads for 54 independent BAs. The 
 BA load projections are first disaggregated to the county-level and then summed and scaled to 
 match the annual state-level total electricity demands projected by the U.S. version of the 
-Global Change Analysis Model (GCAM-USA; [@iyer2017; @binsted2021]). GCAM-USA is designed to 
+Global Change Analysis Model (GCAM-USA) [@iyer2017; @binsted2022]. GCAM-USA is designed to 
 capture the long-term co-evolution of energy, water, land, and economic systems. This approach 
 allows `tell` to reflect changes in the shape of the load profile due to variations in weather and 
 climate as well as the long-term evolution of energy demand due to changes in population, 
@@ -110,14 +109,12 @@ climate and population scenarios.
 6.	Output yearly 8760-hr time-series of total electricity demand at the county-, state-, and 
 BA-scale that are conceptually and quantitatively consistent with each other.
 
-
 ![](ISNE_graphic.png) 
 *Fig. 1. a) Time-series of observed and projected hourly electricity demand within the Independent 
 System Operator of New England (ISNE) BA during the training (2016-2019) and evaluation (2019) periods 
 for TELL; b) County-level populations within the ISNE BA service territory in 2019; c) Fraction of the 
 total population within the BA that lives in each county; and d-g) Time-series of projected hourly 
 electricity demand in 2019 for select counties based on their population weights.*
-
 
 `tell` is an open-source model that can be accessed via GitHub (https://github.com/IMMM-SFA/tell). 
 The repository also includes a Jupyter notebook that provides a walkthrough of the core functionality 
