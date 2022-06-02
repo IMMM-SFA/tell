@@ -263,34 +263,13 @@ that the sample output data in the ``tell`` quickstarter covers the
 years 2039, 2059, 2079, and 2099 so those are the only valid values for
 the ``year_to_plot`` variable in each function call.
 
-5.1. Plot a map of the state scaling factors
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The first visualization plots the state level scaling factors that force
-the annual total loads projected by ``tell`` at the state-level to agree
-with those from GCAM-USA. Values closer to 1 indicate that the models
-are in closer agreement. In this case using the sample output (which
-relies on a generic GCAM-USA simulation) means you shouldn’t read too
-much into disagreements between the two models.
-
-.. code:: ipython3
-
-    # Plot the state-level scaling factors:
-    tell.plot_state_scaling_factors(year_to_plot = '2039', 
-                                    scenario_to_plot = 'rcp85hotter_ssp5',  
-                                    data_input_dir = tell_data_dir, 
-                                    image_output_dir = tell_image_dir,
-                                    image_resolution = 150,
-                                    save_images = True)
-
-
-5.2. Plot the state annual total loads from GCAM-USA and ``tell``
+5.1. Plot the state annual total loads from GCAM-USA and ``tell``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Next we plot the annual total loads from both GCAM-USA and ``tell``. The
-data plotted here are in units of TWh and the ``tell`` values are the
-unscaled projections. The scaled projections ``tell`` are by definition
-equal to those from GCAM-USA.
+The first visualization plots the annual total loads from both GCAM-USA
+and ``tell``. The data plotted here are in units of TWh and the ``tell``
+values are the unscaled projections. The scaled projections ``tell`` are
+by definition equal to those from GCAM-USA.
 
 .. code:: ipython3
 
@@ -303,7 +282,7 @@ equal to those from GCAM-USA.
                                        save_images = True)
 
 
-5.3. Plot the time-series of total hourly loads for a given state
+5.2. Plot the time-series of total hourly loads for a given state
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Here we plot time-series of the raw (unscaled) and scaled total loads
@@ -322,7 +301,7 @@ want to plot using the \`state_to_plot” variable in the function call.
                                      save_images = True)
 
 
-5.4. Plot the load duration curve for a given state
+5.3. Plot the load duration curve for a given state
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Our last plot at the state level is the load duration curve which shows
@@ -342,7 +321,7 @@ variable in the function call.
                                         save_images = True)
 
 
-5.5. Plot the time-series of total hourly loads for a given BA
+5.4. Plot the time-series of total hourly loads for a given BA
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Our final visualization plots the time-series of the raw (unscaled) and
