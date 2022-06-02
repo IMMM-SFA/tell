@@ -51,7 +51,7 @@ Modeling (IM3) project. IM3 explores the vulnerability and resilience of interac
 water, land, and urban systems in response to compound stressors, such as climate trends, 
 extreme events, population, urbanization, energy system transitions, and technology change.
 
-# Statement of need
+# Statement of Need
 To understand and plan for the resilience of the electricity system in the U.S., we need load 
 projections that are responsive to compounding anthropogenic and natural stressors and have
 sufficient spatial and temporal resolution for grid stress modeling [@oikonomou2022; @carvallo2018].
