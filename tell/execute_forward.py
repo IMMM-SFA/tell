@@ -55,7 +55,7 @@ def extract_gcam_usa_loads(filename: str) -> DataFrame:
         if i == 0:
             gcam_usa_output_df = state_df
         else:
-            gcam_usa_output_df = gcam_usa_output_df.append(state_df)
+            gcam_usa_output_df = pd.concat([gcam_usa_output_df, state_df])
 
     return gcam_usa_output_df
 
@@ -166,8 +166,7 @@ def aggregate_mlp_output_files(list_of_files: list) -> DataFrame:
         if file == 0:
             mlp_output_df = mlp_data
         else:
-            mlp_output_df = mlp_output_df.append(mlp_data)
-
+            mlp_output_df = pd.concat([mlp_output_df, mlp_data])
     return mlp_output_df
 
 
@@ -189,8 +188,8 @@ def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, data
 
     # Make a copy of the necessary variables, drop the duplicates, and add in the "year_to_process":
     output_df = joint_mlp_df[
-        {'State_FIPS', 'State_Name', 'TELL_State_Annual_Load_TWh', 'GCAM_USA_State_Annual_Load_TWh',
-         'State_Scaling_Factor'}].copy(deep=False)
+        ['State_FIPS', 'State_Name', 'TELL_State_Annual_Load_TWh', 'GCAM_USA_State_Annual_Load_TWh',
+         'State_Scaling_Factor']].copy(deep=False)
 
     output_df = output_df.drop_duplicates()
 
@@ -245,7 +244,7 @@ def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, data_outp
 
     # Make a copy of the necessary variables:
     ba_output_df = joint_mlp_df[
-        {'Time_UTC', 'BA_Code', 'BA_Number', 'County_BA_Load_MWh', 'County_BA_Load_MWh_Scaled'}].copy(deep=False)
+        ['Time_UTC', 'BA_Code', 'BA_Number', 'County_BA_Load_MWh', 'County_BA_Load_MWh_Scaled']].copy(deep=False)
 
     # Make a list of all of the BAs in "ba_output_df":
     bas = ba_output_df['BA_Code'].unique()
@@ -275,7 +274,8 @@ def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, data_outp
         if i == 0:
             aggregate_output_df = output_df
         else:
-            aggregate_output_df = aggregate_output_df.append(output_df)
+            aggregate_output_df = pd.concat([aggregate_output_df, output_df])
+
 
     # Sort the data alphabetically by BA:
     aggregate_output_df = aggregate_output_df.sort_values(by=["BA_Code", "Time_UTC"])
@@ -308,8 +308,8 @@ def output_tell_state_data(joint_mlp_df: DataFrame, year_to_process: str, data_o
 
     # Make a copy of the necessary variables:
     state_output_df = joint_mlp_df[
-        {'Time_UTC', 'State_FIPS', 'State_Name', 'State_Scaling_Factor', 'County_BA_Load_MWh',
-         'County_BA_Load_MWh_Scaled'}].copy(deep=False)
+        ['Time_UTC', 'State_FIPS', 'State_Name', 'State_Scaling_Factor', 'County_BA_Load_MWh',
+         'County_BA_Load_MWh_Scaled']].copy(deep=False)
 
     # Make a list of all of the states in "state_output_df":
     states = state_output_df['State_Name'].unique()
@@ -341,7 +341,7 @@ def output_tell_state_data(joint_mlp_df: DataFrame, year_to_process: str, data_o
         if i == 0:
             aggregate_output_df = output_df
         else:
-            aggregate_output_df = aggregate_output_df.append(output_df)
+            aggregate_output_df = pd.concat([aggregate_output_df, output_df])
 
     # Sort the data alphabetically by state:
     aggregate_output_df = aggregate_output_df.sort_values(by=['State_Name', 'Time_UTC'])
