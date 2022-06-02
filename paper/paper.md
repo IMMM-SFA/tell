@@ -62,7 +62,7 @@ models most commonly relate meteorology and day-of-week parameters to loads
 meteorology/climate as explanatory variables, typically relying on climate trends, but also 
 include “macro” variables like the decadal evolution of population or economic indicators 
 [@al-hamadi2005; @hong2014; @lindberg2019]. There is limited research that combines short- 
-and long-term modeling approaches [e.g., @boßmann2015; @lindberg2019; @behm2020]. The most 
+and long-term modeling approaches [@boßmann2015; @lindberg2019; @behm2020]. The most 
 relevant existing approach is Behm et al. [@behm2020], which used an artificial neural network
 approach to simulate hourly electricity loads in a handful of European countries based on 
 population-weighted meteorology and date parameters and then used exogenous future annual 
