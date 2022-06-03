@@ -18,7 +18,8 @@ class InstallQuickstarterData:
 
     # URL for DOI minted example data hosted on Zenodo
     DATA_VERSION_URLS = {'0.0.1': 'https://zenodo.org/record/6578641/files/tell_quickstarter_data.zip?download=1',
-                         '0.1.0': 'https://zenodo.org/record/6578641/files/tell_quickstarter_data.zip?download=1'}
+                         '0.1.0': 'https://zenodo.org/record/6578641/files/tell_quickstarter_data.zip?download=1',
+                         '0.1.1': 'https://zenodo.org/record/6578641/files/tell_quickstarter_data.zip?download=1'}
 
     def __init__(self, data_dir=None):
 

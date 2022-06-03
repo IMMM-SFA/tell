@@ -19,7 +19,8 @@ class InstallForcingSample:
 
     # URL for DOI minted example data hosted on Zenodo
     DATA_VERSION_URLS = {'0.0.1': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
-                         '0.1.0': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1'}
+                         '0.1.0': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
+                         '0.1.1': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1'}
 
     def __init__(self, data_dir=None):
         self.data_dir = data_dir
