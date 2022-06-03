@@ -1,4 +1,5 @@
-[![build](https://github.com/IMMM-SFA/tell/actions/workflows/build.yml/badge.svg)](https://github.com/IMMM-SFA/tell/actions/workflows/build.yml)
+[![build](https://github.com/IMMM-SFA/tell/actions/workflows/build.yml/badge.svg)](https://github.com/IMMM-SFA/tell/actions/workflows/build.yml) [![DOI](https://zenodo.org/badge/305802399.svg)](https://zenodo.org/badge/latestdoi/305802399)
+
 
 ## tell
 
