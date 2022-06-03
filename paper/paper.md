@@ -1,5 +1,5 @@
 ---
-title: 'tell:  a Python package to model future total electricity loads.'
+title: 'tell:  a Python package to model future total electricity loads'
 tags:
   - Python
   - Electricity loads
@@ -34,7 +34,7 @@ affiliations:
     index: 1
   - name: Joint Global Change Research Institute, PNNL, College Park, MD, USA
     index: 2
-date: 02 June 2022
+date: 03 June 2022
 bibliography: paper.bib
 ---
 # Summary 
