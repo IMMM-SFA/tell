@@ -2,7 +2,7 @@
 User Guide
 ==========
 This user guide is meant to explain how **tell** works and the concepts that it is built upon. More information about how to
-run the model can be found in the **tell** `quickstarter <https://github.com/IMMM-SFA/tell/blob/review/crvernon/notebooks/tell_quickstarter.ipynb>`_
+run the model can be found in the **tell** `quickstarter <https://github.com/IMMM-SFA/tell/blob/main/notebooks/tell_quickstarter.ipynb>`_
 notebook that contains detailed step-by-step instructions on how to run **tell**.
 
 
@@ -468,7 +468,7 @@ so we opted not to use 2020+ data in the MLP model training or evaluation. In th
 more EIA-930 data becomes available.
 
 Details of the MLP predictive variables are included in the table below. The default parameter settings for training the MLP models are stored
-in the `mlp_settings.yml <https://github.com/IMMM-SFA/tell/blob/review/crvernon/tell/data/mlp_settings.yml>`_ file in the **tell** repository.
+in the `mlp_settings.yml <https://github.com/IMMM-SFA/tell/blob/main/tell/data/mlp_settings.yml>`_ file in the **tell** repository.
 The hyperparameters for the **tell** MLP models (e.g., hidden layer sizes, maximum iterations, and validation fraction) were determined
 using a grid search approach. Hyperparameters were allowed to vary across BAs.
 
@@ -525,7 +525,7 @@ Conversely, of the 10 worst performing BAs (judged by their MAPE value), 7/10 ha
 Because the empirical models that underpin **tell** are so critically important we created a separate analysis notebook
 where users can explore the model's performance characteristics collectively and for individual BAs. The MLP calibration
 and evaluation notebook can be found
-`here <https://github.com/IMMM-SFA/tell/blob/final_mlp_updates/notebooks/tell_mlp_calibration_evaluation.ipynb>`_.
+`here <https://github.com/IMMM-SFA/tell/blob/main/notebooks/tell_mlp_calibration_evaluation.ipynb>`_.
 
 
 Incorporating Detailed Sectoral Models
