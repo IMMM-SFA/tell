@@ -22,6 +22,11 @@ of the load profile due to variations in weather and the long-term evolution of 
 loads to where they would occur spatially within a grid operations model. The output of **tell** is a series of hourly projections of future electricity
 demand at the county-, state-, and BA-scale that are conceptually and quantitatively consistent with one another.
 
+**tell** was designed to work using data from 54 BAs the U.S. and in conjunction with the GCAM-USA model. Thus it is
+not immediately extensible to other countries (e.g., in Europe). However, the fundamental modeling approach based on MLP
+models trained on historical loads and meteorology data could easily be adapted to work in other regions with sufficient
+data.
+
 
 How It Works
 ------------
