@@ -154,6 +154,9 @@ def train(region: str,
     :param verbose:                     Choice to see logged outputs.
     :type verbose:                      bool
 
+    :return:                            [0] Predictions as a dataframe
+                                        [1] Summary statistics as a dataframe
+
     """
 
     # get project level settings data

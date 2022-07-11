@@ -1,5 +1,5 @@
 ---
-title: 'tell:  a Python package to model future total electricity loads'
+title: 'tell:  a Python package to model future total electricity loads in the United States'
 tags:
   - Python
   - Electricity loads
@@ -39,7 +39,7 @@ bibliography: paper.bib
 ---
 # Summary 
 The purpose of the Total ELectricity Load (`tell`) model is to generate 21st century profiles of 
-hourly electricity load (demand) across the Conterminous United States (CONUS) that reflect the 
+hourly electricity load (demand) across the Conterminous United States (CONUS). `tell` loads reflect the 
 impact of climate and socioeconomic change at a spatial and temporal resolution adequate for input
 to an electricity grid operations model. `tell` uses machine learning to develop profiles that are 
 driven by projections of climate/meteorology and population. `tell` also harmonizes its results with
@@ -77,7 +77,9 @@ In contrast, `tell` is a meta-model made up of an aggregation of individual MLP 
 `tell` covers the entire CONUS so that its output can be flexibly aggregated as input to a grid 
 operations model in any of three U.S. grid interconnections. Finally, `tell` is based entirely on 
 publicly available data and is being released as an extensively documented open-source code base 
-so that it can be freely and easily reused by others.
+so that it can be freely and easily reused by others. While `tell` is designed for 54 BAs in the CONUS 
+and relies on the GCAM-USA model, the core MLP modeling approach could be readily adapted to work in 
+other regions with adequate historical data.
 
 # Design and Functionality
 `tell` integrates aspects of both short- and long-term projections of electricity demand in a coherent
