@@ -4,6 +4,7 @@ tell_quickstarter_data/
 sample_forcing_data/
 visualizations/
 tell_data/
+tell/Scripts
 
 # package
 tell.egg-info
