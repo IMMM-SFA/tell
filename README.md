@@ -38,3 +38,6 @@ Whether you find a typo in the documentation, find a bug, or want to develop fun
 
 ### API reference
 The [API Reference](https://immm-sfa.github.io/tell/modules.html) contains a detailed description of the `tell` API. The reference describes how the methods work and which parameters can be used. It assumes that you have an understanding of the key concepts.
+
+### Contact/Help
+Need help with `tell` or have a comment? Please open a [new Issue](https://github.com/IMMM-SFA/tell/issues/new/choose) with your question/comments. 
