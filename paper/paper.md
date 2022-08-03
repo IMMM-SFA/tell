@@ -125,8 +125,9 @@ electricity demand in 2019 for select counties based on their population weights
 
 `tell` is an open-source model that can be accessed via the [GitHub repoistory]. 
 The repository also includes a [Jupyter notebook] that provides a walkthrough of the core functionality 
-of `tell`. Finally, more details about how the  model was formulated and its intended purpose can be 
-found in the `tell` [User Guide].
+of `tell`. This notebook also provides easy access to statistical validation results between the forecasts 
+and observed data. Finally, more details about how the  model was formulated and its intended purpose 
+can be found in the `tell` [User Guide].
 
 # Acknowledgements
 This research was supported in part by the U.S. Department of Energy, Office of Science, as part
