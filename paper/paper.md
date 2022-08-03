@@ -37,6 +37,11 @@ affiliations:
 date: 03 June 2022
 bibliography: paper.bib
 ---
+
+[GitHub repoistory]: https://github.com/IMMM-SFA/tell 
+[Jupyter notebook]: https://immm-sfa.github.io/tell/tell_quickstarter.html
+[User Guide]: https://immm-sfa.github.io/tell/user_guide.html
+
 # Summary 
 The purpose of the Total ELectricity Load (`tell`) model is to generate 21st century profiles of 
 hourly electricity load (demand) across the Conterminous United States (CONUS). `tell` loads reflect the 
@@ -76,7 +81,7 @@ any spatial element to their projections [@al-hamadi2005; @hong2014; @carvallo20
 In contrast, `tell` is a meta-model made up of an aggregation of individual MLP models for 54 BAs. 
 `tell` covers the entire CONUS so that its output can be flexibly aggregated as input to a grid 
 operations model in any of three U.S. grid interconnections. Finally, `tell` is based entirely on 
-publicly available data and is being released as an extensively documented open-source code base 
+publicly available, open data and is being released as an extensively documented open-source code base 
 so that it can be freely and easily reused by others. While `tell` is designed for 54 BAs in the CONUS 
 and relies on the GCAM-USA model, the core MLP modeling approach could be readily adapted to work in 
 other regions with adequate historical data.
@@ -118,11 +123,10 @@ for TELL; b) County-level populations within the ISNE BA service territory in 20
 total population within the BA that lives in each county; and d-g) Time-series of projected hourly 
 electricity demand in 2019 for select counties based on their population weights.*
 
-`tell` is an open-source model that can be accessed via GitHub (https://github.com/IMMM-SFA/tell). 
-The repository also includes a Jupyter notebook that provides a walkthrough of the core functionality 
-of `tell` (https://immm-sfa.github.io/tell/tell_quickstarter.html). Finally, more details about how the 
-model was formulated and its intended purpose can be found in the `tell` User Guide 
-(https://immm-sfa.github.io/tell/user_guide.html).
+`tell` is an open-source model that can be accessed via the [GitHub repoistory]. 
+The repository also includes a [Jupyter notebook] that provides a walkthrough of the core functionality 
+of `tell`. Finally, more details about how the  model was formulated and its intended purpose can be 
+found in the `tell` [User Guide].
 
 # Acknowledgements
 This research was supported in part by the U.S. Department of Energy, Office of Science, as part
