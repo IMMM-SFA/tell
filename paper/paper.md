@@ -91,8 +91,8 @@ other regions with adequate historical data.
 and scalable way. `tell` takes time series meteorological data at one-hour resolution as input and
 uses the temporal variations in weather to project hourly time-series of total electricity demand.
 The core predictions in `tell` are based on a series of multilayer perceptron (MLP) models that 
-relate historical meteorology to coincident BA-scale hourly loads for 54 independent BAs. The 
-BA load projections are first disaggregated to the county-level and then summed and scaled to 
+relate historical meteorology to coincident BA-scale hourly loads for 54 independent BAs [@scikit-learn].
+The BA load projections are first disaggregated to the county-level and then summed and scaled to 
 match the annual state-level total electricity demands projected by the U.S. version of the 
 Global Change Analysis Model (GCAM-USA) [@iyer2017; @binsted2022]. GCAM-USA is designed to 
 capture the long-term co-evolution of energy, water, land, and economic systems. This approach 
@@ -106,7 +106,7 @@ The basic workflow for `tell` proceeds in six sequential steps:
 time-series of total electricity demand for 54 BAs that report their hourly loads in the EIA-930 
 dataset (Fig. 1a).
 2.	Use the empirical models to project future hourly loads for each BA based on IM3’s future 
-climate and population scenarios.
+climate scenarios [@wrf].
 3.	Distribute the hourly loads for each BA to the counties that BA operates in and then aggregate
  the county-level hourly loads from all BAs into annual state-level loads (Fig. 1b-g).
 4.	Calculate annual state-level scaling factors that force the bottom-up annual state-level total
@@ -123,7 +123,7 @@ for TELL; b) County-level populations within the ISNE BA service territory in 20
 total population within the BA that lives in each county; and d-g) Time-series of projected hourly 
 electricity demand in 2019 for select counties based on their population weights.*
 
-`tell` is an open-source model that can be accessed via the [GitHub repoistory]. 
+`tell` is an open source model that can be accessed via the [GitHub repoistory]. 
 The repository also includes a [Jupyter notebook] that provides a walkthrough of the core functionality 
 of `tell`. This notebook also provides easy access to statistical validation results between the forecasts 
 and observed data. Finally, more details about how the  model was formulated and its intended purpose 
