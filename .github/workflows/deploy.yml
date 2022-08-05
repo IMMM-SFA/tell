@@ -1,0 +1,40 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install pandoc
+        run: |
+          sudo apt-get update -y && sudo apt-get install -y pandoc
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - name: Update pip and install python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+      - name: Build html docs
+        working-directory: 'docs/'
+        run: |
+          make html
+      - name: Commit documentation changes
+        run: |
+          cd docs/build/html
+          git init
+          git add -A
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -m 'deploy' -a || true
+      - name: Push changes to gh-pages
+        uses: ad-m/github-push-action@master
+        with:
+          branch: gh-pages
+          directory: docs/build/html
+          force: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
