@@ -51,8 +51,9 @@ driven by projections of climate/meteorology and population. `tell` also harmoni
 United States (U.S.) state-level, annual projections from a national- to global-scale
 energy-economy model. This model accounts for a wide range of other factors affecting 
 electricity demand, including technology change in the building sector, energy prices, and 
-demand elasticities. `tell` was developed as part of the Integrated Multisector Multiscale 
-Modeling (IM3) project. IM3 explores the vulnerability and resilience of interacting energy,
+demand elasticities, which stems from model coupling with the U.S. version of the 
+Global Change Analysis Model (GCAM-USA).  `tell` was developed as part of
+the Integrated Multisector Multiscale Modeling (IM3) project. IM3 explores the vulnerability and resilience of interacting energy,
 water, land, and urban systems in response to compound stressors, such as climate trends, 
 extreme events, population, urbanization, energy system transitions, and technology change.
 
