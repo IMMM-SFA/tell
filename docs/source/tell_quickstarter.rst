@@ -69,7 +69,7 @@ Windows and Mac platforms.
 2. Install the package of data underpinning ``tell``
 ----------------------------------------------------
 
-``tell`` is based on open-source publicly accessible data. For
+``tell`` is based on open, publicly accessible data. For
 convienence, we’ve packaged all of the data underpinning the ``tell``
 quickstarter notebook into a `Zenodo data
 package <https://zenodo.org/record/6578641#.Yo1R7ZPMJTY>`__. In order to
