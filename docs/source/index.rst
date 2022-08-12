@@ -28,6 +28,7 @@ TELL documentation
 accurate load forecasting (electric utilities, regulatory commissions, industrial and big commercial companies, etc.),
 researchers interested in energy system transitions, and many others in need of a framework for blending short and long-term
 load models with an explicit spatial resolution component.
+
 .. panels::
     :card: + intro-card text-center
     :column: col-lg-6 col-md-6 col-sm-6 col-xs-12 d-flex
