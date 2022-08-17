@@ -22,7 +22,7 @@ of the load profile due to variations in weather and the long-term evolution of 
 loads to where they would occur spatially within a grid operations model. The output of **tell** is a series of hourly projections of future electricity
 demand at the county-, state-, and BA-scale that are conceptually and quantitatively consistent with one another.
 
-**tell** was designed to work using data from 54 BAs the U.S. and in conjunction with the GCAM-USA model. Thus it is
+**tell** was designed to work using data from 54 BAs the U.S. and in conjunction with the GCAM-USA model. Thus, it is
 not immediately extensible to other countries (e.g., in Europe). However, the fundamental modeling approach based on MLP
 models trained on historical loads and meteorology data could easily be adapted to work in other regions with sufficient
 data.
@@ -473,9 +473,10 @@ so we opted not to use 2020+ data in the MLP model training or evaluation. In th
 more EIA-930 data becomes available.
 
 Details of the MLP predictive variables are included in the table below. The default parameter settings for training the MLP models are stored
-in the `mlp_settings.yml <https://github.com/IMMM-SFA/tell/blob/main/tell/data/mlp_settings.yml>`_ file in the **tell** repository.
+in the `mlp_settings.yml <https://github.com/IMMM-SFA/tell/blob/main/tell/data/mlp_settings.yml>`_ file in */data* folder in the **tell** repository.
 The hyperparameters for the **tell** MLP models (e.g., hidden layer sizes, maximum iterations, and validation fraction) were determined
-using a grid search approach. Hyperparameters were allowed to vary across BAs.
+using a grid search approach. Hyperparameters were allowed to vary across BAs. Default hyperparameters for each BA are
+also included in the */data/models* folder in the **tell** repository.
 
 .. list-table::
     :header-rows: 1
