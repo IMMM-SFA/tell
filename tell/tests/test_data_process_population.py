@@ -25,7 +25,7 @@ class TestExecuteFor(unittest.TestCase):
         self.assertEqual(3, pop_df.shape[1])
 
         # ensure all strings have a length greater than 0
-        self.assertEqual(True, all(len(i) > 0 for i in hourly_df['county_fips']))
+        self.assertEqual(True, all(len(i) > 0 for i in pop_df['county_fips']))
 
 
 if __name__ == '__main__':
