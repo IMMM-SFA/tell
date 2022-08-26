@@ -1,7 +1,7 @@
 import os
 import unittest
 
-import tell.execute_forward as ef
+import tell.data_process_population as dpp
 
 
 class TestExecuteFor(unittest.TestCase):
@@ -10,21 +10,22 @@ class TestExecuteFor(unittest.TestCase):
     # supporting data
     TEST_POP_DIR = os.path.join(os.path.dirname(__file__), 'data/')
 
-    def test_process_population_scenario(self):
+    def test_fips_pop_yearly(self):
         """Test to ensure high level functionality of normalize_prediction_data()"""
 
         # interpolate pop data from hourly to annual
-        hourly_df = ef.process_population_scenario(scenario_to_process='rcp45hotter_ssp3',
-                                                   population_data_input_dir=TestExecuteFor.TEST_POP_DIR)
+        pop_df = dpp.fips_pop_yearly(pop_input_dir=TestExecuteFor.TEST_POP_DIR,
+                                        start_year=2000,
+                                        end_year=2010)
 
         # check that length is as expected
-        self.assertEqual(251748, len(hourly_df))
+        self.assertEqual(209, len(pop_df))
 
         # check that length is as expected
-        self.assertEqual(3, hourly_df.shape[1])
+        self.assertEqual(3, pop_df.shape[1])
 
         # ensure all strings have a length greater than 0
-        self.assertEqual(True, all(len(i) > 0 for i in hourly_df['Year']))
+        self.assertEqual(True, all(len(i) > 0 for i in hourly_df['county_fips']))
 
 
 if __name__ == '__main__':
