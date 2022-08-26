@@ -4,7 +4,7 @@ import unittest
 import tell.data_process_population as dpp
 
 
-class TestExecuteFor(unittest.TestCase):
+class TestProcessPop(unittest.TestCase):
     """Tests for functionality within execue forward.py"""
 
     # supporting data
@@ -14,9 +14,9 @@ class TestExecuteFor(unittest.TestCase):
         """Test to ensure high level functionality of normalize_prediction_data()"""
 
         # interpolate pop data from hourly to annual
-        pop_df = dpp.fips_pop_yearly(pop_input_dir=TestExecuteFor.TEST_POP_DIR,
-                                        start_year=2000,
-                                        end_year=2010)
+        pop_df = dpp.fips_pop_yearly(pop_input_dir=TestProcessPop.TEST_POP_DIR,
+                                     start_year=2000,
+                                     end_year=2010)
 
         # check that length is as expected
         self.assertEqual(209, len(pop_df))
