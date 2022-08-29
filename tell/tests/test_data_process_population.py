@@ -25,5 +25,6 @@ class TestProcessPop(unittest.TestCase):
         # ensure all strings have a length greater than 0
         self.assertFalse(pop_df["county_FIPS"].isna().all())
 
+
 if __name__ == '__main__':
     unittest.main()
