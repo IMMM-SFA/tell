@@ -19,7 +19,11 @@ class InstallQuickstarterData:
     # URL for DOI minted example data hosted on Zenodo
     DATA_VERSION_URLS = {'0.0.1': 'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1',
                          '0.1.0': 'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1',
-                         '0.1.1': 'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1'}
+                         '0.1.1': 'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1',
+                         '0.1.2': 'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1',
+                         '0.1.3': 'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1'}
+
+    DEFAULT_VERSION = 'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1'
 
     def __init__(self, data_dir=None):
 
@@ -36,9 +40,11 @@ class InstallQuickstarterData:
             data_link = InstallQuickstarterData.DATA_VERSION_URLS[current_version]
 
         except KeyError:
-            msg = f"Link to data missing for current version: {current_version}. Please contact an administrator."
+            msg = f"Link to data missing for current version: {current_version}. Using defaultl version: {InstallQuickstarterData.DEFAULT_VERSION}"
 
-            raise KeyError(msg)
+            data_link = InstallQuickstarterData.DEFAULT_VERSION
+
+            print(msg)
 
         # Retrieve content from the URL:
         print(f"Downloading the quickstarter data package for tell version {current_version}...")
