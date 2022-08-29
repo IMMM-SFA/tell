@@ -1,3 +1,8 @@
+# built dirs
+inputs
+outputs
+
+
 # Directories
 tell_raw_data/
 tell_quickstarter_data/
