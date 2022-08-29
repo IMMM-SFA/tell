@@ -1,5 +1,5 @@
 ---
-title: 'tell:  a Python package to model future total electricity loads'
+title: 'tell:  a Python package to model future total electricity loads in the United States'
 tags:
   - Python
   - Electricity loads
@@ -34,20 +34,26 @@ affiliations:
     index: 1
   - name: Joint Global Change Research Institute, PNNL, College Park, MD, USA
     index: 2
-date: 03 June 2022
+date: 18 August 2022
 bibliography: paper.bib
 ---
+
+[GitHub Repository]: https://github.com/IMMM-SFA/tell 
+[Jupyter Notebook]: https://immm-sfa.github.io/tell/tell_quickstarter.html
+[User Guide]: https://immm-sfa.github.io/tell/user_guide.html
+
 # Summary 
 The purpose of the Total ELectricity Load (`tell`) model is to generate 21st century profiles of 
-hourly electricity load (demand) across the Conterminous United States (CONUS) that reflect the 
+hourly electricity load (demand) across the Conterminous United States (CONUS). `tell` loads reflect the 
 impact of climate and socioeconomic change at a spatial and temporal resolution adequate for input
 to an electricity grid operations model. `tell` uses machine learning to develop profiles that are 
 driven by projections of climate/meteorology and population. `tell` also harmonizes its results with
 United States (U.S.) state-level, annual projections from a national- to global-scale
 energy-economy model. This model accounts for a wide range of other factors affecting 
 electricity demand, including technology change in the building sector, energy prices, and 
-demand elasticities. `tell` was developed as part of the Integrated Multisector Multiscale 
-Modeling (IM3) project. IM3 explores the vulnerability and resilience of interacting energy,
+demand elasticities, which stems from model coupling with the U.S. version of the 
+Global Change Analysis Model (GCAM-USA). `tell` was developed as part of
+the Integrated Multisector Multiscale Modeling (IM3) project. IM3 explores the vulnerability and resilience of interacting energy,
 water, land, and urban systems in response to compound stressors, such as climate trends, 
 extreme events, population, urbanization, energy system transitions, and technology change.
 
@@ -76,16 +82,18 @@ any spatial element to their projections [@al-hamadi2005; @hong2014; @carvallo20
 In contrast, `tell` is a meta-model made up of an aggregation of individual MLP models for 54 BAs. 
 `tell` covers the entire CONUS so that its output can be flexibly aggregated as input to a grid 
 operations model in any of three U.S. grid interconnections. Finally, `tell` is based entirely on 
-publicly available data and is being released as an extensively documented open-source code base 
-so that it can be freely and easily reused by others.
+publicly available, open data and is being released as an extensively documented open-source code base 
+so that it can be freely and easily reused by others. While `tell` is designed for 54 BAs in the CONUS 
+and relies on the GCAM-USA model, the core MLP modeling approach could be readily adapted to work in 
+other regions with adequate historical data.
 
 # Design and Functionality
 `tell` integrates aspects of both short- and long-term projections of electricity demand in a coherent
 and scalable way. `tell` takes time series meteorological data at one-hour resolution as input and
 uses the temporal variations in weather to project hourly time-series of total electricity demand.
-The core predictions in `tell` are based on a series of multilayer perceptron (MLP) models that 
-relate historical meteorology to coincident BA-scale hourly loads for 54 independent BAs. The 
-BA load projections are first disaggregated to the county-level and then summed and scaled to 
+The core predictions in `tell` are based on a series of multilayer perceptron (MLP) models [@scikit-learn] that 
+relate historical meteorology to coincident BA-scale hourly loads for 54 independent BAs.
+The BA load projections are first disaggregated to the county-level and then summed and scaled to 
 match the annual state-level total electricity demands projected by the U.S. version of the 
 Global Change Analysis Model (GCAM-USA) [@iyer2017; @binsted2022]. GCAM-USA is designed to 
 capture the long-term co-evolution of energy, water, land, and economic systems. This approach 
@@ -99,7 +107,7 @@ The basic workflow for `tell` proceeds in six sequential steps:
 time-series of total electricity demand for 54 BAs that report their hourly loads in the EIA-930 
 dataset (Fig. 1a).
 2.	Use the empirical models to project future hourly loads for each BA based on IM3’s future 
-climate and population scenarios.
+climate scenarios generated using the Weather Research and Forecasting [@wrf] model.
 3.	Distribute the hourly loads for each BA to the counties that BA operates in and then aggregate
  the county-level hourly loads from all BAs into annual state-level loads (Fig. 1b-g).
 4.	Calculate annual state-level scaling factors that force the bottom-up annual state-level total
@@ -116,11 +124,11 @@ for TELL; b) County-level populations within the ISNE BA service territory in 20
 total population within the BA that lives in each county; and d-g) Time-series of projected hourly 
 electricity demand in 2019 for select counties based on their population weights.*
 
-`tell` is an open-source model that can be accessed via GitHub (https://github.com/IMMM-SFA/tell). 
-The repository also includes a Jupyter notebook that provides a walkthrough of the core functionality 
-of `tell` (https://immm-sfa.github.io/tell/tell_quickstarter.html). Finally, more details about how the 
-model was formulated and its intended purpose can be found in the `tell` User Guide 
-(https://immm-sfa.github.io/tell/user_guide.html).
+`tell` is an open source model that can be accessed via the [GitHub Repository]. 
+The repository also includes a [Jupyter Notebook] that provides a walk through of the core functionality 
+of `tell`. This notebook also provides easy access to statistical validation results between the forecasts 
+and observed data. Finally, more details about how the  model was formulated and its intended purpose 
+can be found in the `tell` [User Guide].
 
 # Acknowledgements
 This research was supported in part by the U.S. Department of Energy, Office of Science, as part

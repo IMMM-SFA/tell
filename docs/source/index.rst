@@ -24,6 +24,11 @@ TELL documentation
   2. Work at a spatial resolution adequate for input to a unit commitment/economic dispatch (UC/ED) model.
   3. Maintain consistency with the long-term growth and evolution of annual state-level electricity demand projected by an economically driven human-Earth system model.
 
+`tell` is targeted for users that are interested in grid stress modeling. This could include those whose business needs require
+accurate load forecasting (electric utilities, regulatory commissions, industrial and big commercial companies, etc.),
+researchers interested in energy system transitions, and many others in need of a framework for blending short and long-term
+load models with an explicit spatial resolution component.
+
 .. panels::
     :card: + intro-card text-center
     :column: col-lg-6 col-md-6 col-sm-6 col-xs-12 d-flex

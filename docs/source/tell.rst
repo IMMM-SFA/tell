@@ -1,7 +1,7 @@
-tell.data\_process\_compile\_df module
---------------------------------------
+tell.data\_process\_compile module
+----------------------------------
 
-.. automodule:: tell.data_process_compile_df
+.. automodule:: tell.data_process_compile
    :members:
    :undoc-members:
    :show-inheritance:
@@ -14,18 +14,18 @@ tell.data\_process\_eia\_930 module
    :undoc-members:
    :show-inheritance:
 
-tell.data\_process\_pop\_interp module
---------------------------------------
+tell.data\_process\_population module
+-------------------------------------
 
-.. automodule:: tell.data_process_pop_interp
+.. automodule:: tell.data_process_population
    :members:
    :undoc-members:
    :show-inheritance:
 
-tell.data\_process\_wrf module
-------------------------------
+tell.data\_spatial\_mapping module
+----------------------------------
 
-.. automodule:: tell.data_process_wrf
+.. automodule:: tell.data_spatial_mapping
    :members:
    :undoc-members:
    :show-inheritance:
@@ -38,34 +38,26 @@ tell.execute\_forward module
    :undoc-members:
    :show-inheritance:
 
-tell.install\_supplement module
--------------------------------
+tell.install\_forcing\_data module
+----------------------------------
 
-.. automodule:: tell.install_supplement
+.. automodule:: tell.install_forcing_data
    :members:
    :undoc-members:
    :show-inheritance:
 
-tell.install\_weather\_forcing\_sample module
----------------------------------------------
+tell.install\_quickstarter\_data module
+---------------------------------------
 
-.. automodule:: tell.install_weather_forcing_sample
+.. automodule:: tell.install_quickstarter_data
    :members:
    :undoc-members:
    :show-inheritance:
 
-tell.logger module
-------------------
+tell.install\_raw\_data module
+------------------------------
 
-.. automodule:: tell.logger
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-tell.match module
------------------
-
-.. automodule:: tell.match
+.. automodule:: tell.install_raw_data
    :members:
    :undoc-members:
    :show-inheritance:
@@ -82,6 +74,30 @@ tell.mlp\_predict module
 ------------------------
 
 .. automodule:: tell.mlp_predict
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tell.mlp\_prepare\_data module
+------------------------------
+
+.. automodule:: tell.mlp_prepare_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tell.mlp\_train module
+----------------------
+
+.. automodule:: tell.mlp_train
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tell.mlp\_utils module
+----------------------
+
+.. automodule:: tell.mlp_utils
    :members:
    :undoc-members:
    :show-inheritance:
@@ -109,3 +125,4 @@ tell.visualization module
    :members:
    :undoc-members:
    :show-inheritance:
+

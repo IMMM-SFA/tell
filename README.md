@@ -16,6 +16,9 @@
 
 ### Install `tell`
 
+`tell` is available via GitHub repository by using the pip install functionality. `tell` requires a Python version between 3.8 and 4.0 as well as a pip install to import the package. `tell` has been tested on
+Windows and Mac platforms.
+
 ```bash
 pip install tell
 ```

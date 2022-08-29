@@ -55,7 +55,9 @@ not to save these plots by setting the ``save_images`` and
 -------------------
 
 ``tell`` is available via GitHub repository by using the pip install
-functionality.
+functionality. ``tell`` requires a Python version between 3.8 and 4.0 as
+well as a pip install to import the package. ``tell`` has been tested on
+Windows and Mac platforms.
 
 .. code:: ipython3
 
@@ -67,7 +69,7 @@ functionality.
 2. Install the package of data underpinning ``tell``
 ----------------------------------------------------
 
-``tell`` is based on open-source publicly accessible data. For
+``tell`` is based on open, publicly accessible data. For
 convienence, we’ve packaged all of the data underpinning the ``tell``
 quickstarter notebook into a `Zenodo data
 package <https://zenodo.org/record/6578641#.Yo1R7ZPMJTY>`__. In order to
