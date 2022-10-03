@@ -34,6 +34,12 @@ class TestMlpUtils(unittest.TestCase):
                                    "ground_truth": [1.1, 2.2],
                                    "region": ["alpha"]*2})
 
+    COMP_EVAL_DF = pd.DataFrame({"BA": "alpha",
+                                 "RMS_ABS": [0.070711],
+                                 "RMS_NORM": [0.041595],
+                                 "MAPE": [0.022727],
+                                 "R2": [0.983471]}).round(4)
+
     def test_normalize_prediction_data(self):
         """Test to ensure high level functionality of normalize_prediction_data()"""
 
@@ -81,6 +87,18 @@ class TestMlpUtils(unittest.TestCase):
                                       datetime_arr=np.array([1.1, 2.2]))
 
         pd.testing.assert_frame_equal(TestMlpUtils.COMP_DENORM_DF, df)
+
+    def test_evaluate(self):
+        """Test to ensure high level functionality of evaluate()"""
+
+        df = mpu.evaluate(region="alpha",
+                          y_predicted=np.array([1.1, 2.2]),
+                          y_comparison=np.array([1.1, 2.3])).round(4)
+
+        print(TestMlpUtils.COMP_EVAL_DF)
+        print(df)
+
+        pd.testing.assert_frame_equal(TestMlpUtils.COMP_EVAL_DF, df)
 
 
 if __name__ == '__main__':
