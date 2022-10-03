@@ -55,6 +55,13 @@ class TestMlpUtils(unittest.TestCase):
             else:
                 np.testing.assert_array_equal(target, res[k].round(2))
 
+    def test_get_balancing_authority_to_model_dict(self):
+        """Test to ensure high level functionality of get_balancing_authority_to_model_dict()"""
+
+        d = mpu.get_balancing_authority_to_model_dict()
+
+        print(d)
+
 
 if __name__ == '__main__':
     unittest.main()
