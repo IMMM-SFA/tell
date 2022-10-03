@@ -39,3 +39,4 @@ sklearn>=0.0
 threadpoolctl>=3.1.0
 urllib3>=1.26.8
 tqdm>=4.63.0
+fastparquet>=0.8.3

@@ -3,3 +3,4 @@ include tell/data/balancing_authority_modeled.yml
 include tell/data/mlp_settings.yml
 include tell/data/hyperparameters.csv
 include tell/data/models/*
+include tell/tests/data/*

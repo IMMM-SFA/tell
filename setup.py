@@ -64,7 +64,8 @@ setup(
         'six>=1.16.0',
         'sklearn>=0.0',
         'threadpoolctl>=3.1.0',
-        'urllib3>=1.26.8'
+        'urllib3>=1.26.8',
+        'fastparquet>=0.8.3'
     ],
     extras_require={
         'dev': [
