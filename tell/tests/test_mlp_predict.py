@@ -18,7 +18,14 @@ class TestMlpPredict(unittest.TestCase):
                         year=2039,
                         data_dir=pkg_resources.resource_filename("tell", "tests/data"))
 
-        df.to_parquet(pkg_resources.resource_filename("tell", "tests/data/comp_predict.parquet"))
+        pd.testing.assert_frame_equal(TestMlpPredict.COMP_PREDICT_DF, df)
+
+    def test_predict_batch(self):
+        """Test to ensure high level functionality of predict_batch()"""
+
+        df = mp.predict_batch(target_region_list=["ERCO"],
+                              year=2039,
+                              data_dir=pkg_resources.resource_filename("tell", "tests/data"))
 
         pd.testing.assert_frame_equal(TestMlpPredict.COMP_PREDICT_DF, df)
 
