@@ -60,7 +60,7 @@ class TestMlpUtils(unittest.TestCase):
 
         d = mpu.get_balancing_authority_to_model_dict()
 
-        print(d)
+        self.assertEqual(54, len(d))
 
 
 if __name__ == '__main__':
