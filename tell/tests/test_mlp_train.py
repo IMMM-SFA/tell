@@ -11,6 +11,8 @@ class TestMlpTrain(unittest.TestCase):
     """Tests for functionality within mlp_train.py"""
 
     COMP_TRAIN_ARR = pd.read_parquet(pkg_resources.resource_filename("tell", "tests/data/comp_train.parquet"))["a"].values
+    COMP_TRAIN_PRED_DF = pd.read_parquet(pkg_resources.resource_filename("tell", "tests/data/train_data/comp_train_pred.parquet"))
+    COMP_TRAIN_VALID_DF = pd.read_parquet(pkg_resources.resource_filename("tell", "tests/data/train_data/comp_train_valid.parquet"))
 
     def test_train_mlp_model(self):
         """Test to ensure high level functionality of predict()"""
@@ -27,14 +29,27 @@ class TestMlpTrain(unittest.TestCase):
 
         np.testing.assert_array_equal(TestMlpTrain.COMP_TRAIN_ARR, arr)
 
-    # def test_predict_batch(self):
-    #     """Test to ensure high level functionality of predict_batch()"""
-    #
-    #     df = mp.predict_batch(target_region_list=["ERCO"],
-    #                           year=2039,
-    #                           data_dir=pkg_resources.resource_filename("tell", "tests/data"))
-    #
-    #     pd.testing.assert_frame_equal(TestMlpTrain.COMP_PREDICT_DF, df)
+    def test_train(self):
+        """Test to ensure high level functionality of train()"""
+
+        np.random.seed(123)
+
+        prediction_df, validation_df = mp.train(region="ERCO",
+                                                data_dir=pkg_resources.resource_filename("tell", "tests/data/train_data"))
+
+        pd.testing.assert_frame_equal(TestMlpTrain.COMP_TRAIN_PRED_DF, prediction_df)
+        pd.testing.assert_frame_equal(TestMlpTrain.COMP_TRAIN_VALID_DF, validation_df)
+
+    def test_train_batch(self):
+        """Test to ensure high level functionality of train()"""
+
+        np.random.seed(123)
+
+        prediction_df, validation_df = mp.train_batch(target_region_list=["ERCO"],
+                                                      data_dir=pkg_resources.resource_filename("tell", "tests/data/train_data"))
+
+        pd.testing.assert_frame_equal(TestMlpTrain.COMP_TRAIN_PRED_DF, prediction_df)
+        pd.testing.assert_frame_equal(TestMlpTrain.COMP_TRAIN_VALID_DF, validation_df)
 
 
 if __name__ == '__main__':
