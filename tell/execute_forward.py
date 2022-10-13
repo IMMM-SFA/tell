@@ -438,7 +438,9 @@ def output_tell_county_data(joint_mlp_df: DataFrame, year_to_process: str, gcam_
         output_df.to_csv(csv_output_filename, sep=',', index=False)
 
 
-def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_process: str, data_input_dir: str, save_county_data=False):
+def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_process: str, data_output_dir: str,
+                    gcam_usa_input_dir: str, map_input_dir: str, mlp_input_dir: str, pop_input_dir: str,
+                    save_county_data=False):
     """Takes the .csv files produced by the TELL MLP model and distributes
     the predicted load to the counties that each balancing authority (BA) operates
     in. The county-level hourly loads are then summed to the state-level and scaled
@@ -456,8 +458,20 @@ def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_pro
     :param scenario_to_process:         Scenario to process
     :type scenario_to_process:          str
 
-    :param data_input_dir:              Top-level data directory for TELL
-    :type data_input_dir:               str
+    :param data_output_dir:              Top-level data directory for TELL output
+    :type data_output_dir:               str
+
+    :param gcam_usa_input_dir:          Path to where the GCAM-USA data is stored
+    :type gcam_usa_input_dir:           str
+
+    :param map_input_dir:               Path to where the BA-to-county mapping data are stored
+    :type map_input_dir:                str
+
+    :param mlp_input_dir:               Path to where the TELL MLP output data are stored
+    :type mlp_input_dir:                str
+
+    :param pop_input_dir:                Path to where the population projection data are stored
+    :type pop_input_dir:                str
 
     :param save_county_data:            Set to True if you want to save the time-series of load for each county
     :type save_county_data:             bool
@@ -472,21 +486,15 @@ def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_pro
     begin_time = datetime.datetime.now()
     print('Start time = ', begin_time)
 
-    # Set the data input directories:
-    gcam_usa_input_dir = os.path.join(data_input_dir, r'sample_forcing_data', r'sample_gcam_usa_data')
-    map_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'ba_service_territory')
-    mlp_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'mlp_output', scenario_to_process, year_to_process)
-    pop_input_dir = os.path.join(data_input_dir, r'sample_forcing_data', r'sample_population_projections')
-
     # Set the data output directory:
-    data_output_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', 'outputs', r'tell_output', scenario_to_process, year_to_process)
+    data_output_dir_full = os.path.join(data_output_dir, scenario_to_process, gcam_target_year)
 
     # Check if the data output directory exists and if not then create it:
-    if os.path.exists(data_output_dir) is False:
-        os.makedirs(data_output_dir)
+    if os.path.exists(data_output_dir_full) is False:
+        os.makedirs(data_output_dir_full)
     if save_county_data:
-        if os.path.exists(os.path.join(data_output_dir, 'County_Level_Data')) is False:
-            os.mkdir(os.path.join(data_output_dir, 'County_Level_Data'))
+        if os.path.exists(os.path.join(data_output_dir_full, 'County_Level_Data')) is False:
+            os.mkdir(os.path.join(data_output_dir_full, 'County_Level_Data'))
 
     # Load in the sample GCAM-USA output file and subset the data to only the "year_to_process":
     gcam_usa_df = extract_gcam_usa_loads(scenario_to_process = 'rcp85cooler_ssp5',
@@ -514,7 +522,7 @@ def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_pro
     mapping_df = mapping_df.dropna()
 
     # Create a list of all of the MLP output files in the "mlp_input_dir" and aggregate the files in that list:
-    mlp_filelist = sorted(glob.glob(os.path.join(mlp_input_dir, '*_mlp_output.csv')))
+    mlp_filelist = sorted(glob.glob(os.path.join(mlp_input_dir, scenario_to_process, year_to_process, '*_mlp_output.csv')))
     mlp_output_df = aggregate_mlp_output_files(mlp_filelist)
 
     # Merge the "mapping_df" with "mlp_output_df" using BA codes to merge on:
@@ -536,13 +544,13 @@ def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_pro
     joint_mlp_df['County_BA_Load_MWh_Scaled'] = joint_mlp_df['County_BA_Load_MWh'].mul(joint_mlp_df['State_Scaling_Factor'])
 
     # Output the resulting projections using the output functions:
-    summary_df = output_tell_summary_data(joint_mlp_df, year_to_process, gcam_target_year, data_output_dir)
-    ba_time_series_df = output_tell_ba_data(joint_mlp_df, year_to_process, gcam_target_year, data_output_dir)
-    state_time_series_df = output_tell_state_data(joint_mlp_df, year_to_process, gcam_target_year, data_output_dir)
+    summary_df = output_tell_summary_data(joint_mlp_df, year_to_process, gcam_target_year, data_output_dir_full)
+    ba_time_series_df = output_tell_ba_data(joint_mlp_df, year_to_process, gcam_target_year, data_output_dir_full)
+    state_time_series_df = output_tell_state_data(joint_mlp_df, year_to_process, gcam_target_year, data_output_dir_full)
 
     # If the "save_county_data" flag is set to true then save the time-series of demand for each county:
     if save_county_data:
-        output_tell_county_data(joint_mlp_df, year_to_process, gcam_target_year, data_output_dir)
+        output_tell_county_data(joint_mlp_df, year_to_process, gcam_target_year, data_output_dir_full)
 
     # Output the end time and elapsed time in order to benchmark the run time:
     print('End time = ', datetime.datetime.now())
