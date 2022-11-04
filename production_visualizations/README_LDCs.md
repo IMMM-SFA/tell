@@ -10,7 +10,12 @@ and state simulated by the TELL model.
 demonstrate variability in peak loads.
 >
 ## Summary Figures
+The figures below show box-plots of the mean difference between annual load profiles (e.g., each year from 2020-2030 
+) and the center year profile (e.g., 2025) for all states and BAs. The top panel shows the distribution of the actual 
+load difference in MWh and the bottom panel shows the distribution of the relative difference (i.e., [Year - 
+Center Year] /  Center Year).
 ![State_Peak_Load_Bias_Plot](rcp85hotter_ssp5/Peak_Load_Variability_States_Top_168_rcp85hotter_ssp5.png)
+![BA_Peak_Load_Bias_Plot](rcp85hotter_ssp5/Peak_Load_Variability_BAs_Top_168_rcp85hotter_ssp5.png)
 
 ## Balancing Authority Analyses
 >
