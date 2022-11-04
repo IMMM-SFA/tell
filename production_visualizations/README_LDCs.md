@@ -9,6 +9,9 @@ and state simulated by the TELL model.
 1. Right now the plots are set to focus on the highest 168 hours (7 days) of load for each BA and state. This helps to
 demonstrate variability in peak loads.
 >
+## Summary Figures
+![State_Peak_Load_Bias_Plot](rcp85hotter_ssp5/Peak_Load_Variability_States_Top_168_rcp85hotter_ssp5.png)
+
 ## Balancing Authority Analyses
 >
 | Name | rcp85cooler_ssp3 | rcp85cooler_ssp5 | rcp85hotter_ssp3 | rcp85hotter_ssp5 |
