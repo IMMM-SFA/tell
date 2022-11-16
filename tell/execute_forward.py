@@ -32,13 +32,13 @@ def extract_gcam_usa_loads(scenario_to_process: str, filename: str) -> DataFrame
     gcam_usa_df = gcam_usa_df[gcam_usa_df['param'].isin(['elecFinalBySecTWh'])]
 
     # Make a list of all of the states in the "gcam_usa_df":
-    states = gcam_usa_df['region'].unique()
+    states = gcam_usa_df['subRegion'].unique()
 
     # Loop over the states and interpolate their loads to an annual time step:
     for i in range(len(states)):
 
         # Subset to just the data for the state being processed:
-        subset_df = gcam_usa_df[gcam_usa_df['region'].isin([states[i]])].copy()
+        subset_df = gcam_usa_df[gcam_usa_df['subRegion'].isin([states[i]])].copy()
 
         # Retrieve the state metadata:
         (state_fips, state_name) = state_metadata_from_state_abbreviation(states[i])
@@ -132,7 +132,7 @@ def process_population_scenario(scenario_to_process: str, population_data_input_
     population_interp_df['Year'] = population_interp_df['yr'].dt.year
     population_interp_df.drop(columns=['yr'], inplace=True)
 
-    # Reorder the columns, convert the FIPS values from strings to integeers, round the population projections
+    # Reorder the columns, convert the FIPS values from strings to integers, round the population projections
     # to whole numbers, and sort the dataframe by FIPS code then year:
     population_interp_df = population_interp_df[['County_FIPS', 'Year', 'Population']]
     population_interp_df['County_FIPS'] = population_interp_df['County_FIPS'].astype(int)
@@ -213,9 +213,9 @@ def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, gcam
 
     # Round off the values to make the output file more readable:
     output_df['State_FIPS'] = output_df['State_FIPS'].round(0)
-    output_df['Raw_TELL_Load_TWh'] = output_df['Raw_TELL_Load_TWh'].round(2)
-    output_df['GCAM_USA_Load_TWh'] = output_df['GCAM_USA_Load_TWh'].round(2)
-    output_df['Scaled_TELL_Load_TWh'] = output_df['Scaled_TELL_Load_TWh'].round(2)
+    output_df['Raw_TELL_Load_TWh'] = output_df['Raw_TELL_Load_TWh'].round(5)
+    output_df['GCAM_USA_Load_TWh'] = output_df['GCAM_USA_Load_TWh'].round(5)
+    output_df['Scaled_TELL_Load_TWh'] = output_df['Scaled_TELL_Load_TWh'].round(5)
     output_df['Scaling_Factor'] = output_df['Scaling_Factor'].round(5)
 
     # Reorder the columns, fill in missing values, and sort alphabetically by state name:
@@ -497,7 +497,7 @@ def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_pro
             os.mkdir(os.path.join(data_output_dir_full, 'County_Level_Data'))
 
     # Load in the sample GCAM-USA output file and subset the data to only the "year_to_process":
-    gcam_usa_df = extract_gcam_usa_loads(scenario_to_process = 'rcp85cooler_ssp5',
+    gcam_usa_df = extract_gcam_usa_loads(scenario_to_process = scenario_to_process,
                                          filename = (os.path.join(gcam_usa_input_dir, 'gcamDataTable_aggParam.csv')))
     gcam_usa_df = gcam_usa_df[gcam_usa_df['Year'] == int(gcam_target_year)]
 
