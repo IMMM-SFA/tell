@@ -25,8 +25,14 @@ def extract_gcam_usa_loads(scenario_to_process: str, filename: str) -> DataFrame
     # Load in the raw GCAM-USA output file:
     gcam_usa_df = pd.read_csv(filename, index_col=None, header=0)
 
+    # Cluge the scenario for historical runs:
+    if scenario_to_process == 'historic':
+       scenario_to_process_gcam = 'rcp45cooler_ssp3'
+    else:
+       scenario_to_process_gcam = scenario_to_process
+
     # Subset the data to only the scenario you want to process:
-    gcam_usa_df = gcam_usa_df[gcam_usa_df['scenario'].isin([scenario_to_process])]
+    gcam_usa_df = gcam_usa_df[gcam_usa_df['scenario'].isin([scenario_to_process_gcam])]
 
     # Subset the data to only the total annual consumption of electricity by state:
     gcam_usa_df = gcam_usa_df[gcam_usa_df['param'].isin(['elecFinalBySecTWh'])]
@@ -78,66 +84,104 @@ def process_population_scenario(scenario_to_process: str, population_data_input_
 
     """
 
-    if scenario_to_process == 'rcp45cooler_ssp3':
-        scenario_string = 'ssp3'
-    if scenario_to_process == 'rcp45cooler_ssp5':
-        scenario_string = 'ssp5'
-    if scenario_to_process == 'rcp45hotter_ssp3':
-        scenario_string = 'ssp3'
-    if scenario_to_process == 'rcp45hotter_ssp5':
-        scenario_string = 'ssp5'
-    if scenario_to_process == 'rcp85cooler_ssp3':
-        scenario_string = 'ssp3'
-    if scenario_to_process == 'rcp85cooler_ssp5':
-        scenario_string = 'ssp5'
-    if scenario_to_process == 'rcp85hotter_ssp3':
-        scenario_string = 'ssp3'
-    if scenario_to_process == 'rcp85hotter_ssp5':
-        scenario_string = 'ssp5'
+    if scenario_to_process == 'historic':
+        # Read in the raw county-level population .csv file from the U.S. Census Bureau:
+        df_pop = pd.read_csv(population_data_input_dir + '/county_populations_2000_to_2020.csv')
 
-    # Read in the raw file:
-    population_df = pd.read_csv(os.path.join(population_data_input_dir, f"{scenario_string}_county_population.csv"),
-                                dtype={'FIPS': str})
+        # Loop over the range of years defined by the 'start_year' and 'end_year' variables:
+        for y in range(2000, 2020 + 1):
 
-    # Drop the 'state_name' column and rename the "FIPS" column:
-    population_df.drop(columns=['state_name'], inplace=True)
-    population_df.rename(columns={'FIPS': 'County_FIPS'}, inplace=True)
+            # Only keep columns that are needed:
+            key = [f'pop_{y}', 'county_FIPS']
 
-    # Set county FIPS code as the index variable:
-    population_df.set_index('County_FIPS', inplace=True)
+            # Change the variable name for population for the year:
+            df_pop_yr = df_pop[key].copy()
 
-    # Transpose the dataframe:
-    population_dft = population_df.T
+            # Assign a new variable to indicate the year:
+            df_pop_yr['year'] = y
 
-    # Bring the index back into the dataframe:
-    population_dft.reset_index(inplace=True)
+            # Rename some columns for consistency:
+            df_pop_yr.rename(columns={f'pop_{y}': 'population'}, inplace=True)
 
-    # Rename the index column as "yr":
-    population_dft.rename(columns={'index': 'yr'}, inplace=True)
+            # Concatenate all the years into a single dataframe:
+            if y == 2000:
+                population_interp_df = df_pop_yr.copy()
+            else:
+                population_interp_df = pd.concat([population_interp_df, df_pop_yr])
 
-    # Convert the year to a datetime variable:
-    population_dft['yr'] = pd.to_datetime(population_dft['yr'])
+        # Rename the some variables for consistency:
+        population_interp_df.rename(columns={'population': 'Population',
+                                             'year': 'Year',
+                                             'county_FIPS': 'County_FIPS'}, inplace=True)
 
-    # Set the year as the index variable:
-    population_dft.set_index('yr', inplace=True)
+        # Reorder the columns, convert the FIPS values from strings to integers, round the population projections
+        # to whole numbers, and sort the dataframe by FIPS code then year:
+        population_interp_df = population_interp_df[['County_FIPS', 'Year', 'Population']]
+        population_interp_df['County_FIPS'] = population_interp_df['County_FIPS'].astype(int)
+        population_interp_df['Population'] = population_interp_df['Population'].round(0).astype(int)
+        population_interp_df = population_interp_df.sort_values(['County_FIPS', 'Year'])
 
-    # Interpolate the populations to an annual time-step and transpose the results:
-    population_interp_df = population_dft.resample('1Y').mean().interpolate('linear').T
+    else:
+        if scenario_to_process == 'rcp45cooler_ssp3':
+            scenario_string = 'ssp3'
+        if scenario_to_process == 'rcp45cooler_ssp5':
+            scenario_string = 'ssp5'
+        if scenario_to_process == 'rcp45hotter_ssp3':
+            scenario_string = 'ssp3'
+        if scenario_to_process == 'rcp45hotter_ssp5':
+            scenario_string = 'ssp5'
+        if scenario_to_process == 'rcp85cooler_ssp3':
+            scenario_string = 'ssp3'
+        if scenario_to_process == 'rcp85cooler_ssp5':
+            scenario_string = 'ssp5'
+        if scenario_to_process == 'rcp85hotter_ssp3':
+            scenario_string = 'ssp3'
+        if scenario_to_process == 'rcp85hotter_ssp5':
+            scenario_string = 'ssp5'
 
-    # Convert the dataframe from a wide format to a long format and name the population variable:
-    population_interp_df = population_interp_df.stack().reset_index()
-    population_interp_df.rename(columns={0: 'Population'}, inplace=True)
+        # Read in the raw file:
+        population_df = pd.read_csv(os.path.join(population_data_input_dir, f"{scenario_string}_county_population.csv"),
+                                    dtype={'FIPS': str})
 
-    # Change the time variable to only the year value:
-    population_interp_df['Year'] = population_interp_df['yr'].dt.year
-    population_interp_df.drop(columns=['yr'], inplace=True)
+        # Drop the 'state_name' column and rename the "FIPS" column:
+        population_df.drop(columns=['state_name'], inplace=True)
+        population_df.rename(columns={'FIPS': 'County_FIPS'}, inplace=True)
 
-    # Reorder the columns, convert the FIPS values from strings to integers, round the population projections
-    # to whole numbers, and sort the dataframe by FIPS code then year:
-    population_interp_df = population_interp_df[['County_FIPS', 'Year', 'Population']]
-    population_interp_df['County_FIPS'] = population_interp_df['County_FIPS'].astype(int)
-    population_interp_df['Population'] = population_interp_df['Population'].round(0).astype(int)
-    population_interp_df = population_interp_df.sort_values(['County_FIPS', 'Year'])
+        # Set county FIPS code as the index variable:
+        population_df.set_index('County_FIPS', inplace=True)
+
+        # Transpose the dataframe:
+        population_dft = population_df.T
+
+        # Bring the index back into the dataframe:
+        population_dft.reset_index(inplace=True)
+
+        # Rename the index column as "yr":
+        population_dft.rename(columns={'index': 'yr'}, inplace=True)
+
+        # Convert the year to a datetime variable:
+        population_dft['yr'] = pd.to_datetime(population_dft['yr'])
+
+        # Set the year as the index variable:
+        population_dft.set_index('yr', inplace=True)
+
+        # Interpolate the populations to an annual time-step and transpose the results:
+        population_interp_df = population_dft.resample('1Y').mean().interpolate('linear').T
+
+        # Convert the dataframe from a wide format to a long format and name the population variable:
+        population_interp_df = population_interp_df.stack().reset_index()
+        population_interp_df.rename(columns={0: 'Population'}, inplace=True)
+
+        # Change the time variable to only the year value:
+        population_interp_df['Year'] = population_interp_df['yr'].dt.year
+        population_interp_df.drop(columns=['yr'], inplace=True)
+
+        # Reorder the columns, convert the FIPS values from strings to integers, round the population projections
+        # to whole numbers, and sort the dataframe by FIPS code then year:
+        population_interp_df = population_interp_df[['County_FIPS', 'Year', 'Population']]
+        population_interp_df['County_FIPS'] = population_interp_df['County_FIPS'].astype(int)
+        population_interp_df['Population'] = population_interp_df['Population'].round(0).astype(int)
+        population_interp_df = population_interp_df.sort_values(['County_FIPS', 'Year'])
 
     return population_interp_df
 
@@ -508,7 +552,10 @@ def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_pro
     population_df = process_population_scenario(scenario_to_process, pop_input_dir)
 
     # Subset to only the year being processed:
-    population_df = population_df.loc[(population_df['Year'] == int(year_to_process))]
+    if (scenario_to_process == 'historic') and (int(year_to_process) < 2000):
+       population_df = population_df.loc[(population_df['Year'] == 2000)]
+    else:
+       population_df = population_df.loc[(population_df['Year'] == int(year_to_process))]
 
     # Only keep the columns that are needed:
     population_df = population_df[['County_FIPS', 'Population']].copy()
