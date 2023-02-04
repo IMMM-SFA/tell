@@ -25,18 +25,6 @@ def extract_gcam_usa_loads(scenario_to_process: str, filename: str) -> DataFrame
     # Load in the raw GCAM-USA output file:
     gcam_usa_df = pd.read_csv(filename, index_col=None, header=0)
 
-    # Cluge the scenario for historical runs:
-    if scenario_to_process == 'historic':
-       scenario_to_process_gcam = 'rcp45cooler_ssp3'
-    else:
-       scenario_to_process_gcam = scenario_to_process
-
-    # Subset the data to only the scenario you want to process:
-    gcam_usa_df = gcam_usa_df[gcam_usa_df['scenario'].isin([scenario_to_process_gcam])]
-
-    # Subset the data to only the total annual consumption of electricity by state:
-    gcam_usa_df = gcam_usa_df[gcam_usa_df['param'].isin(['elecFinalBySecTWh'])]
-
     # Make a list of all of the states in the "gcam_usa_df":
     states = gcam_usa_df['subRegion'].unique()
 
@@ -49,15 +37,25 @@ def extract_gcam_usa_loads(scenario_to_process: str, filename: str) -> DataFrame
         # Retrieve the state metadata:
         (state_fips, state_name) = state_metadata_from_state_abbreviation(states[i])
 
-        # Linearly interpolate the 5-year loads from GCAM-USA to an annual time step:
+        # Linearly interpolate the 5-year non-transportation loads from GCAM-USA to an annual time step:
         annual_time_vector = pd.Series(range(subset_df['x'].min(), subset_df['x'].max()))
         interpolation_function = interpolate.interp1d(subset_df['x'], subset_df['value'], kind='linear')
-        annual_loads = interpolation_function(annual_time_vector)
+        annual_non_transportation_loads = interpolation_function(annual_time_vector)
+
+        # Linearly interpolate the 5-year transportation loads from GCAM-USA to an annual time step:
+        annual_time_vector = pd.Series(range(subset_df['x'].min(), subset_df['x'].max()))
+        interpolation_function = interpolate.interp1d(subset_df['x'], subset_df['transportation_value'], kind='linear')
+        annual_transportation_loads = interpolation_function(annual_time_vector)
+
+        # Convert the electricity demands from EJ to TWh:
+        annual_non_transportation_loads = annual_non_transportation_loads * 277.77777777778
+        annual_transportation_loads = annual_transportation_loads * 277.77777777778
 
         # Create an empty dataframe and store the results:
         state_df = pd.DataFrame()
         state_df['Year'] = annual_time_vector.tolist()
-        state_df['GCAM_USA_State_Annual_Load_TWh'] = annual_loads
+        state_df['Non_Transportation_TWh'] = annual_non_transportation_loads
+        state_df['Transportation_TWh'] = annual_transportation_loads
         state_df['State_FIPS'] = state_fips
         state_df['State_Name'] = state_name
         state_df['State_Abbreviation'] = states[i]
@@ -122,25 +120,8 @@ def process_population_scenario(scenario_to_process: str, population_data_input_
         population_interp_df = population_interp_df.sort_values(['County_FIPS', 'Year'])
 
     else:
-        if scenario_to_process == 'rcp45cooler_ssp3':
-            scenario_string = 'ssp3'
-        if scenario_to_process == 'rcp45cooler_ssp5':
-            scenario_string = 'ssp5'
-        if scenario_to_process == 'rcp45hotter_ssp3':
-            scenario_string = 'ssp3'
-        if scenario_to_process == 'rcp45hotter_ssp5':
-            scenario_string = 'ssp5'
-        if scenario_to_process == 'rcp85cooler_ssp3':
-            scenario_string = 'ssp3'
-        if scenario_to_process == 'rcp85cooler_ssp5':
-            scenario_string = 'ssp5'
-        if scenario_to_process == 'rcp85hotter_ssp3':
-            scenario_string = 'ssp3'
-        if scenario_to_process == 'rcp85hotter_ssp5':
-            scenario_string = 'ssp5'
-
         # Read in the raw file:
-        population_df = pd.read_csv(os.path.join(population_data_input_dir, f"{scenario_string}_county_population.csv"),
+        population_df = pd.read_csv(os.path.join(population_data_input_dir, "ssp5_county_population.csv"),
                                     dtype={'FIPS': str})
 
         # Drop the 'state_name' column and rename the "FIPS" column:
@@ -240,7 +221,7 @@ def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, gcam
 
     # Make a copy of the necessary variables, drop the duplicates, and add in the "year_to_process":
     output_df = joint_mlp_df[
-        ['State_FIPS', 'State_Name', 'TELL_State_Annual_Load_TWh', 'GCAM_USA_State_Annual_Load_TWh',
+        ['State_FIPS', 'State_Name', 'TELL_State_Annual_Load_TWh', 'Non_Transportation_TWh', 'Transportation_TWh',
          'State_Scaling_Factor']].copy(deep=False)
 
     output_df = output_df.drop_duplicates()
@@ -248,24 +229,27 @@ def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, gcam
     output_df['Year'] = year_to_process
 
     # Rename the columns to make them more readable:
-    output_df.rename(columns={'TELL_State_Annual_Load_TWh': 'Raw_TELL_Load_TWh',
-                              'GCAM_USA_State_Annual_Load_TWh': 'GCAM_USA_Load_TWh',
+    output_df.rename(columns={'TELL_State_Annual_Load_TWh': 'Raw_TELL_Non_Transportation_Load_TWh',
+                              'Non_Transportation_TWh': 'GCAM_USA_Non_Transportation_Load_TWh',
+                              'Transportation_TWh': 'GCAM_USA_Transportation_Load_TWh',
                               'State_Scaling_Factor': 'Scaling_Factor'}, inplace=True)
 
     # Calculate the scaled TELL loads:
-    output_df['Scaled_TELL_Load_TWh'] = output_df['Raw_TELL_Load_TWh'].mul(output_df['Scaling_Factor'])
+    output_df['Scaled_TELL_Non_Transportation_Load_TWh'] = output_df['Raw_TELL_Non_Transportation_Load_TWh'].mul(output_df['Scaling_Factor'])
 
     # Round off the values to make the output file more readable:
     output_df['State_FIPS'] = output_df['State_FIPS'].round(0)
-    output_df['Raw_TELL_Load_TWh'] = output_df['Raw_TELL_Load_TWh'].round(5)
-    output_df['GCAM_USA_Load_TWh'] = output_df['GCAM_USA_Load_TWh'].round(5)
-    output_df['Scaled_TELL_Load_TWh'] = output_df['Scaled_TELL_Load_TWh'].round(5)
+    output_df['Raw_TELL_Non_Transportation_Load_TWh'] = output_df['Raw_TELL_Non_Transportation_Load_TWh'].round(5)
+    output_df['GCAM_USA_Non_Transportation_Load_TWh'] = output_df['GCAM_USA_Non_Transportation_Load_TWh'].round(5)
+    output_df['GCAM_USA_Transportation_Load_TWh'] = output_df['GCAM_USA_Transportation_Load_TWh'].round(5)
+    output_df['Scaled_TELL_Non_Transportation_Load_TWh'] = output_df['Scaled_TELL_Non_Transportation_Load_TWh'].round(5)
     output_df['Scaling_Factor'] = output_df['Scaling_Factor'].round(5)
 
     # Reorder the columns, fill in missing values, and sort alphabetically by state name:
     output_df = output_df[
-        ['Year', 'State_Name', 'State_FIPS', 'Scaling_Factor', 'GCAM_USA_Load_TWh', 'Raw_TELL_Load_TWh',
-         'Scaled_TELL_Load_TWh']]
+        ['Year', 'State_Name', 'State_FIPS', 'Scaling_Factor', 'GCAM_USA_Non_Transportation_Load_TWh',
+         'GCAM_USA_Transportation_Load_TWh', 'Raw_TELL_Non_Transportation_Load_TWh',
+         'Scaled_TELL_Non_Transportation_Load_TWh']]
     output_df = output_df.fillna(-9999)
     output_df = output_df.sort_values('State_Name')
 
@@ -482,9 +466,9 @@ def output_tell_county_data(joint_mlp_df: DataFrame, year_to_process: str, gcam_
         output_df.to_csv(csv_output_filename, sep=',', index=False)
 
 
-def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_process: str, data_output_dir: str,
-                    gcam_usa_input_dir: str, map_input_dir: str, mlp_input_dir: str, pop_input_dir: str,
-                    save_county_data=False):
+def execute_forward(year_to_process: str, gcam_target_year: str, gcam_scenario_to_process: str,
+                    weather_scenario_to_process: str, data_output_dir: str, gcam_usa_input_dir: str, map_input_dir: str,
+                    mlp_input_dir: str, pop_input_dir: str, save_county_data=False):
     """Takes the .csv files produced by the TELL MLP model and distributes
     the predicted load to the counties that each balancing authority (BA) operates
     in. The county-level hourly loads are then summed to the state-level and scaled
@@ -499,8 +483,11 @@ def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_pro
     :param gcam_target_year:            Year to scale against the GCAM-USA annual loads
     :type gcam_target_year:             str
 
-    :param scenario_to_process:         Scenario to process
-    :type scenario_to_process:          str
+    :param gcam_scenario_to_process:    GCAM-USA scenario to process
+    :type gcam_scenario_to_process:     str
+
+    :param weather_scenario_to_process: Weather scenario to process
+    :type weather_scenario_to_process:  str
 
     :param data_output_dir:              Top-level data directory for TELL output
     :type data_output_dir:               str
@@ -531,7 +518,7 @@ def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_pro
     print('Start time = ', begin_time)
 
     # Set the data output directory:
-    data_output_dir_full = os.path.join(data_output_dir, scenario_to_process, gcam_target_year)
+    data_output_dir_full = os.path.join(data_output_dir, gcam_scenario_to_process, gcam_target_year)
 
     # Check if the data output directory exists and if not then create it:
     if os.path.exists(data_output_dir_full) is False:
@@ -541,18 +528,18 @@ def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_pro
             os.mkdir(os.path.join(data_output_dir_full, 'County_Level_Data'))
 
     # Load in the sample GCAM-USA output file and subset the data to only the "year_to_process":
-    gcam_usa_df = extract_gcam_usa_loads(scenario_to_process = scenario_to_process,
-                                         filename = (os.path.join(gcam_usa_input_dir, 'gcamDataTable_aggParam.csv')))
+    gcam_usa_df = extract_gcam_usa_loads(scenario_to_process = gcam_scenario_to_process,
+                                         filename = (os.path.join(gcam_usa_input_dir, ('GODEEEP_' + gcam_scenario_to_process + '_electricity_load.csv'))))
     gcam_usa_df = gcam_usa_df[gcam_usa_df['Year'] == int(gcam_target_year)]
 
     # Load in the most recent (i.e., 2019) BA service territory mapping file:
     ba_mapping_df = pd.read_csv((os.path.join(map_input_dir, 'ba_service_territory_2019.csv')), index_col=None, header=0)
 
     # Read in the sample population projection dataset for the scenario being processed:
-    population_df = process_population_scenario(scenario_to_process, pop_input_dir)
+    population_df = process_population_scenario(weather_scenario_to_process, pop_input_dir)
 
     # Subset to only the year being processed:
-    if (scenario_to_process == 'historic') and (int(year_to_process) < 2000):
+    if (weather_scenario_to_process == 'historic') and (int(year_to_process) < 2000):
        population_df = population_df.loc[(population_df['Year'] == 2000)]
     else:
        population_df = population_df.loc[(population_df['Year'] == int(year_to_process))]
@@ -569,7 +556,7 @@ def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_pro
     mapping_df = mapping_df.dropna()
 
     # Create a list of all of the MLP output files in the "mlp_input_dir" and aggregate the files in that list:
-    mlp_filelist = sorted(glob.glob(os.path.join(mlp_input_dir, scenario_to_process, year_to_process, '*_mlp_output.csv')))
+    mlp_filelist = sorted(glob.glob(os.path.join(mlp_input_dir, weather_scenario_to_process, year_to_process, '*_mlp_output.csv')))
     mlp_output_df = aggregate_mlp_output_files(mlp_filelist)
 
     # Merge the "mapping_df" with "mlp_output_df" using BA codes to merge on:
@@ -582,10 +569,11 @@ def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_pro
     joint_mlp_df['TELL_State_Annual_Load_TWh'] = (joint_mlp_df.groupby('State_FIPS')['County_BA_Load_MWh'].transform('sum')) / 1000000
 
     # Add a column with the state-level annual total loads from GCAM-USA:
-    joint_mlp_df = pd.merge(joint_mlp_df, gcam_usa_df[['State_FIPS', 'GCAM_USA_State_Annual_Load_TWh']], on='State_FIPS', how='left')
+    joint_mlp_df = pd.merge(joint_mlp_df, gcam_usa_df[['State_FIPS', 'Non_Transportation_TWh', 'Transportation_TWh']],
+                            on='State_FIPS', how='left')
 
     # Compute the state-level scaling factors that force TELL annual loads to match GCAM-USA annual loads:
-    joint_mlp_df['State_Scaling_Factor'] = joint_mlp_df['GCAM_USA_State_Annual_Load_TWh'].div(joint_mlp_df['TELL_State_Annual_Load_TWh'])
+    joint_mlp_df['State_Scaling_Factor'] = joint_mlp_df['Non_Transportation_TWh'].div(joint_mlp_df['TELL_State_Annual_Load_TWh'])
 
     # Apply those scaling factors to the "County_BA_Load_MWh" variable:
     joint_mlp_df['County_BA_Load_MWh_Scaled'] = joint_mlp_df['County_BA_Load_MWh'].mul(joint_mlp_df['State_Scaling_Factor'])
