@@ -528,8 +528,14 @@ def execute_forward(year_to_process: str, gcam_target_year: str, gcam_scenario_t
             os.mkdir(os.path.join(data_output_dir_full, 'County_Level_Data'))
 
     # Load in the sample GCAM-USA output file and subset the data to only the "year_to_process":
-    gcam_usa_df = extract_gcam_usa_loads(scenario_to_process = gcam_scenario_to_process,
-                                         filename = (os.path.join(gcam_usa_input_dir, ('GODEEEP_' + gcam_scenario_to_process + '_electricity_load.csv'))))
+    if gcam_scenario_to_process == 'historic':
+       gcam_usa_df = extract_gcam_usa_loads(scenario_to_process = gcam_scenario_to_process,
+                                            filename = (os.path.join(gcam_usa_input_dir, ('GODEEEP_BAU_Climate_electricity_load.csv'))))
+    else:
+        gcam_usa_df = extract_gcam_usa_loads(scenario_to_process=gcam_scenario_to_process,
+                                             filename=(os.path.join(gcam_usa_input_dir, (
+                                                         'GODEEEP_' + gcam_scenario_to_process + '_electricity_load.csv'))))
+    # Subset the data to only the year being processed:
     gcam_usa_df = gcam_usa_df[gcam_usa_df['Year'] == int(gcam_target_year)]
 
     # Load in the most recent (i.e., 2019) BA service territory mapping file:
