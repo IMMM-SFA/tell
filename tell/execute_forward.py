@@ -38,12 +38,12 @@ def extract_gcam_usa_loads(scenario_to_process: str, filename: str) -> DataFrame
         (state_fips, state_name) = state_metadata_from_state_abbreviation(states[i])
 
         # Linearly interpolate the 5-year non-transportation loads from GCAM-USA to an annual time step:
-        annual_time_vector = pd.Series(range(subset_df['x'].min(), subset_df['x'].max()))
+        annual_time_vector = pd.Series(range(subset_df['x'].min(), (subset_df['x'].max()+1)))
         interpolation_function = interpolate.interp1d(subset_df['x'], subset_df['value'], kind='linear')
         annual_non_transportation_loads = interpolation_function(annual_time_vector)
 
         # Linearly interpolate the 5-year transportation loads from GCAM-USA to an annual time step:
-        annual_time_vector = pd.Series(range(subset_df['x'].min(), subset_df['x'].max()))
+        annual_time_vector = pd.Series(range(subset_df['x'].min(), (subset_df['x'].max()+1)))
         interpolation_function = interpolate.interp1d(subset_df['x'], subset_df['transportation_value'], kind='linear')
         annual_transportation_loads = interpolation_function(annual_time_vector)
 
@@ -532,9 +532,9 @@ def execute_forward(year_to_process: str, gcam_target_year: str, gcam_scenario_t
        gcam_usa_df = extract_gcam_usa_loads(scenario_to_process = gcam_scenario_to_process,
                                             filename = (os.path.join(gcam_usa_input_dir, ('GODEEEP_BAU_Climate_electricity_load.csv'))))
     else:
-        gcam_usa_df = extract_gcam_usa_loads(scenario_to_process=gcam_scenario_to_process,
-                                             filename=(os.path.join(gcam_usa_input_dir, (
-                                                         'GODEEEP_' + gcam_scenario_to_process + '_electricity_load.csv'))))
+        gcam_usa_df = extract_gcam_usa_loads(scenario_to_process = gcam_scenario_to_process,
+                                             filename = (os.path.join(gcam_usa_input_dir, ('GODEEEP_' + gcam_scenario_to_process + '_electricity_load.csv'))))
+
     # Subset the data to only the year being processed:
     gcam_usa_df = gcam_usa_df[gcam_usa_df['Year'] == int(gcam_target_year)]
 
