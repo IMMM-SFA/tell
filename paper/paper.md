@@ -132,7 +132,7 @@ and observed data. Finally, more details about how the  model was formulated and
 can be found in the `tell` [User Guide].
 
 # Acknowledgements
-This research was supported in part by the U.S. Department of Energy, Office of Science, as part
+This research was supported by the U.S. Department of Energy, Office of Science, as part
 of research in MultiSector Dynamics, Earth and Environmental System Modeling Program. The
 Pacific Northwest National Laboratory is operated for DOE by Battelle Memorial Institute under
 contract DE-AC05-76RL01830. The views and opinions expressed in this paper are those of the 
