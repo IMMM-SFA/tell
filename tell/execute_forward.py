@@ -514,7 +514,7 @@ def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_pro
     :param mlp_input_dir:               Path to where the TELL MLP output data are stored
     :type mlp_input_dir:                str
 
-    :param pop_input_dir:                Path to where the population projection data are stored
+    :param pop_input_dir:               Path to where the population projection data are stored
     :type pop_input_dir:                str
 
     :param save_county_data:            Set to True if you want to save the time-series of load for each county
