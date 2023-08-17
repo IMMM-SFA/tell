@@ -71,7 +71,7 @@ def extract_gcam_usa_loads(scenario_to_process: str, filename: str) -> DataFrame
     return gcam_usa_output_df
 
 
-def process_population_scenario(scenario_to_process: str, population_data_input_dir: str):
+def process_population_scenario(scenario_to_process: str, population_data_input_dir: str) -> DataFrame:
     """Read in a future population file and interpolate the data to an annual resolution.
 
     :param scenario_to_process:         Scenario to process
@@ -219,7 +219,7 @@ def aggregate_mlp_output_files(list_of_files: list) -> DataFrame:
     return mlp_output_df
 
 
-def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, gcam_target_year: str, data_output_dir: str):
+def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, gcam_target_year: str, data_output_dir: str) -> DataFrame:
     """Writes a summary file describing state-level annual total loads from TELL and GCAM-USA.
 
     :param joint_mlp_df:            DataFrame of processed TELL loads
@@ -234,7 +234,7 @@ def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, gcam
     :param data_output_dir:         Data output directory
     :type data_output_dir:          str
 
-    :return:                        Summary statistics as a dataframe
+    :return:                        DataFrame of summary statistics
 
     """
 
@@ -279,7 +279,7 @@ def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, gcam
     return output_df
 
 
-def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, gcam_target_year: str, data_output_dir: str):
+def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, gcam_target_year: str, data_output_dir: str) -> DataFrame:
     """Writes a file of the time-series of hourly loads for each BA.
 
     :param joint_mlp_df:            DataFrame of processed TELL loads
@@ -294,7 +294,7 @@ def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, gcam_targ
     :param data_output_dir:         Data output directory
     :type data_output_dir:          str
 
-    :return:                        BA-level total load time-series as a dataframe
+    :return:                        DataFrame of BA-level total load time-series
 
     """
 
@@ -347,7 +347,7 @@ def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, gcam_targ
     return aggregate_output_df
 
 
-def output_tell_state_data(joint_mlp_df: DataFrame, year_to_process: str, gcam_target_year: str, data_output_dir: str):
+def output_tell_state_data(joint_mlp_df: DataFrame, year_to_process: str, gcam_target_year: str, data_output_dir: str) -> DataFrame:
     """Writes a file of the time-series of hourly loads for each state.
 
     :param joint_mlp_df:            DataFrame of processed TELL loads
@@ -362,7 +362,7 @@ def output_tell_state_data(joint_mlp_df: DataFrame, year_to_process: str, gcam_t
     :param data_output_dir:         Data output directory
     :type data_output_dir:          str
 
-    :return:                        State-level total load time-series as a dataframe
+    :return:                        DataFrame of state-level total load time-series
 
     """
 
@@ -520,9 +520,9 @@ def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_pro
     :param save_county_data:            Set to True if you want to save the time-series of load for each county
     :type save_county_data:             bool
 
-    :return:                            [0] Summary statistics as a dataframe
-                                        [1] BA-level total load time-series as a dataframe
-                                        [2] State-level total load time-series as a dataframe
+    :return:                            [0] DataFrame of summary statistics
+                                        [1] DataFrame of BA-level total load time-series
+                                        [2] DataFrame of state-level total load time-series
 
     """
 
