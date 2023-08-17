@@ -24,7 +24,8 @@ class InstallQuickstarterData:
                          '0.1.3': 'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1',
                          '0.1.4': 'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1',
                          '0.1.5': 'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1',
-                         '1.0.0': 'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1'}
+                         '1.0.0': 'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1',
+                         '1.1.0': 'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1'}
 
     DEFAULT_VERSION = 'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1'
 
