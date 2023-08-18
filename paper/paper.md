@@ -103,18 +103,19 @@ technology, and economics. The projections from `tell` are quantitatively and co
 consistent across county-, state-, and BA-scales.
 
 The basic workflow for `tell` proceeds in six sequential steps:
-1.	Formulate empirical models that relate the historical observed meteorology to the hourly 
+
+1. Formulate empirical models that relate the historical observed meteorology to the hourly 
 time-series of total electricity demand for 54 BAs that report their hourly loads in the EIA-930 
 dataset (Fig. 1a).
-2.	Use the empirical models to project future hourly loads for each BA based on IM3’s future 
+2. Use the empirical models to project future hourly loads for each BA based on IM3’s future 
 climate scenarios generated using the Weather Research and Forecasting [@wrf] model.
-3.	Distribute the hourly loads for each BA to the counties that BA operates in and then aggregate
+3. Distribute the hourly loads for each BA to the counties that BA operates in and then aggregate
  the county-level hourly loads from all BAs into annual state-level loads (Fig. 1b-g).
-4.	Calculate annual state-level scaling factors that force the bottom-up annual state-level total
+4. Calculate annual state-level scaling factors that force the bottom-up annual state-level total
  loads from `tell` to match the annual state-level total loads from GCAM-USA.
-5.	Apply the state-level scaling factors to each county- and BA-level time-series of hourly total
+5. Apply the state-level scaling factors to each county- and BA-level time-series of hourly total
  demand.
-6.	Output yearly 8760-hr time-series of total electricity demand at the county-, state-, and 
+6. Output yearly 8760-hr time-series of total electricity demand at the county-, state-, and 
 BA-scale that are conceptually and quantitatively consistent with each other.
 
 ![](ISNE_graphic.png) 
@@ -131,7 +132,7 @@ and observed data. Finally, more details about how the  model was formulated and
 can be found in the `tell` [User Guide].
 
 # Acknowledgements
-This research was supported in part by the U.S. Department of Energy, Office of Science, as part
+This research was supported by the U.S. Department of Energy, Office of Science, as part
 of research in MultiSector Dynamics, Earth and Environmental System Modeling Program. The
 Pacific Northwest National Laboratory is operated for DOE by Battelle Memorial Institute under
 contract DE-AC05-76RL01830. The views and opinions expressed in this paper are those of the 

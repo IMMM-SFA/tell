@@ -23,7 +23,10 @@ class InstallForcingSample:
                          '0.1.1': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
                          '0.1.2': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
                          '0.1.3': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
-                         '0.1.4': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1'}
+                         '0.1.4': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
+                         '0.1.5': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
+                         '1.0.0': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
+                         '1.1.0': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1'}
 
     DEFAULT_VERSION = 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1'
 

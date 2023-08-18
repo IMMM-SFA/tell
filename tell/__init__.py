@@ -25,4 +25,4 @@ from .execute_forward import *
 from .visualization import *
 
 # Set the current version of TELL:
-__version__ = '0.1.4'
+__version__ = '1.1.0'
