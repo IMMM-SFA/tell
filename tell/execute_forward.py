@@ -9,9 +9,11 @@ from pandas import DataFrame
 from scipy import interpolate
 from .states_fips_function import state_metadata_from_state_abbreviation
 
+def extract_gcam_usa_loads(scenario_to_process: str, filename: str) -> DataFrame:
+    """Extracts the state-level annual loads from a GCAM-USA output file.
 
-def extract_gcam_usa_loads(filename: str) -> DataFrame:
-    """Extracts the state-level annual loads from a given GCAM-USA output file.
+    :param scenario_to_process: Scenario to process
+    :type scenario_to_process:  str
 
     :param filename:            Name of the GCAM-USA output file
     :type filename:             str
@@ -23,24 +25,33 @@ def extract_gcam_usa_loads(filename: str) -> DataFrame:
     # Load in the raw GCAM-USA output file:
     gcam_usa_df = pd.read_csv(filename, index_col=None, header=0)
 
+    # Cluge the scenario for historical runs:
+    if scenario_to_process == 'historic':
+       scenario_to_process_gcam = 'rcp45cooler_ssp3'
+    else:
+       scenario_to_process_gcam = scenario_to_process
+
+    # Subset the data to only the scenario you want to process:
+    gcam_usa_df = gcam_usa_df[gcam_usa_df['scenario'].isin([scenario_to_process_gcam])]
+
     # Subset the data to only the total annual consumption of electricity by state:
     gcam_usa_df = gcam_usa_df[gcam_usa_df['param'].isin(['elecFinalBySecTWh'])]
 
     # Make a list of all of the states in the "gcam_usa_df":
-    states = gcam_usa_df['region'].unique()
+    states = gcam_usa_df['subRegion'].unique()
 
     # Loop over the states and interpolate their loads to an annual time step:
     for i in range(len(states)):
 
         # Subset to just the data for the state being processed:
-        subset_df = gcam_usa_df[gcam_usa_df['region'].isin([states[i]])].copy()
+        subset_df = gcam_usa_df[gcam_usa_df['subRegion'].isin([states[i]])].copy()
 
         # Retrieve the state metadata:
         (state_fips, state_name) = state_metadata_from_state_abbreviation(states[i])
 
         # Linearly interpolate the 5-year loads from GCAM-USA to an annual time step:
-        annual_time_vector = pd.Series(range(subset_df['origX'].min(), subset_df['origX'].max()))
-        interpolation_function = interpolate.interp1d(subset_df['origX'], subset_df['value'], kind='linear')
+        annual_time_vector = pd.Series(range(subset_df['x'].min(), subset_df['x'].max()))
+        interpolation_function = interpolate.interp1d(subset_df['x'], subset_df['value'], kind='linear')
         annual_loads = interpolation_function(annual_time_vector)
 
         # Create an empty dataframe and store the results:
@@ -60,7 +71,7 @@ def extract_gcam_usa_loads(filename: str) -> DataFrame:
     return gcam_usa_output_df
 
 
-def process_population_scenario(scenario_to_process: str, population_data_input_dir: str):
+def process_population_scenario(scenario_to_process: str, population_data_input_dir: str) -> DataFrame:
     """Read in a future population file and interpolate the data to an annual resolution.
 
     :param scenario_to_process:         Scenario to process
@@ -73,66 +84,104 @@ def process_population_scenario(scenario_to_process: str, population_data_input_
 
     """
 
-    if scenario_to_process == 'rcp45cooler_ssp3':
-        scenario_string = 'ssp3'
-    if scenario_to_process == 'rcp45cooler_ssp5':
-        scenario_string = 'ssp5'
-    if scenario_to_process == 'rcp45hotter_ssp3':
-        scenario_string = 'ssp3'
-    if scenario_to_process == 'rcp45hotter_ssp5':
-        scenario_string = 'ssp5'
-    if scenario_to_process == 'rcp85cooler_ssp3':
-        scenario_string = 'ssp3'
-    if scenario_to_process == 'rcp85cooler_ssp5':
-        scenario_string = 'ssp5'
-    if scenario_to_process == 'rcp85hotter_ssp3':
-        scenario_string = 'ssp3'
-    if scenario_to_process == 'rcp85hotter_ssp5':
-        scenario_string = 'ssp5'
+    if scenario_to_process == 'historic':
+        # Read in the raw county-level population .csv file from the U.S. Census Bureau:
+        df_pop = pd.read_csv(population_data_input_dir + '/county_populations_2000_to_2020.csv')
 
-    # Read in the raw file:
-    population_df = pd.read_csv(os.path.join(population_data_input_dir, f"{scenario_string}_county_population.csv"),
-                                dtype={'FIPS': str})
+        # Loop over the range of years defined by the 'start_year' and 'end_year' variables:
+        for y in range(2000, 2020 + 1):
 
-    # Drop the 'state_name' column and rename the "FIPS" column:
-    population_df.drop(columns=['state_name'], inplace=True)
-    population_df.rename(columns={'FIPS': 'County_FIPS'}, inplace=True)
+            # Only keep columns that are needed:
+            key = [f'pop_{y}', 'county_FIPS']
 
-    # Set county FIPS code as the index variable:
-    population_df.set_index('County_FIPS', inplace=True)
+            # Change the variable name for population for the year:
+            df_pop_yr = df_pop[key].copy()
 
-    # Transpose the dataframe:
-    population_dft = population_df.T
+            # Assign a new variable to indicate the year:
+            df_pop_yr['year'] = y
 
-    # Bring the index back into the dataframe:
-    population_dft.reset_index(inplace=True)
+            # Rename some columns for consistency:
+            df_pop_yr.rename(columns={f'pop_{y}': 'population'}, inplace=True)
 
-    # Rename the index column as "yr":
-    population_dft.rename(columns={'index': 'yr'}, inplace=True)
+            # Concatenate all the years into a single dataframe:
+            if y == 2000:
+                population_interp_df = df_pop_yr.copy()
+            else:
+                population_interp_df = pd.concat([population_interp_df, df_pop_yr])
 
-    # Convert the year to a datetime variable:
-    population_dft['yr'] = pd.to_datetime(population_dft['yr'])
+        # Rename the some variables for consistency:
+        population_interp_df.rename(columns={'population': 'Population',
+                                             'year': 'Year',
+                                             'county_FIPS': 'County_FIPS'}, inplace=True)
 
-    # Set the year as the index variable:
-    population_dft.set_index('yr', inplace=True)
+        # Reorder the columns, convert the FIPS values from strings to integers, round the population projections
+        # to whole numbers, and sort the dataframe by FIPS code then year:
+        population_interp_df = population_interp_df[['County_FIPS', 'Year', 'Population']]
+        population_interp_df['County_FIPS'] = population_interp_df['County_FIPS'].astype(int)
+        population_interp_df['Population'] = population_interp_df['Population'].round(0).astype(int)
+        population_interp_df = population_interp_df.sort_values(['County_FIPS', 'Year'])
 
-    # Interpolate the populations to an annual time-step and transpose the results:
-    population_interp_df = population_dft.resample('1Y').mean().interpolate('linear').T
+    else:
+        if scenario_to_process == 'rcp45cooler_ssp3':
+            scenario_string = 'ssp3'
+        if scenario_to_process == 'rcp45cooler_ssp5':
+            scenario_string = 'ssp5'
+        if scenario_to_process == 'rcp45hotter_ssp3':
+            scenario_string = 'ssp3'
+        if scenario_to_process == 'rcp45hotter_ssp5':
+            scenario_string = 'ssp5'
+        if scenario_to_process == 'rcp85cooler_ssp3':
+            scenario_string = 'ssp3'
+        if scenario_to_process == 'rcp85cooler_ssp5':
+            scenario_string = 'ssp5'
+        if scenario_to_process == 'rcp85hotter_ssp3':
+            scenario_string = 'ssp3'
+        if scenario_to_process == 'rcp85hotter_ssp5':
+            scenario_string = 'ssp5'
 
-    # Convert the dataframe from a wide format to a long format and name the population variable:
-    population_interp_df = population_interp_df.stack().reset_index()
-    population_interp_df.rename(columns={0: 'Population'}, inplace=True)
+        # Read in the raw file:
+        population_df = pd.read_csv(os.path.join(population_data_input_dir, f"{scenario_string}_county_population.csv"),
+                                    dtype={'FIPS': str})
 
-    # Change the time variable to only the year value:
-    population_interp_df['Year'] = population_interp_df['yr'].dt.year
-    population_interp_df.drop(columns=['yr'], inplace=True)
+        # Drop the 'state_name' column and rename the "FIPS" column:
+        population_df.drop(columns=['state_name'], inplace=True)
+        population_df.rename(columns={'FIPS': 'County_FIPS'}, inplace=True)
 
-    # Reorder the columns, convert the FIPS values from strings to integeers, round the population projections
-    # to whole numbers, and sort the dataframe by FIPS code then year:
-    population_interp_df = population_interp_df[['County_FIPS', 'Year', 'Population']]
-    population_interp_df['County_FIPS'] = population_interp_df['County_FIPS'].astype(int)
-    population_interp_df['Population'] = population_interp_df['Population'].round(0).astype(int)
-    population_interp_df = population_interp_df.sort_values(['County_FIPS', 'Year'])
+        # Set county FIPS code as the index variable:
+        population_df.set_index('County_FIPS', inplace=True)
+
+        # Transpose the dataframe:
+        population_dft = population_df.T
+
+        # Bring the index back into the dataframe:
+        population_dft.reset_index(inplace=True)
+
+        # Rename the index column as "yr":
+        population_dft.rename(columns={'index': 'yr'}, inplace=True)
+
+        # Convert the year to a datetime variable:
+        population_dft['yr'] = pd.to_datetime(population_dft['yr'])
+
+        # Set the year as the index variable:
+        population_dft.set_index('yr', inplace=True)
+
+        # Interpolate the populations to an annual time-step and transpose the results:
+        population_interp_df = population_dft.resample('1Y').mean().interpolate('linear').T
+
+        # Convert the dataframe from a wide format to a long format and name the population variable:
+        population_interp_df = population_interp_df.stack().reset_index()
+        population_interp_df.rename(columns={0: 'Population'}, inplace=True)
+
+        # Change the time variable to only the year value:
+        population_interp_df['Year'] = population_interp_df['yr'].dt.year
+        population_interp_df.drop(columns=['yr'], inplace=True)
+
+        # Reorder the columns, convert the FIPS values from strings to integers, round the population projections
+        # to whole numbers, and sort the dataframe by FIPS code then year:
+        population_interp_df = population_interp_df[['County_FIPS', 'Year', 'Population']]
+        population_interp_df['County_FIPS'] = population_interp_df['County_FIPS'].astype(int)
+        population_interp_df['Population'] = population_interp_df['Population'].round(0).astype(int)
+        population_interp_df = population_interp_df.sort_values(['County_FIPS', 'Year'])
 
     return population_interp_df
 
@@ -170,7 +219,7 @@ def aggregate_mlp_output_files(list_of_files: list) -> DataFrame:
     return mlp_output_df
 
 
-def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, data_output_dir: str):
+def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, gcam_target_year: str, data_output_dir: str) -> DataFrame:
     """Writes a summary file describing state-level annual total loads from TELL and GCAM-USA.
 
     :param joint_mlp_df:            DataFrame of processed TELL loads
@@ -179,10 +228,13 @@ def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, data
     :param year_to_process:         Year to process
     :type year_to_process:          str
 
+    :param gcam_target_year:        Year to scale against the GCAM-USA annual loads
+    :type gcam_target_year:         str
+
     :param data_output_dir:         Data output directory
     :type data_output_dir:          str
 
-    :return:                        Summary statistics as a dataframe
+    :return:                        DataFrame of summary statistics
 
     """
 
@@ -205,9 +257,9 @@ def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, data
 
     # Round off the values to make the output file more readable:
     output_df['State_FIPS'] = output_df['State_FIPS'].round(0)
-    output_df['Raw_TELL_Load_TWh'] = output_df['Raw_TELL_Load_TWh'].round(2)
-    output_df['GCAM_USA_Load_TWh'] = output_df['GCAM_USA_Load_TWh'].round(2)
-    output_df['Scaled_TELL_Load_TWh'] = output_df['Scaled_TELL_Load_TWh'].round(2)
+    output_df['Raw_TELL_Load_TWh'] = output_df['Raw_TELL_Load_TWh'].round(5)
+    output_df['GCAM_USA_Load_TWh'] = output_df['GCAM_USA_Load_TWh'].round(5)
+    output_df['Scaled_TELL_Load_TWh'] = output_df['Scaled_TELL_Load_TWh'].round(5)
     output_df['Scaling_Factor'] = output_df['Scaling_Factor'].round(5)
 
     # Reorder the columns, fill in missing values, and sort alphabetically by state name:
@@ -218,7 +270,8 @@ def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, data
     output_df = output_df.sort_values('State_Name')
 
     # Generate the .csv output file name:
-    csv_output_filename = os.path.join(data_output_dir, 'TELL_State_Summary_Data_' + year_to_process + '.csv')
+    csv_output_filename = os.path.join(data_output_dir, 'TELL_State_Summary_Data_' + year_to_process
+                                       + '_Scaled_' + gcam_target_year + '.csv')
 
     # Write out the dataframe to a .csv file:
     output_df.to_csv(csv_output_filename, sep=',', index=False)
@@ -226,7 +279,7 @@ def output_tell_summary_data(joint_mlp_df: DataFrame, year_to_process: str, data
     return output_df
 
 
-def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, data_output_dir: str):
+def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, gcam_target_year: str, data_output_dir: str) -> DataFrame:
     """Writes a file of the time-series of hourly loads for each BA.
 
     :param joint_mlp_df:            DataFrame of processed TELL loads
@@ -235,10 +288,13 @@ def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, data_outp
     :param year_to_process:         Year to process
     :type year_to_process:          str
 
+    :param gcam_target_year:        Year to scale against the GCAM-USA annual loads
+    :type gcam_target_year:         str
+
     :param data_output_dir:         Data output directory
     :type data_output_dir:          str
 
-    :return:                        BA-level total load time-series as a dataframe
+    :return:                        DataFrame of BA-level total load time-series
 
     """
 
@@ -282,7 +338,8 @@ def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, data_outp
 
     # Generate the .csv output file name:
     csv_output_filename = os.path.join(data_output_dir,
-                                       'TELL_Balancing_Authority_Hourly_Load_Data_' + year_to_process + '.csv')
+                                       'TELL_Balancing_Authority_Hourly_Load_Data_' + year_to_process
+                                       + '_Scaled_' + gcam_target_year + '.csv')
 
     # Write out the dataframe to a .csv file:
     aggregate_output_df.to_csv(csv_output_filename, sep=',', index=False)
@@ -290,7 +347,7 @@ def output_tell_ba_data(joint_mlp_df: DataFrame, year_to_process: str, data_outp
     return aggregate_output_df
 
 
-def output_tell_state_data(joint_mlp_df: DataFrame, year_to_process: str, data_output_dir: str):
+def output_tell_state_data(joint_mlp_df: DataFrame, year_to_process: str, gcam_target_year: str, data_output_dir: str) -> DataFrame:
     """Writes a file of the time-series of hourly loads for each state.
 
     :param joint_mlp_df:            DataFrame of processed TELL loads
@@ -299,10 +356,13 @@ def output_tell_state_data(joint_mlp_df: DataFrame, year_to_process: str, data_o
     :param year_to_process:         Year to process
     :type year_to_process:          str
 
+    :param gcam_target_year:        Year to scale against the GCAM-USA annual loads
+    :type gcam_target_year:         str
+
     :param data_output_dir:         Data output directory
     :type data_output_dir:          str
 
-    :return:                        State-level total load time-series as a dataframe
+    :return:                        DataFrame of state-level total load time-series
 
     """
 
@@ -347,7 +407,8 @@ def output_tell_state_data(joint_mlp_df: DataFrame, year_to_process: str, data_o
     aggregate_output_df = aggregate_output_df.sort_values(by=['State_Name', 'Time_UTC'])
 
     # Generate the .csv output file name:
-    csv_output_filename = os.path.join(data_output_dir, 'TELL_State_Hourly_Load_Data_' + year_to_process + '.csv')
+    csv_output_filename = os.path.join(data_output_dir, 'TELL_State_Hourly_Load_Data_' + year_to_process
+                                       + '_Scaled_' + gcam_target_year + '.csv')
 
     # Write out the dataframe to a .csv file:
     aggregate_output_df.to_csv(csv_output_filename, sep=',', index=False)
@@ -355,7 +416,7 @@ def output_tell_state_data(joint_mlp_df: DataFrame, year_to_process: str, data_o
     return aggregate_output_df
 
 
-def output_tell_county_data(joint_mlp_df: DataFrame, year_to_process: str, data_output_dir: str):
+def output_tell_county_data(joint_mlp_df: DataFrame, year_to_process: str, gcam_target_year: str, data_output_dir: str):
     """Writes a file of the time-series of hourly loads for each county.
 
     :param joint_mlp_df:            DataFrame of processed TELL loads
@@ -364,6 +425,9 @@ def output_tell_county_data(joint_mlp_df: DataFrame, year_to_process: str, data_
     :param year_to_process:         Year to process
     :type year_to_process:          str
 
+    :param gcam_target_year:        Year to scale against the GCAM-USA annual loads
+    :type gcam_target_year:         str
+
     :param data_output_dir:         Data output directory
     :type data_output_dir:          str
 
@@ -371,8 +435,8 @@ def output_tell_county_data(joint_mlp_df: DataFrame, year_to_process: str, data_
 
     # Make a copy of the necessary variables:
     county_output_df = joint_mlp_df[
-        {'Time_UTC', 'County_FIPS', 'County_Name', 'State_Name', 'State_FIPS', 'County_BA_Load_MWh',
-         'County_BA_Load_MWh_Scaled'}].copy(deep=False)
+        ['Time_UTC', 'County_FIPS', 'County_Name', 'State_Name', 'State_FIPS', 'County_BA_Load_MWh',
+         'County_BA_Load_MWh_Scaled']].copy(deep=False)
 
     # Make a list of all of the counties in "county_output_df":
     counties = county_output_df['County_FIPS'].unique()
@@ -412,13 +476,15 @@ def output_tell_county_data(joint_mlp_df: DataFrame, year_to_process: str, data_
 
         csv_output_filename = os.path.join(
             data_output_dir + '/County_Level_Data/TELL_' + state_name + '_' + county_name + '_Hourly_Load_Data_' +
-            year_to_process + '.csv')
+            year_to_process + '_Scaled_' + gcam_target_year + '.csv')
 
         # Write out the dataframe to a .csv file:
         output_df.to_csv(csv_output_filename, sep=',', index=False)
 
 
-def execute_forward(year_to_process: str, scenario_to_process: str, data_input_dir: str, save_county_data=False):
+def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_process: str, data_output_dir: str,
+                    gcam_usa_input_dir: str, map_input_dir: str, mlp_input_dir: str, pop_input_dir: str,
+                    save_county_data=False):
     """Takes the .csv files produced by the TELL MLP model and distributes
     the predicted load to the counties that each balancing authority (BA) operates
     in. The county-level hourly loads are then summed to the state-level and scaled
@@ -430,18 +496,33 @@ def execute_forward(year_to_process: str, scenario_to_process: str, data_input_d
     :param year_to_process:             Year to process
     :type year_to_process:              str
 
+    :param gcam_target_year:            Year to scale against the GCAM-USA annual loads
+    :type gcam_target_year:             str
+
     :param scenario_to_process:         Scenario to process
     :type scenario_to_process:          str
 
-    :param data_input_dir:              Top-level data directory for TELL
-    :type data_input_dir:               str
+    :param data_output_dir:              Top-level data directory for TELL output
+    :type data_output_dir:               str
+
+    :param gcam_usa_input_dir:          Path to where the GCAM-USA data is stored
+    :type gcam_usa_input_dir:           str
+
+    :param map_input_dir:               Path to where the BA-to-county mapping data are stored
+    :type map_input_dir:                str
+
+    :param mlp_input_dir:               Path to where the TELL MLP output data are stored
+    :type mlp_input_dir:                str
+
+    :param pop_input_dir:               Path to where the population projection data are stored
+    :type pop_input_dir:                str
 
     :param save_county_data:            Set to True if you want to save the time-series of load for each county
     :type save_county_data:             bool
 
-    :return:                            [0] Summary statistics as a dataframe
-                                        [1] BA-level total load time-series as a dataframe
-                                        [2] State-level total load time-series as a dataframe
+    :return:                            [0] DataFrame of summary statistics
+                                        [1] DataFrame of BA-level total load time-series
+                                        [2] DataFrame of state-level total load time-series
 
     """
 
@@ -449,35 +530,32 @@ def execute_forward(year_to_process: str, scenario_to_process: str, data_input_d
     begin_time = datetime.datetime.now()
     print('Start time = ', begin_time)
 
-    # Set the data input directories:
-    gcam_usa_input_dir = os.path.join(data_input_dir, r'sample_forcing_data', r'sample_gcam_usa_data', scenario_to_process)
-    map_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'ba_service_territory')
-    mlp_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'mlp_output', scenario_to_process, year_to_process)
-    pop_input_dir = os.path.join(data_input_dir, r'sample_forcing_data', r'sample_population_projections')
-
     # Set the data output directory:
-    data_output_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', 'outputs', r'tell_output', scenario_to_process, year_to_process)
+    data_output_dir_full = os.path.join(data_output_dir, scenario_to_process, gcam_target_year)
 
     # Check if the data output directory exists and if not then create it:
-    if os.path.exists(data_output_dir) is False:
-        os.makedirs(data_output_dir)
+    if os.path.exists(data_output_dir_full) is False:
+        os.makedirs(data_output_dir_full)
     if save_county_data:
-        if os.path.exists(os.path.join(data_output_dir, 'County_Level_Data')) is False:
-            os.mkdir(os.path.join(data_output_dir, 'County_Level_Data'))
+        if os.path.exists(os.path.join(data_output_dir_full, 'County_Level_Data')) is False:
+            os.mkdir(os.path.join(data_output_dir_full, 'County_Level_Data'))
 
     # Load in the sample GCAM-USA output file and subset the data to only the "year_to_process":
-    gcam_usa_df = extract_gcam_usa_loads(os.path.join(gcam_usa_input_dir, 'gcamDataTable_aggParam.csv'))
-    gcam_usa_df = gcam_usa_df[gcam_usa_df['Year'] == int(year_to_process)]
+    gcam_usa_df = extract_gcam_usa_loads(scenario_to_process = scenario_to_process,
+                                         filename = (os.path.join(gcam_usa_input_dir, 'gcamDataTable_aggParam.csv')))
+    gcam_usa_df = gcam_usa_df[gcam_usa_df['Year'] == int(gcam_target_year)]
 
     # Load in the most recent (i.e., 2019) BA service territory mapping file:
-    ba_mapping_df = pd.read_csv((os.path.join(map_input_dir, 'ba_service_territory_2019.csv')),
-                                index_col=None, header=0)
+    ba_mapping_df = pd.read_csv((os.path.join(map_input_dir, 'ba_service_territory_2019.csv')), index_col=None, header=0)
 
     # Read in the sample population projection dataset for the scenario being processed:
     population_df = process_population_scenario(scenario_to_process, pop_input_dir)
 
     # Subset to only the year being processed:
-    population_df = population_df.loc[(population_df['Year'] == int(year_to_process))]
+    if (scenario_to_process == 'historic') and (int(year_to_process) < 2000):
+       population_df = population_df.loc[(population_df['Year'] == 2000)]
+    else:
+       population_df = population_df.loc[(population_df['Year'] == int(year_to_process))]
 
     # Only keep the columns that are needed:
     population_df = population_df[['County_FIPS', 'Population']].copy()
@@ -491,7 +569,7 @@ def execute_forward(year_to_process: str, scenario_to_process: str, data_input_d
     mapping_df = mapping_df.dropna()
 
     # Create a list of all of the MLP output files in the "mlp_input_dir" and aggregate the files in that list:
-    mlp_filelist = sorted(glob.glob(os.path.join(mlp_input_dir, '*_mlp_output.csv')))
+    mlp_filelist = sorted(glob.glob(os.path.join(mlp_input_dir, scenario_to_process, year_to_process, '*_mlp_output.csv')))
     mlp_output_df = aggregate_mlp_output_files(mlp_filelist)
 
     # Merge the "mapping_df" with "mlp_output_df" using BA codes to merge on:
@@ -513,13 +591,13 @@ def execute_forward(year_to_process: str, scenario_to_process: str, data_input_d
     joint_mlp_df['County_BA_Load_MWh_Scaled'] = joint_mlp_df['County_BA_Load_MWh'].mul(joint_mlp_df['State_Scaling_Factor'])
 
     # Output the resulting projections using the output functions:
-    summary_df = output_tell_summary_data(joint_mlp_df, year_to_process, data_output_dir)
-    ba_time_series_df = output_tell_ba_data(joint_mlp_df, year_to_process, data_output_dir)
-    state_time_series_df = output_tell_state_data(joint_mlp_df, year_to_process, data_output_dir)
+    summary_df = output_tell_summary_data(joint_mlp_df, year_to_process, gcam_target_year, data_output_dir_full)
+    ba_time_series_df = output_tell_ba_data(joint_mlp_df, year_to_process, gcam_target_year, data_output_dir_full)
+    state_time_series_df = output_tell_state_data(joint_mlp_df, year_to_process, gcam_target_year, data_output_dir_full)
 
     # If the "save_county_data" flag is set to true then save the time-series of demand for each county:
     if save_county_data:
-        output_tell_county_data(joint_mlp_df, year_to_process, data_output_dir)
+        output_tell_county_data(joint_mlp_df, year_to_process, gcam_target_year, data_output_dir_full)
 
     # Output the end time and elapsed time in order to benchmark the run time:
     print('End time = ', datetime.datetime.now())
