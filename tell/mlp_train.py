@@ -210,7 +210,6 @@ def train(region: str,
     performance_df = evaluate(region=region,
                               y_predicted=prediction_df["predictions"].values,
                               y_comparison=data_mlp.y_comp)
-
     return prediction_df, performance_df
 
 

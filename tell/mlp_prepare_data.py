@@ -252,6 +252,7 @@ class DatasetTrain(DefaultSettings):
         # format the input data file
         df_filtered = self.format_filter_data(df)
 
+
         # add fields for weekday, each day of the week, and holidays to the data frame; also adds "Weekday" and
         # "Holidays" as fields to the x_variables list
         if self.add_dayofweek_xvars:
@@ -314,13 +315,11 @@ class DatasetTrain(DefaultSettings):
 
         # rename columns to default or user desired
         df.rename(columns=self.data_column_rename_dict, inplace=True)
-
+        
         # generate datetime timestamp field
         df[self.DATETIME_FIELD] = pd.to_datetime(df[self.expected_datetime_columns])
-
         # filter by date range
         df = df.loc[(df[self.DATETIME_FIELD] >= self.start_time) & (df[self.DATETIME_FIELD] <= self.end_time)].copy()
-
         # sort values by timestamp
         df.sort_values(by=[self.DATETIME_FIELD], inplace=True)
 

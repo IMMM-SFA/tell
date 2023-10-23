@@ -24,7 +24,7 @@ def list_EIA_930_files(data_input_dir: str) -> list:
 
     # Loop over the list and find the path for each BA in the list:
     for i in ba_name:
-        path_to_check = os.path.join(data_input_dir, r'tell_raw_data', r'EIA_930', r'Balancing_Authority', f'{i}.xlsx')
+        path_to_check = os.path.join(data_input_dir, r'tell_raw_data', r'EIA_930', r'Balancing_Authority', f'{i}_hourly_load_data.xlsx')
         path_list.append(path_to_check)
 
     # Return the list:

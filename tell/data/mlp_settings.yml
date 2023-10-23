@@ -50,13 +50,16 @@ y_variables: ["Demand"]
 day_list: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 # Timestamp showing the datetime of for the run to start
-start_time: "2016-01-01 00:00:00"
+#start_time: "2016-01-01 00:00:00"
+start_time: "2007-01-01 00:00:00"
 
 # Timestamp showing the datetime of for the run to end
-end_time: "2019-12-31 23:00:00"
+#end_time: "2019-12-31 23:00:00"
+end_time: "2013-12-31 23:00:00"
 
 # Timestamp showing the datetime to split the train and test data by
-split_datetime: "2018-12-31 23:00:00"
+#split_datetime: "2018-12-31 23:00:00"
+split_datetime: "2012-12-30 23:00:00"
 
 # Seed value to reproduce randomization.
 seed_value: 391
