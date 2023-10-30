@@ -8,6 +8,7 @@ import pandas as pd
 import sklearn
 import yaml
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_percentage_error
+from sklearn.metrics import mean_pinball_loss
 
 
 def get_balancing_authority_to_model_dict():
@@ -310,10 +311,37 @@ def evaluate(region: str,
     # R2
     r2_val = r2_score(y_pred, y_comp)
 
+    #MAPE for the peak demand
+    peak_pred = y_pred.reshape(-1, 24).max(axis=1)
+    peak_comp = y_comp.reshape(-1, 24).max(axis=1)
+
+    peak_mape = mean_absolute_percentage_error(peak_pred, peak_comp)
+    peak_rms = np.sqrt(mean_squared_error(peak_pred, peak_comp))
+    peak_rms_norm = peak_rms/np.mean(peak_comp)
+
+    #compute peak time offset
+    t_pred = np.argmax(y_pred.reshape(-1, 24), axis=1)
+    t_comp = np.argmax(y_comp.reshape(-1, 24), axis=1)
+    t_offset = np.mean(np.abs(t_pred - t_comp))
+
+    #Pinball loss
+    percentiles = np.arange(0.1, 1.0, 0.1)
+    pinball_loss = [mean_pinball_loss(y_pred, y_comp, alpha=a) for a in percentiles]
+    mean_pb_score = np.mean(np.asarray(pinball_loss))/np.mean(y_comp)
+
+    #top n score
+
     stats_dict = {"BA": [region],
                   "RMS_ABS": [rms_abs],
                   "RMS_NORM": [rms_norm],
                   "MAPE": [mape],
-                  "R2": [r2_val]}
+                  "R2": [r2_val],
+                  "t_offset": [t_offset],
+                  "peak_mape": [peak_mape],
+                  "peak_rms": [peak_rms],
+                  "peak_rms_norm": [peak_rms_norm],
+                  "mean_pb_score": [mean_pb_score]
+                  }
 
     return pd.DataFrame(stats_dict)
+
