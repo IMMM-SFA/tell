@@ -18,15 +18,18 @@ class InstallRawData:
     """
 
     # URL for DOI-minted TELL raw data data package hosted on Zenodo:
-    DATA_VERSION_URLS = {'0.0.1': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
-                         '0.1.0': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
-                         '0.1.1': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
-                         '0.1.2': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
-                         '0.1.3': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
-                         '0.1.4': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
-                         '0.1.5': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
-                         '1.0.0': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
-                         '1.1.0': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1'}
+    DATA_VERSION_URLS = {
+        '0.0.1': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
+        '0.1.0': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
+        '0.1.1': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
+        '0.1.2': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
+        '0.1.3': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
+        '0.1.4': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
+        '0.1.5': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
+        '1.0.0': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
+        '1.1.0': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
+        '1.1.1': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
+    }
 
     DEFAULT_VERSION = 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1'
 
