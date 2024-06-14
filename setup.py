@@ -22,7 +22,7 @@ setup(
     description='A model to predict total electricity loads',
     long_description=readme(),
     long_description_content_type="text/markdown",
-    python_requires='>=3.9.*, <4',
+    python_requires='>=3.9',
     include_package_data=True,
     install_requires=[
         'setuptools>=49.2.1',
@@ -62,7 +62,6 @@ setup(
         'scipy>=1.7.3',
         'Shapely>=1.8.0',
         'six>=1.16.0',
-        'sklearn>=0.0',
         'threadpoolctl>=3.1.0',
         'urllib3>=1.26.8',
         'fastparquet>=0.8.3'
