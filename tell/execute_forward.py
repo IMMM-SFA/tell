@@ -9,67 +9,6 @@ from pandas import DataFrame
 from scipy import interpolate
 from .states_fips_function import state_metadata_from_state_abbreviation
 
-# def extract_gcam_usa_loads(scenario_to_process: str, filename: str) -> DataFrame:
-#     """Extracts the state-level annual loads from a GCAM-USA output file.
-#
-#     :param scenario_to_process: Scenario to process
-#     :type scenario_to_process:  str
-#
-#     :param filename:            Name of the GCAM-USA output file
-#     :type filename:             str
-#
-#     :return:                    DataFrame of state-level annual total electricity loads
-#
-#     """
-#
-#     # Load in the raw GCAM-USA output file:
-#     gcam_usa_df = pd.read_csv(filename, index_col=None, header=0)
-#
-#     # Cluge the scenario for historical runs:
-#     if scenario_to_process == 'historic':
-#        scenario_to_process_gcam = 'rcp45cooler_ssp3'
-#     else:
-#        scenario_to_process_gcam = scenario_to_process
-#
-#     # Subset the data to only the scenario you want to process:
-#     gcam_usa_df = gcam_usa_df[gcam_usa_df['scenario'].isin([scenario_to_process_gcam])]
-#
-#     # Subset the data to only the total annual consumption of electricity by state:
-#     gcam_usa_df = gcam_usa_df[gcam_usa_df['param'].isin(['elecFinalBySecTWh'])]
-#
-#     # Make a list of all of the states in the "gcam_usa_df":
-#     states = gcam_usa_df['subRegion'].unique()
-#
-#     # Loop over the states and interpolate their loads to an annual time step:
-#     for i in range(len(states)):
-#
-#         # Subset to just the data for the state being processed:
-#         subset_df = gcam_usa_df[gcam_usa_df['subRegion'].isin([states[i]])].copy()
-#
-#         # Retrieve the state metadata:
-#         (state_fips, state_name) = state_metadata_from_state_abbreviation(states[i])
-#
-#         # Linearly interpolate the 5-year loads from GCAM-USA to an annual time step:
-#         annual_time_vector = pd.Series(range(subset_df['x'].min(), subset_df['x'].max()))
-#         interpolation_function = interpolate.interp1d(subset_df['x'], subset_df['value'], kind='linear')
-#         annual_loads = interpolation_function(annual_time_vector)
-#
-#         # Create an empty dataframe and store the results:
-#         state_df = pd.DataFrame()
-#         state_df['Year'] = annual_time_vector.tolist()
-#         state_df['GCAM_USA_State_Annual_Load_TWh'] = annual_loads
-#         state_df['State_FIPS'] = state_fips
-#         state_df['State_Name'] = state_name
-#         state_df['State_Abbreviation'] = states[i]
-#
-#         # Aggregate the output into a new dataframe:
-#         if i == 0:
-#             gcam_usa_output_df = state_df
-#         else:
-#             gcam_usa_output_df = pd.concat([gcam_usa_output_df, state_df])
-#
-#     return gcam_usa_output_df
-
 
 def extract_gcam_usa_loads(scenario_to_process: str, gcam_usa_input_dir:str) -> DataFrame:
     """Extracts the state-level annual loads from a GCAM-USA output file.
@@ -101,7 +40,6 @@ def extract_gcam_usa_loads(scenario_to_process: str, gcam_usa_input_dir:str) -> 
 
     # Loop over the states and interpolate their loads to an annual time step:
     for i in range(len(states)):
-        # for i in range(1):
 
         # Subset to just the data for the state being processed:
         subset_df = gcam_usa_df[gcam_usa_df['subRegion'].isin([states[i]])].copy()
@@ -588,7 +526,7 @@ def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_pro
 
     # Print the start time and set a time variable to benchmark the run time:
     begin_time = datetime.datetime.now()
-    print('Start time = ', begin_time)
+    print('Scenario = ', scenario_to_process, ', Year = ', year_to_process)
 
     # Set the data output directory:
     data_output_dir_full = os.path.join(data_output_dir, scenario_to_process, gcam_target_year)
@@ -660,7 +598,6 @@ def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_pro
         output_tell_county_data(joint_mlp_df, year_to_process, gcam_target_year, data_output_dir_full)
 
     # Output the end time and elapsed time in order to benchmark the run time:
-    print('End time = ', datetime.datetime.now())
     print('Elapsed time = ', datetime.datetime.now() - begin_time)
 
     return summary_df, ba_time_series_df, state_time_series_df
