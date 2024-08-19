@@ -18,20 +18,19 @@ class InstallForcingSample:
     """
 
     # URL for DOI minted example data hosted on Zenodo
-    DATA_VERSION_URLS = {
-        '0.0.1': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
-        '0.1.0': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
-        '0.1.1': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
-        '0.1.2': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
-        '0.1.3': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
-        '0.1.4': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
-        '0.1.5': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
-        '1.0.0': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
-        '1.1.0': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
-        '1.1.1': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
-    }
 
-    DEFAULT_VERSION = 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1'
+    DATA_VERSION_URLS = {'0.0.1': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
+                         '0.1.0': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
+                         '0.1.1': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
+                         '0.1.2': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
+                         '0.1.3': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
+                         '0.1.4': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
+                         '0.1.5': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
+                         '1.0.0': 'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',
+                         '1.1.0': 'https://zenodo.org/records/13344803/files/sample_forcing_data.zip?download=1',
+                         '1.2.0': 'https://zenodo.org/records/13344803/files/sample_forcing_data.zip?download=1'}
+
+    DEFAULT_VERSION = 'https://zenodo.org/records/13344803/files/sample_forcing_data.zip?download=1'
 
     def __init__(self, data_dir=None):
         self.data_dir = data_dir

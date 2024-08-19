@@ -9,33 +9,31 @@ from pandas import DataFrame
 from scipy import interpolate
 from .states_fips_function import state_metadata_from_state_abbreviation
 
-def extract_gcam_usa_loads(scenario_to_process: str, filename: str) -> DataFrame:
+
+def extract_gcam_usa_loads(scenario_to_process: str, gcam_usa_input_dir:str) -> DataFrame:
     """Extracts the state-level annual loads from a GCAM-USA output file.
 
     :param scenario_to_process: Scenario to process
     :type scenario_to_process:  str
 
-    :param filename:            Name of the GCAM-USA output file
-    :type filename:             str
+    :param gcam_usa_input_dir:  Path to where the GCAM-USA data are stored
+    :type gcam_usa_input_dir:   str
 
     :return:                    DataFrame of state-level annual total electricity loads
 
     """
 
-    # Load in the raw GCAM-USA output file:
-    gcam_usa_df = pd.read_csv(filename, index_col=None, header=0)
-
     # Cluge the scenario for historical runs:
     if scenario_to_process == 'historic':
-       scenario_to_process_gcam = 'rcp45cooler_ssp3'
+        scenario_to_process_gcam = 'rcp45cooler_ssp3'
     else:
-       scenario_to_process_gcam = scenario_to_process
+        scenario_to_process_gcam = scenario_to_process
 
-    # Subset the data to only the scenario you want to process:
-    gcam_usa_df = gcam_usa_df[gcam_usa_df['scenario'].isin([scenario_to_process_gcam])]
+    # Create the filename for the needed GCAM run:
+    filename = (os.path.join(gcam_usa_input_dir, ('electricity_demand_' + scenario_to_process_gcam + '.csv')))
 
-    # Subset the data to only the total annual consumption of electricity by state:
-    gcam_usa_df = gcam_usa_df[gcam_usa_df['param'].isin(['elecFinalBySecTWh'])]
+    # Load in the raw GCAM-USA output file:
+    gcam_usa_df = pd.read_csv(filename, index_col=None, header=0)
 
     # Make a list of all of the states in the "gcam_usa_df":
     states = gcam_usa_df['subRegion'].unique()
@@ -475,7 +473,7 @@ def output_tell_county_data(joint_mlp_df: DataFrame, year_to_process: str, gcam_
         state_name = state_name.replace(",", "_")
 
         csv_output_filename = os.path.join(
-            data_output_dir + '/County_Level_Data/TELL_' + state_name + '_' + county_name + '_Hourly_Load_Data_' +
+            data_output_dir + '/County_Level_Data/' + year_to_process + '/TELL_' + state_name + '_' + county_name + '_Hourly_Load_Data_' +
             year_to_process + '_Scaled_' + gcam_target_year + '.csv')
 
         # Write out the dataframe to a .csv file:
@@ -528,7 +526,7 @@ def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_pro
 
     # Print the start time and set a time variable to benchmark the run time:
     begin_time = datetime.datetime.now()
-    print('Start time = ', begin_time)
+    print('Scenario = ', scenario_to_process, ', Year = ', year_to_process)
 
     # Set the data output directory:
     data_output_dir_full = os.path.join(data_output_dir, scenario_to_process, gcam_target_year)
@@ -537,12 +535,12 @@ def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_pro
     if os.path.exists(data_output_dir_full) is False:
         os.makedirs(data_output_dir_full)
     if save_county_data:
-        if os.path.exists(os.path.join(data_output_dir_full, 'County_Level_Data')) is False:
-            os.mkdir(os.path.join(data_output_dir_full, 'County_Level_Data'))
+        if os.path.exists(os.path.join(data_output_dir_full, 'County_Level_Data', year_to_process)) is False:
+            os.mkdir(os.path.join(data_output_dir_full, 'County_Level_Data', year_to_process))
 
     # Load in the sample GCAM-USA output file and subset the data to only the "year_to_process":
     gcam_usa_df = extract_gcam_usa_loads(scenario_to_process = scenario_to_process,
-                                         filename = (os.path.join(gcam_usa_input_dir, 'gcamDataTable_aggParam.csv')))
+                                         gcam_usa_input_dir = gcam_usa_input_dir)
     gcam_usa_df = gcam_usa_df[gcam_usa_df['Year'] == int(gcam_target_year)]
 
     # Load in the most recent (i.e., 2019) BA service territory mapping file:
@@ -600,7 +598,6 @@ def execute_forward(year_to_process: str, gcam_target_year: str, scenario_to_pro
         output_tell_county_data(joint_mlp_df, year_to_process, gcam_target_year, data_output_dir_full)
 
     # Output the end time and elapsed time in order to benchmark the run time:
-    print('End time = ', datetime.datetime.now())
     print('Elapsed time = ', datetime.datetime.now() - begin_time)
 
     return summary_df, ba_time_series_df, state_time_series_df
