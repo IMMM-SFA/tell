@@ -269,7 +269,7 @@ def extract_future_ba_population(year: int, ba_code: str, scenario: str, data_in
     mapping_df = mapping_df.merge(pop_df, on=['County_FIPS'])
 
     # Only keep the columns that are needed:
-    df = mapping_df[['2020', '2030', '2040', '2050', '2060', '2070', '2080', '2090', '2100']].copy()
+    df = mapping_df.drop(columns=['County_FIPS', 'BA_Code', 'state_name'])
 
     # Sum the population across all counties:
     df_sum = df.sum(axis=0)
