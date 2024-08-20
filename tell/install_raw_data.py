@@ -29,6 +29,7 @@ class InstallRawData:
         '1.0.0': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
         '1.1.0': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
         '1.1.1': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',
+        '1.2.0': 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1'
     }
 
     DEFAULT_VERSION = 'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1'
