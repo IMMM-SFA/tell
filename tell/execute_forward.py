@@ -164,7 +164,7 @@ def process_population_scenario(scenario_to_process: str, population_data_input_
         population_dft.set_index('yr', inplace=True)
 
         # Interpolate the populations to an annual time-step and transpose the results:
-        population_interp_df = population_dft.resample('1Y').mean().interpolate('linear').T
+        population_interp_df = population_dft.resample('1YE').mean().interpolate('linear').T
 
         # Convert the dataframe from a wide format to a long format and name the population variable:
         population_interp_df = population_interp_df.stack().reset_index()
