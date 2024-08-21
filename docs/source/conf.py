@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath('../'))
 project = 'TELL'
 copyright = '2022, Batelle Memorial Institute'
 author = 'Casey Burleyson, Casey McGrath'
-version = 'v1.2.0'
+version = '1.2.1'
 
 
 
