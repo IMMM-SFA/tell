@@ -31,6 +31,7 @@ class InstallForcingSample:
         '1.1.0': 'https://zenodo.org/records/13344803/files/sample_forcing_data.zip?download=1',
         '1.2.0': 'https://zenodo.org/records/13344803/files/sample_forcing_data.zip?download=1',
         '1.2.1': 'https://zenodo.org/records/13344803/files/sample_forcing_data.zip?download=1',
+        `1.3.0`: 'https://zenodo.org/records/13344803/files/sample_forcing_data.zip?download=1',
     }
 
     DEFAULT_VERSION = 'https://zenodo.org/records/13344803/files/sample_forcing_data.zip?download=1'
