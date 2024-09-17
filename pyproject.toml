@@ -13,12 +13,14 @@ authors = [
     {name = "Casey McGrath", email = "casey.mcgrath@pnnl.gov"},
     {name = "Casey Burleyson", email = "casey.burleyson@pnnl.gov"},
     {name = "Chris Vernon", email = "chris.vernon@pnnl.gov"},
+    {name = "Em Rexer", email = "emily.rexer@pnnl.gov"},
     {name = "Aowabin Rahman", email = "aowabin.rahman@pnnl.gov"},
 ]
 maintainers = [
     {name = "Casey McGrath", email = "casey.mcgrath@pnnl.gov"},
     {name = "Casey Burleyson", email = "casey.burleyson@pnnl.gov"},
     {name = "Chris Vernon", email = "chris.vernon@pnnl.gov"},
+    {name = "Em Rexer", email = "emily.rexer@pnnl.gov"},
 ]
 dependencies = [
     "setuptools>=49.2.1",
