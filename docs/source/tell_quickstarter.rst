@@ -62,7 +62,7 @@ supported by GeoPandas functionality.  Please see suggestions for installing
 GeoPandas on Windows here:
 https://geopandas.org/en/stable/getting_started/install.html)
 
-.. code:: ipython3
+.. code:: python
 
     # Start by importing the TELL package and information about your operating system:
     import os 
@@ -85,7 +85,7 @@ available in a `Zenodo data
 package <https://zenodo.org/record/6354665#.Yi-_PRDMJTY>`__. The sample
 forcing data package will require ~250 MB of storage.
 
-.. code:: ipython3
+.. code:: python
 
     # Identify the current working directory, the subdirectory where the data will be stored, and the image output subdirectory:
     current_dir =  os.path.join(os.path.dirname(os.getcwd()))
@@ -101,13 +101,13 @@ forcing data package will require ~250 MB of storage.
        os.makedirs(tell_image_dir)
 
 
-.. code:: ipython3
+.. code:: python
 
     # Download the TELL quickstarter data package from Zenodo:
     tell.install_quickstarter_data(data_dir = tell_data_dir)
 
 
-.. code:: ipython3
+.. code:: python
 
     # Download the TELL sample forcing data package from Zenodo:
     tell.install_sample_forcing_data(data_dir = tell_data_dir)
@@ -146,13 +146,13 @@ a function to do some basic analysis of the trained model’s performance.
 More extensive evaluation of the ``tell`` predictive models is included
 in the ``tell_mlp_calibration_evaluation.ipynb`` notebook.
 
-.. code:: ipython3
+.. code:: python
 
     # For more information about the training of predictive models you can call the help function:
     help(tell.train)
 
 
-.. code:: ipython3
+.. code:: python
 
     # Run the MLP training step for a single BA (i.e., "region"):
     prediction_df, validation_df = tell.train(region = 'PJM',
@@ -169,7 +169,7 @@ You can also train multiple BAs at the same time using parallel
 processing. The example code block below retrains the models for all BAs
 in ``tell``.
 
-.. code:: ipython3
+.. code:: python
 
     # Generate a list of BA abbreviations to process:
     ba_abbrev_list = tell.get_balancing_authority_to_model_dict().keys()
@@ -183,7 +183,7 @@ in ``tell``.
     validation_df
 
 
-.. code:: ipython3
+.. code:: python
 
     # Plot the statistical performance (e.g., RMS_ABS, RMS_NORM, MAPE, or R2) of the predictive models across all the BAs in TELL:
     tell.plot_mlp_summary_statistics(validation_df, 
@@ -203,7 +203,7 @@ meteorology for each BA: 2039, 2059, 2079, and 2099. Those are the only
 valid options for the ``year`` variable when calling the prediciton
 functions.
 
-.. code:: ipython3
+.. code:: python
 
     # Run the MLP prediction step for a single BA (i.e., "region"):
     pdf = tell.predict(region = 'ERCO',
@@ -217,7 +217,7 @@ functions.
     pdf
 
 
-.. code:: ipython3
+.. code:: python
 
     # Generate a list of BA abbreviations to process:
     ba_abbrev_list = tell.get_balancing_authority_to_model_dict().keys()
@@ -250,7 +250,7 @@ since it takes a while to write out the county-level output data this
 output is optional. To output county-level load projections just set the
 ``save_county_data`` flag to true.
 
-.. code:: ipython3
+.. code:: python
 
     # Run the TELL model forward in time for a given year:
     summary_df, ba_time_series_df, state_time_series_df = tell.execute_forward(year_to_process = '2039',
@@ -276,7 +276,7 @@ and ``tell``. The data plotted here are in units of TWh and the ``tell``
 values are the unscaled projections. The scaled projections ``tell`` are
 by definition equal to those from GCAM-USA.
 
-.. code:: ipython3
+.. code:: python
 
     # Plot the annual total loads from both GCAM-USA and TELL:
     tell.plot_state_annual_total_loads(year_to_plot = '2039',
@@ -294,7 +294,7 @@ Here we plot time-series of the raw (unscaled) and scaled total loads
 from ``tell`` at the state level. The user specifies which state they
 want to plot using the \`state_to_plot” variable in the function call.
 
-.. code:: ipython3
+.. code:: python
 
     # Plot the time-series of raw and scaled loads from TELL at the state level for a user-specified state:
     tell.plot_state_load_time_series(state_to_plot = 'Connecticut', 
@@ -314,7 +314,7 @@ the frequency at which a given load occurs in a state. The user
 specifies which state they want to plot using the “state_to_plot”
 variable in the function call.
 
-.. code:: ipython3
+.. code:: python
 
     # Plot the load duration curve at the state level for a user-specified state:
     tell.plot_state_load_duration_curve(state_to_plot = 'North Carolina', 
@@ -334,7 +334,7 @@ scaled total loads from ``tell`` at the BA level. The user specifies
 which BA they want to plot using the “ba_to_plot” variable in the
 function call.
 
-.. code:: ipython3
+.. code:: python
 
     # Plot the time-series of raw and scaled loads from TELL at the BA level for a user-specified BA (e.g., PJM, CISO, ERCO, etc.):
     tell.plot_ba_load_time_series(ba_to_plot = 'NYIS', 
