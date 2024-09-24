@@ -29,65 +29,68 @@ accurate load forecasting (electric utilities, regulatory commissions, industria
 researchers interested in energy system transitions, and many others in need of a framework for blending short and long-term
 load models with an explicit spatial resolution component.
 
-.. panels::
-    :card: + intro-card text-center
-    :column: col-lg-6 col-md-6 col-sm-6 col-xs-12 d-flex
+.. grid:: 4
+    :gutter: 3
 
-    >>>
-    :img-top: _static/cognitive.svg
+    .. grid-item-card:: Getting started
+        :img-top: _static/index_info.svg
+        :class-img-top: sd-px-4, sd-py-4 custom-img-size
+        :text-align: center
 
-    Getting started
-    ^^^
+        New to `tell`? Get familiar with what `tell` is all about.
 
-    New to `tell`? Get familiar with what `tell` is all about.
+        +++
+        .. button-ref:: README
+                :click-parent:
+                :color: primary
+                :expand: 
 
-    +++
-    .. link-button:: README
-            :type: ref
-            :text: Getting started
-            :classes: btn-block btn-secondary stretched-link
+                Getting started
 
-    >>>
-    :img-top: _static/education.svg
+    .. grid-item-card:: Quickstarter
+        :img-top: _static/index_quickstarter.svg
+        :class-img-top: sd-px-4, sd-py-4
+        :text-align: center
 
-    Quickstarter
-    ^^^
+        Follow along with this Jupyter notebook to learn the ropes of `tell`.
 
-    Follow along with this Jupyter notebook to learn the ropes of `tell`.
+        +++
+        .. button-ref:: tell_quickstarter
+                :click-parent:
+                :color: primary
+                :expand: 
 
-    +++
-    .. link-button:: tell_quickstarter
-            :type: ref
-            :text: Quickstarter
-            :classes: btn-block btn-secondary stretched-link
+                Quickstarter
 
-    >>>
-    :img-top: _static/soccer.svg
+    .. grid-item-card:: User Guide
+        :img-top: _static/index_user_guide.svg
+        :class-img-top: sd-px-4, sd-py-4
+        :text-align: center
 
-    User Guide
-    ^^^
+        The user guide provides in-depth information on the key concepts of `tell`.
 
-    The user guide provides in-depth information on the key concepts of `tell`.
+        +++
+        .. button-ref:: user_guide
+                :click-parent:
+                :color: primary
+                :expand: 
 
-    +++
-    .. link-button:: user_guide
-            :type: ref
-            :text: User Guide
-            :classes: btn-block btn-secondary stretched-link
+                User Guide
 
-    >>>
-    :img-top: _static/api.svg
+    .. grid-item-card:: API reference
+        :img-top: _static/index_api.svg
+        :class-img-top: sd-px-4, sd-py-4
+        :text-align: center
 
-    API reference
-    ^^^
+        A detailed description of the `tell` API.
 
-    A detailed description of the `tell` API.
+        +++
+        .. button-ref:: modules
+                :click-parent:
+                :color: primary
+                :expand: 
 
-    +++
-    .. link-button:: modules
-            :type: ref
-            :text: API
-            :classes: btn-block btn-secondary stretched-link
+                API    
 
 
 .. toctree::
