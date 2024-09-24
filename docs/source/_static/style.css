@@ -46,3 +46,12 @@
 .card-body {
     padding: 0.5rem;
 }
+
+/* Custom class for resizing grid-item-card images */
+.custom-img-size {
+  width: 75px;      /* Set desired width */
+  height: auto;      /* Maintain aspect ratio */
+  max-width: 100%;   /* Ensure responsiveness */
+  display: block;    /* Remove inline spacing */
+  margin: 0 auto;    /* Center the image horizontally */
+}

@@ -34,7 +34,7 @@ load models with an explicit spatial resolution component.
 
     .. grid-item-card:: Getting started
         :img-top: _static/index_info.svg
-        :class-img-top: sd-px-4, sd-py-4
+        :class-img-top: sd-px-4, sd-py-4 custom-img-size
         :text-align: center
 
         New to `tell`? Get familiar with what `tell` is all about.
