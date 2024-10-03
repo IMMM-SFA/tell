@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tell.data_spatial_mapping &mdash; TELL  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=cf4e22e0" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            TELL
+          </a>
+              <div class="version">
+                1.3.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tell_quickstarter.html">Quickstarter Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement.html">Acknowledgement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TELL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tell.data_spatial_mapping</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tell.data_spatial_mapping</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
+
+
+<div class="viewcode-block" id="process_spatial_mapping">
+<a class="viewcode-back" href="../../tell.html#tell.data_spatial_mapping.process_spatial_mapping">[docs]</a>
+<span class="k">def</span> <span class="nf">process_spatial_mapping</span><span class="p">(</span><span class="n">target_year</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">fips_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">service_area_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sales_ult_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                            <span class="n">bal_auth_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Workflow function to execute the mapping of BAs to counties for a given year</span>
+
+<span class="sd">    :param target_year:                         Year to process; four digit year (e.g., 1990)</span>
+<span class="sd">    :type target_year:                          int</span>
+
+<span class="sd">    :param fips_file:                           County FIPS code .csv file</span>
+<span class="sd">    :type fips_file:                            str</span>
+
+<span class="sd">    :param service_area_file:                   Balancing authority service area Excel file</span>
+<span class="sd">    :type service_area_file:                    str</span>
+
+<span class="sd">    :param sales_ult_file:                      Balancing authority sales to ultimate customer Excel file</span>
+<span class="sd">    :type sales_ult_file:                       str</span>
+
+<span class="sd">    :param bal_auth_file:                       Balancing authority and ID codes Excel file</span>
+<span class="sd">    :type bal_auth_file:                        str</span>
+
+<span class="sd">    :param output_dir:                          Directory to store the output .csv file</span>
+<span class="sd">    :type output_dir:                           str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Read in the raw data from the &quot;Service_Territory_YYYY.xlsx&quot; spreadsheet:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">df_territory</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">service_area_file</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;Counties&#39;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">df_territory</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">service_area_file</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;Counties_States&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Only keep the columns that are needed:</span>
+    <span class="n">df_territory</span> <span class="o">=</span> <span class="n">df_territory</span><span class="p">[[</span><span class="s1">&#39;Utility Number&#39;</span><span class="p">,</span> <span class="s1">&#39;State&#39;</span><span class="p">,</span> <span class="s1">&#39;County&#39;</span><span class="p">,</span> <span class="s1">&#39;Data Year&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Read in the raw data from the &quot;Sales_Ult_Cust_YYYY.xlsx&quot; spreadsheet:</span>
+    <span class="n">df_ultcust</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">sales_ult_file</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;States&#39;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># Rename the &quot;BA_CODE&quot; column for EIA-861 data before 2017:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">df_ultcust</span> <span class="o">=</span> <span class="n">df_ultcust</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;BA_CODE&#39;</span><span class="p">:</span> <span class="s1">&#39;BA Code&#39;</span><span class="p">})</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">df_ultcust</span> <span class="o">=</span> <span class="n">df_ultcust</span>
+
+    <span class="c1"># Only keep the columns that are needed:</span>
+    <span class="n">df_ultcust</span> <span class="o">=</span> <span class="n">df_ultcust</span><span class="p">[[</span><span class="s1">&#39;Utility Number&#39;</span><span class="p">,</span> <span class="s1">&#39;State&#39;</span><span class="p">,</span> <span class="s1">&#39;BA Code&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Read in the raw data from the &quot;Balancing_Authority_YYYY.xlsx&quot; spreadsheet:</span>
+    <span class="n">df_ba</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">bal_auth_file</span><span class="p">)</span>
+
+    <span class="c1"># Rename the &quot;BA_CODE&quot; column for EIA-861 data before 2017:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">df_ba</span> <span class="o">=</span> <span class="n">df_ba</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;BA_CODE&#39;</span><span class="p">:</span> <span class="s1">&#39;BA Code&#39;</span><span class="p">,</span> <span class="s1">&#39;BA ID&#39;</span><span class="p">:</span> <span class="s1">&#39;BA_Number&#39;</span><span class="p">})</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">df_ba</span> <span class="o">=</span> <span class="n">df_ba</span>
+
+    <span class="c1"># Only keep the columns that are needed:</span>
+    <span class="n">df_ba</span> <span class="o">=</span> <span class="n">df_ba</span><span class="p">[[</span><span class="s1">&#39;State&#39;</span><span class="p">,</span> <span class="s1">&#39;BA Code&#39;</span><span class="p">,</span> <span class="s1">&#39;BA_Number&#39;</span><span class="p">,</span> <span class="s1">&#39;Balancing Authority Name&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Merge the &#39;df_territory&#39; and &#39;df_ultcust&#39; dataframes based on common utility numbers and states:</span>
+    <span class="n">df_territory_ultcust</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_territory</span><span class="p">,</span> <span class="n">df_ultcust</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Utility Number&#39;</span><span class="p">,</span> <span class="s1">&#39;State&#39;</span><span class="p">],</span>
+                                    <span class="n">right_on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Utility Number&#39;</span><span class="p">,</span> <span class="s1">&#39;State&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Merge the &#39;df_territory_ultcust&#39; and &#39;df_ba&#39; dataframes based on common BA codes:</span>
+    <span class="n">df_territory_ultcust_ba</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_territory_ultcust</span><span class="p">,</span> <span class="n">df_ba</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;BA Code&#39;</span><span class="p">,</span> <span class="s1">&#39;State&#39;</span><span class="p">],</span>
+                                       <span class="n">right_on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;BA Code&#39;</span><span class="p">,</span> <span class="s1">&#39;State&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Only keep the columns that are needed:</span>
+    <span class="n">df_territory_ultcust_ba</span> <span class="o">=</span> <span class="n">df_territory_ultcust_ba</span><span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;Data Year&#39;</span><span class="p">,</span> <span class="s1">&#39;State&#39;</span><span class="p">,</span> <span class="s1">&#39;County&#39;</span><span class="p">,</span> <span class="s1">&#39;BA Code&#39;</span><span class="p">,</span> <span class="s1">&#39;Balancing Authority Name&#39;</span><span class="p">,</span> <span class="s1">&#39;BA_Number&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Drop the duplicates that result from more than one utility-BA combination per county:</span>
+    <span class="n">df_territory_ultcust_ba</span> <span class="o">=</span> <span class="n">df_territory_ultcust_ba</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+
+    <span class="c1"># Drop the rows that have a NaN value for &quot;BA Code&quot;:</span>
+    <span class="n">df_territory_ultcust_ba</span> <span class="o">=</span> <span class="n">df_territory_ultcust_ba</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;BA Code&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Make the &quot;County&quot; variable consistently lower case:</span>
+    <span class="n">df_territory_ultcust_ba</span><span class="p">[</span><span class="s1">&#39;County&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_territory_ultcust_ba</span><span class="p">[</span><span class="s1">&#39;County&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+
+    <span class="c1"># Remove apostrophes from the &quot;County&quot; variable:</span>
+    <span class="n">df_territory_ultcust_ba</span><span class="p">[</span><span class="s1">&#39;County&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_territory_ultcust_ba</span><span class="p">[</span><span class="s1">&#39;County&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Replace spaces and dashes with underscores in the &quot;County&quot; variable:</span>
+    <span class="n">df_territory_ultcust_ba</span><span class="p">[</span><span class="s1">&#39;County&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_territory_ultcust_ba</span><span class="p">[</span><span class="s1">&#39;County&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">))</span>
+    <span class="n">df_territory_ultcust_ba</span><span class="p">[</span><span class="s1">&#39;County&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_territory_ultcust_ba</span><span class="p">[</span><span class="s1">&#39;County&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Rename one county that has two spaces in the raw EIA-861 data:</span>
+    <span class="n">df_territory_ultcust_ba</span><span class="p">[</span><span class="s1">&#39;County&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_territory_ultcust_ba</span><span class="p">[</span><span class="s1">&#39;County&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;st__helena&quot;</span><span class="p">,</span> <span class="s2">&quot;st_helena&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Read in the state and county FIPS code .csv file:</span>
+    <span class="n">df_fips</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fips_file</span><span class="p">)</span>
+
+    <span class="c1"># Make the &quot;county_name&quot; variable consistently lower case and copy it to a new variable:</span>
+    <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+
+    <span class="c1"># Strip the words &quot;county&quot;, &quot;borough&quot;, &quot;parish&quot;, &quot;municipality&quot;, and &quot;census area&quot; from the &quot;county_match&quot; variable:</span>
+    <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; county&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; borough&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; parish&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; municipality&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; census area&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># Rename two counties that contain the prefix &quot;De&quot;:</span>
+    <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;de soto&quot;</span><span class="p">,</span> <span class="s2">&quot;desoto&quot;</span><span class="p">))</span>
+    <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;de witt&quot;</span><span class="p">,</span> <span class="s2">&quot;dewitt&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Remove apostrophes and periods from the &quot;county_match&quot; variable:</span>
+    <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+    <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Replace spaces and dashes with underscores in the &quot;county_match&quot; variable:</span>
+    <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">))</span>
+    <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_fips</span><span class="p">[</span><span class="s1">&#39;county_match&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Rename a few columns to match what is in the &#39;df_territory_ultcust_ba&#39; dataframe:</span>
+    <span class="n">df_fips</span> <span class="o">=</span> <span class="n">df_fips</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;county_match&#39;</span><span class="p">:</span> <span class="s1">&#39;County&#39;</span><span class="p">,</span> <span class="s1">&#39;state_abbreviation&#39;</span><span class="p">:</span> <span class="s1">&#39;State&#39;</span><span class="p">})</span>
+
+    <span class="c1"># Merge the &#39;df_territory_ultcust_ba&#39; and &#39;df_fips&#39; dataframes based on common county names and state abbreviations:</span>
+    <span class="n">df_merged</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_territory_ultcust_ba</span><span class="p">,</span> <span class="n">df_fips</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;County&#39;</span><span class="p">,</span> <span class="s1">&#39;State&#39;</span><span class="p">],</span>
+                         <span class="n">right_on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;County&#39;</span><span class="p">,</span> <span class="s1">&#39;State&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Only keep the columns that are needed:</span>
+    <span class="n">df_output</span> <span class="o">=</span> <span class="n">df_merged</span><span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;Data Year&#39;</span><span class="p">,</span> <span class="s1">&#39;state_name&#39;</span><span class="p">,</span> <span class="s1">&#39;state_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;county_name&#39;</span><span class="p">,</span> <span class="s1">&#39;county_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;BA_Number&#39;</span><span class="p">,</span> <span class="s1">&#39;BA Code&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Rename the columns using a consistent format:</span>
+    <span class="n">df_output</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Data Year&quot;</span><span class="p">:</span> <span class="s2">&quot;Year&quot;</span><span class="p">,</span>
+                              <span class="s2">&quot;state_FIPS&quot;</span><span class="p">:</span> <span class="s2">&quot;State_FIPS&quot;</span><span class="p">,</span>
+                              <span class="s2">&quot;state_name&quot;</span><span class="p">:</span> <span class="s2">&quot;State_Name&quot;</span><span class="p">,</span>
+                              <span class="s2">&quot;county_FIPS&quot;</span><span class="p">:</span> <span class="s2">&quot;County_FIPS&quot;</span><span class="p">,</span>
+                              <span class="s2">&quot;county_name&quot;</span><span class="p">:</span> <span class="s2">&quot;County_Name&quot;</span><span class="p">,</span>
+                              <span class="s2">&quot;BA Code&quot;</span><span class="p">:</span> <span class="s2">&quot;BA_Code&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Reorder the columns:</span>
+    <span class="n">df_output</span> <span class="o">=</span> <span class="n">df_output</span><span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">,</span> <span class="s1">&#39;State_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;State_Name&#39;</span><span class="p">,</span> <span class="s1">&#39;County_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;County_Name&#39;</span><span class="p">,</span> <span class="s1">&#39;BA_Number&#39;</span><span class="p">,</span> <span class="s1">&#39;BA_Code&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Sort the dataframe by BA number first and then county FIPS code:</span>
+    <span class="n">df_output</span> <span class="o">=</span> <span class="n">df_output</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;BA_Number&quot;</span><span class="p">,</span> <span class="s2">&quot;County_FIPS&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Write the spatial mapping output to a .csv file:</span>
+    <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;ba_service_territory_</span><span class="si">{</span><span class="n">target_year</span><span class="si">}</span><span class="s1">.csv&#39;</span><span class="p">)</span>
+    <span class="n">df_output</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="map_ba_service_territory">
+<a class="viewcode-back" href="../../tell.html#tell.data_spatial_mapping.map_ba_service_territory">[docs]</a>
+<span class="k">def</span> <span class="nf">map_ba_service_territory</span><span class="p">(</span><span class="n">start_year</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end_year</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Workflow function to run the &quot;process_spatial_mapping&quot; function to map BAs to counties</span>
+
+<span class="sd">    :param start_year:                         Year to start process; four digit year (e.g., 1990)</span>
+<span class="sd">    :type start_year:                          int</span>
+
+<span class="sd">    :param end_year:                           Year to end process; four digit year (e.g., 1990)</span>
+<span class="sd">    :type end_year:                            int</span>
+
+<span class="sd">    :param data_input_dir:                     Top-level data directory for TELL</span>
+<span class="sd">    :type data_input_dir:                      str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Set the output directory based on the &quot;raw_data_dir&quot; variable:</span>
+    <span class="n">output_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_quickstarter_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;ba_service_territory&#39;</span><span class="p">)</span>
+
+    <span class="c1"># If the output directory doesn&#39;t exist then create it:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+
+    <span class="c1"># Create a vector of years to process:</span>
+    <span class="n">years_to_process</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Loop over the range of years to process:</span>
+    <span class="k">for</span> <span class="n">target_year</span> <span class="ow">in</span> <span class="n">years_to_process</span><span class="p">:</span>
+        <span class="c1"># Set paths to files:</span>
+        <span class="n">fips_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_raw_data&#39;</span><span class="p">,</span> <span class="s1">&#39;state_and_county_fips_codes.csv&#39;</span><span class="p">)</span>
+        <span class="n">service_area_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_raw_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;EIA_861&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">target_year</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Service_Territory_</span><span class="si">{</span><span class="n">target_year</span><span class="si">}</span><span class="s1">.xlsx&#39;</span><span class="p">)</span>
+        <span class="n">sales_ult_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_raw_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;EIA_861&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">target_year</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Sales_Ult_Cust_</span><span class="si">{</span><span class="n">target_year</span><span class="si">}</span><span class="s1">.xlsx&#39;</span><span class="p">)</span>
+        <span class="n">bal_auth_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_raw_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;EIA_861&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">target_year</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Balancing_Authority_</span><span class="si">{</span><span class="n">target_year</span><span class="si">}</span><span class="s1">.xlsx&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Run the &quot;process_spatial_mapping&quot; function for that year:</span>
+        <span class="n">process_spatial_mapping</span><span class="p">(</span><span class="n">target_year</span><span class="p">,</span> <span class="n">fips_file</span><span class="p">,</span> <span class="n">service_area_file</span><span class="p">,</span> <span class="n">sales_ult_file</span><span class="p">,</span> <span class="n">bal_auth_file</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Batelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

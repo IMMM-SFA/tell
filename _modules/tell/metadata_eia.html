@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tell.metadata_eia &mdash; TELL  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=cf4e22e0" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            TELL
+          </a>
+              <div class="version">
+                1.3.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tell_quickstarter.html">Quickstarter Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement.html">Acknowledgement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TELL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tell.metadata_eia</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tell.metadata_eia</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
+
+
+<div class="viewcode-block" id="metadata_eia">
+<a class="viewcode-back" href="../../tell.html#tell.metadata_eia.metadata_eia">[docs]</a>
+<span class="k">def</span> <span class="nf">metadata_eia</span><span class="p">(</span><span class="n">numbers</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Define the state FIPS code and state name from a given state abbreviation.</span>
+
+<span class="sd">    :param numbers:                 EIA 930 BA number</span>
+<span class="sd">    :type numbers:                  int</span>
+
+<span class="sd">    :return:                        DataFrame with BA short and long name</span>
+
+<span class="sd">     &quot;&quot;&quot;</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">eia_ba_number</span> <span class="ow">in</span> <span class="n">numbers</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>      <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;NBSO&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;New Brunswick System Operator&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">189</span><span class="p">:</span>    <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;AEC&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;PowerSouth Energy Cooperative&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">317</span><span class="p">:</span>    <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;YAD&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Alcoa Power Generating Inc. - Yadkin &#39;</span> \
+                                                                             <span class="s1">&#39;Division&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">599</span><span class="p">:</span>    <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;AMPL&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Anchorage Municipal Light and Power&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">803</span><span class="p">:</span>    <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;AZPS&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Arizona Public Service Company&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">924</span><span class="p">:</span>    <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;AECI&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Associated Electric Cooperative Inc.&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">1738</span><span class="p">:</span>   <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;BPAT&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Bonneville Power Administration&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">2775</span><span class="p">:</span>   <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;CISO&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;California Independent System Operator&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">3046</span><span class="p">:</span>   <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;CPLE&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Duke Energy Progress East&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">3413</span><span class="p">:</span>   <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;CHPD&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;PUD No. 1 of Chelan County&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">3522</span><span class="p">:</span>   <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;CEA&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Chugach Electric Association Inc.&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">5326</span><span class="p">:</span>   <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;DOPD&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;PUD No. 1 of Douglas County&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">5416</span><span class="p">:</span>   <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;DUK&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Duke Energy Carolinas&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">5701</span><span class="p">:</span>   <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;EPE&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;El Paso Electric Company&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">5723</span><span class="p">:</span>   <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;ERCO&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Electric Reliability Council of Texas Inc.&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">5748</span><span class="p">:</span>   <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;EEI&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Electric Energy Inc.&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">6452</span><span class="p">:</span>   <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;FPL&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Florida Power &amp; Light Company&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">6455</span><span class="p">:</span>   <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;FPC&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Duke Energy Florida Inc.&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">6909</span><span class="p">:</span>   <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;GVL&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Gainesville Regional Utilities&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">8795</span><span class="p">:</span>   <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;HST&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;City of Homestead&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">9191</span><span class="p">:</span>   <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;IPCO&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Idaho Power Company&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">9216</span><span class="p">:</span>   <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;IID&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Imperial Irrigation District&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">9617</span><span class="p">:</span>   <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;JEA&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;JEA&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">11208</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;LDWP&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Los Angeles Department of Water and Power&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">11249</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;LGEE&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Louisville Gas &amp; Electric Company and &#39;</span> \
+                                                                             <span class="s1">&#39;Kentucky Utilities&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">12825</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;NWMT&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;NorthWestern Energy&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">13407</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;NEVP&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Nevada Power Company&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">13434</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;ISNE&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;ISO New England Inc.&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">13485</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;NSB&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;New Smyrna Beach Utilities Commission&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">13501</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;NYIS&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;New York Independent System Operator&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">14015</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;OVEC&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Ohio Valley Electric Corporation&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">14378</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;PACW&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;PacifiCorp - West&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">14379</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;PACE&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;PacifiCorp - East&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">14412</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;GRMA&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Gila River Power LLC&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">14610</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;FMPP&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Florida Municipal Power Pool&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">14624</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;GCPD&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;PUD No. 2 of Grant County&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">14725</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;PJM&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;PJM Interconnection LLC&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">15399</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;AVRN&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Avangrid Renewables LLC&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">15466</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;PSCO&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Public Service Company of Colorado&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">15248</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;PGE&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Portland General Electric Company&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">15473</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;PNM&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Public Service Company of New Mexico&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">15500</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;PSEI&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Puget Sound Energy&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">16534</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;BANC&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Balancing Authority of Northern &#39;</span> \
+                                                                             <span class="s1">&#39;California&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">16572</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;SRP&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Salt River Project&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">16868</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;SCL&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Seattle City Light&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">17539</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;SCEG&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;South Carolina Electric &amp; Gas Company&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">17543</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;SC&#39;</span><span class="p">;</span>   <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;South Carolina Public Service Authority&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">17716</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;SPA&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Southwestern Power Administration&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">18195</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;SOCO&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Southern Company Services Inc. - &#39;</span> \
+                                                                             <span class="s1">&#39;Transmission&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">18429</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;TPWR&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;City of Tacoma Department of Public&#39;</span> \
+                                                                             <span class="s1">&#39; Utilities Light Division&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">18445</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;TAL&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;City of Tallahassee&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">18454</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;TEC&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Tampa Electric Company&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">18642</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;TVA&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Tennessee Valley Authority&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">19281</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;TIDC&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Turlock Irrigation District&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">19547</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;HECO&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Hawaiian Electric Company Inc.&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">19610</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;WAUW&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Western Area Power Administration - &#39;</span> \
+                                                                             <span class="s1">&#39;UGP West&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">20169</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;AVA&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Avista Corporation&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">21554</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;SEC&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Seminole Electric Cooperative&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">24211</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;TEPC&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Tucson Electric Power Company&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">25471</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;WALC&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Western Area Power Administration - &#39;</span> \
+                                                                             <span class="s1">&#39;Desert Southwest Region&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">28502</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;WAUE&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Western Area Power Administration - &#39;</span> \
+                                                                             <span class="s1">&#39;UGP East&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">28503</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;WACM&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Western Area Power Administration - &#39;</span> \
+                                                                             <span class="s1">&#39;Rocky Mountain Region&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">29304</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;SEPA&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Southeastern Power Administration&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">32790</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;HECO&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;New Harquahala Generating Company LLC&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">56090</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;GRIF&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Griffith Energy LLC&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">56365</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;GWA&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;NaturEner Power Watch LLC&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">56545</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;GRIS&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Gridforce South&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">56669</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;MISO&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Midcontinent Independent Transmission &#39;</span> \
+                                                                             <span class="s1">&#39;System Operator Inc.&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">56812</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;DEAA&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Arlington Valley LLC&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">58786</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;CPLW&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Duke Energy Progress West&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">58790</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;GRID&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Gridforce Energy Management LLC&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">58791</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;WWA&#39;</span><span class="p">;</span>  <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;NaturEner Wind Watch LLC&#39;</span>
+        <span class="k">elif</span> <span class="n">eia_ba_number</span> <span class="o">==</span> <span class="mi">59504</span><span class="p">:</span>  <span class="n">ba_short_name</span> <span class="o">=</span> <span class="s1">&#39;SWPP&#39;</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="s1">&#39;Southwest Power Pool&#39;</span>
+        <span class="k">else</span><span class="p">:</span> <span class="n">ba_short_name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">;</span> <span class="n">ba_long_name</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">eia_ba_number</span><span class="p">,</span> <span class="n">ba_short_name</span><span class="p">,</span> <span class="n">ba_long_name</span><span class="p">])</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;BA_Number&#39;</span><span class="p">,</span> <span class="s1">&#39;BA_Name&#39;</span><span class="p">,</span> <span class="s1">&#39;BA_Long_Name&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Batelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

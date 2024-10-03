@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tell.mlp_train &mdash; TELL  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=cf4e22e0" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            TELL
+          </a>
+              <div class="version">
+                1.3.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tell_quickstarter.html">Quickstarter Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement.html">Acknowledgement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TELL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tell.mlp_train</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tell.mlp_train</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="kn">from</span> <span class="nn">sklearn.neural_network</span> <span class="kn">import</span> <span class="n">MLPRegressor</span> <span class="k">as</span> <span class="n">MLP</span>
+
+<span class="kn">from</span> <span class="nn">tell.mlp_prepare_data</span> <span class="kn">import</span> <span class="n">DatasetTrain</span><span class="p">,</span> <span class="n">DefaultSettings</span>
+<span class="kn">from</span> <span class="nn">tell.mlp_utils</span> <span class="kn">import</span> <span class="n">normalize_features</span><span class="p">,</span> <span class="n">denormalize_features</span><span class="p">,</span> <span class="n">pickle_model</span><span class="p">,</span> <span class="n">evaluate</span><span class="p">,</span> <span class="n">pickle_normalization_dict</span>
+
+
+<div class="viewcode-block" id="train_mlp_model">
+<a class="viewcode-back" href="../../tell.html#tell.mlp_train.train_mlp_model">[docs]</a>
+<span class="k">def</span> <span class="nf">train_mlp_model</span><span class="p">(</span><span class="n">region</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                    <span class="n">x_train</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                    <span class="n">y_train</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                    <span class="n">x_test</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                    <span class="n">mlp_hidden_layer_sizes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                    <span class="n">mlp_max_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                    <span class="n">mlp_validation_fraction</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                    <span class="n">save_model</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="n">model_output_directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trains the MLP model.</span>
+
+<span class="sd">    :param region:                          Indicating region / balancing authority we want to train and test on.</span>
+<span class="sd">                                            Must match with string in CSV files.</span>
+<span class="sd">    :type region:                           str</span>
+
+<span class="sd">    :param x_train:                         Training features</span>
+<span class="sd">    :type x_train:                          np.ndarray</span>
+
+<span class="sd">    :param y_train:                         Training targets</span>
+<span class="sd">    :type y_train:                          np.ndarray</span>
+
+<span class="sd">    :param x_test:                          Test features</span>
+<span class="sd">    :type x_test:                           np.ndarray</span>
+
+<span class="sd">    :param mlp_hidden_layer_sizes:          The ith element represents the number of neurons in the ith hidden layer.</span>
+<span class="sd">    :type mlp_hidden_layer_sizes:           int</span>
+
+<span class="sd">    :param mlp_max_iter:                    Maximum number of iterations. The solver iterates until convergence</span>
+<span class="sd">                                            (determined by ‘tol’) or this number of iterations. For stochastic solvers</span>
+<span class="sd">                                            (‘sgd’, ‘adam’), note that this determines the number of epochs (how many</span>
+<span class="sd">                                            times each data point will be used), not the number of gradient steps.</span>
+<span class="sd">    :type mlp_max_iter:                     int</span>
+
+<span class="sd">    :param mlp_validation_fraction:         The proportion of training data to set aside as validation set for early</span>
+<span class="sd">                                            stopping. Must be between 0 and 1.</span>
+<span class="sd">    :type mlp_validation_fraction:          float</span>
+
+<span class="sd">    :param save_model:                      Choice to write ML models to a pickled file via joblib.</span>
+<span class="sd">    :type save_model:                       bool</span>
+
+<span class="sd">    :param model_output_directory:          Full path to output directory where model file will be written.</span>
+<span class="sd">    :type model_output_directory:           Union[str, None]</span>
+
+<span class="sd">    :return:                                y_p: np.ndarray -&gt; predictions over test set</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># instantiate the MLP model</span>
+    <span class="n">mlp</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span><span class="n">hidden_layer_sizes</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">mlp_hidden_layer_sizes</span><span class="p">),</span>
+              <span class="n">max_iter</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">mlp_max_iter</span><span class="p">),</span>
+              <span class="n">validation_fraction</span><span class="o">=</span><span class="n">mlp_validation_fraction</span><span class="p">)</span>
+
+    <span class="c1"># fit the model to data matrix X (training features) and target Y (training targets)</span>
+    <span class="n">mlp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+    <span class="c1"># predict using the multi-layer perceptron model using the test features</span>
+    <span class="n">y_p</span> <span class="o">=</span> <span class="n">mlp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
+
+    <span class="c1"># write the model to file if desired</span>
+    <span class="k">if</span> <span class="n">save_model</span><span class="p">:</span>
+        <span class="n">pickle_model</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span>
+                     <span class="n">model_object</span><span class="o">=</span><span class="n">mlp</span><span class="p">,</span>
+                     <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;multi-layer-perceptron-regressor&quot;</span><span class="p">,</span>
+                     <span class="n">model_output_directory</span><span class="o">=</span><span class="n">model_output_directory</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">y_p</span></div>
+
+
+
+<div class="viewcode-block" id="train">
+<a class="viewcode-back" href="../../tell.html#tell.mlp_train.train">[docs]</a>
+<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">region</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+          <span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+          <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate predictions for MLP model for a target region from an input CSV file.</span>
+
+<span class="sd">    :param region:                      Indicating region / balancing authority we want to train and test on.</span>
+<span class="sd">                                        Must match with string in CSV files.</span>
+<span class="sd">    :type region:                       str</span>
+
+<span class="sd">    :param data_dir:                    Full path to the directory that houses the input CSV files.</span>
+<span class="sd">    :type data_dir:                     str</span>
+
+<span class="sd">    :param mlp_hidden_layer_sizes:      The ith element represents the number of neurons in the ith hidden layer.</span>
+<span class="sd">    :type mlp_hidden_layer_sizes:       Optional[int]</span>
+
+<span class="sd">    :param mlp_max_iter:                Maximum number of iterations. The solver iterates until convergence</span>
+<span class="sd">                                        (determined by ‘tol’) or this number of iterations. For stochastic solvers</span>
+<span class="sd">                                        (‘sgd’, ‘adam’), note that this determines the number of epochs (how many</span>
+<span class="sd">                                        times each data point will be used), not the number of gradient steps.</span>
+<span class="sd">    :type mlp_max_iter:                 Optional[int]</span>
+
+<span class="sd">    :param mlp_validation_fraction:     The proportion of training data to set aside as validation set for early</span>
+<span class="sd">                                        stopping. Must be between 0 and 1.</span>
+<span class="sd">    :type mlp_validation_fraction:      Optional[float]</span>
+
+<span class="sd">    :param data_column_rename_dict:     Dictionary for the field names present in the input CSV file (keys) to what the</span>
+<span class="sd">                                        code expects them to be (values).</span>
+<span class="sd">    :type data_column_rename_dict:      Optional[dict[str]]</span>
+
+<span class="sd">    :param expected_datetime_columns:   Expected names of the date time columns in the input CSV file.</span>
+<span class="sd">    :type expected_datetime_columns:    Optional[list[str]]</span>
+
+<span class="sd">    :param hour_field_name:             Field name of the hour field in the input CSV file.</span>
+<span class="sd">    :type hour_field_name:              Optional[str]</span>
+
+<span class="sd">    :param month_field_name:            Field name of the month field in the input CSV file.</span>
+<span class="sd">    :type month_field_name:             Optional[str]</span>
+
+<span class="sd">    :param x_variables:                 Target variable list.</span>
+<span class="sd">    :type x_variables:                  Optional[list[str]]</span>
+
+<span class="sd">    :param add_dayofweek_xvars:         True if the user wishes to add weekday and holiday targets to the x variables.</span>
+<span class="sd">    :type add_dayofweek_xvars:          Optional[bool]</span>
+
+<span class="sd">    :param y_variables:                 Feature variable list.</span>
+<span class="sd">    :type y_variables:                  Optional[list[str]]</span>
+
+<span class="sd">    :param day_list:                    List of day abbreviations and their order.</span>
+<span class="sd">    :type day_list:                     Optional[list[str]]</span>
+
+<span class="sd">    :param start_time:                  Timestamp showing the datetime of for the run to start</span>
+<span class="sd">                                        (e.g., 2016-01-01 00:00:00).</span>
+<span class="sd">    :type start_time:                   Optional[str]</span>
+
+<span class="sd">    :param end_time:                    Timestamp showing the datetime of for the run to end</span>
+<span class="sd">                                        (e.g., 2019-12-31 23:00:00).</span>
+<span class="sd">    :type end_time:                     Optional[str]</span>
+
+<span class="sd">    :param split_datetime:              Timestamp showing the datetime to split the train and test data by</span>
+<span class="sd">                                        (e.g., 2018-12-31 23:00:00).</span>
+<span class="sd">    :type split_datetime:               Optional[str]</span>
+
+<span class="sd">    :param nodata_value:                No data value in the input CSV file.</span>
+<span class="sd">    :type nodata_value:                 Optional[int]</span>
+
+<span class="sd">    :param seed_value:                  Seed value to reproduce randomization.</span>
+<span class="sd">    :type seed_value:                   Optional[int]</span>
+
+<span class="sd">    :param save_model:                  Choice to write ML models to a pickled file via joblib.</span>
+<span class="sd">    :type save_model:                   bool</span>
+
+<span class="sd">    :param model_output_directory:      Full path to output directory where model file will be written.</span>
+<span class="sd">    :type model_output_directory:       Union[str, None]</span>
+
+<span class="sd">    :param verbose:                     Choice to see logged outputs.</span>
+<span class="sd">    :type verbose:                      bool</span>
+
+<span class="sd">    :return:                            [0] Predictions as a dataframe</span>
+<span class="sd">                                        [1] Summary statistics as a dataframe</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># get project level settings data</span>
+    <span class="n">settings</span> <span class="o">=</span> <span class="n">DefaultSettings</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span>
+                               <span class="n">data_dir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">,</span>
+                               <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># set random seed</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">seed_value</span><span class="p">)</span>
+
+    <span class="c1"># prepare data for MLP model</span>
+    <span class="n">data_mlp</span> <span class="o">=</span> <span class="n">DatasetTrain</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span>
+                            <span class="n">data_dir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">,</span>
+                            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># scale model features and targets for the MLP model</span>
+    <span class="n">normalized_dict</span> <span class="o">=</span> <span class="n">normalize_features</span><span class="p">(</span><span class="n">x_train</span><span class="o">=</span><span class="n">data_mlp</span><span class="o">.</span><span class="n">x_train</span><span class="p">,</span>
+                                         <span class="n">x_test</span><span class="o">=</span><span class="n">data_mlp</span><span class="o">.</span><span class="n">x_test</span><span class="p">,</span>
+                                         <span class="n">y_train</span><span class="o">=</span><span class="n">data_mlp</span><span class="o">.</span><span class="n">y_train</span><span class="p">,</span>
+                                         <span class="n">y_test</span><span class="o">=</span><span class="n">data_mlp</span><span class="o">.</span><span class="n">y_test</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">save_model</span><span class="p">:</span>
+        <span class="n">pickle_normalization_dict</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span>
+                                  <span class="n">normalization_dict</span><span class="o">=</span><span class="n">normalized_dict</span><span class="p">,</span>
+                                  <span class="n">model_output_directory</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">model_output_directory</span><span class="p">)</span>
+
+    <span class="c1"># unpack normalized data needed to run the MLP model</span>
+    <span class="n">x_train_norm</span> <span class="o">=</span> <span class="n">normalized_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;x_train_norm&quot;</span><span class="p">)</span>
+    <span class="n">y_train_norm</span> <span class="o">=</span> <span class="n">normalized_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;y_train_norm&quot;</span><span class="p">)</span>
+    <span class="n">x_test_norm</span> <span class="o">=</span> <span class="n">normalized_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;x_test_norm&quot;</span><span class="p">)</span>
+
+    <span class="c1"># run the MLP model</span>
+    <span class="n">y_predicted_normalized</span> <span class="o">=</span> <span class="n">train_mlp_model</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span>
+                                             <span class="n">x_train</span><span class="o">=</span><span class="n">x_train_norm</span><span class="p">,</span>
+                                             <span class="n">y_train</span><span class="o">=</span><span class="n">y_train_norm</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
+                                             <span class="n">x_test</span><span class="o">=</span><span class="n">x_test_norm</span><span class="p">,</span>
+                                             <span class="n">mlp_hidden_layer_sizes</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">mlp_hidden_layer_sizes</span><span class="p">,</span>
+                                             <span class="n">mlp_max_iter</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">mlp_max_iter</span><span class="p">,</span>
+                                             <span class="n">mlp_validation_fraction</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">mlp_validation_fraction</span><span class="p">,</span>
+                                             <span class="n">save_model</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">save_model</span><span class="p">,</span>
+                                             <span class="n">model_output_directory</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">model_output_directory</span><span class="p">)</span>
+
+    <span class="c1"># denormalize predicted data</span>
+    <span class="n">prediction_df</span> <span class="o">=</span> <span class="n">denormalize_features</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span>
+                                         <span class="n">normalized_dict</span><span class="o">=</span><span class="n">normalized_dict</span><span class="p">,</span>
+                                         <span class="n">y_predicted_normalized</span><span class="o">=</span><span class="n">y_predicted_normalized</span><span class="p">,</span>
+                                         <span class="n">y_comparison</span><span class="o">=</span><span class="n">data_mlp</span><span class="o">.</span><span class="n">y_test</span><span class="p">,</span>
+                                         <span class="n">datetime_arr</span><span class="o">=</span><span class="n">data_mlp</span><span class="o">.</span><span class="n">df_test</span><span class="p">[</span><span class="n">settings</span><span class="o">.</span><span class="n">DATETIME_FIELD</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="c1"># generate evaluation stats</span>
+    <span class="n">performance_df</span> <span class="o">=</span> <span class="n">evaluate</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span>
+                              <span class="n">y_predicted</span><span class="o">=</span><span class="n">prediction_df</span><span class="p">[</span><span class="s2">&quot;predictions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                              <span class="n">y_comparison</span><span class="o">=</span><span class="n">data_mlp</span><span class="o">.</span><span class="n">y_comp</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">prediction_df</span><span class="p">,</span> <span class="n">performance_df</span></div>
+
+
+
+<div class="viewcode-block" id="train_batch">
+<a class="viewcode-back" href="../../tell.html#tell.mlp_train.train_batch">[docs]</a>
+<span class="k">def</span> <span class="nf">train_batch</span><span class="p">(</span><span class="n">target_region_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+                <span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate predictions for MLP model for a target region from an input CSV file.</span>
+
+<span class="sd">    :param target_region_list:          List of names indicating region / balancing authority we want to train and test</span>
+<span class="sd">                                        on. Must match with string in CSV files.</span>
+<span class="sd">    :type target_region_list:           list</span>
+
+<span class="sd">    :param data_dir:                    Full path to the directory that houses the input CSV files.</span>
+<span class="sd">    :type data_dir:                     str</span>
+
+<span class="sd">    :param n_jobs:                      The maximum number of concurrently running jobs, such as the number of Python</span>
+<span class="sd">                                        worker processes when backend=”multiprocessing” or the size of the thread-pool</span>
+<span class="sd">                                        when backend=”threading”. If -1 all CPUs are used. If 1 is given, no parallel</span>
+<span class="sd">                                        computing code is used at all, which is useful for debugging. For n_jobs</span>
+<span class="sd">                                        below -1, (n_cpus + 1 + n_jobs) are used. Thus for n_jobs = -2, all CPUs</span>
+<span class="sd">                                        but one are used. None is a marker for ‘unset’ that will be interpreted as</span>
+<span class="sd">                                        n_jobs=1 (sequential execution) unless the call is performed under a</span>
+<span class="sd">                                        parallel_backend context manager that sets another value for n_jobs.</span>
+<span class="sd">    :type n_jobs:                       int</span>
+
+<span class="sd">    :param mlp_hidden_layer_sizes:      The ith element represents the number of neurons in the ith hidden layer.</span>
+<span class="sd">    :type mlp_hidden_layer_sizes:       Optional[int]</span>
+
+<span class="sd">    :param mlp_max_iter:                Maximum number of iterations. The solver iterates until convergence</span>
+<span class="sd">                                        (determined by ‘tol’) or this number of iterations. For stochastic solvers</span>
+<span class="sd">                                        (‘sgd’, ‘adam’), note that this determines the number of epochs (how many</span>
+<span class="sd">                                        times each data point will be used), not the number of gradient steps.</span>
+<span class="sd">    :type mlp_max_iter:                 Optional[int]</span>
+
+<span class="sd">    :param mlp_validation_fraction:     The proportion of training data to set aside as validation set for early</span>
+<span class="sd">                                        stopping. Must be between 0 and 1.</span>
+<span class="sd">    :type mlp_validation_fraction:      Optional[float]</span>
+
+<span class="sd">    :param data_column_rename_dict:     Dictionary for the field names present in the input CSV file (keys) to what the</span>
+<span class="sd">                                        code expects them to be (values).</span>
+<span class="sd">    :type data_column_rename_dict:      Optional[dict[str]]</span>
+
+<span class="sd">    :param expected_datetime_columns:   Expected names of the date time columns in the input CSV file.</span>
+<span class="sd">    :type expected_datetime_columns:    Optional[list[str]]</span>
+
+<span class="sd">    :param hour_field_name:             Field name of the hour field in the input CSV file.</span>
+<span class="sd">    :type hour_field_name:              Optional[str]</span>
+
+<span class="sd">    :param month_field_name:            Field name of the month field in the input CSV file.</span>
+<span class="sd">    :type month_field_name:             Optional[str]</span>
+
+<span class="sd">    :param x_variables:                 Target variable list.</span>
+<span class="sd">    :type x_variables:                  Optional[list[str]]</span>
+
+<span class="sd">    :param add_dayofweek_xvars:         True if the user wishes to add weekday and holiday targets to the x variables.</span>
+<span class="sd">    :type add_dayofweek_xvars:          Optional[bool]</span>
+
+<span class="sd">    :param y_variables:                 Feature variable list.</span>
+<span class="sd">    :type y_variables:                  Optional[list[str]]</span>
+
+<span class="sd">    :param day_list:                    List of day abbreviations and their order.</span>
+<span class="sd">    :type day_list:                     Optional[list[str]]</span>
+
+<span class="sd">    :param start_time:                  Timestamp showing the datetime of for the run to start</span>
+<span class="sd">                                        (e.g., 2016-01-01 00:00:00).</span>
+<span class="sd">    :type start_time:                   Optional[str]</span>
+
+<span class="sd">    :param end_time:                    Timestamp showing the datetime of for the run to end</span>
+<span class="sd">                                        (e.g., 2019-12-31 23:00:00).</span>
+<span class="sd">    :type end_time:                     Optional[str]</span>
+
+<span class="sd">    :param split_datetime:              Timestamp showing the datetime to split the train and test data by</span>
+<span class="sd">                                        (e.g., 2018-12-31 23:00:00).</span>
+<span class="sd">    :type split_datetime:               Optional[str]</span>
+
+<span class="sd">    :param nodata_value:                No data value in the input CSV file.</span>
+<span class="sd">    :type nodata_value:                 Optional[int]</span>
+
+<span class="sd">    :param seed_value:                  Seed value to reproduce randomization.</span>
+<span class="sd">    :type seed_value:                   Optional[int]</span>
+
+<span class="sd">    :param save_model:                  Choice to write ML models to a pickled file via joblib.</span>
+<span class="sd">    :type save_model:                   bool</span>
+
+<span class="sd">    :param model_output_directory:      Full path to output directory where model file will be written.</span>
+<span class="sd">    :type model_output_directory:       Union[str, None]</span>
+
+<span class="sd">    :param verbose:                     Choice to see logged outputs.</span>
+<span class="sd">    :type verbose:                      bool</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># run all regions in target list in parallel</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;loky&quot;</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">train</span><span class="p">)(</span><span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span>
+                                                                     <span class="n">data_dir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">,</span>
+                                                                     <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="n">target_region_list</span><span class="p">)</span>
+
+    <span class="c1"># aggregate outputs</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">prediction_df</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">performance_df</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prediction_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">prediction_df</span><span class="p">,</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+            <span class="n">performance_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">performance_df</span><span class="p">,</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+    <span class="k">return</span> <span class="n">prediction_df</span><span class="p">,</span> <span class="n">performance_df</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Batelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

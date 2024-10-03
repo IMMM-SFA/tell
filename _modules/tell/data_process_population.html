@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tell.data_process_population &mdash; TELL  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=cf4e22e0" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            TELL
+          </a>
+              <div class="version">
+                1.3.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tell_quickstarter.html">Quickstarter Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement.html">Acknowledgement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TELL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tell.data_process_population</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tell.data_process_population</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">.metadata_eia</span> <span class="kn">import</span> <span class="n">metadata_eia</span>
+
+
+<div class="viewcode-block" id="fips_pop_yearly">
+<a class="viewcode-back" href="../../tell.html#tell.data_process_population.fips_pop_yearly">[docs]</a>
+<span class="k">def</span> <span class="nf">fips_pop_yearly</span><span class="p">(</span><span class="n">pop_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start_year</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end_year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read in the raw population data, format columns, and return single dataframe for all years</span>
+
+<span class="sd">    :param pop_input_dir:               Directory where raw county population data is stored</span>
+<span class="sd">    :type pop_input_dir:                str</span>
+
+<span class="sd">    :param start_year:                  Year to start process; four digit year (e.g., 1990)</span>
+<span class="sd">    :type start_year:                   int</span>
+
+<span class="sd">    :param end_year:                    Year to end process; four digit year (e.g., 1990)</span>
+<span class="sd">    :type end_year:                     int</span>
+
+<span class="sd">    :return:                            DataFrame</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Read in the raw county-level population .csv file from the U.S. Census Bureau:</span>
+    <span class="n">df_pop</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">pop_input_dir</span> <span class="o">+</span> <span class="s1">&#39;/county_populations_2000_to_2020.csv&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Loop over the range of years defined by the &#39;start_year&#39; and &#39;end_year&#39; variables:</span>
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+
+        <span class="c1"># Only keep columns that are needed:</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;pop_</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;county_FIPS&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Change the variable name for population for the year:</span>
+        <span class="n">df_pop_yr</span> <span class="o">=</span> <span class="n">df_pop</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Assign a new variable to indicate the year:</span>
+        <span class="n">df_pop_yr</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+
+        <span class="c1"># Rename some columns for consistency:</span>
+        <span class="n">df_pop_yr</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="sa">f</span><span class="s1">&#39;pop_</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;population&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Concatenate all the years into a single dataframe:</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="n">start_year</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df_pop_yr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">df_pop_yr</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="merge_mapping_data">
+<a class="viewcode-back" href="../../tell.html#tell.data_process_population.merge_mapping_data">[docs]</a>
+<span class="k">def</span> <span class="nf">merge_mapping_data</span><span class="p">(</span><span class="n">map_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pop_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start_year</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end_year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merge the BA mapping files and historical population data based on FIPS codes</span>
+
+<span class="sd">    :param map_input_dir:               Directory where the BA-to-county mapping is stored</span>
+<span class="sd">    :type map_input_dir:                str</span>
+
+<span class="sd">    :param pop_input_dir:               Directory where raw county population data is stored</span>
+<span class="sd">    :type pop_input_dir:                str</span>
+
+<span class="sd">    :param start_year:                  Year to start process; four digit year (e.g., 1990)</span>
+<span class="sd">    :type start_year:                   int</span>
+
+<span class="sd">    :param end_year:                    Year to end process; four digit year (e.g., 1990)</span>
+<span class="sd">    :type end_year:                     int</span>
+
+<span class="sd">    :return:                            DataFrame</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Load in the BA-to-county mapping files produced by the &#39;spatial_mapping.py&#39; functions:</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">map_input_dir</span><span class="si">}</span><span class="s1">/*.csv&#39;</span><span class="p">)):</span>
+
+        <span class="c1"># Read in the .csv file:</span>
+        <span class="n">dfx</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">map_input_dir</span><span class="p">,</span> <span class="n">file</span><span class="p">))</span>
+
+        <span class="c1"># Concatenate the BA-to-county mapping files across years:</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">dfx</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">dfx</span><span class="p">])</span>
+
+    <span class="c1"># Only keep the columns that are needed:</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s1">&#39;Year&#39;</span><span class="p">,</span> <span class="s1">&#39;County_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;BA_Number&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Fill in missing values and reassign the variables as integers:</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;BA_Number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;BA_Number&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+
+    <span class="c1"># Select for valid (and unique) BA numbers using the &#39;metadata_eia.py&#39; functions:</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;BA_Number&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">unique_num</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">num</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">metadata_df</span> <span class="o">=</span> <span class="n">metadata_eia</span><span class="p">(</span><span class="n">unique_num</span><span class="p">)</span>
+
+    <span class="c1"># Merge the mapping dataframe to the the metadata dataframe based on BA number:</span>
+    <span class="n">df_map</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">metadata_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;BA_Number&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Rename some columns for consistency:</span>
+    <span class="n">df_map</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;County_FIPS&quot;</span><span class="p">:</span> <span class="s2">&quot;county_FIPS&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df_map</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Year&quot;</span><span class="p">:</span> <span class="s2">&quot;year&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Get sum of population by FIPS code (e.g., counties) using the &#39;fips_pop_yearly&#39; function:</span>
+    <span class="n">df_pop</span> <span class="o">=</span> <span class="n">fips_pop_yearly</span><span class="p">(</span><span class="n">pop_input_dir</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">)</span>
+
+    <span class="c1"># Merge the dataframes based on county FIPS code and year:</span>
+    <span class="n">df_combine</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_pop</span><span class="p">,</span> <span class="n">df_map</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;county_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">],</span> <span class="n">right_on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;county_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">df_combine</span></div>
+
+
+
+<div class="viewcode-block" id="ba_pop_sum">
+<a class="viewcode-back" href="../../tell.html#tell.data_process_population.ba_pop_sum">[docs]</a>
+<span class="k">def</span> <span class="nf">ba_pop_sum</span><span class="p">(</span><span class="n">map_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pop_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start_year</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end_year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sum the total population within a BA&#39;s service territory in a given year</span>
+
+<span class="sd">    :param map_input_dir:               Directory where the BA-to-county mapping is stored</span>
+<span class="sd">    :type map_input_dir:                str</span>
+
+<span class="sd">    :param pop_input_dir:               Directory where raw county population data is stored</span>
+<span class="sd">    :type pop_input_dir:                str</span>
+
+<span class="sd">    :param start_year:                  Year to start process; four digit year (e.g., 1990)</span>
+<span class="sd">    :type start_year:                   int</span>
+
+<span class="sd">    :param end_year:                    Year to end process; four digit year (e.g., 1990)</span>
+<span class="sd">    :type end_year:                     int</span>
+
+<span class="sd">    :return:                            DataFrame</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Get population from the &#39;merge_mapping_data&#39; function:</span>
+    <span class="n">df_pop</span> <span class="o">=</span> <span class="n">merge_mapping_data</span><span class="p">(</span><span class="n">map_input_dir</span><span class="p">,</span> <span class="n">pop_input_dir</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">)</span>
+
+    <span class="c1"># Sum the population for each BA by year:</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df_pop</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;BA_Name&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">])[</span><span class="s1">&#39;population&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="process_ba_population_data">
+<a class="viewcode-back" href="../../tell.html#tell.data_process_population.process_ba_population_data">[docs]</a>
+<span class="k">def</span> <span class="nf">process_ba_population_data</span><span class="p">(</span><span class="n">start_year</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end_year</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate a time-series of the total population living with a BAs service territory</span>
+
+<span class="sd">    :param start_year:                         Year to start process; four digit year (e.g., 1990)</span>
+<span class="sd">    :type start_year:                          int</span>
+
+<span class="sd">    :param end_year:                           Year to end process; four digit year (e.g., 1990)</span>
+<span class="sd">    :type end_year:                            int</span>
+
+<span class="sd">    :param data_input_dir:                     Top-level data directory for TELL</span>
+<span class="sd">    :type data_input_dir:                      str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Set the output directory based on the &quot;data_input_dir&quot; variable:</span>
+    <span class="n">output_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_quickstarter_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;historical_population&#39;</span><span class="p">)</span>
+
+    <span class="c1"># If the output directory doesn&#39;t exist then create it:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+
+    <span class="c1"># Set the input directories based on the &quot;data_input_dir&quot; variable:</span>
+    <span class="n">map_input_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_quickstarter_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;ba_service_territory&#39;</span><span class="p">)</span>
+    <span class="n">pop_input_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_raw_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;Population&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Sum the populations using the &#39;ba_pop_sum&#39; function:</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">ba_pop_sum</span><span class="p">(</span><span class="n">map_input_dir</span><span class="p">,</span> <span class="n">pop_input_dir</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">)</span>
+
+    <span class="c1"># Convert the year to a datetime variable:</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;%Y&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Rename some columns for consistency:</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;population&quot;</span><span class="p">:</span> <span class="s2">&quot;pop&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;BA_Name&#39;</span><span class="p">:</span> <span class="s1">&#39;name&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Reshape the dataframe so that the interpolation will work:</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">&#39;pop&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Set the start and end times for the interpolation:</span>
+    <span class="n">rng_start</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">start_year</span><span class="si">}</span><span class="s1">-01-01 00:00:00&#39;</span>
+    <span class="n">rng_end</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">end_year</span><span class="si">}</span><span class="s1">-12-31 23:00:00&#39;</span>
+    <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">rng_start</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+    <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">rng_end</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Get a range of dates to interpolate to:</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">rng_start</span><span class="p">,</span> <span class="n">rng_end</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Reindex the dataframe and linearly interpolate from an annual to an hourly resolution:</span>
+    <span class="n">df_interp</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Transpose the interpolated dataframe:</span>
+    <span class="n">df_interp</span> <span class="o">=</span> <span class="n">df_interp</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="c1"># Reset the index variable:</span>
+    <span class="n">df_interp</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Extract the year, month, day, and hour for each date:</span>
+    <span class="n">df_interp</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_interp</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y&#39;</span><span class="p">)</span>
+    <span class="n">df_interp</span><span class="p">[</span><span class="s1">&#39;Month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_interp</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%m&#39;</span><span class="p">)</span>
+    <span class="n">df_interp</span><span class="p">[</span><span class="s1">&#39;Day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_interp</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">df_interp</span><span class="p">[</span><span class="s1">&#39;Hour&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_interp</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Reorder the columns and remove the datestring variable:</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="n">df_interp</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Year&quot;</span><span class="p">)</span>
+    <span class="n">df_interp</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="n">df_interp</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Month&quot;</span><span class="p">)</span>
+    <span class="n">df_interp</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="n">df_interp</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Day&quot;</span><span class="p">)</span>
+    <span class="n">df_interp</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="n">df_interp</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Hour&quot;</span><span class="p">)</span>
+    <span class="n">df_interp</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+
+    <span class="c1"># Drop the index variable:</span>
+    <span class="n">df_interp</span> <span class="o">=</span> <span class="n">df_interp</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Get list of BA names from the column headers:</span>
+    <span class="n">df_names</span> <span class="o">=</span> <span class="n">df_interp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="o">~</span><span class="n">df_interp</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">&#39;Year&#39;</span><span class="p">,</span> <span class="s1">&#39;Month&#39;</span><span class="p">,</span> <span class="s1">&#39;Day&#39;</span><span class="p">,</span> <span class="s1">&#39;Hour&#39;</span><span class="p">])]</span>
+    <span class="n">BA_name</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_names</span><span class="p">)</span>
+
+    <span class="c1"># Loop over BA names to write each BA&#39;s population time-series to a .csv file:</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">BA_name</span><span class="p">:</span>
+        <span class="n">df_interp</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">_hourly_population_data.csv&#39;</span><span class="p">),</span>
+                         <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                         <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">,</span> <span class="s1">&#39;Month&#39;</span><span class="p">,</span> <span class="s1">&#39;Day&#39;</span><span class="p">,</span> <span class="s1">&#39;Hour&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">],</span>
+                         <span class="n">header</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">,</span> <span class="s1">&#39;Month&#39;</span><span class="p">,</span> <span class="s1">&#39;Day&#39;</span><span class="p">,</span> <span class="s1">&#39;Hour&#39;</span><span class="p">,</span> <span class="s1">&#39;Total_Population&#39;</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="extract_future_ba_population">
+<a class="viewcode-back" href="../../tell.html#tell.data_process_population.extract_future_ba_population">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_future_ba_population</span><span class="p">(</span><span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ba_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scenario</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the total population living within a BA&#39;s service territory in a given year under</span>
+<span class="sd">    a given SSP scenario.</span>
+
+<span class="sd">    :param year:                               Year to process; four digit year (e.g., 1990)</span>
+<span class="sd">    :type year:                                int</span>
+
+<span class="sd">    :param ba_code:                            Code for the BA you want to process (e.g., &#39;PJM&#39; or &#39;CISO&#39;)</span>
+<span class="sd">    :type ba_code:                             str</span>
+
+<span class="sd">    :param scenario:                           Code for the SSP scenario you want to process (either &#39;ssp3&#39; or &#39;ssp5&#39;)</span>
+<span class="sd">    :type scenario:                            str</span>
+
+<span class="sd">    :param data_input_dir:                     Top-level data directory for TELL</span>
+<span class="sd">    :type data_input_dir:                      str</span>
+
+<span class="sd">    :return:                                   Hourly total population living within the BA&#39;s service territory</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Set the input directories based on the &quot;data_input_dir&quot; variable:</span>
+    <span class="n">map_input_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_quickstarter_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;ba_service_territory&#39;</span><span class="p">)</span>
+    <span class="n">pop_input_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;sample_forcing_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;sample_population_projections&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Read in the BA mapping .csv file:</span>
+    <span class="n">mapping_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">map_input_dir</span><span class="p">,</span> <span class="s1">&#39;ba_service_territory_2019.csv&#39;</span><span class="p">))</span>
+
+    <span class="c1"># Only keep the columns that are needed:</span>
+    <span class="n">mapping_df</span> <span class="o">=</span> <span class="n">mapping_df</span><span class="p">[[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;BA_Code&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Subset to only the BA you want to process:</span>
+    <span class="n">mapping_df</span> <span class="o">=</span> <span class="n">mapping_df</span><span class="p">[</span><span class="n">mapping_df</span><span class="p">[</span><span class="s2">&quot;BA_Code&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ba_code</span><span class="p">]</span>
+
+    <span class="c1"># Read in the population projection file for the scenario you want to process:</span>
+    <span class="n">pop_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pop_input_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">scenario</span><span class="si">}</span><span class="s1">_county_population.csv&#39;</span><span class="p">))</span>
+
+    <span class="c1"># Rename some columns for consistency:</span>
+    <span class="n">pop_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;FIPS&quot;</span><span class="p">:</span> <span class="s2">&quot;County_FIPS&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Merge the mapping dataframe to the the population dataframe based on county FIPS code:</span>
+    <span class="n">mapping_df</span> <span class="o">=</span> <span class="n">mapping_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">pop_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Only keep the columns that are needed:</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">mapping_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;BA_Code&#39;</span><span class="p">,</span> <span class="s1">&#39;state_name&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Sum the population across all counties:</span>
+    <span class="n">df_sum</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Convert the series to a dataframe:</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;Year&#39;</span><span class="p">:</span> <span class="n">df_sum</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;Population&#39;</span><span class="p">:</span> <span class="n">df_sum</span><span class="o">.</span><span class="n">values</span><span class="p">})</span>
+
+    <span class="c1"># Convert the year to a datetime variable:</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;%Y&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Linearly interpolate from an decadal to an hourly resolution:</span>
+    <span class="n">df_interp</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;Year&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s1">&#39;H&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Reset the index variable:</span>
+    <span class="n">df_interp</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Set the start and end times for the year you want to process:</span>
+    <span class="n">rng_start</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s1">-01-01 00:00:00&#39;</span>
+    <span class="n">rng_end</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s1">-12-31 23:00:00&#39;</span>
+
+    <span class="c1"># Subset to only the year you want to process:</span>
+    <span class="n">df_interp</span> <span class="o">=</span> <span class="n">df_interp</span><span class="p">[</span><span class="n">df_interp</span><span class="p">[</span><span class="s2">&quot;Year&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">rng_start</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">))]</span>
+    <span class="n">df_interp</span> <span class="o">=</span> <span class="n">df_interp</span><span class="p">[</span><span class="n">df_interp</span><span class="p">[</span><span class="s2">&quot;Year&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">rng_end</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">))]</span>
+
+    <span class="c1"># Rename some columns for consistency:</span>
+    <span class="n">df_interp</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Year&quot;</span><span class="p">:</span> <span class="s2">&quot;Time&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Extract the year, month, day, and hour for each date:</span>
+    <span class="n">df_interp</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_interp</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y&#39;</span><span class="p">)</span>
+    <span class="n">df_interp</span><span class="p">[</span><span class="s1">&#39;Month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_interp</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%m&#39;</span><span class="p">)</span>
+    <span class="n">df_interp</span><span class="p">[</span><span class="s1">&#39;Day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_interp</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">df_interp</span><span class="p">[</span><span class="s1">&#39;Hour&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_interp</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Reorder the columns:</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="n">df_interp</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Year&quot;</span><span class="p">)</span>
+    <span class="n">df_interp</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="n">df_interp</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Month&quot;</span><span class="p">)</span>
+    <span class="n">df_interp</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="n">df_interp</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Day&quot;</span><span class="p">)</span>
+    <span class="n">df_interp</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="n">df_interp</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Hour&quot;</span><span class="p">)</span>
+    <span class="n">df_interp</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="n">df_interp</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Population&quot;</span><span class="p">)</span>
+    <span class="n">df_interp</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+
+    <span class="c1"># Drop the index variable:</span>
+    <span class="n">df_interp</span> <span class="o">=</span> <span class="n">df_interp</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;Time&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Return the output as a dataframe:</span>
+    <span class="k">return</span> <span class="n">df_interp</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Batelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

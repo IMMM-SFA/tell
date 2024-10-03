@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Reference &mdash; TELL  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+      <link rel="stylesheet" type="text/css" href="_static/style.css?v=cf4e22e0" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tell.data_process_compile module" href="tell.html" />
+    <link rel="prev" title="User Guide" href="user_guide.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            TELL
+          </a>
+              <div class="version">
+                1.3.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tell_quickstarter.html">Quickstarter Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tell.html">tell.data_process_compile module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#module-tell.data_process_eia_930">tell.data_process_eia_930 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#module-tell.data_process_population">tell.data_process_population module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#module-tell.data_spatial_mapping">tell.data_spatial_mapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#module-tell.execute_forward">tell.execute_forward module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#module-tell.install_forcing_data">tell.install_forcing_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#module-tell.install_quickstarter_data">tell.install_quickstarter_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#module-tell.install_raw_data">tell.install_raw_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#module-tell.metadata_eia">tell.metadata_eia module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#module-tell.mlp_predict">tell.mlp_predict module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#module-tell.mlp_prepare_data">tell.mlp_prepare_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#module-tell.mlp_train">tell.mlp_train module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#module-tell.mlp_utils">tell.mlp_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#module-tell.package_data">tell.package_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#module-tell.states_fips_function">tell.states_fips_function module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#module-tell.visualization">tell.visualization module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgement.html">Acknowledgement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">TELL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API Reference</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tell.html">tell.data_process_compile module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.data_process_compile.compile_data"><code class="docutils literal notranslate"><span class="pre">compile_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tell.html#module-tell.data_process_eia_930">tell.data_process_eia_930 module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.data_process_eia_930.eia_data_subset"><code class="docutils literal notranslate"><span class="pre">eia_data_subset()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.data_process_eia_930.list_EIA_930_files"><code class="docutils literal notranslate"><span class="pre">list_EIA_930_files()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.data_process_eia_930.process_eia_930_data"><code class="docutils literal notranslate"><span class="pre">process_eia_930_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tell.html#module-tell.data_process_population">tell.data_process_population module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.data_process_population.ba_pop_sum"><code class="docutils literal notranslate"><span class="pre">ba_pop_sum()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.data_process_population.extract_future_ba_population"><code class="docutils literal notranslate"><span class="pre">extract_future_ba_population()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.data_process_population.fips_pop_yearly"><code class="docutils literal notranslate"><span class="pre">fips_pop_yearly()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.data_process_population.merge_mapping_data"><code class="docutils literal notranslate"><span class="pre">merge_mapping_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.data_process_population.process_ba_population_data"><code class="docutils literal notranslate"><span class="pre">process_ba_population_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tell.html#module-tell.data_spatial_mapping">tell.data_spatial_mapping module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.data_spatial_mapping.map_ba_service_territory"><code class="docutils literal notranslate"><span class="pre">map_ba_service_territory()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.data_spatial_mapping.process_spatial_mapping"><code class="docutils literal notranslate"><span class="pre">process_spatial_mapping()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tell.html#module-tell.execute_forward">tell.execute_forward module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.execute_forward.aggregate_mlp_output_files"><code class="docutils literal notranslate"><span class="pre">aggregate_mlp_output_files()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.execute_forward.execute_forward"><code class="docutils literal notranslate"><span class="pre">execute_forward()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.execute_forward.extract_gcam_usa_loads"><code class="docutils literal notranslate"><span class="pre">extract_gcam_usa_loads()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.execute_forward.output_tell_ba_data"><code class="docutils literal notranslate"><span class="pre">output_tell_ba_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.execute_forward.output_tell_county_data"><code class="docutils literal notranslate"><span class="pre">output_tell_county_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.execute_forward.output_tell_state_data"><code class="docutils literal notranslate"><span class="pre">output_tell_state_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.execute_forward.output_tell_summary_data"><code class="docutils literal notranslate"><span class="pre">output_tell_summary_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.execute_forward.process_population_scenario"><code class="docutils literal notranslate"><span class="pre">process_population_scenario()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tell.html#module-tell.install_forcing_data">tell.install_forcing_data module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.install_forcing_data.InstallForcingSample"><code class="docutils literal notranslate"><span class="pre">InstallForcingSample</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.install_forcing_data.InstallForcingSample.DATA_VERSION_URLS"><code class="docutils literal notranslate"><span class="pre">InstallForcingSample.DATA_VERSION_URLS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.install_forcing_data.InstallForcingSample.DEFAULT_VERSION"><code class="docutils literal notranslate"><span class="pre">InstallForcingSample.DEFAULT_VERSION</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.install_forcing_data.InstallForcingSample.fetch_zenodo"><code class="docutils literal notranslate"><span class="pre">InstallForcingSample.fetch_zenodo()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.install_forcing_data.install_sample_forcing_data"><code class="docutils literal notranslate"><span class="pre">install_sample_forcing_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tell.html#module-tell.install_quickstarter_data">tell.install_quickstarter_data module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.install_quickstarter_data.InstallQuickstarterData"><code class="docutils literal notranslate"><span class="pre">InstallQuickstarterData</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.install_quickstarter_data.InstallQuickstarterData.DATA_VERSION_URLS"><code class="docutils literal notranslate"><span class="pre">InstallQuickstarterData.DATA_VERSION_URLS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.install_quickstarter_data.InstallQuickstarterData.DEFAULT_VERSION"><code class="docutils literal notranslate"><span class="pre">InstallQuickstarterData.DEFAULT_VERSION</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.install_quickstarter_data.InstallQuickstarterData.fetch_zenodo"><code class="docutils literal notranslate"><span class="pre">InstallQuickstarterData.fetch_zenodo()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.install_quickstarter_data.install_quickstarter_data"><code class="docutils literal notranslate"><span class="pre">install_quickstarter_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tell.html#module-tell.install_raw_data">tell.install_raw_data module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.install_raw_data.InstallRawData"><code class="docutils literal notranslate"><span class="pre">InstallRawData</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.install_raw_data.InstallRawData.DATA_VERSION_URLS"><code class="docutils literal notranslate"><span class="pre">InstallRawData.DATA_VERSION_URLS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.install_raw_data.InstallRawData.DEFAULT_VERSION"><code class="docutils literal notranslate"><span class="pre">InstallRawData.DEFAULT_VERSION</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.install_raw_data.InstallRawData.fetch_zenodo"><code class="docutils literal notranslate"><span class="pre">InstallRawData.fetch_zenodo()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.install_raw_data.install_tell_raw_data"><code class="docutils literal notranslate"><span class="pre">install_tell_raw_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tell.html#module-tell.metadata_eia">tell.metadata_eia module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.metadata_eia.metadata_eia"><code class="docutils literal notranslate"><span class="pre">metadata_eia()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tell.html#module-tell.mlp_predict">tell.mlp_predict module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.mlp_predict.predict"><code class="docutils literal notranslate"><span class="pre">predict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.mlp_predict.predict_batch"><code class="docutils literal notranslate"><span class="pre">predict_batch()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tell.html#module-tell.mlp_prepare_data">tell.mlp_prepare_data module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetPredict"><code class="docutils literal notranslate"><span class="pre">DatasetPredict</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetPredict.DATETIME_FIELD"><code class="docutils literal notranslate"><span class="pre">DatasetPredict.DATETIME_FIELD</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetPredict.HOLIDAY_FIELD"><code class="docutils literal notranslate"><span class="pre">DatasetPredict.HOLIDAY_FIELD</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetPredict.NODATA_VALUE"><code class="docutils literal notranslate"><span class="pre">DatasetPredict.NODATA_VALUE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetPredict.WEEKDAY_FIELD"><code class="docutils literal notranslate"><span class="pre">DatasetPredict.WEEKDAY_FIELD</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetPredict.breakout_day_designation"><code class="docutils literal notranslate"><span class="pre">DatasetPredict.breakout_day_designation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetPredict.clean_data"><code class="docutils literal notranslate"><span class="pre">DatasetPredict.clean_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetPredict.extract_targets_features"><code class="docutils literal notranslate"><span class="pre">DatasetPredict.extract_targets_features()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetPredict.fetch_read_file"><code class="docutils literal notranslate"><span class="pre">DatasetPredict.fetch_read_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetPredict.format_filter_data"><code class="docutils literal notranslate"><span class="pre">DatasetPredict.format_filter_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetPredict.generate_data"><code class="docutils literal notranslate"><span class="pre">DatasetPredict.generate_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetPredict.update_default_settings"><code class="docutils literal notranslate"><span class="pre">DatasetPredict.update_default_settings()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetPredict.update_hyperparameters"><code class="docutils literal notranslate"><span class="pre">DatasetPredict.update_hyperparameters()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetTrain"><code class="docutils literal notranslate"><span class="pre">DatasetTrain</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetTrain.DATETIME_FIELD"><code class="docutils literal notranslate"><span class="pre">DatasetTrain.DATETIME_FIELD</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetTrain.HOLIDAY_FIELD"><code class="docutils literal notranslate"><span class="pre">DatasetTrain.HOLIDAY_FIELD</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetTrain.NODATA_VALUE"><code class="docutils literal notranslate"><span class="pre">DatasetTrain.NODATA_VALUE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetTrain.WEEKDAY_FIELD"><code class="docutils literal notranslate"><span class="pre">DatasetTrain.WEEKDAY_FIELD</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetTrain.breakout_day_designation"><code class="docutils literal notranslate"><span class="pre">DatasetTrain.breakout_day_designation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetTrain.clean_data"><code class="docutils literal notranslate"><span class="pre">DatasetTrain.clean_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetTrain.extract_targets_features"><code class="docutils literal notranslate"><span class="pre">DatasetTrain.extract_targets_features()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetTrain.fetch_read_file"><code class="docutils literal notranslate"><span class="pre">DatasetTrain.fetch_read_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetTrain.format_filter_data"><code class="docutils literal notranslate"><span class="pre">DatasetTrain.format_filter_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetTrain.generate_data"><code class="docutils literal notranslate"><span class="pre">DatasetTrain.generate_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetTrain.iqr_outlier_detection"><code class="docutils literal notranslate"><span class="pre">DatasetTrain.iqr_outlier_detection()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetTrain.split_train_test"><code class="docutils literal notranslate"><span class="pre">DatasetTrain.split_train_test()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetTrain.update_default_settings"><code class="docutils literal notranslate"><span class="pre">DatasetTrain.update_default_settings()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DatasetTrain.update_hyperparameters"><code class="docutils literal notranslate"><span class="pre">DatasetTrain.update_hyperparameters()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DefaultSettings"><code class="docutils literal notranslate"><span class="pre">DefaultSettings</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DefaultSettings.DATETIME_FIELD"><code class="docutils literal notranslate"><span class="pre">DefaultSettings.DATETIME_FIELD</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DefaultSettings.HOLIDAY_FIELD"><code class="docutils literal notranslate"><span class="pre">DefaultSettings.HOLIDAY_FIELD</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DefaultSettings.NODATA_VALUE"><code class="docutils literal notranslate"><span class="pre">DefaultSettings.NODATA_VALUE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DefaultSettings.WEEKDAY_FIELD"><code class="docutils literal notranslate"><span class="pre">DefaultSettings.WEEKDAY_FIELD</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DefaultSettings.update_default_settings"><code class="docutils literal notranslate"><span class="pre">DefaultSettings.update_default_settings()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tell.html#tell.mlp_prepare_data.DefaultSettings.update_hyperparameters"><code class="docutils literal notranslate"><span class="pre">DefaultSettings.update_hyperparameters()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tell.html#module-tell.mlp_train">tell.mlp_train module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.mlp_train.train"><code class="docutils literal notranslate"><span class="pre">train()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.mlp_train.train_batch"><code class="docutils literal notranslate"><span class="pre">train_batch()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.mlp_train.train_mlp_model"><code class="docutils literal notranslate"><span class="pre">train_mlp_model()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tell.html#module-tell.mlp_utils">tell.mlp_utils module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.mlp_utils.denormalize_features"><code class="docutils literal notranslate"><span class="pre">denormalize_features()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.mlp_utils.evaluate"><code class="docutils literal notranslate"><span class="pre">evaluate()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.mlp_utils.get_balancing_authority_to_model_dict"><code class="docutils literal notranslate"><span class="pre">get_balancing_authority_to_model_dict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.mlp_utils.load_model"><code class="docutils literal notranslate"><span class="pre">load_model()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.mlp_utils.load_normalization_dict"><code class="docutils literal notranslate"><span class="pre">load_normalization_dict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.mlp_utils.load_predictive_models"><code class="docutils literal notranslate"><span class="pre">load_predictive_models()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.mlp_utils.normalize_features"><code class="docutils literal notranslate"><span class="pre">normalize_features()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.mlp_utils.normalize_prediction_data"><code class="docutils literal notranslate"><span class="pre">normalize_prediction_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.mlp_utils.pickle_model"><code class="docutils literal notranslate"><span class="pre">pickle_model()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.mlp_utils.pickle_normalization_dict"><code class="docutils literal notranslate"><span class="pre">pickle_normalization_dict()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tell.html#module-tell.package_data">tell.package_data module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.package_data.get_ba_abbreviations"><code class="docutils literal notranslate"><span class="pre">get_ba_abbreviations()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.package_data.read_yaml"><code class="docutils literal notranslate"><span class="pre">read_yaml()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tell.html#module-tell.states_fips_function">tell.states_fips_function module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.states_fips_function.state_metadata_from_state_abbreviation"><code class="docutils literal notranslate"><span class="pre">state_metadata_from_state_abbreviation()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tell.html#module-tell.visualization">tell.visualization module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.visualization.plot_ba_load_time_series"><code class="docutils literal notranslate"><span class="pre">plot_ba_load_time_series()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.visualization.plot_ba_service_territory"><code class="docutils literal notranslate"><span class="pre">plot_ba_service_territory()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.visualization.plot_ba_variable_correlations"><code class="docutils literal notranslate"><span class="pre">plot_ba_variable_correlations()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.visualization.plot_mlp_ba_peak_week"><code class="docutils literal notranslate"><span class="pre">plot_mlp_ba_peak_week()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.visualization.plot_mlp_ba_time_series"><code class="docutils literal notranslate"><span class="pre">plot_mlp_ba_time_series()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.visualization.plot_mlp_errors_vs_load"><code class="docutils literal notranslate"><span class="pre">plot_mlp_errors_vs_load()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.visualization.plot_mlp_summary_statistics"><code class="docutils literal notranslate"><span class="pre">plot_mlp_summary_statistics()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.visualization.plot_state_annual_total_loads"><code class="docutils literal notranslate"><span class="pre">plot_state_annual_total_loads()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.visualization.plot_state_load_duration_curve"><code class="docutils literal notranslate"><span class="pre">plot_state_load_duration_curve()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.visualization.plot_state_load_time_series"><code class="docutils literal notranslate"><span class="pre">plot_state_load_time_series()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tell.html#tell.visualization.plot_state_scaling_factors"><code class="docutils literal notranslate"><span class="pre">plot_state_scaling_factors()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="user_guide.html" class="btn btn-neutral float-left" title="User Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tell.html" class="btn btn-neutral float-right" title="tell.data_process_compile module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Batelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tell.states_fips_function &mdash; TELL  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=cf4e22e0" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            TELL
+          </a>
+              <div class="version">
+                1.3.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tell_quickstarter.html">Quickstarter Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement.html">Acknowledgement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TELL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tell.states_fips_function</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tell.states_fips_function</h1><div class="highlight"><pre>
+<div class="viewcode-block" id="state_metadata_from_state_abbreviation">
+<a class="viewcode-back" href="../../tell.html#tell.states_fips_function.state_metadata_from_state_abbreviation">[docs]</a>
+<span></span><span class="k">def</span> <span class="nf">state_metadata_from_state_abbreviation</span><span class="p">(</span><span class="n">state_abbreviation</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Define the state FIPS code and state name from a given state abbreviation.</span>
+
+<span class="sd">    :param state_abbreviation:          state abbreviation</span>
+<span class="sd">    :type state_abbreviation:           str</span>
+
+<span class="sd">    :return:                            [0] state FIPS code</span>
+<span class="sd">                                        [1] state name</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">state_fips</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">state_name</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;AK&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>  <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Alaska&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;AL&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>  <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Alabama&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;AK&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">;</span>  <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Alaska&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;AZ&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">4000</span><span class="p">;</span>  <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Arizona&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;AR&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">;</span>  <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Arkansas&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;CA&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">6000</span><span class="p">;</span>  <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;California&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;CO&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">8000</span><span class="p">;</span>  <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Colorado&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;CT&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">9000</span><span class="p">;</span>  <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Connecticut&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;DE&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Delaware&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;DC&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">11000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;District of Columbia&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;FL&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">12000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Florida&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;GA&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">13000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Georgia&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;HI&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">15000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Hawaii&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;ID&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">16000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Idaho&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;IL&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">17000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Illinois&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;IN&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">18000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Indiana&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;IA&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">19000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Iowa&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;KS&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">20000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Kansas&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;KY&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">21000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Kentucky&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;LA&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">22000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Louisiana&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;ME&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">23000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Maine&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;MD&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">24000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Maryland&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;MA&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">25000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Massachusetts&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;MI&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">26000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Michigan&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;MN&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">27000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Minnesota&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;MS&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">28000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Mississippi&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;MO&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">29000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Missouri&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;MT&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">30000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Montana&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;NE&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">31000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Nebraska&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;NV&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">32000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Nevada&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;NH&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">33000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;New Hampshire&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;NJ&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">34000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;New Jersey&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;NM&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">35000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;New Mexico&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;NY&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">36000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;New York&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;NC&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">37000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;North Carolina&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;ND&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">38000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;North Dakota&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;OH&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">39000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Ohio&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;OK&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">40000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Oklahoma&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;OR&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">41000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Oregon&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;PA&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">42000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Pennsylvania&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;RI&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">44000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Rhode Island&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;SC&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">45000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;South Carolina&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;SD&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">46000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;South Dakota&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;TN&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">47000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Tennessee&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;TX&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">48000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Texas&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;UT&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">49000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Utah&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;VT&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">50000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Vermont&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;VA&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">51000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Virginia&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;WA&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">53000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Washington&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;WV&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">54000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;West Virginia&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;WI&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">55000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Wisconsin&#39;</span>
+    <span class="k">if</span> <span class="n">state_abbreviation</span> <span class="o">==</span> <span class="s1">&#39;WY&#39;</span><span class="p">:</span> <span class="n">state_fips</span> <span class="o">=</span> <span class="mi">56000</span><span class="p">;</span> <span class="n">state_name</span> <span class="o">=</span> <span class="s1">&#39;Wyoming&#39;</span>
+
+    <span class="k">if</span> <span class="n">state_fips</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;There are no FIPS codes available for state abbreviation:  &#39;</span><span class="si">{</span><span class="n">state_abbreviation</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">state_fips</span><span class="p">,</span> <span class="n">state_name</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Batelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

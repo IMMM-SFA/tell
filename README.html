@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tell &mdash; TELL  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+      <link rel="stylesheet" type="text/css" href="_static/style.css?v=cf4e22e0" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Welcome to the tell Quickstarter!" href="tell_quickstarter.html" />
+    <link rel="prev" title="TELL documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            TELL
+          </a>
+              <div class="version">
+                1.3.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tell_quickstarter.html">Quickstarter Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgement.html">Acknowledgement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">TELL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">tell</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/README.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <p><a class="reference external" href="https://github.com/IMMM-SFA/tell/actions/workflows/build.yml"><img alt="build" src="https://github.com/IMMM-SFA/tell/actions/workflows/build.yml/badge.svg" /></a> <a class="reference external" href="https://zenodo.org/badge/latestdoi/305802399"><img alt="DOI" src="https://zenodo.org/badge/305802399.svg" /></a></p>
+<section id="tell">
+<h1>tell<a class="headerlink" href="#tell" title="Link to this heading"></a></h1>
+<section id="tell-is-an-open-source-python-package-to-model-future-hourly-total-electricity-loads">
+<h2><code class="docutils literal notranslate"><span class="pre">tell</span></code> is an open-source Python package to model future hourly total electricity loads.<a class="headerlink" href="#tell-is-an-open-source-python-package-to-model-future-hourly-total-electricity-loads" title="Link to this heading"></a></h2>
+</section>
+<section id="purpose">
+<h2>Purpose<a class="headerlink" href="#purpose" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">tell</span></code> was created to:</p>
+<ul class="simple">
+<li><p>Project the short- and long-term evolution of hourly electricity demand in response to changes in weather and climate.</p></li>
+<li><p>Work at a spatial resolution adequate for input to a unit commitment/economic dispatch (UC/ED) model.</p></li>
+<li><p>Maintain consistency with the long-term growth and evolution of annual state-level electricity demand projected by an economically driven human-Earth system model.</p></li>
+</ul>
+</section>
+<section id="install-tell">
+<h2>Install <code class="docutils literal notranslate"><span class="pre">tell</span></code><a class="headerlink" href="#install-tell" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">tell</span></code> is available via GitHub repository by using the pip install functionality. <code class="docutils literal notranslate"><span class="pre">tell</span></code> requires a Python version between 3.8 and 4.0 as well as a pip install to import the package. <code class="docutils literal notranslate"><span class="pre">tell</span></code> has been tested on
+Windows and Mac platforms. (Note: For those installing on Windows, <code class="docutils literal notranslate"><span class="pre">tell</span></code>  is supported by GeoPandas functionality.  Please see suggestions for installing GeoPandas on Windows here:<br />https://geopandas.org/en/stable/getting_started/install.html)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>tell
+</pre></div>
+</div>
+</section>
+<section id="check-out-a-quickstarter-tutorial-to-run-tell">
+<h2>Check out a quickstarter tutorial to run <code class="docutils literal notranslate"><span class="pre">tell</span></code><a class="headerlink" href="#check-out-a-quickstarter-tutorial-to-run-tell" title="Link to this heading"></a></h2>
+<p>Run <code class="docutils literal notranslate"><span class="pre">tell</span></code> using the quickstarter tutorial: <a class="reference external" href="https://immm-sfa.github.io/tell/tell_quickstarter.html">Quickstarter</a>.</p>
+</section>
+<section id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
+<p>New to <code class="docutils literal notranslate"><span class="pre">tell</span></code>?  Get familiar with what <code class="docutils literal notranslate"><span class="pre">tell</span></code> is all about in our <a class="reference external" href="https://immm-sfa.github.io/tell/index.html#">Getting Started</a> documentation.</p>
+</section>
+<section id="user-guide">
+<h2>User guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>Our <a class="reference external" href="https://immm-sfa.github.io/tell/user_guide.html">User Guide</a> provides in-depth information on the key concepts of <code class="docutils literal notranslate"><span class="pre">tell</span></code> and how the model works.</p>
+</section>
+<section id="contributing-to-tell">
+<h2>Contributing to <code class="docutils literal notranslate"><span class="pre">tell</span></code><a class="headerlink" href="#contributing-to-tell" title="Link to this heading"></a></h2>
+<p>Whether you find a typo in the documentation, find a bug, or want to develop functionality that you think will make <code class="docutils literal notranslate"><span class="pre">tell</span></code> more robust, you are welcome to contribute. Please see our <a class="reference external" href="https://immm-sfa.github.io/tell/contributing.html">Contribution Guidelines</a> for more details.</p>
+</section>
+<section id="api-reference">
+<h2>API reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h2>
+<p>The <a class="reference external" href="https://immm-sfa.github.io/tell/modules.html">API Reference</a> contains a detailed description of the <code class="docutils literal notranslate"><span class="pre">tell</span></code> API. The reference describes how the methods work and which parameters can be used. It assumes that you have an understanding of the key concepts.</p>
+</section>
+<section id="contact-help">
+<h2>Contact/Help<a class="headerlink" href="#contact-help" title="Link to this heading"></a></h2>
+<p>Need help with <code class="docutils literal notranslate"><span class="pre">tell</span></code> or have a comment? Please open a <a class="reference external" href="https://github.com/IMMM-SFA/tell/issues/new/choose">new Issue</a> with your question/comments.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="TELL documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tell_quickstarter.html" class="btn btn-neutral float-right" title="Welcome to the tell Quickstarter!" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Batelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tell.execute_forward &mdash; TELL  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=cf4e22e0" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            TELL
+          </a>
+              <div class="version">
+                1.3.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tell_quickstarter.html">Quickstarter Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement.html">Acknowledgement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TELL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tell.execute_forward</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tell.execute_forward</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span>
+<span class="kn">from</span> <span class="nn">.states_fips_function</span> <span class="kn">import</span> <span class="n">state_metadata_from_state_abbreviation</span>
+
+
+<div class="viewcode-block" id="extract_gcam_usa_loads">
+<a class="viewcode-back" href="../../tell.html#tell.execute_forward.extract_gcam_usa_loads">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_gcam_usa_loads</span><span class="p">(</span><span class="n">scenario_to_process</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gcam_usa_input_dir</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extracts the state-level annual loads from a GCAM-USA output file.</span>
+
+<span class="sd">    :param scenario_to_process: Scenario to process</span>
+<span class="sd">    :type scenario_to_process:  str</span>
+
+<span class="sd">    :param gcam_usa_input_dir:  Path to where the GCAM-USA data are stored</span>
+<span class="sd">    :type gcam_usa_input_dir:   str</span>
+
+<span class="sd">    :return:                    DataFrame of state-level annual total electricity loads</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Cluge the scenario for historical runs:</span>
+    <span class="k">if</span> <span class="n">scenario_to_process</span> <span class="o">==</span> <span class="s1">&#39;historic&#39;</span><span class="p">:</span>
+        <span class="n">scenario_to_process_gcam</span> <span class="o">=</span> <span class="s1">&#39;rcp45cooler_ssp3&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">scenario_to_process_gcam</span> <span class="o">=</span> <span class="n">scenario_to_process</span>
+
+    <span class="c1"># Create the filename for the needed GCAM run:</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gcam_usa_input_dir</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;electricity_demand_&#39;</span> <span class="o">+</span> <span class="n">scenario_to_process_gcam</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">)))</span>
+
+    <span class="c1"># Load in the raw GCAM-USA output file:</span>
+    <span class="n">gcam_usa_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Make a list of all of the states in the &quot;gcam_usa_df&quot;:</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="n">gcam_usa_df</span><span class="p">[</span><span class="s1">&#39;subRegion&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+    <span class="c1"># Loop over the states and interpolate their loads to an annual time step:</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">)):</span>
+
+        <span class="c1"># Subset to just the data for the state being processed:</span>
+        <span class="n">subset_df</span> <span class="o">=</span> <span class="n">gcam_usa_df</span><span class="p">[</span><span class="n">gcam_usa_df</span><span class="p">[</span><span class="s1">&#39;subRegion&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">]])]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Retrieve the state metadata:</span>
+        <span class="p">(</span><span class="n">state_fips</span><span class="p">,</span> <span class="n">state_name</span><span class="p">)</span> <span class="o">=</span> <span class="n">state_metadata_from_state_abbreviation</span><span class="p">(</span><span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="c1"># Linearly interpolate the 5-year loads from GCAM-USA to an annual time step:</span>
+        <span class="n">annual_time_vector</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">subset_df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">subset_df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+        <span class="n">interpolation_function</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">subset_df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">subset_df</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">],</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+        <span class="n">annual_loads</span> <span class="o">=</span> <span class="n">interpolation_function</span><span class="p">(</span><span class="n">annual_time_vector</span><span class="p">)</span>
+
+        <span class="c1"># Create an empty dataframe and store the results:</span>
+        <span class="n">state_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="n">state_df</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">annual_time_vector</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">state_df</span><span class="p">[</span><span class="s1">&#39;GCAM_USA_State_Annual_Load_TWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">annual_loads</span>
+        <span class="n">state_df</span><span class="p">[</span><span class="s1">&#39;State_FIPS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">state_fips</span>
+        <span class="n">state_df</span><span class="p">[</span><span class="s1">&#39;State_Name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">state_name</span>
+        <span class="n">state_df</span><span class="p">[</span><span class="s1">&#39;State_Abbreviation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># Aggregate the output into a new dataframe:</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">gcam_usa_output_df</span> <span class="o">=</span> <span class="n">state_df</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gcam_usa_output_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">gcam_usa_output_df</span><span class="p">,</span> <span class="n">state_df</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">gcam_usa_output_df</span></div>
+
+
+
+<div class="viewcode-block" id="process_population_scenario">
+<a class="viewcode-back" href="../../tell.html#tell.execute_forward.process_population_scenario">[docs]</a>
+<span class="k">def</span> <span class="nf">process_population_scenario</span><span class="p">(</span><span class="n">scenario_to_process</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">population_data_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read in a future population file and interpolate the data to an annual resolution.</span>
+
+<span class="sd">    :param scenario_to_process:         Scenario to process</span>
+<span class="sd">    :type scenario_to_process:          str</span>
+
+<span class="sd">    :param population_data_input_dir:   Path to where the sample population projections are stored</span>
+<span class="sd">    :type population_data_input_dir:    str</span>
+
+<span class="sd">    :return:                            DataFrame of population projections at an annual resolution</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">scenario_to_process</span> <span class="o">==</span> <span class="s1">&#39;historic&#39;</span><span class="p">:</span>
+        <span class="c1"># Read in the raw county-level population .csv file from the U.S. Census Bureau:</span>
+        <span class="n">df_pop</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">population_data_input_dir</span> <span class="o">+</span> <span class="s1">&#39;/county_populations_2000_to_2020.csv&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Loop over the range of years defined by the &#39;start_year&#39; and &#39;end_year&#39; variables:</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">2020</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+
+            <span class="c1"># Only keep columns that are needed:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;pop_</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;county_FIPS&#39;</span><span class="p">]</span>
+
+            <span class="c1"># Change the variable name for population for the year:</span>
+            <span class="n">df_pop_yr</span> <span class="o">=</span> <span class="n">df_pop</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+            <span class="c1"># Assign a new variable to indicate the year:</span>
+            <span class="n">df_pop_yr</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+
+            <span class="c1"># Rename some columns for consistency:</span>
+            <span class="n">df_pop_yr</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="sa">f</span><span class="s1">&#39;pop_</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;population&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="c1"># Concatenate all the years into a single dataframe:</span>
+            <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">2000</span><span class="p">:</span>
+                <span class="n">population_interp_df</span> <span class="o">=</span> <span class="n">df_pop_yr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">population_interp_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">population_interp_df</span><span class="p">,</span> <span class="n">df_pop_yr</span><span class="p">])</span>
+
+        <span class="c1"># Rename the some variables for consistency:</span>
+        <span class="n">population_interp_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;population&#39;</span><span class="p">:</span> <span class="s1">&#39;Population&#39;</span><span class="p">,</span>
+                                             <span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="s1">&#39;Year&#39;</span><span class="p">,</span>
+                                             <span class="s1">&#39;county_FIPS&#39;</span><span class="p">:</span> <span class="s1">&#39;County_FIPS&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Reorder the columns, convert the FIPS values from strings to integers, round the population projections</span>
+        <span class="c1"># to whole numbers, and sort the dataframe by FIPS code then year:</span>
+        <span class="n">population_interp_df</span> <span class="o">=</span> <span class="n">population_interp_df</span><span class="p">[[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;Year&#39;</span><span class="p">,</span> <span class="s1">&#39;Population&#39;</span><span class="p">]]</span>
+        <span class="n">population_interp_df</span><span class="p">[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">population_interp_df</span><span class="p">[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">population_interp_df</span><span class="p">[</span><span class="s1">&#39;Population&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">population_interp_df</span><span class="p">[</span><span class="s1">&#39;Population&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">population_interp_df</span> <span class="o">=</span> <span class="n">population_interp_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;Year&#39;</span><span class="p">])</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">scenario_to_process</span> <span class="o">==</span> <span class="s1">&#39;rcp45cooler_ssp3&#39;</span><span class="p">:</span>
+            <span class="n">scenario_string</span> <span class="o">=</span> <span class="s1">&#39;ssp3&#39;</span>
+        <span class="k">if</span> <span class="n">scenario_to_process</span> <span class="o">==</span> <span class="s1">&#39;rcp45cooler_ssp5&#39;</span><span class="p">:</span>
+            <span class="n">scenario_string</span> <span class="o">=</span> <span class="s1">&#39;ssp5&#39;</span>
+        <span class="k">if</span> <span class="n">scenario_to_process</span> <span class="o">==</span> <span class="s1">&#39;rcp45hotter_ssp3&#39;</span><span class="p">:</span>
+            <span class="n">scenario_string</span> <span class="o">=</span> <span class="s1">&#39;ssp3&#39;</span>
+        <span class="k">if</span> <span class="n">scenario_to_process</span> <span class="o">==</span> <span class="s1">&#39;rcp45hotter_ssp5&#39;</span><span class="p">:</span>
+            <span class="n">scenario_string</span> <span class="o">=</span> <span class="s1">&#39;ssp5&#39;</span>
+        <span class="k">if</span> <span class="n">scenario_to_process</span> <span class="o">==</span> <span class="s1">&#39;rcp85cooler_ssp3&#39;</span><span class="p">:</span>
+            <span class="n">scenario_string</span> <span class="o">=</span> <span class="s1">&#39;ssp3&#39;</span>
+        <span class="k">if</span> <span class="n">scenario_to_process</span> <span class="o">==</span> <span class="s1">&#39;rcp85cooler_ssp5&#39;</span><span class="p">:</span>
+            <span class="n">scenario_string</span> <span class="o">=</span> <span class="s1">&#39;ssp5&#39;</span>
+        <span class="k">if</span> <span class="n">scenario_to_process</span> <span class="o">==</span> <span class="s1">&#39;rcp85hotter_ssp3&#39;</span><span class="p">:</span>
+            <span class="n">scenario_string</span> <span class="o">=</span> <span class="s1">&#39;ssp3&#39;</span>
+        <span class="k">if</span> <span class="n">scenario_to_process</span> <span class="o">==</span> <span class="s1">&#39;rcp85hotter_ssp5&#39;</span><span class="p">:</span>
+            <span class="n">scenario_string</span> <span class="o">=</span> <span class="s1">&#39;ssp5&#39;</span>
+
+        <span class="c1"># Read in the raw file:</span>
+        <span class="n">population_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">population_data_input_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">scenario_string</span><span class="si">}</span><span class="s2">_county_population.csv&quot;</span><span class="p">),</span>
+                                    <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;FIPS&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">})</span>
+
+        <span class="c1"># Drop the &#39;state_name&#39; column and rename the &quot;FIPS&quot; column:</span>
+        <span class="n">population_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;state_name&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">population_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;FIPS&#39;</span><span class="p">:</span> <span class="s1">&#39;County_FIPS&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Set county FIPS code as the index variable:</span>
+        <span class="n">population_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Transpose the dataframe:</span>
+        <span class="n">population_dft</span> <span class="o">=</span> <span class="n">population_df</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="c1"># Bring the index back into the dataframe:</span>
+        <span class="n">population_dft</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Rename the index column as &quot;yr&quot;:</span>
+        <span class="n">population_dft</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="s1">&#39;yr&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Convert the year to a datetime variable:</span>
+        <span class="n">population_dft</span><span class="p">[</span><span class="s1">&#39;yr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">population_dft</span><span class="p">[</span><span class="s1">&#39;yr&#39;</span><span class="p">])</span>
+
+        <span class="c1"># Set the year as the index variable:</span>
+        <span class="n">population_dft</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;yr&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Interpolate the populations to an annual time-step and transpose the results:</span>
+        <span class="n">population_interp_df</span> <span class="o">=</span> <span class="n">population_dft</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s1">&#39;1YE&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="c1"># Convert the dataframe from a wide format to a long format and name the population variable:</span>
+        <span class="n">population_interp_df</span> <span class="o">=</span> <span class="n">population_interp_df</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">population_interp_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;Population&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Change the time variable to only the year value:</span>
+        <span class="n">population_interp_df</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">population_interp_df</span><span class="p">[</span><span class="s1">&#39;yr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span>
+        <span class="n">population_interp_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;yr&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Reorder the columns, convert the FIPS values from strings to integers, round the population projections</span>
+        <span class="c1"># to whole numbers, and sort the dataframe by FIPS code then year:</span>
+        <span class="n">population_interp_df</span> <span class="o">=</span> <span class="n">population_interp_df</span><span class="p">[[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;Year&#39;</span><span class="p">,</span> <span class="s1">&#39;Population&#39;</span><span class="p">]]</span>
+        <span class="n">population_interp_df</span><span class="p">[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">population_interp_df</span><span class="p">[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">population_interp_df</span><span class="p">[</span><span class="s1">&#39;Population&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">population_interp_df</span><span class="p">[</span><span class="s1">&#39;Population&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">population_interp_df</span> <span class="o">=</span> <span class="n">population_interp_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;Year&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">population_interp_df</span></div>
+
+
+
+<div class="viewcode-block" id="aggregate_mlp_output_files">
+<a class="viewcode-back" href="../../tell.html#tell.execute_forward.aggregate_mlp_output_files">[docs]</a>
+<span class="k">def</span> <span class="nf">aggregate_mlp_output_files</span><span class="p">(</span><span class="n">list_of_files</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Aggregates a list of MLP output files into a dataframe.</span>
+
+<span class="sd">    :param list_of_files:           List of MLP output files</span>
+<span class="sd">    :type list_of_files:            list</span>
+
+<span class="sd">    :return:                        DataFrame of all MLP output concatenated together</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Loop over the list of MLP output files:</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">list_of_files</span><span class="p">)):</span>
+
+        <span class="c1"># Read in the .csv file and replace missing values with nan:</span>
+        <span class="n">mlp_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">list_of_files</span><span class="p">[</span><span class="n">file</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="o">-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+        <span class="c1"># Rename the &quot;BA&quot; variable:</span>
+        <span class="n">mlp_data</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;BA&#39;</span><span class="p">:</span> <span class="s1">&#39;BA_Code&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Rename the &quot;Load&quot; variable:</span>
+        <span class="n">mlp_data</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Load&#39;</span><span class="p">:</span> <span class="s1">&#39;Total_BA_Load_MWh&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Replacing missing or negative loads with NaN:</span>
+        <span class="n">mlp_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="p">(</span><span class="n">mlp_data</span><span class="p">[</span><span class="s1">&#39;Total_BA_Load_MWh&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span> <span class="s1">&#39;Total_BA_Load_MWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="c1"># Aggregate the output into a new dataframe:</span>
+        <span class="k">if</span> <span class="n">file</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">mlp_output_df</span> <span class="o">=</span> <span class="n">mlp_data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mlp_output_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">mlp_output_df</span><span class="p">,</span> <span class="n">mlp_data</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">mlp_output_df</span></div>
+
+
+
+<div class="viewcode-block" id="output_tell_summary_data">
+<a class="viewcode-back" href="../../tell.html#tell.execute_forward.output_tell_summary_data">[docs]</a>
+<span class="k">def</span> <span class="nf">output_tell_summary_data</span><span class="p">(</span><span class="n">joint_mlp_df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">year_to_process</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gcam_target_year</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a summary file describing state-level annual total loads from TELL and GCAM-USA.</span>
+
+<span class="sd">    :param joint_mlp_df:            DataFrame of processed TELL loads</span>
+<span class="sd">    :type joint_mlp_df:             DataFrame</span>
+
+<span class="sd">    :param year_to_process:         Year to process</span>
+<span class="sd">    :type year_to_process:          str</span>
+
+<span class="sd">    :param gcam_target_year:        Year to scale against the GCAM-USA annual loads</span>
+<span class="sd">    :type gcam_target_year:         str</span>
+
+<span class="sd">    :param data_output_dir:         Data output directory</span>
+<span class="sd">    :type data_output_dir:          str</span>
+
+<span class="sd">    :return:                        DataFrame of summary statistics</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Make a copy of the necessary variables, drop the duplicates, and add in the &quot;year_to_process&quot;:</span>
+    <span class="n">output_df</span> <span class="o">=</span> <span class="n">joint_mlp_df</span><span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;State_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;State_Name&#39;</span><span class="p">,</span> <span class="s1">&#39;TELL_State_Annual_Load_TWh&#39;</span><span class="p">,</span> <span class="s1">&#39;GCAM_USA_State_Annual_Load_TWh&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;State_Scaling_Factor&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">output_df</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+
+    <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">year_to_process</span>
+
+    <span class="c1"># Rename the columns to make them more readable:</span>
+    <span class="n">output_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;TELL_State_Annual_Load_TWh&#39;</span><span class="p">:</span> <span class="s1">&#39;Raw_TELL_Load_TWh&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;GCAM_USA_State_Annual_Load_TWh&#39;</span><span class="p">:</span> <span class="s1">&#39;GCAM_USA_Load_TWh&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;State_Scaling_Factor&#39;</span><span class="p">:</span> <span class="s1">&#39;Scaling_Factor&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Calculate the scaled TELL loads:</span>
+    <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Scaled_TELL_Load_TWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Raw_TELL_Load_TWh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Scaling_Factor&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Round off the values to make the output file more readable:</span>
+    <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;State_FIPS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;State_FIPS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Raw_TELL_Load_TWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Raw_TELL_Load_TWh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;GCAM_USA_Load_TWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;GCAM_USA_Load_TWh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Scaled_TELL_Load_TWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Scaled_TELL_Load_TWh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Scaling_Factor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Scaling_Factor&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+    <span class="c1"># Reorder the columns, fill in missing values, and sort alphabetically by state name:</span>
+    <span class="n">output_df</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">,</span> <span class="s1">&#39;State_Name&#39;</span><span class="p">,</span> <span class="s1">&#39;State_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;Scaling_Factor&#39;</span><span class="p">,</span> <span class="s1">&#39;GCAM_USA_Load_TWh&#39;</span><span class="p">,</span> <span class="s1">&#39;Raw_TELL_Load_TWh&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;Scaled_TELL_Load_TWh&#39;</span><span class="p">]]</span>
+    <span class="n">output_df</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">9999</span><span class="p">)</span>
+    <span class="n">output_df</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;State_Name&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Generate the .csv output file name:</span>
+    <span class="n">csv_output_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_output_dir</span><span class="p">,</span> <span class="s1">&#39;TELL_State_Summary_Data_&#39;</span> <span class="o">+</span> <span class="n">year_to_process</span>
+                                       <span class="o">+</span> <span class="s1">&#39;_Scaled_&#39;</span> <span class="o">+</span> <span class="n">gcam_target_year</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Write out the dataframe to a .csv file:</span>
+    <span class="n">output_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">csv_output_filename</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">output_df</span></div>
+
+
+
+<div class="viewcode-block" id="output_tell_ba_data">
+<a class="viewcode-back" href="../../tell.html#tell.execute_forward.output_tell_ba_data">[docs]</a>
+<span class="k">def</span> <span class="nf">output_tell_ba_data</span><span class="p">(</span><span class="n">joint_mlp_df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">year_to_process</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gcam_target_year</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a file of the time-series of hourly loads for each BA.</span>
+
+<span class="sd">    :param joint_mlp_df:            DataFrame of processed TELL loads</span>
+<span class="sd">    :type joint_mlp_df:             DataFrame</span>
+
+<span class="sd">    :param year_to_process:         Year to process</span>
+<span class="sd">    :type year_to_process:          str</span>
+
+<span class="sd">    :param gcam_target_year:        Year to scale against the GCAM-USA annual loads</span>
+<span class="sd">    :type gcam_target_year:         str</span>
+
+<span class="sd">    :param data_output_dir:         Data output directory</span>
+<span class="sd">    :type data_output_dir:          str</span>
+
+<span class="sd">    :return:                        DataFrame of BA-level total load time-series</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Make a copy of the necessary variables:</span>
+    <span class="n">ba_output_df</span> <span class="o">=</span> <span class="n">joint_mlp_df</span><span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;Time_UTC&#39;</span><span class="p">,</span> <span class="s1">&#39;BA_Code&#39;</span><span class="p">,</span> <span class="s1">&#39;BA_Number&#39;</span><span class="p">,</span> <span class="s1">&#39;County_BA_Load_MWh&#39;</span><span class="p">,</span> <span class="s1">&#39;County_BA_Load_MWh_Scaled&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Make a list of all of the BAs in &quot;ba_output_df&quot;:</span>
+    <span class="n">bas</span> <span class="o">=</span> <span class="n">ba_output_df</span><span class="p">[</span><span class="s1">&#39;BA_Code&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+    <span class="c1"># Loop over the BAs and process their data into an output file:</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bas</span><span class="p">)):</span>
+
+        <span class="c1"># Subset to just the data for the BA being processed:</span>
+        <span class="n">output_df</span> <span class="o">=</span> <span class="n">ba_output_df</span><span class="p">[</span><span class="n">ba_output_df</span><span class="p">[</span><span class="s1">&#39;BA_Code&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="n">bas</span><span class="p">[</span><span class="n">i</span><span class="p">]])]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Sum the county loads as a function of time:</span>
+        <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Raw_TELL_BA_Load_MWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Time_UTC&#39;</span><span class="p">)[</span><span class="s1">&#39;County_BA_Load_MWh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">&#39;sum&#39;</span><span class="p">)</span>
+        <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Scaled_TELL_BA_Load_MWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Time_UTC&#39;</span><span class="p">)[</span><span class="s1">&#39;County_BA_Load_MWh_Scaled&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">&#39;sum&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Subset and reorder the columns, drop duplicates, fill in missing values, and sort chronologically:</span>
+        <span class="n">output_df</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[[</span><span class="s1">&#39;BA_Code&#39;</span><span class="p">,</span> <span class="s1">&#39;BA_Number&#39;</span><span class="p">,</span> <span class="s1">&#39;Time_UTC&#39;</span><span class="p">,</span> <span class="s1">&#39;Raw_TELL_BA_Load_MWh&#39;</span><span class="p">,</span> <span class="s1">&#39;Scaled_TELL_BA_Load_MWh&#39;</span><span class="p">]]</span>
+        <span class="n">output_df</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+        <span class="n">output_df</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">9999</span><span class="p">)</span>
+        <span class="n">output_df</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;Time_UTC&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Round off the values to make the output file more readable:</span>
+        <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;BA_Number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;BA_Number&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Raw_TELL_BA_Load_MWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Raw_TELL_BA_Load_MWh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Scaled_TELL_BA_Load_MWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Scaled_TELL_BA_Load_MWh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Aggregate the output into a new dataframe:</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">aggregate_output_df</span> <span class="o">=</span> <span class="n">output_df</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">aggregate_output_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">aggregate_output_df</span><span class="p">,</span> <span class="n">output_df</span><span class="p">])</span>
+
+
+    <span class="c1"># Sort the data alphabetically by BA:</span>
+    <span class="n">aggregate_output_df</span> <span class="o">=</span> <span class="n">aggregate_output_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;BA_Code&quot;</span><span class="p">,</span> <span class="s2">&quot;Time_UTC&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Generate the .csv output file name:</span>
+    <span class="n">csv_output_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_output_dir</span><span class="p">,</span>
+                                       <span class="s1">&#39;TELL_Balancing_Authority_Hourly_Load_Data_&#39;</span> <span class="o">+</span> <span class="n">year_to_process</span>
+                                       <span class="o">+</span> <span class="s1">&#39;_Scaled_&#39;</span> <span class="o">+</span> <span class="n">gcam_target_year</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Write out the dataframe to a .csv file:</span>
+    <span class="n">aggregate_output_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">csv_output_filename</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">aggregate_output_df</span></div>
+
+
+
+<div class="viewcode-block" id="output_tell_state_data">
+<a class="viewcode-back" href="../../tell.html#tell.execute_forward.output_tell_state_data">[docs]</a>
+<span class="k">def</span> <span class="nf">output_tell_state_data</span><span class="p">(</span><span class="n">joint_mlp_df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">year_to_process</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gcam_target_year</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a file of the time-series of hourly loads for each state.</span>
+
+<span class="sd">    :param joint_mlp_df:            DataFrame of processed TELL loads</span>
+<span class="sd">    :type joint_mlp_df:             DataFrame</span>
+
+<span class="sd">    :param year_to_process:         Year to process</span>
+<span class="sd">    :type year_to_process:          str</span>
+
+<span class="sd">    :param gcam_target_year:        Year to scale against the GCAM-USA annual loads</span>
+<span class="sd">    :type gcam_target_year:         str</span>
+
+<span class="sd">    :param data_output_dir:         Data output directory</span>
+<span class="sd">    :type data_output_dir:          str</span>
+
+<span class="sd">    :return:                        DataFrame of state-level total load time-series</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Make a copy of the necessary variables:</span>
+    <span class="n">state_output_df</span> <span class="o">=</span> <span class="n">joint_mlp_df</span><span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;Time_UTC&#39;</span><span class="p">,</span> <span class="s1">&#39;State_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;State_Name&#39;</span><span class="p">,</span> <span class="s1">&#39;State_Scaling_Factor&#39;</span><span class="p">,</span> <span class="s1">&#39;County_BA_Load_MWh&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;County_BA_Load_MWh_Scaled&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Make a list of all of the states in &quot;state_output_df&quot;:</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="n">state_output_df</span><span class="p">[</span><span class="s1">&#39;State_Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+    <span class="c1"># Loop over the states and process their data:</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">)):</span>
+
+        <span class="c1"># Subset to just the data for the state being processed:</span>
+        <span class="n">output_df</span> <span class="o">=</span> <span class="n">state_output_df</span><span class="p">[</span><span class="n">state_output_df</span><span class="p">[</span><span class="s1">&#39;State_Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">]])]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Sum the county loads as a function of time:</span>
+        <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Raw_TELL_State_Load_MWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Time_UTC&#39;</span><span class="p">)[</span><span class="s1">&#39;County_BA_Load_MWh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">&#39;sum&#39;</span><span class="p">)</span>
+        <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Scaled_TELL_State_Load_MWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Time_UTC&#39;</span><span class="p">)[</span><span class="s1">&#39;County_BA_Load_MWh_Scaled&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span>
+            <span class="s1">&#39;sum&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Subset and reorder the columns, drop duplicates, fill in missing values, and sort chronologically:</span>
+        <span class="n">output_df</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span>
+            <span class="p">[</span><span class="s1">&#39;State_Name&#39;</span><span class="p">,</span> <span class="s1">&#39;State_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;Time_UTC&#39;</span><span class="p">,</span> <span class="s1">&#39;Raw_TELL_State_Load_MWh&#39;</span><span class="p">,</span> <span class="s1">&#39;Scaled_TELL_State_Load_MWh&#39;</span><span class="p">]]</span>
+        <span class="n">output_df</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+        <span class="n">output_df</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">9999</span><span class="p">)</span>
+        <span class="n">output_df</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Time_UTC&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Round off the values to make the output file more readable:</span>
+        <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;State_FIPS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;State_FIPS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Raw_TELL_State_Load_MWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Raw_TELL_State_Load_MWh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Scaled_TELL_State_Load_MWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Scaled_TELL_State_Load_MWh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Aggregate the output into a new dataframe:</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">aggregate_output_df</span> <span class="o">=</span> <span class="n">output_df</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">aggregate_output_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">aggregate_output_df</span><span class="p">,</span> <span class="n">output_df</span><span class="p">])</span>
+
+    <span class="c1"># Sort the data alphabetically by state:</span>
+    <span class="n">aggregate_output_df</span> <span class="o">=</span> <span class="n">aggregate_output_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;State_Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Time_UTC&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Generate the .csv output file name:</span>
+    <span class="n">csv_output_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_output_dir</span><span class="p">,</span> <span class="s1">&#39;TELL_State_Hourly_Load_Data_&#39;</span> <span class="o">+</span> <span class="n">year_to_process</span>
+                                       <span class="o">+</span> <span class="s1">&#39;_Scaled_&#39;</span> <span class="o">+</span> <span class="n">gcam_target_year</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Write out the dataframe to a .csv file:</span>
+    <span class="n">aggregate_output_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">csv_output_filename</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">aggregate_output_df</span></div>
+
+
+
+<div class="viewcode-block" id="output_tell_county_data">
+<a class="viewcode-back" href="../../tell.html#tell.execute_forward.output_tell_county_data">[docs]</a>
+<span class="k">def</span> <span class="nf">output_tell_county_data</span><span class="p">(</span><span class="n">joint_mlp_df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">year_to_process</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gcam_target_year</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a file of the time-series of hourly loads for each county.</span>
+
+<span class="sd">    :param joint_mlp_df:            DataFrame of processed TELL loads</span>
+<span class="sd">    :type joint_mlp_df:             DataFrame</span>
+
+<span class="sd">    :param year_to_process:         Year to process</span>
+<span class="sd">    :type year_to_process:          str</span>
+
+<span class="sd">    :param gcam_target_year:        Year to scale against the GCAM-USA annual loads</span>
+<span class="sd">    :type gcam_target_year:         str</span>
+
+<span class="sd">    :param data_output_dir:         Data output directory</span>
+<span class="sd">    :type data_output_dir:          str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Make a copy of the necessary variables:</span>
+    <span class="n">county_output_df</span> <span class="o">=</span> <span class="n">joint_mlp_df</span><span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;Time_UTC&#39;</span><span class="p">,</span> <span class="s1">&#39;County_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;County_Name&#39;</span><span class="p">,</span> <span class="s1">&#39;State_Name&#39;</span><span class="p">,</span> <span class="s1">&#39;State_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;County_BA_Load_MWh&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;County_BA_Load_MWh_Scaled&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Make a list of all of the counties in &quot;county_output_df&quot;:</span>
+    <span class="n">counties</span> <span class="o">=</span> <span class="n">county_output_df</span><span class="p">[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+    <span class="c1"># Loop over the counties and process their data:</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">counties</span><span class="p">)):</span>
+
+        <span class="c1"># Subset to just the data for the county being processed:</span>
+        <span class="n">output_df</span> <span class="o">=</span> <span class="n">county_output_df</span><span class="p">[</span><span class="n">county_output_df</span><span class="p">[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">counties</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Sum the county loads as a function of time:</span>
+        <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Raw_TELL_County_Load_MWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Time_UTC&#39;</span><span class="p">)[</span><span class="s1">&#39;County_BA_Load_MWh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">&#39;sum&#39;</span><span class="p">)</span>
+        <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Scaled_TELL_County_Load_MWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Time_UTC&#39;</span><span class="p">)[</span><span class="s1">&#39;County_BA_Load_MWh_Scaled&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span>
+            <span class="s1">&#39;sum&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Subset and reorder the columns, drop duplicates, fill in missing values, and sort chronologically:</span>
+        <span class="n">output_df</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span>
+            <span class="p">[</span><span class="s1">&#39;County_Name&#39;</span><span class="p">,</span> <span class="s1">&#39;County_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;State_Name&#39;</span><span class="p">,</span> <span class="s1">&#39;State_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;Time_UTC&#39;</span><span class="p">,</span> <span class="s1">&#39;Raw_TELL_County_Load_MWh&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;Scaled_TELL_County_Load_MWh&#39;</span><span class="p">]]</span>
+        <span class="n">output_df</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+        <span class="n">output_df</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">9999</span><span class="p">)</span>
+        <span class="n">output_df</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;Time_UTC&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Round off the values to make the output file more readable:</span>
+        <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;State_FIPS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;State_FIPS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Raw_TELL_County_Load_MWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Raw_TELL_County_Load_MWh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Scaled_TELL_County_Load_MWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;Scaled_TELL_County_Load_MWh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Generate the .csv output file name:</span>
+        <span class="n">county_name</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;County_Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">county_name</span> <span class="o">=</span> <span class="n">county_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="n">county_name</span> <span class="o">=</span> <span class="n">county_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="n">state_name</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[</span><span class="s1">&#39;State_Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">state_name</span> <span class="o">=</span> <span class="n">state_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="n">state_name</span> <span class="o">=</span> <span class="n">state_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+        <span class="n">csv_output_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">data_output_dir</span> <span class="o">+</span> <span class="s1">&#39;/County_Level_Data/&#39;</span> <span class="o">+</span> <span class="n">year_to_process</span> <span class="o">+</span> <span class="s1">&#39;/TELL_&#39;</span> <span class="o">+</span> <span class="n">state_name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">county_name</span> <span class="o">+</span> <span class="s1">&#39;_Hourly_Load_Data_&#39;</span> <span class="o">+</span>
+            <span class="n">year_to_process</span> <span class="o">+</span> <span class="s1">&#39;_Scaled_&#39;</span> <span class="o">+</span> <span class="n">gcam_target_year</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Write out the dataframe to a .csv file:</span>
+        <span class="n">output_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">csv_output_filename</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="execute_forward">
+<a class="viewcode-back" href="../../tell.html#tell.execute_forward.execute_forward">[docs]</a>
+<span class="k">def</span> <span class="nf">execute_forward</span><span class="p">(</span><span class="n">year_to_process</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gcam_target_year</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scenario_to_process</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                    <span class="n">gcam_usa_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">map_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mlp_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pop_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                    <span class="n">save_county_data</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Takes the .csv files produced by the TELL MLP model and distributes</span>
+<span class="sd">    the predicted load to the counties that each balancing authority (BA) operates</span>
+<span class="sd">    in. The county-level hourly loads are then summed to the state-level and scaled</span>
+<span class="sd">    to match the state-level annual loads produced by GCAM-USA. Three sets of output</span>
+<span class="sd">    files are generated: county-level hourly loads, state-level hourly loads, and</span>
+<span class="sd">    hourly loads for each BA. There is one additional summary output file that includes</span>
+<span class="sd">    state-level annual loads from TELL and GCAM-USA as well as the scaling factors.</span>
+
+<span class="sd">    :param year_to_process:             Year to process</span>
+<span class="sd">    :type year_to_process:              str</span>
+
+<span class="sd">    :param gcam_target_year:            Year to scale against the GCAM-USA annual loads</span>
+<span class="sd">    :type gcam_target_year:             str</span>
+
+<span class="sd">    :param scenario_to_process:         Scenario to process</span>
+<span class="sd">    :type scenario_to_process:          str</span>
+
+<span class="sd">    :param data_output_dir:              Top-level data directory for TELL output</span>
+<span class="sd">    :type data_output_dir:               str</span>
+
+<span class="sd">    :param gcam_usa_input_dir:          Path to where the GCAM-USA data is stored</span>
+<span class="sd">    :type gcam_usa_input_dir:           str</span>
+
+<span class="sd">    :param map_input_dir:               Path to where the BA-to-county mapping data are stored</span>
+<span class="sd">    :type map_input_dir:                str</span>
+
+<span class="sd">    :param mlp_input_dir:               Path to where the TELL MLP output data are stored</span>
+<span class="sd">    :type mlp_input_dir:                str</span>
+
+<span class="sd">    :param pop_input_dir:               Path to where the population projection data are stored</span>
+<span class="sd">    :type pop_input_dir:                str</span>
+
+<span class="sd">    :param save_county_data:            Set to True if you want to save the time-series of load for each county</span>
+<span class="sd">    :type save_county_data:             bool</span>
+
+<span class="sd">    :return:                            [0] DataFrame of summary statistics</span>
+<span class="sd">                                        [1] DataFrame of BA-level total load time-series</span>
+<span class="sd">                                        [2] DataFrame of state-level total load time-series</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Print the start time and set a time variable to benchmark the run time:</span>
+    <span class="n">begin_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Scenario = &#39;</span><span class="p">,</span> <span class="n">scenario_to_process</span><span class="p">,</span> <span class="s1">&#39;, Year = &#39;</span><span class="p">,</span> <span class="n">year_to_process</span><span class="p">)</span>
+
+    <span class="c1"># Set the data output directory:</span>
+    <span class="n">data_output_dir_full</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_output_dir</span><span class="p">,</span> <span class="n">scenario_to_process</span><span class="p">,</span> <span class="n">gcam_target_year</span><span class="p">)</span>
+
+    <span class="c1"># Check if the data output directory exists and if not then create it:</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data_output_dir_full</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">data_output_dir_full</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">save_county_data</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_output_dir_full</span><span class="p">,</span> <span class="s1">&#39;County_Level_Data&#39;</span><span class="p">,</span> <span class="n">year_to_process</span><span class="p">))</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_output_dir_full</span><span class="p">,</span> <span class="s1">&#39;County_Level_Data&#39;</span><span class="p">,</span> <span class="n">year_to_process</span><span class="p">))</span>
+
+    <span class="c1"># Load in the sample GCAM-USA output file and subset the data to only the &quot;year_to_process&quot;:</span>
+    <span class="n">gcam_usa_df</span> <span class="o">=</span> <span class="n">extract_gcam_usa_loads</span><span class="p">(</span><span class="n">scenario_to_process</span> <span class="o">=</span> <span class="n">scenario_to_process</span><span class="p">,</span>
+                                         <span class="n">gcam_usa_input_dir</span> <span class="o">=</span> <span class="n">gcam_usa_input_dir</span><span class="p">)</span>
+    <span class="n">gcam_usa_df</span> <span class="o">=</span> <span class="n">gcam_usa_df</span><span class="p">[</span><span class="n">gcam_usa_df</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">gcam_target_year</span><span class="p">)]</span>
+
+    <span class="c1"># Load in the most recent (i.e., 2019) BA service territory mapping file:</span>
+    <span class="n">ba_mapping_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">((</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">map_input_dir</span><span class="p">,</span> <span class="s1">&#39;ba_service_territory_2019.csv&#39;</span><span class="p">)),</span> <span class="n">index_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Read in the sample population projection dataset for the scenario being processed:</span>
+    <span class="n">population_df</span> <span class="o">=</span> <span class="n">process_population_scenario</span><span class="p">(</span><span class="n">scenario_to_process</span><span class="p">,</span> <span class="n">pop_input_dir</span><span class="p">)</span>
+
+    <span class="c1"># Subset to only the year being processed:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">scenario_to_process</span> <span class="o">==</span> <span class="s1">&#39;historic&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_process</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">):</span>
+       <span class="n">population_df</span> <span class="o">=</span> <span class="n">population_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">population_df</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2000</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+       <span class="n">population_df</span> <span class="o">=</span> <span class="n">population_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">population_df</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">year_to_process</span><span class="p">))]</span>
+
+    <span class="c1"># Only keep the columns that are needed:</span>
+    <span class="n">population_df</span> <span class="o">=</span> <span class="n">population_df</span><span class="p">[[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;Population&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Merge the ba_mapping_df and population_df dataframes. Compute the fraction of the total population in each BA</span>
+    <span class="c1"># that lives in a given county:</span>
+    <span class="n">mapping_df</span> <span class="o">=</span> <span class="n">ba_mapping_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">population_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">])</span>
+    <span class="n">mapping_df</span> <span class="o">=</span> <span class="n">mapping_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;BA_Number&#39;</span><span class="p">)</span>
+    <span class="n">mapping_df</span><span class="p">[</span><span class="s1">&#39;BA_Population_Sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapping_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;BA_Code&#39;</span><span class="p">)[</span><span class="s1">&#39;Population&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">&#39;sum&#39;</span><span class="p">)</span>
+    <span class="n">mapping_df</span><span class="p">[</span><span class="s1">&#39;BA_Population_Fraction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapping_df</span><span class="p">[</span><span class="s1">&#39;Population&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">mapping_df</span><span class="p">[</span><span class="s1">&#39;BA_Population_Sum&#39;</span><span class="p">]</span>
+    <span class="n">mapping_df</span> <span class="o">=</span> <span class="n">mapping_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+    <span class="c1"># Create a list of all of the MLP output files in the &quot;mlp_input_dir&quot; and aggregate the files in that list:</span>
+    <span class="n">mlp_filelist</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mlp_input_dir</span><span class="p">,</span> <span class="n">scenario_to_process</span><span class="p">,</span> <span class="n">year_to_process</span><span class="p">,</span> <span class="s1">&#39;*_mlp_output.csv&#39;</span><span class="p">)))</span>
+    <span class="n">mlp_output_df</span> <span class="o">=</span> <span class="n">aggregate_mlp_output_files</span><span class="p">(</span><span class="n">mlp_filelist</span><span class="p">)</span>
+
+    <span class="c1"># Merge the &quot;mapping_df&quot; with &quot;mlp_output_df&quot; using BA codes to merge on:</span>
+    <span class="n">joint_mlp_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">mlp_output_df</span><span class="p">,</span> <span class="n">mapping_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;BA_Code&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Scale the BA loads in each county by the fraction of the BA&#39;s total population that lives there:</span>
+    <span class="n">joint_mlp_df</span><span class="p">[</span><span class="s1">&#39;County_BA_Load_MWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">joint_mlp_df</span><span class="p">[</span><span class="s1">&#39;Total_BA_Load_MWh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">joint_mlp_df</span><span class="p">[</span><span class="s1">&#39;BA_Population_Fraction&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Sum the county-level hourly loads into annual state-level total loads and convert that value from MWh to TWh:</span>
+    <span class="n">joint_mlp_df</span><span class="p">[</span><span class="s1">&#39;TELL_State_Annual_Load_TWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">joint_mlp_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;State_FIPS&#39;</span><span class="p">)[</span><span class="s1">&#39;County_BA_Load_MWh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">&#39;sum&#39;</span><span class="p">))</span> <span class="o">/</span> <span class="mi">1000000</span>
+
+    <span class="c1"># Add a column with the state-level annual total loads from GCAM-USA:</span>
+    <span class="n">joint_mlp_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">joint_mlp_df</span><span class="p">,</span> <span class="n">gcam_usa_df</span><span class="p">[[</span><span class="s1">&#39;State_FIPS&#39;</span><span class="p">,</span> <span class="s1">&#39;GCAM_USA_State_Annual_Load_TWh&#39;</span><span class="p">]],</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;State_FIPS&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Compute the state-level scaling factors that force TELL annual loads to match GCAM-USA annual loads:</span>
+    <span class="n">joint_mlp_df</span><span class="p">[</span><span class="s1">&#39;State_Scaling_Factor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">joint_mlp_df</span><span class="p">[</span><span class="s1">&#39;GCAM_USA_State_Annual_Load_TWh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">joint_mlp_df</span><span class="p">[</span><span class="s1">&#39;TELL_State_Annual_Load_TWh&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Apply those scaling factors to the &quot;County_BA_Load_MWh&quot; variable:</span>
+    <span class="n">joint_mlp_df</span><span class="p">[</span><span class="s1">&#39;County_BA_Load_MWh_Scaled&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">joint_mlp_df</span><span class="p">[</span><span class="s1">&#39;County_BA_Load_MWh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">joint_mlp_df</span><span class="p">[</span><span class="s1">&#39;State_Scaling_Factor&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Output the resulting projections using the output functions:</span>
+    <span class="n">summary_df</span> <span class="o">=</span> <span class="n">output_tell_summary_data</span><span class="p">(</span><span class="n">joint_mlp_df</span><span class="p">,</span> <span class="n">year_to_process</span><span class="p">,</span> <span class="n">gcam_target_year</span><span class="p">,</span> <span class="n">data_output_dir_full</span><span class="p">)</span>
+    <span class="n">ba_time_series_df</span> <span class="o">=</span> <span class="n">output_tell_ba_data</span><span class="p">(</span><span class="n">joint_mlp_df</span><span class="p">,</span> <span class="n">year_to_process</span><span class="p">,</span> <span class="n">gcam_target_year</span><span class="p">,</span> <span class="n">data_output_dir_full</span><span class="p">)</span>
+    <span class="n">state_time_series_df</span> <span class="o">=</span> <span class="n">output_tell_state_data</span><span class="p">(</span><span class="n">joint_mlp_df</span><span class="p">,</span> <span class="n">year_to_process</span><span class="p">,</span> <span class="n">gcam_target_year</span><span class="p">,</span> <span class="n">data_output_dir_full</span><span class="p">)</span>
+
+    <span class="c1"># If the &quot;save_county_data&quot; flag is set to true then save the time-series of demand for each county:</span>
+    <span class="k">if</span> <span class="n">save_county_data</span><span class="p">:</span>
+        <span class="n">output_tell_county_data</span><span class="p">(</span><span class="n">joint_mlp_df</span><span class="p">,</span> <span class="n">year_to_process</span><span class="p">,</span> <span class="n">gcam_target_year</span><span class="p">,</span> <span class="n">data_output_dir_full</span><span class="p">)</span>
+
+    <span class="c1"># Output the end time and elapsed time in order to benchmark the run time:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Elapsed time = &#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">begin_time</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">summary_df</span><span class="p">,</span> <span class="n">ba_time_series_df</span><span class="p">,</span> <span class="n">state_time_series_df</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Batelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

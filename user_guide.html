@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Guide &mdash; TELL  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+      <link rel="stylesheet" type="text/css" href="_static/style.css?v=cf4e22e0" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="modules.html" />
+    <link rel="prev" title="Welcome to the tell Quickstarter!" href="tell_quickstarter.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            TELL
+          </a>
+              <div class="version">
+                1.3.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tell_quickstarter.html">Quickstarter Notebook</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgement.html">Acknowledgement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">TELL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">User Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/user_guide.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="user-guide">
+<h1>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h1>
+<p>This user guide is meant to explain how <strong>tell</strong> works and the concepts that it is built upon. More information about how to
+run the model can be found in the <strong>tell</strong> <a class="reference external" href="https://github.com/IMMM-SFA/tell/blob/main/notebooks/tell_quickstarter.ipynb">quickstarter</a>
+notebook that contains detailed step-by-step instructions on how to run <strong>tell</strong>.</p>
+<section id="about-tell">
+<h2>About <strong>tell</strong><a class="headerlink" href="#about-tell" title="Link to this heading"></a></h2>
+<p>The Total ELectricity Load (<strong>tell</strong>) model projects the short- and long-term evolution of hourly electricity demand in response to future changes in
+weather and climate. The purpose of <strong>tell</strong> is to generate end-of-century hourly profiles of electricity demand across the entire Conterminous
+United States (CONUS) at a spatial resolution adequate for input to a unit commitment/economic dispatch (UC/ED) model while also maintaining consistency
+with the long-term growth and evolution of annual state-level electricity demand projected by an economically driven human-Earth system model. <strong>tell</strong> takes
+as input future projections of the hourly time-series of meteorology and decadal populations and uses the temporal variations in weather to project
+hourly profiles of total electricity demand. The core predictions in <strong>tell</strong> are based on a series of multilayer perceptron (MLP) models for 54 independent
+Balancing Authorities (BAs). Those MLP models are trained on historical observations of weather and electricity demand. Hourly projections from <strong>tell</strong>
+are scaled to match the annual state-level total electricity loads projected by the U.S. version of the Global Change Analysis Model (GCAM-USA) which
+captures the long-term co-evolution of the human-Earth system. Using this unique approach allows <strong>tell</strong> to reflect both changes in the shape
+of the load profile due to variations in weather and the long-term evolution of energy demand due to changes in population, technology, and economics.
+<strong>tell</strong> is unique from other load forecasting models in that it features an explicit spatial component that allows it to relate projected
+loads to where they would occur spatially within a grid operations model. The output of <strong>tell</strong> is a series of hourly projections of future electricity
+demand at the county-, state-, and BA-scale that are conceptually and quantitatively consistent with one another.</p>
+<p><strong>tell</strong> was designed to work using data from 54 BAs the U.S. and in conjunction with the GCAM-USA model. Thus, it is
+not immediately extensible to other countries (e.g., in Europe). However, the fundamental modeling approach based on MLP
+models trained on historical loads and meteorology data could easily be adapted to work in other regions with sufficient
+data.</p>
+</section>
+<section id="how-it-works">
+<h2>How It Works<a class="headerlink" href="#how-it-works" title="Link to this heading"></a></h2>
+<p>The basic workflow for <strong>tell</strong> proceeds in six sequential steps:</p>
+<ol class="arabic simple">
+<li><p>Formulate empirical models that relate the historical observed meteorology to the hourly time-series of total electricity demand for 54 BAs that report their hourly loads in the <a class="reference external" href="https://www.eia.gov/electricity/gridmonitor/about">EIA-930</a> dataset.</p></li>
+<li><p>Use the empirical models to project future hourly loads for each BA based on IM3’s climate and population scenarios.</p></li>
+<li><p>Distribute the hourly loads for each BA to the counties that BA operates in and then aggregate the county-level hourly loads from all BAs into annual state-level loads.</p></li>
+<li><p>Calculate annual state-level scaling factors that force the bottom-up annual state-level total loads from <strong>tell</strong> to match the annual state-level total loads from GCAM-USA.</p></li>
+<li><p>Apply the state-level scaling factors to each county- and BA-level time-series of hourly total demand.</p></li>
+<li><p>Output yearly 8760-hr time-series of total electricity demand at the state-, county-, and BA-scale that are conceptually and quantitatively consistent with each other.</p></li>
+</ol>
+</section>
+<section id="design-constraints">
+<h2>Design Constraints<a class="headerlink" href="#design-constraints" title="Link to this heading"></a></h2>
+<p><strong>tell</strong> was designed with the following constraints:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Topic</p></th>
+<th class="head"><p>Requirement</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Spatial resolution and scope</p></td>
+<td><p>Should cover the entire U.S. (excluding Alaska and Hawaii) and produce demands at an appropriately high spatial resolution for input into a nodal UC/ED model</p></td>
+</tr>
+<tr class="row-odd"><td><p>Temporal resolution and scope</p></td>
+<td><p>Should produce hourly projections of total electricity demand in one-year increments through the year 2100.</p></td>
+</tr>
+<tr class="row-even"><td><p>Forcing factors</p></td>
+<td><p>Projections should respond to changes in meteorology and climate.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Multiscale consistency</p></td>
+<td><p>Should produce hourly total electricity demand at the county-, state-, and BA-scale that are conceptually and quantitatively consistent with each other.</p></td>
+</tr>
+<tr class="row-even"><td><p>Open-source</p></td>
+<td><p>Should be based entirely on publicly available data and be made available as an extensively-documented open-source model.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="fundamental-concepts">
+<h2>Fundamental Concepts<a class="headerlink" href="#fundamental-concepts" title="Link to this heading"></a></h2>
+<p>The following are the building blocks of how <strong>tell</strong> projects future loads.</p>
+<section id="balancing-authorities">
+<h3>Balancing Authorities<a class="headerlink" href="#balancing-authorities" title="Link to this heading"></a></h3>
+<p>The core projections of <strong>tell</strong> occur at the scale of Balancing Authorities (BAs). BAs are responsible for the real-time balancing of electricity supply and demand within a given region of the electric grid.
+For <strong>tell</strong>, BAs are useful because they represent the finest scale for which historical hourly load data is uniformly available across the U.S. This allows us to build an electric load projection
+model that works across the entire country. <strong>tell</strong> uses historical (2015-2019) hourly load data from the <a class="reference external" href="https://www.eia.gov/electricity/gridmonitor/about">EIA-930</a> dataset for BAs across the U.S. We note
+that some smaller BAs are not included in the EIA-930 dataset. Other BAs are generation only or we were unable to geolocate them. Eight BAs (CISO, ERCO, MISO, ISNE, NYIS, PJM, PNM, and SWPP) started
+reporting subregional loads in the EIA-930 dataset in 2018. Because we were unable to uniformly and objectively geolocate each of these subregions we opted to use the aggregate total loads for those BAs.
+In total, we formulated a multi-layer perceptron (MLP) model for 54 out of the 68 BAs in the EIA-930 dataset.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>BA Code</p></th>
+<th class="head"><p>BA Name</p></th>
+<th class="head"><p>EIA BA Number</p></th>
+<th class="head"><p>Characteristics</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>AEC</p></td>
+<td><p>PowerSouth Energy Cooperative</p></td>
+<td><p>189</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/AEC_Quick_Look_Plots.png">AEC</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>AECI</p></td>
+<td><p>Associated Electric Cooperative Incorporated</p></td>
+<td><p>924</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/AECI_Quick_Look_Plots.png">AECI</a></p></td>
+</tr>
+<tr class="row-even"><td><p>AVA</p></td>
+<td><p>Avista Corporation</p></td>
+<td><p>20169</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/AVA_Quick_Look_Plots.png">AVA</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>AVRN</strong></p></td>
+<td><p><strong>Avangrid Renewables</strong></p></td>
+<td><p><strong>NA</strong></p></td>
+<td><p><strong>Generation Only</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>AZPS</p></td>
+<td><p>Arizona Public Service Company</p></td>
+<td><p>803</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/AZPS_Quick_Look_Plots.png">AZPS</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>BANC</p></td>
+<td><p>Balancing Authority of Northern California</p></td>
+<td><p>16534</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/BANC_Quick_Look_Plots.png">BANC</a></p></td>
+</tr>
+<tr class="row-even"><td><p>BPAT</p></td>
+<td><p>Bonneville Power Administration</p></td>
+<td><p>1738</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/BPAT_Quick_Look_Plots.png">BPAT</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>CHPD</p></td>
+<td><p>Public Utility District No. 1 of Chelan County</p></td>
+<td><p>3413</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/CHPD_Quick_Look_Plots.png">CHPD</a></p></td>
+</tr>
+<tr class="row-even"><td><p>CISO</p></td>
+<td><p>California Independent System Operator</p></td>
+<td><p>2775</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/CISO_Quick_Look_Plots.png">CISO</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>CPLE</p></td>
+<td><p>Duke Energy Progress East</p></td>
+<td><p>3046</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/CPLE_Quick_Look_Plots.png">CPLE</a></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>CPLW</strong></p></td>
+<td><p><strong>Duke Energy Progress West</strong></p></td>
+<td><p><strong>NA</strong></p></td>
+<td><p><strong>Not Geolocated</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>DEAA</strong></p></td>
+<td><p><strong>Arlington Valley</strong></p></td>
+<td><p><strong>NA</strong></p></td>
+<td><p><strong>Generation Only</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>DOPD</p></td>
+<td><p>Public Utility District No. 1 of Douglas County</p></td>
+<td><p>5326</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/DOPD_Quick_Look_Plots.png">DOPD</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>DUK</p></td>
+<td><p>Duke Energy Carolinas</p></td>
+<td><p>5416</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/DUK_Quick_Look_Plots.png">DUK</a></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>EEI</strong></p></td>
+<td><p><strong>Electric Energy Incorporated</strong></p></td>
+<td><p><strong>NA</strong></p></td>
+<td><p><strong>Generation Only</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>EPE</p></td>
+<td><p>El Paso Electric Company</p></td>
+<td><p>5701</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/EPE_Quick_Look_Plots.png">EPE</a></p></td>
+</tr>
+<tr class="row-even"><td><p>ERCO</p></td>
+<td><p>Electric Reliability Council of Texas</p></td>
+<td><p>5723</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/ERCO_Quick_Look_Plots.png">ERCO</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>FMPP</p></td>
+<td><p>Florida Municipal Power Pool</p></td>
+<td><p>14610</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/FMPP_Quick_Look_Plots.png">FMPP</a></p></td>
+</tr>
+<tr class="row-even"><td><p>FPC</p></td>
+<td><p>Duke Energy Florida</p></td>
+<td><p>6455</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/FPC_Quick_Look_Plots.png">FPC</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>FPL</p></td>
+<td><p>Florida Power and Light</p></td>
+<td><p>6452</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/FPL_Quick_Look_Plots.png">FPL</a></p></td>
+</tr>
+<tr class="row-even"><td><p>GCPD</p></td>
+<td><p>Public Utility District No. 2 of Grant County</p></td>
+<td><p>14624</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/GCPD_Quick_Look_Plots.png">GCPD</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>GLHB</strong></p></td>
+<td><p><strong>GridLiance</strong></p></td>
+<td><p><strong>NA</strong></p></td>
+<td><p><strong>Not Geolocated</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>GRID</strong></p></td>
+<td><p><strong>Gridforce Energy Management</strong></p></td>
+<td><p><strong>NA</strong></p></td>
+<td><p><strong>Generation Only</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>GRIF</strong></p></td>
+<td><p><strong>Griffith Energy</strong></p></td>
+<td><p><strong>NA</strong></p></td>
+<td><p><strong>Generation Only</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>GRMA</strong></p></td>
+<td><p><strong>Gila River Power</strong></p></td>
+<td><p><strong>NA</strong></p></td>
+<td><p><strong>Generation Only</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>GVL</p></td>
+<td><p>Gainesville Regional Utilities</p></td>
+<td><p>6909</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/GVL_Quick_Look_Plots.png">GVL</a></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>GWA</strong></p></td>
+<td><p><strong>NaturEner Power Watch</strong></p></td>
+<td><p><strong>NA</strong></p></td>
+<td><p><strong>Generation Only</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>HGMA</strong></p></td>
+<td><p><strong>New Harquahala Generating Company</strong></p></td>
+<td><p><strong>NA</strong></p></td>
+<td><p><strong>Generation Only</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>HST</p></td>
+<td><p>City of Homestead</p></td>
+<td><p>8795</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/HST_Quick_Look_Plots.png">HST</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>IID</p></td>
+<td><p>Imperial Irrigation District</p></td>
+<td><p>9216</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/IID_Quick_Look_Plots.png">IID</a></p></td>
+</tr>
+<tr class="row-even"><td><p>IPCO</p></td>
+<td><p>Idaho Power Company</p></td>
+<td><p>9191</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/IPCO_Quick_Look_Plots.png">IPCO</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>ISNE</p></td>
+<td><p>Independent System Operator of New England</p></td>
+<td><p>13434</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/ISNE_Quick_Look_Plots.png">ISNE</a></p></td>
+</tr>
+<tr class="row-even"><td><p>JEA</p></td>
+<td><p>JEA</p></td>
+<td><p>9617</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/JEA_Quick_Look_Plots.png">JEA</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>LDWP</p></td>
+<td><p>Los Angeles Department of Water and Power</p></td>
+<td><p>11208</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/LDWP_Quick_Look_Plots.png">LDWP</a></p></td>
+</tr>
+<tr class="row-even"><td><p>LGEE</p></td>
+<td><p>Louisville Gas and Electric Company and Kentucky Utilities Company</p></td>
+<td><p>11249</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/LGEE_Quick_Look_Plots.png">LGEE</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>MISO</p></td>
+<td><p>Midcontinent Independent System Operator</p></td>
+<td><p>56669</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/MISO_Quick_Look_Plots.png">MISO</a></p></td>
+</tr>
+<tr class="row-even"><td><p>NEVP</p></td>
+<td><p>Nevada Power Company</p></td>
+<td><p>13407</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/NEVP_Quick_Look_Plots.png">NEVP</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>NSB</p></td>
+<td><p>Utilities Commission of New Smyrna Beach</p></td>
+<td><p>13485</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/NSB_Quick_Look_Plots.png">NSB</a></p></td>
+</tr>
+<tr class="row-even"><td><p>NWMT</p></td>
+<td><p>NorthWestern Corporation</p></td>
+<td><p>12825</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/NWMT_Quick_Look_Plots.png">NWMT</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>NYIS</p></td>
+<td><p>New York Independent System Operator</p></td>
+<td><p>13501</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/NYIS_Quick_Look_Plots.png">NYIS</a></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>OVEC</strong></p></td>
+<td><p><strong>Ohio Valley Electric Corporation</strong></p></td>
+<td><p><strong>NA</strong></p></td>
+<td><p><strong>Retired</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>PACE</p></td>
+<td><p>PacifiCorp East</p></td>
+<td><p>14379</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/PACE_Quick_Look_Plots.png">PACE</a></p></td>
+</tr>
+<tr class="row-even"><td><p>PACW</p></td>
+<td><p>PacifiCorp West</p></td>
+<td><p>14378</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/PACW_Quick_Look_Plots.png">PACW</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>PGE</p></td>
+<td><p>Portland General Electric Company</p></td>
+<td><p>15248</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/PGE_Quick_Look_Plots.png">PGE</a></p></td>
+</tr>
+<tr class="row-even"><td><p>PJM</p></td>
+<td><p>PJM Interconnection</p></td>
+<td><p>14725</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/PJM_Quick_Look_Plots.png">PJM</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>PNM</p></td>
+<td><p>Public Service Company of New Mexico</p></td>
+<td><p>15473</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/PNM_Quick_Look_Plots.png">PNM</a></p></td>
+</tr>
+<tr class="row-even"><td><p>PSCO</p></td>
+<td><p>Public Service Company of Colorado</p></td>
+<td><p>15466</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/PSCO_Quick_Look_Plots.png">PSCO</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>PSEI</p></td>
+<td><p>Puget Sound Energy</p></td>
+<td><p>15500</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/PSEI_Quick_Look_Plots.png">PSEI</a></p></td>
+</tr>
+<tr class="row-even"><td><p>SC</p></td>
+<td><p>South Carolina Public Service Authority</p></td>
+<td><p>17543</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/SC_Quick_Look_Plots.png">SC</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>SCEG</p></td>
+<td><p>South Carolina Electric and Gas Company</p></td>
+<td><p>17539</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/SCEG_Quick_Look_Plots.png">SCEG</a></p></td>
+</tr>
+<tr class="row-even"><td><p>SCL</p></td>
+<td><p>Seattle City Light</p></td>
+<td><p>16868</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/SCL_Quick_Look_Plots.png">SCL</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>SEC</p></td>
+<td><p>Seminole Electric Cooperative</p></td>
+<td><p>21554</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/SEC_Quick_Look_Plots.png">SEC</a></p></td>
+</tr>
+<tr class="row-even"><td><p>SEPA</p></td>
+<td><p>Southeastern Power Administration</p></td>
+<td><p><strong>NA</strong></p></td>
+<td><p><strong>Generation Only</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>SOCO</p></td>
+<td><p>Southern Company Services - Transmission</p></td>
+<td><p>18195</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/SOCO_Quick_Look_Plots.png">SOCO</a></p></td>
+</tr>
+<tr class="row-even"><td><p>SPA</p></td>
+<td><p>Southwestern Power Administration</p></td>
+<td><p>17716</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/SPA_Quick_Look_Plots.png">SPA</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>SRP</p></td>
+<td><p>Salt River Project</p></td>
+<td><p>16572</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/SRP_Quick_Look_Plots.png">SRP</a></p></td>
+</tr>
+<tr class="row-even"><td><p>SWPP</p></td>
+<td><p>Southwest Power Pool</p></td>
+<td><p>59504</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/SWPP_Quick_Look_Plots.png">SWPP</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>TAL</p></td>
+<td><p>City of Tallahassee</p></td>
+<td><p>18445</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/TAL_Quick_Look_Plots.png">TAL</a></p></td>
+</tr>
+<tr class="row-even"><td><p>TEC</p></td>
+<td><p>Tampa Electric Company</p></td>
+<td><p>18454</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/TEC_Quick_Look_Plots.png">TEC</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>TEPC</p></td>
+<td><p>Tucson Electric Power</p></td>
+<td><p>24211</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/TEPC_Quick_Look_Plots.png">TEPC</a></p></td>
+</tr>
+<tr class="row-even"><td><p>TIDC</p></td>
+<td><p>Turlock Irrigation District</p></td>
+<td><p>19281</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/TIDC_Quick_Look_Plots.png">TIDC</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>TPWR</p></td>
+<td><p>City of Tacoma Department of Public Utilities</p></td>
+<td><p>18429</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/TPWR_Quick_Look_Plots.png">TPWR</a></p></td>
+</tr>
+<tr class="row-even"><td><p>TVA</p></td>
+<td><p>Tennessee Valley Authority</p></td>
+<td><p>18642</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/TVA_Quick_Look_Plots.png">TVA</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>WACM</p></td>
+<td><p>Western Area Power Administration - Rocky Mountain Region</p></td>
+<td><p>28503</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/WACM_Quick_Look_Plots.png">WACM</a></p></td>
+</tr>
+<tr class="row-even"><td><p>WALC</p></td>
+<td><p>Western Area Power Administration - Desert Southwest Region</p></td>
+<td><p>25471</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/WALC_Quick_Look_Plots.png">WALC</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>WAUW</p></td>
+<td><p>Western Area Power Administration - Upper Great Plains West</p></td>
+<td><p>19610</p></td>
+<td><p><a class="reference external" href="_static/BA_Quick_Look_Plots/WAUW_Quick_Look_Plots.png">WAUW</a></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>WWA</strong></p></td>
+<td><p><strong>NaturEner Wind Watch</strong></p></td>
+<td><p><strong>NA</strong></p></td>
+<td><p><strong>Generation Only</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>YAD</strong></p></td>
+<td><p><strong>Alcoa Power Generating - Yadkin Division</strong></p></td>
+<td><p><strong>NA</strong></p></td>
+<td><p><strong>Generation Only</strong></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="geolocating-balancing-authorities">
+<h3>Geolocating Balancing Authorities<a class="headerlink" href="#geolocating-balancing-authorities" title="Link to this heading"></a></h3>
+<p>As a spatially-explicit model, <strong>tell</strong> needs the ability to geolocate the loads it projects. Since the fundamental projections
+in <strong>tell</strong> occur at the spatial scale of BAs, we needed to devise a way to determine where each BA operated within the U.S.
+For <strong>tell</strong>, being able to do  this geolocation using county boundaries has a number of benefits in terms of load disaggregation
+and reaggregation - so we focused on techniques to map BAs to the counties they operate in. While there are multiple maps
+of BA service territories available online, there are several fundamental challenges to using maps generated by others:</p>
+<p>1. The provenance of the data and methodology underpinning most of the maps is unknown. In other words, there is no way to determine
+how the BAs were placed and if the methods used to do so are robust.</p>
+<p>2. The maps often depict the BAs as spatially unique and non-overlapping. For a county-scale mapping at least, we know this to be
+untrue. Additionally, the maps are typically static representations of how BAs were configured at a single point in time. As the
+actual territory of BAs can and does change over time, this presents challenges for placing BA loads occurring over a range of years.</p>
+<p>3. Maps available online are often cartoon or stylized versions of reality with curvy lines that do not follow traditional geopolitical
+boundaries. As such, to go from the cartoon map to an actual list of counties that a BA operates in would necessitate a number of
+subjective decisions that are not reproducible from person to person.</p>
+<p>Given these limitations, we devised our own method to geolocate BAs in <strong>tell</strong>. We eventually found a publicly available
+dataset from the EIA that served as our foundation. The <a class="reference external" href="https://www.eia.gov/electricity/data/eia861/">EIA-861</a> dataset is an annual
+report describing the characteristics of the electric power industry in the U.S. Among other information, EIA-861 contains two sets of
+data that are critical to <strong>tell</strong>:</p>
+<ul class="simple">
+<li><p>The “Service_Territory_YYYY.xlsx” spreadsheet provides a list of every county that a given utility operates in:</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/utility_to_county.png"><img alt="_images/utility_to_county.png" class="align-center" src="_images/utility_to_county.png" style="width: 600px;" /></a>
+<ul class="simple">
+<li><p>The “Sales_Ult_Cust_YYYY.xlsx” spreadsheet provides the BA that each utility reports to in a given state:</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/utility_to_ba.png"><img alt="_images/utility_to_ba.png" class="align-center" src="_images/utility_to_ba.png" style="width: 600px;" /></a>
+<p>Using these two datasets in combination, <strong>tell</strong> reverse engineers the counties that each BA likely operated in within a given year. In
+addition to being completely objective and reproducible, this method overcomes the limitations described above because it allows
+more than one BA to be mapped to a single county and also allows the geolocation of BAs to evolve over time. <strong>tell</strong>
+maps BA service territory annually from 2015-2020. The results of that mapping are summarized graphically in the map below.
+The spatial extent of each BA in 2019 is shown in the link for each BA in the table above.</p>
+<a class="reference internal image-reference" href="_images/Overlapping_Balancing_Authorities_Map.png"><img alt="_images/Overlapping_Balancing_Authorities_Map.png" class="align-center" src="_images/Overlapping_Balancing_Authorities_Map.png" style="width: 900px;" /></a>
+<p>This figure shows the number of BAs that <strong>tell</strong> identifies as operating within each county in 2019. The bottom panel shows an example
+of four different BAs reported operating in Brevard County, FL. While the majority of counties only have one BA identified, some counties
+have as many as five. Note that a handful of counties had zero BAs identified as operating within them in 2019. Because we think these
+BA-to-county mappings may be useful to many others the output files from the mapping process are included as .csv files below. They can be
+reproduced within the <strong>tell</strong> package by running the <code class="docutils literal notranslate"><span class="pre">tell.map_ba_service_territory</span></code> function.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Year</p></th>
+<th class="head"><p>File</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>2015</p></td>
+<td><p><a class="reference external" href="_static/User_Guide_Data/ba_service_territory_2015.csv">Mapping</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>2016</p></td>
+<td><p><a class="reference external" href="_static/User_Guide_Data/ba_service_territory_2016.csv">Mapping</a></p></td>
+</tr>
+<tr class="row-even"><td><p>2017</p></td>
+<td><p><a class="reference external" href="_static/User_Guide_Data/ba_service_territory_2017.csv">Mapping</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>2018</p></td>
+<td><p><a class="reference external" href="_static/User_Guide_Data/ba_service_territory_2018.csv">Mapping</a></p></td>
+</tr>
+<tr class="row-even"><td><p>2019</p></td>
+<td><p><a class="reference external" href="_static/User_Guide_Data/ba_service_territory_2019.csv">Mapping</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>2020</p></td>
+<td><p><a class="reference external" href="_static/User_Guide_Data/ba_service_territory_2020.csv">Mapping</a></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="load-disaggregation-and-reaggregation">
+<h3>Load Disaggregation and Reaggregation<a class="headerlink" href="#load-disaggregation-and-reaggregation" title="Link to this heading"></a></h3>
+<p><strong>tell</strong> uses multiple instances of load disaggregation and reaggregation in order to cross spatiotemporal scales. The fundamental
+projections in <strong>tell</strong> occur at the spatial scale of BAs. In order to compare those hourly load values at the BA-level with the
+annual state-level load values produced by GCAM-USA, we first disaggregate the hourly projected BA-level loads to the county-level
+and then reaggregate those hourly county-level loads to an annual total load projection for each state. For each BA we identify
+the counties that BA operates in using the methodology described above. We then use the county-level populations for those counties
+to determine the fraction of the BA’s total load that should be assigned to each county. A graphical depiction of this for the ISNE BA
+is shown below. Using this approach, the load received by each county in a BA’s service territory has the same shape and temporal
+patterns, but the magnitude varies depending on the population in that county relative to the total population in the BA’s service
+territory. As there are spatial overlaps in BAs, many counties receive partial loads from more than one BA.</p>
+<a class="reference internal image-reference" href="_images/Load_Projection_Dissagregation_Example_ISNE.png"><img alt="_images/Load_Projection_Dissagregation_Example_ISNE.png" class="align-center" src="_images/Load_Projection_Dissagregation_Example_ISNE.png" style="width: 900px;" /></a>
+<p>Once the load projections from all BAs in <strong>tell</strong> have been disaggregated to the county-level, we next sum up the loads from all
+counties in a given state to get annual state-level total loads which are scaled to match the projections from GCAM-USA. The scaling
+factors for each state are then applied to all county- and BA-level hourly load values in that state. The final output of <strong>tell</strong> is thus
+a series of 8760-hr time series of total electricity loads at the county-, state-, and BA-scale that are conceptually and quantitatively
+consistent with each other.</p>
+<p>It is important to note that the future evolution of population is also taken into account in <strong>tell</strong>. Projected annual changes in
+population for each county and state are generated using the Shared Socioeconomic Pathways (<a class="reference external" href="https://en.wikipedia.org/wiki/Shared_Socioeconomic_Pathways">SSPs</a>)
+scenarios. Those future populations are used to derive new weighting factors to be used in disaggregating and reaggregating future <strong>tell</strong> loads.
+Thus, in an scenario where lots of people move to, for example, Southern California, the counties there would not only receive a higher
+proportion of the BA-level loads for BAs operating there, but would also have an incrementally larger impact on the future total
+hourly load profile for California as a whole.</p>
+</section>
+<section id="multilayer-perceptron-mlp-models">
+<h3>Multilayer Perceptron (MLP) Models<a class="headerlink" href="#multilayer-perceptron-mlp-models" title="Link to this heading"></a></h3>
+<p><strong>tell</strong> uses a series of multilayer perceptron (MLP) models to project future loads. There is one unique MLP model for each BA. The MLP model
+for each BA is trained and evaluated independently. The MLP models are trained on historical load data from the <a class="reference external" href="https://www.eia.gov/electricity/gridmonitor/about">EIA-930</a>
+dataset and weather from IM3’s historical runs using the Weather Research and Forecasting (WRF) model. In the production version of <strong>tell</strong>
+the MLP models for each BA were trained on data from 2016-2018 and evaluated against observed loads from 2019. While the EIA-930 data extends past
+the year 2019, COVID-19 induced significant changes in the diurnal profile of electricity demand (e.g., <a class="reference external" href="https://www.sciencedirect.com/science/article/pii/S0306261921010631">Burleyson et al. 2021</a>)
+so we opted not to use 2020+ data in the MLP model training or evaluation. In the future, <strong>tell</strong> could be retrained repeatedly as more and
+more EIA-930 data becomes available.</p>
+<p>Details of the MLP predictive variables are included in the table below. The default parameter settings for training the MLP models are stored
+in the <a class="reference external" href="https://github.com/IMMM-SFA/tell/blob/main/tell/data/mlp_settings.yml">mlp_settings.yml</a> file in <em>/data</em> folder in the <strong>tell</strong> repository.
+The hyperparameters for the <strong>tell</strong> MLP models (e.g., hidden layer sizes, maximum iterations, and validation fraction) were determined
+using a grid search approach. Hyperparameters were allowed to vary across BAs. Default hyperparameters for each BA are
+also included in the <em>/data/models</em> folder in the <strong>tell</strong> repository.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Units/Format</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Temperature</p></td>
+<td><p>2-m temperature from WRF (T2)</p></td>
+<td><p>K</p></td>
+</tr>
+<tr class="row-odd"><td><p>Specific humidity</p></td>
+<td><p>2-m water vapor mixing ratio from WRF (Q2)</p></td>
+<td><p>kg kg <sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>Shortwave radiation</p></td>
+<td><p>Downwelling shortwave radiative flux at the surface from WRF (SWdn)</p></td>
+<td><p>W m <sup>-2</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>Longwave radiation</p></td>
+<td><p>Downwwelling longwave radiative flux at the surface from WRF (GLW)</p></td>
+<td><p>W m <sup>-2</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>Wind speed</p></td>
+<td><p>10-m wind speed derived from the U and V wind components from WRF (U10 and V10)</p></td>
+<td><p>m s <sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>Hour of the day</p></td>
+<td><p>Hour of the day in UTC</p></td>
+<td><p>00-23 UTC</p></td>
+</tr>
+<tr class="row-even"><td><p>Day of the week</p></td>
+<td><p>Is the day a weekday or weekend?</p></td>
+<td><p>Weekdays (1) or Weekends (0)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Federal holiday</p></td>
+<td><p>Is the day a federal holiday?</p></td>
+<td><p>Yes (1) or No (0)</p></td>
+</tr>
+</tbody>
+</table>
+<p>In general, the <strong>tell</strong> empirical models work quite well. 76% (41/54) of the BAs have an R2 value greater than 0.75
+while 83% (45/54) have a MAPE under 10%.</p>
+<a class="reference internal image-reference" href="_images/MLP_Summary_Statistics.png"><img alt="_images/MLP_Summary_Statistics.png" class="align-center" src="_images/MLP_Summary_Statistics.png" style="width: 900px;" /></a>
+<p>It’s illustrative to look at the error metrics as a function of load. To do this, we calculate the mean hourly load
+for each BA during the evaluation year and then plot the error statistics as a function of that mean load. Analyzing
+the data in this way demonstrates that the BAs with the poorly performing empirical models are almost universally the
+smaller BAs. The largest BAs, which are critically important for the overall demand on the grid, generally perform quite
+well. Of the 10 BAs with the largest mean demand, 9/10 have a MAPE value under 5% and an R2 value greater than 0.85.
+Conversely, of the 10 worst performing BAs (judged by their MAPE value), 7/10 have an average hourly load less than
+1700 MWh.</p>
+<a class="reference internal image-reference" href="_images/MLP_Summary_Statistics_vs_Load.png"><img alt="_images/MLP_Summary_Statistics_vs_Load.png" class="align-center" src="_images/MLP_Summary_Statistics_vs_Load.png" style="width: 900px;" /></a>
+<p>Because the empirical models that underpin <strong>tell</strong> are so critically important we created a separate analysis notebook
+where users can explore the model’s performance characteristics collectively and for individual BAs. The MLP calibration
+and evaluation notebook can be found
+<a class="reference external" href="https://github.com/IMMM-SFA/tell/blob/main/notebooks/tell_mlp_calibration_evaluation.ipynb">here</a>.</p>
+</section>
+<section id="incorporating-detailed-sectoral-models">
+<h3>Incorporating Detailed Sectoral Models<a class="headerlink" href="#incorporating-detailed-sectoral-models" title="Link to this heading"></a></h3>
+<p>By design <strong>tell</strong> projects future time-series of the <em>total</em> hourly load at different spatial scales. These <em>total</em> loads
+are responsive to variations in population and climate. It is important to note that <strong>tell</strong> does not resolve the
+load profiles for individual sectors of the electric industry (e.g., residential, commercial, industrial, and commercial).
+However, the model is designed so that it can be modified to reflect changes in these individual sectors in a relatively
+straightforward way. We know that technologies in each of these sectors are currently and are likely to continue to evolve
+quickly. For example, the rapid penetration of rooftop solar will modify future grid-scale electricity demand from residential
+customers. Similarly, widespread adoption of electric vehicles will impact the magnitude and shape of the load profiles in the
+residential, commercial, and transportation sectors. In order to reflect technology change in a given sector you need a detailed
+understanding of that sector as well as an ability to simulate future changes due to specific technologies.</p>
+<p>While <strong>tell</strong> was not designed for this level of detail, other detailed sectoral models are. We built <strong>tell</strong> to incorporate
+technological changes by partnering with these detailed sectoral models. The figure below shows how this might work conceptually.
+The top row reflects information that might come out of a detailed residential energy model. In panel (a) we show the diurnal
+load profiles for residential customers in a given region. The load profile reflects a typical springtime load profile
+in residential buildings. Now imagine that you wanted to simulate the impact of widespread rooftop solar adoption within that
+region. Panel (b) shows the potential solar energy supply simulated by the detailed model. The solar energy curve follows a typical
+sinusoidal pattern that peaks at solar noon. Finally, panel (c) shows the impact of rooftop solar on the residential demand profile.</p>
+<a class="reference internal image-reference" href="_images/Load_Perturbation_Incorporation_Example.png"><img alt="_images/Load_Perturbation_Incorporation_Example.png" class="align-center" src="_images/Load_Perturbation_Incorporation_Example.png" style="width: 900px;" /></a>
+<p><strong>tell</strong> can take the output of the detailed residential buildings sector model and use it to modify the time-series
+of <em>total</em> load that the model projects. The way to do this is to take the difference values produced by the detailed sectoral
+model (i.e., the difference between the base and modified residential load profiles) and add those perturbations directly on top
+of the <em>total</em> load time-series produced by <strong>tell</strong>. Panel (d) shows how this would play out in <strong>tell</strong>. The black line represents
+the <strong>tell</strong> hourly <em>total</em> load time-series before the intervention and the red line shows the <em>total</em> load time-series after the
+rooftop solar difference values from the residential model were added.</p>
+<p>This approach means that <strong>tell</strong> doesn’t need to know anything about the residential energy sector or the fraction of the total
+load it represents. All <strong>tell</strong> cares about is how the intervention you want to explore will translate into changes in the sectoral
+load time-series. Note that in order to do this the detailed sectoral model needs to produce output at at least one of the spatial
+scales in <strong>tell</strong> (i.e., counties, states, or BAs). This approach allows users of detailed sectoral models to explore how specific
+interventions will impact future demands at the grid-scale without having to have complementary sectoral models of all other sectors.
+Finally, if the detailed sectoral model projects changes in the load shape but doesn’t resolve the magnitude at a given spatial scale,
+it should be possible to use year-over-year changes from the GCAM-USA sectoral models to scale the load shape changes before they are
+passed on to <strong>tell</strong>.</p>
+</section>
+<section id="scenarios">
+<h3>Scenarios<a class="headerlink" href="#scenarios" title="Link to this heading"></a></h3>
+<p><strong>tell</strong> is designed to work in conjunction with the U.S. version of the Global Change Analysis Model (GCAM-USA)
+to explore different future scenarios of population and climate change. The models are configured to run the following
+combinations of Representative Concentration Pathways (<a class="reference external" href="https://en.wikipedia.org/wiki/Representative_Concentration_Pathway">RCPs</a>)
+and Shared Socioeconomic Pathways (<a class="reference external" href="https://en.wikipedia.org/wiki/Shared_Socioeconomic_Pathways">SSPs</a>):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Climate Scenario</p></th>
+<th class="head"><p>Population Scenario</p></th>
+<th class="head"><p>scenario_name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>RCP 4.5 - Cooler</p></td>
+<td><p>SSP3</p></td>
+<td><p>rcp45cooler_ssp3</p></td>
+</tr>
+<tr class="row-odd"><td><p>RCP 4.5 - Cooler</p></td>
+<td><p>SSP5</p></td>
+<td><p>rcp45cooler_ssp5</p></td>
+</tr>
+<tr class="row-even"><td><p>RCP 4.5 - Hotter</p></td>
+<td><p>SSP3</p></td>
+<td><p>rcp45hotter_ssp3</p></td>
+</tr>
+<tr class="row-odd"><td><p>RCP 4.5 - Hotter</p></td>
+<td><p>SSP5</p></td>
+<td><p>rcp45hotter_ssp5</p></td>
+</tr>
+<tr class="row-even"><td><p>RCP 8.5 - Cooler</p></td>
+<td><p>SSP3</p></td>
+<td><p>rcp85cooler_ssp3</p></td>
+</tr>
+<tr class="row-odd"><td><p>RCP 8.5 - Cooler</p></td>
+<td><p>SSP5</p></td>
+<td><p>rcp85cooler_ssp5</p></td>
+</tr>
+<tr class="row-even"><td><p>RCP 8.5 - Hotter</p></td>
+<td><p>SSP3</p></td>
+<td><p>rcp85hotter_ssp3</p></td>
+</tr>
+<tr class="row-odd"><td><p>RCP 8.5 - Hotter</p></td>
+<td><p>SSP5</p></td>
+<td><p>rcp85hotter_ssp5</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading"></a></h2>
+<p><strong>tell</strong> produces four types of output files. Each type of output is written out as a .csv file or series of .csv files in <code class="docutils literal notranslate"><span class="pre">tell_data/outputs/tell_output/scenario_name</span></code>.
+Each type of output file can be suppressed by commenting out the relevant output function in <code class="docutils literal notranslate"><span class="pre">execute_forward.py</span></code>. Missing values in each output file are
+coded as -9999. All times are in UTC.</p>
+<section id="state-summary-data">
+<h3>State Summary Data<a class="headerlink" href="#state-summary-data" title="Link to this heading"></a></h3>
+<p>This output file gives the annual total loads for each of the 48 states in the CONUS as well as the District of Columbia. It also contains the scaling factor for
+each state that force the aggregate annual total loads from  <strong>tell</strong> to agree with those produced by GCAM-USA.</p>
+<p>Filename: <em>TELL_State_Summary_Data_YYYY.csv</em></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Units/Format</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Year</p></td>
+<td><p>Year of load</p></td>
+<td><p>NA</p></td>
+</tr>
+<tr class="row-odd"><td><p>State_Name</p></td>
+<td><p>Name of the state</p></td>
+<td><p>NA</p></td>
+</tr>
+<tr class="row-even"><td><p>State_FIPS</p></td>
+<td><p>FIPS code of the state</p></td>
+<td><p>NA</p></td>
+</tr>
+<tr class="row-odd"><td><p>State_Scaling_Factor</p></td>
+<td><p>Scaling factor to force agreement between <strong>tell</strong> and GCAM-USA annual total loads</p></td>
+<td><p>NA</p></td>
+</tr>
+<tr class="row-even"><td><p>GCAM_USA_Load_TWh</p></td>
+<td><p>Annual total load for the state from GCAM-USA</p></td>
+<td><p>TWh</p></td>
+</tr>
+<tr class="row-odd"><td><p>Raw_TELL_Load_TWh</p></td>
+<td><p>Unscaled annual total load for the state from TELL</p></td>
+<td><p>TWh</p></td>
+</tr>
+<tr class="row-even"><td><p>Scaled_TELL_Load_TWh</p></td>
+<td><p>Scaled annual total load for the state from TELL</p></td>
+<td><p>TWh</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="balancing-authority-hourly-load-data">
+<h3>Balancing Authority Hourly Load Data<a class="headerlink" href="#balancing-authority-hourly-load-data" title="Link to this heading"></a></h3>
+<p>This output file gives the hourly time-series of total loads for each of the BAs simulated by <strong>tell</strong>.</p>
+<p>Filename: <em>TELL_Balancing_Authority_Hourly_Load_Data_YYYY.csv</em></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Units/Format</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>BA_Code</p></td>
+<td><p>Alphanumeric code for the BA</p></td>
+<td><p>NA</p></td>
+</tr>
+<tr class="row-odd"><td><p>BA_Number</p></td>
+<td><p>Designated EIA number for the BA</p></td>
+<td><p>NA</p></td>
+</tr>
+<tr class="row-even"><td><p>Time_UTC</p></td>
+<td><p>Hour of the load in UTC</p></td>
+<td><p>YYYY-MM-DD HH:MM:SS</p></td>
+</tr>
+<tr class="row-odd"><td><p>Raw_TELL_BA_Load_MWh</p></td>
+<td><p>Unscaled hourly total load for the BA from TELL</p></td>
+<td><p>MWh</p></td>
+</tr>
+<tr class="row-even"><td><p>Scaled_TELL_BA_Load_MWh</p></td>
+<td><p>Scaled hourly total load for the BA from TELL</p></td>
+<td><p>MWh</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="state-hourly-load-data">
+<h3>State Hourly Load Data<a class="headerlink" href="#state-hourly-load-data" title="Link to this heading"></a></h3>
+<p>This output file gives the hourly time-series of total loads for each of the 48 states in the CONUS and the District of Columbia.</p>
+<p>Filename: <em>TELL_State_Hourly_Load_Data_YYYY.csv</em></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Units/Format</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>State_Name</p></td>
+<td><p>Name of the state</p></td>
+<td><p>NA</p></td>
+</tr>
+<tr class="row-odd"><td><p>State_FIPS</p></td>
+<td><p>FIPS code of the state</p></td>
+<td><p>NA</p></td>
+</tr>
+<tr class="row-even"><td><p>Time_UTC</p></td>
+<td><p>Hour of the load in UTC</p></td>
+<td><p>YYYY-MM-DD HH:MM:SS</p></td>
+</tr>
+<tr class="row-odd"><td><p>Raw_TELL_State_Load_MWh</p></td>
+<td><p>Unscaled hourly total load for the state from TELL</p></td>
+<td><p>MWh</p></td>
+</tr>
+<tr class="row-even"><td><p>Scaled_TELL_State_Load_MWh</p></td>
+<td><p>Scaled hourly total load for the state from TELL</p></td>
+<td><p>MWh</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="county-hourly-load-data">
+<h3>County Hourly Load Data<a class="headerlink" href="#county-hourly-load-data" title="Link to this heading"></a></h3>
+<p>This collection of output files gives the hourly time-series of total loads for each county in the CONUS and the District of Columbia.
+These output files are stored in a subdirectory of the output directory named <code class="docutils literal notranslate"><span class="pre">County_Level_Data</span></code>. Note that since it takes a while to
+write out the county-level output data this output is optional. To output county-level load projections just set the <code class="docutils literal notranslate"><span class="pre">save_county_data</span></code>
+flag to True when calling the <code class="docutils literal notranslate"><span class="pre">tell.execute_forward</span></code> function.</p>
+<p>Filename Format: <em>TELL_statename_countyname_Hourly_Load_Data_YYYY.csv</em></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Units/Format</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>County_Name</p></td>
+<td><p>Name of the county</p></td>
+<td><p>NA</p></td>
+</tr>
+<tr class="row-odd"><td><p>County_FIPS</p></td>
+<td><p>FIPS code of the county</p></td>
+<td><p>NA</p></td>
+</tr>
+<tr class="row-even"><td><p>State_Name</p></td>
+<td><p>Name of the state the county is in</p></td>
+<td><p>NA</p></td>
+</tr>
+<tr class="row-odd"><td><p>State_FIPS</p></td>
+<td><p>FIPS code of the state</p></td>
+<td><p>NA</p></td>
+</tr>
+<tr class="row-even"><td><p>Time_UTC</p></td>
+<td><p>Hour of the load in UTC</p></td>
+<td><p>YYYY-MM-DD HH:MM:SS</p></td>
+</tr>
+<tr class="row-odd"><td><p>Raw_TELL_County_Load_MWh</p></td>
+<td><p>Unscaled hourly total load for the county from TELL</p></td>
+<td><p>MWh</p></td>
+</tr>
+<tr class="row-even"><td><p>Scaled_TELL_County_Load_MWh</p></td>
+<td><p>Scaled hourly total load for the county from TELL</p></td>
+<td><p>MWh</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tell_quickstarter.html" class="btn btn-neutral float-left" title="Welcome to the tell Quickstarter!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Batelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

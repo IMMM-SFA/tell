@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tell.visualization &mdash; TELL  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=cf4e22e0" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            TELL
+          </a>
+              <div class="version">
+                1.3.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tell_quickstarter.html">Quickstarter Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement.html">Acknowledgement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TELL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tell.visualization</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tell.visualization</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1</span> <span class="kn">import</span> <span class="n">make_axes_locatable</span>
+
+
+<div class="viewcode-block" id="plot_ba_service_territory">
+<a class="viewcode-back" href="../../tell.html#tell.visualization.plot_ba_service_territory">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_ba_service_territory</span><span class="p">(</span><span class="n">ba_to_plot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year_to_plot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                              <span class="n">image_resolution</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">save_images</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot maps of the service territory for a given BA in a given year</span>
+
+<span class="sd">    :param ba_to_plot:          Code for the BA you want to plot</span>
+<span class="sd">    :type ba_to_plot:           str</span>
+
+<span class="sd">    :param year_to_plot:        Year you want to plot (valid 2015-2019)</span>
+<span class="sd">    :type year_to_plot:         str</span>
+
+<span class="sd">    :param data_input_dir:      Top-level data directory for TELL</span>
+<span class="sd">    :type data_input_dir:       str</span>
+
+<span class="sd">    :param image_output_dir:    Directory to store the images</span>
+<span class="sd">    :type image_output_dir:     str</span>
+
+<span class="sd">    :param image_resolution:    Resolution at which you want to save the images in DPI</span>
+<span class="sd">    :type image_resolution:     int</span>
+
+<span class="sd">    :param save_images:         Set to True if you want to save the images after they&#39;re generated</span>
+<span class="sd">    :type save_images:          bool</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Set the input directories based on the &#39;data_input_dir&#39; variable:</span>
+    <span class="n">shapefile_input_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_raw_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;County_Shapefiles&#39;</span><span class="p">)</span>
+    <span class="n">population_input_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_raw_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;Population&#39;</span><span class="p">)</span>
+    <span class="n">ba_service_territory_input_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_quickstarter_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;ba_service_territory&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Read in the county shapefile and reassign the &#39;FIPS&#39; variable as integers:</span>
+    <span class="n">counties_df</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">shapefile_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tl_2020_us_county.shp&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;GEOID&#39;</span><span class="p">:</span> <span class="s1">&#39;County_FIPS&#39;</span><span class="p">})</span>
+    <span class="n">counties_df</span><span class="p">[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">counties_df</span><span class="p">[</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="c1"># Read in county populations file:</span>
+    <span class="n">population_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">population_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;county_populations_2000_to_2020.csv&#39;</span><span class="p">))</span>
+
+    <span class="c1"># Keep only the columns we need:</span>
+    <span class="n">population_df</span> <span class="o">=</span> <span class="n">population_df</span><span class="p">[[</span><span class="s1">&#39;county_FIPS&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;pop_&#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span><span class="p">)]]</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Rename the columns:</span>
+    <span class="n">population_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;county_FIPS&quot;</span><span class="p">:</span> <span class="s2">&quot;County_FIPS&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;pop_&#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span><span class="p">):</span> <span class="s2">&quot;Population&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Read in the BA mapping file:</span>
+    <span class="n">ba_mapping_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">((</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ba_service_territory_input_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;ba_service_territory_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">)</span><span class="si">}</span><span class="s1">.csv&#39;</span><span class="p">)),</span> <span class="n">index_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Merge the ba_mapping_df and population_df together using county FIPS codes to join them:</span>
+    <span class="n">ba_mapping_df</span> <span class="o">=</span> <span class="n">ba_mapping_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">population_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Merge the ba_mapping_df and counties_df together using county FIPS codes to join them:</span>
+    <span class="n">counties_df</span> <span class="o">=</span> <span class="n">counties_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">ba_mapping_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;County_FIPS&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Subset to only the BA you want to plot:</span>
+    <span class="n">counties_subset_df</span> <span class="o">=</span> <span class="n">counties_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">counties_df</span><span class="p">[</span><span class="s1">&#39;BA_Code&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ba_to_plot</span><span class="p">]</span>
+
+    <span class="c1"># Create the figure:</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="n">divider</span> <span class="o">=</span> <span class="n">make_axes_locatable</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+    <span class="n">cax</span> <span class="o">=</span> <span class="n">divider</span><span class="o">.</span><span class="n">append_axes</span><span class="p">(</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="s2">&quot;3%&quot;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">ax1</span> <span class="o">=</span> <span class="n">counties_subset_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s1">&#39;Population&#39;</span><span class="p">,</span>
+                                  <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;GnBu&#39;</span><span class="p">,</span>
+                                  <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+                                  <span class="n">cax</span><span class="o">=</span><span class="n">cax</span><span class="p">,</span>
+                                  <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span>
+                                  <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                                  <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                  <span class="n">legend_kwds</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;County Population in &#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span><span class="p">),</span> <span class="s1">&#39;orientation&#39;</span><span class="p">:</span> <span class="s1">&#39;vertical&#39;</span><span class="p">})</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">((</span><span class="n">ba_to_plot</span> <span class="o">+</span> <span class="s1">&#39; Service Territory in &#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span><span class="p">))</span>
+
+    <span class="c1"># If the &quot;save_images&quot; flag is set to true then save the plot to a .png file:</span>
+    <span class="k">if</span> <span class="n">save_images</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+       <span class="n">filename</span> <span class="o">=</span> <span class="p">(</span><span class="n">ba_to_plot</span> <span class="o">+</span> <span class="s1">&#39;_Service_Territory_&#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">)</span>
+       <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">image_output_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="n">image_resolution</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plot_mlp_summary_statistics">
+<a class="viewcode-back" href="../../tell.html#tell.visualization.plot_mlp_summary_statistics">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_mlp_summary_statistics</span><span class="p">(</span><span class="n">validation_df</span><span class="p">,</span> <span class="n">image_output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_resolution</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">save_images</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the summary statistics of the MLP evaluation data across BAs</span>
+
+<span class="sd">    :param validation_df:       Validation dataframe produced by the batch training of MLP models for all BAs</span>
+<span class="sd">    :type validation_dft:       df</span>
+
+<span class="sd">    :param image_output_dir:    Directory to store the images</span>
+<span class="sd">    :type image_output_dir:     str</span>
+
+<span class="sd">    :param image_resolution:    Resolution at which you want to save the images in DPI</span>
+<span class="sd">    :type image_resolution:     int</span>
+
+<span class="sd">    :param save_images:         Set to True if you want to save the images after they&#39;re generated</span>
+<span class="sd">    :type save_images:          bool</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create an x-axis the length of the dataframe to be used in plotting:</span>
+    <span class="n">x_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">validation_df</span><span class="p">))</span>
+
+    <span class="c1"># Make the plot:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">221</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">validation_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;R2&#39;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;R2&#39;</span><span class="p">],</span> <span class="mf">0.75</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">validation_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;R2&#39;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;BA&#39;</span><span class="p">],</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Balancing Authority&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;R2 Score&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Coefficient of Determination&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">222</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">validation_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;MAPE&#39;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;MAPE&#39;</span><span class="p">],</span> <span class="mf">0.75</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">validation_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;MAPE&#39;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;BA&#39;</span><span class="p">],</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Balancing Authority&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;MAPE&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Mean Absolute Percentage Error&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">223</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">validation_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;RMS_ABS&#39;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;RMS_ABS&#39;</span><span class="p">],</span> <span class="mf">0.75</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">validation_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;RMS_ABS&#39;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;BA&#39;</span><span class="p">],</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Balancing Authority&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Absolute RMS Error [MWh]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Absolute Root-Mean-Squared Error&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">224</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">validation_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;RMS_NORM&#39;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;RMS_NORM&#39;</span><span class="p">],</span> <span class="mf">0.75</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">validation_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;RMS_NORM&#39;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;BA&#39;</span><span class="p">],</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Balancing Authority&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Normalized RMS Error&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Normalized Root-Mean-Squared Error&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">wspace</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+
+    <span class="c1"># If the &quot;save_images&quot; flag is set to true then save the plot to a .png file:</span>
+    <span class="k">if</span> <span class="n">save_images</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">image_output_dir</span><span class="p">,</span> <span class="s1">&#39;MLP_Summary_Statistics.png&#39;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="n">image_resolution</span><span class="p">,</span>
+                    <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plot_mlp_errors_vs_load">
+<a class="viewcode-back" href="../../tell.html#tell.visualization.plot_mlp_errors_vs_load">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_mlp_errors_vs_load</span><span class="p">(</span><span class="n">prediction_df</span><span class="p">,</span> <span class="n">validation_df</span><span class="p">,</span> <span class="n">image_output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_resolution</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">save_images</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the summary statistics of the MLP evaluation data as a function of mean load</span>
+
+<span class="sd">    :param prediction_df:       Prediction dataframe produced by the batch training of MLP models for all BAs</span>
+<span class="sd">    :type prediction_df:        df</span>
+
+<span class="sd">    :param validation_df:       Validation dataframe produced by the batch training of MLP models for all BAs</span>
+<span class="sd">    :type validation_df:        df</span>
+
+<span class="sd">    :param image_output_dir:    Directory to store the images</span>
+<span class="sd">    :type image_output_dir:     str</span>
+
+<span class="sd">    :param image_resolution:    Resolution at which you want to save the images in DPI</span>
+<span class="sd">    :type image_resolution:     int</span>
+
+<span class="sd">    :param save_images:         Set to True if you want to save the images after they&#39;re generated</span>
+<span class="sd">    :type save_images:          bool</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Compute the mean hourly load for each BA:</span>
+    <span class="n">prediction_df</span><span class="p">[</span><span class="s1">&#39;Mean_Load_MWh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prediction_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;region&#39;</span><span class="p">)[</span><span class="s1">&#39;predictions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Rename the region variable:</span>
+    <span class="n">prediction_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;region&#39;</span><span class="p">:</span> <span class="s1">&#39;BA&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Keep on the variables we need:</span>
+    <span class="n">mean_load_df</span> <span class="o">=</span> <span class="n">prediction_df</span><span class="p">[[</span><span class="s1">&#39;BA&#39;</span><span class="p">,</span> <span class="s1">&#39;Mean_Load_MWh&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+
+    <span class="c1"># Merge the mean load data into the validation dataframe:</span>
+    <span class="n">validation_df</span> <span class="o">=</span> <span class="n">validation_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">mean_load_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;BA&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Make the plot:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">221</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">validation_df</span><span class="p">[</span><span class="s1">&#39;Mean_Load_MWh&#39;</span><span class="p">],</span> <span class="n">validation_df</span><span class="p">[</span><span class="s1">&#39;R2&#39;</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Mean Hourly Load [MWh]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;R2 Score&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Coefficient of Determination&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">222</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">validation_df</span><span class="p">[</span><span class="s1">&#39;Mean_Load_MWh&#39;</span><span class="p">],</span> <span class="n">validation_df</span><span class="p">[</span><span class="s1">&#39;MAPE&#39;</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Mean Hourly Load [MWh]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;MAPE&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Mean Absolute Percentage Error&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">223</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">validation_df</span><span class="p">[</span><span class="s1">&#39;Mean_Load_MWh&#39;</span><span class="p">],</span> <span class="n">validation_df</span><span class="p">[</span><span class="s1">&#39;RMS_ABS&#39;</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Mean Hourly Load [MWh]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Absolute RMS Error [MWh]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Absolute Root-Mean-Squared Error&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">224</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">validation_df</span><span class="p">[</span><span class="s1">&#39;Mean_Load_MWh&#39;</span><span class="p">],</span> <span class="n">validation_df</span><span class="p">[</span><span class="s1">&#39;RMS_NORM&#39;</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Mean Hourly Load [MWh]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Normalized RMS Error&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Normalized Root-Mean-Squared Error&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">wspace</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+
+    <span class="c1"># If the &quot;save_images&quot; flag is set to true then save the plot to a .png file:</span>
+    <span class="k">if</span> <span class="n">save_images</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">image_output_dir</span><span class="p">,</span> <span class="s1">&#39;MLP_Summary_Statistics_vs_Load.png&#39;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="n">image_resolution</span><span class="p">,</span>
+                    <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">validation_df</span></div>
+
+
+
+<div class="viewcode-block" id="plot_mlp_ba_time_series">
+<a class="viewcode-back" href="../../tell.html#tell.visualization.plot_mlp_ba_time_series">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_mlp_ba_time_series</span><span class="p">(</span><span class="n">prediction_df</span><span class="p">,</span> <span class="n">ba_to_plot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                            <span class="n">image_output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_resolution</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">save_images</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the performance metrics for an individual BA</span>
+
+<span class="sd">    :param prediction_df:       Prediction dataframe produced by the batch training of MLP models for all BAs</span>
+<span class="sd">    :type prediction_df:        df</span>
+
+<span class="sd">    :param ba_to_plot:          Code for the BA you want to plot</span>
+<span class="sd">    :type ba_to_plot:           str</span>
+
+<span class="sd">    :param image_output_dir:    Directory to store the images</span>
+<span class="sd">    :type image_output_dir:     str</span>
+
+<span class="sd">    :param image_resolution:    Resolution at which you want to save the images in DPI</span>
+<span class="sd">    :type image_resolution:     int</span>
+
+<span class="sd">    :param save_images:         Set to True if you want to save the images after they&#39;re generated</span>
+<span class="sd">    :type save_images:          bool</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Rename the region variable:</span>
+    <span class="n">prediction_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;region&#39;</span><span class="p">:</span> <span class="s1">&#39;BA&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Subset to just the data for the BA you want to plot</span>
+    <span class="n">subset_df</span> <span class="o">=</span> <span class="n">prediction_df</span><span class="p">[</span><span class="n">prediction_df</span><span class="p">[</span><span class="s1">&#39;BA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="n">ba_to_plot</span><span class="p">])]</span>
+
+    <span class="n">one_to_one</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">200000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+    <span class="c1"># Make the plot:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">211</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">subset_df</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">],</span> <span class="n">subset_df</span><span class="p">[</span><span class="s1">&#39;ground_truth&#39;</span><span class="p">],</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Observed&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">subset_df</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">],</span> <span class="n">subset_df</span><span class="p">[</span><span class="s1">&#39;predictions&#39;</span><span class="p">],</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Predicted&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">subset_df</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">subset_df</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Demand [MWh]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Hourly Demand Time Series in &#39;</span> <span class="o">+</span> <span class="n">ba_to_plot</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">223</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">subset_df</span><span class="p">[</span><span class="s1">&#39;ground_truth&#39;</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="n">edgecolor</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Observed&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">subset_df</span><span class="p">[</span><span class="s1">&#39;predictions&#39;</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="n">edgecolor</span> <span class="o">=</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Predicted&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Demand [MWh]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Frequency&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Hourly Demand Distribution in &#39;</span> <span class="o">+</span> <span class="n">ba_to_plot</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">224</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">subset_df</span><span class="p">[</span><span class="s1">&#39;ground_truth&#39;</span><span class="p">],</span> <span class="n">subset_df</span><span class="p">[</span><span class="s1">&#39;predictions&#39;</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hourly Sample&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">one_to_one</span><span class="p">,</span><span class="n">one_to_one</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;1:1&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">one_to_one</span><span class="p">,</span> <span class="p">(</span><span class="n">one_to_one</span><span class="o">*</span><span class="mf">1.1</span><span class="p">),</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;1:1 - 10%&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">one_to_one</span><span class="p">,</span> <span class="p">(</span><span class="n">one_to_one</span><span class="o">*</span><span class="mf">0.9</span><span class="p">),</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;1:1 + 10%&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mf">0.98</span><span class="o">*</span><span class="n">subset_df</span><span class="p">[[</span><span class="s1">&#39;ground_truth&#39;</span><span class="p">,</span> <span class="s1">&#39;predictions&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="mf">1.02</span><span class="o">*</span><span class="n">subset_df</span><span class="p">[[</span><span class="s1">&#39;ground_truth&#39;</span><span class="p">,</span> <span class="s1">&#39;predictions&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mf">0.98</span><span class="o">*</span><span class="n">subset_df</span><span class="p">[[</span><span class="s1">&#39;ground_truth&#39;</span><span class="p">,</span> <span class="s1">&#39;predictions&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="mf">1.02</span><span class="o">*</span><span class="n">subset_df</span><span class="p">[[</span><span class="s1">&#39;ground_truth&#39;</span><span class="p">,</span> <span class="s1">&#39;predictions&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Observed Hourly Demand [MWh]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Predicted Hourly Demand [MWh]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Hourly Demand Relationship in &#39;</span> <span class="o">+</span> <span class="n">ba_to_plot</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">wspace</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+
+    <span class="c1"># If the &quot;save_images&quot; flag is set to true then save the plot to a .png file:</span>
+    <span class="k">if</span> <span class="n">save_images</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">image_output_dir</span><span class="p">,</span> <span class="n">ba_to_plot</span> <span class="o">+</span> <span class="s1">&#39;_Time_Series.png&#39;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="n">image_resolution</span><span class="p">,</span>
+                    <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plot_mlp_ba_peak_week">
+<a class="viewcode-back" href="../../tell.html#tell.visualization.plot_mlp_ba_peak_week">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_mlp_ba_peak_week</span><span class="p">(</span><span class="n">prediction_df</span><span class="p">,</span> <span class="n">ba_to_plot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                          <span class="n">image_output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_resolution</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">save_images</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the time-series of load during the peak week of the year for a given BA.</span>
+
+<span class="sd">    :param prediction_df:       Prediction dataframe produced by the batch training of MLP models for all BAs</span>
+<span class="sd">    :type prediction_df:        df</span>
+
+<span class="sd">    :param ba_to_plot:          Code for the BA you want to plot</span>
+<span class="sd">    :type ba_to_plot:           str</span>
+
+<span class="sd">    :param image_output_dir:    Directory to store the images</span>
+<span class="sd">    :type image_output_dir:     str</span>
+
+<span class="sd">    :param image_resolution:    Resolution at which you want to save the images in DPI</span>
+<span class="sd">    :type image_resolution:     int</span>
+
+<span class="sd">    :param save_images:         Set to True if you want to save the images after they&#39;re generated</span>
+<span class="sd">    :type save_images:          bool</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Rename the region variable:</span>
+    <span class="n">prediction_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;region&#39;</span><span class="p">:</span> <span class="s1">&#39;BA&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Subset to just the data for the BA you want to plot</span>
+    <span class="n">subset_df</span> <span class="o">=</span> <span class="n">prediction_df</span><span class="p">[</span><span class="n">prediction_df</span><span class="p">[</span><span class="s1">&#39;BA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="n">ba_to_plot</span><span class="p">])]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Smooth the predictions using exponentially-weighted windows:</span>
+    <span class="n">subset_df</span><span class="p">[</span><span class="s1">&#39;Rolling_Mean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subset_df</span><span class="p">[</span><span class="s1">&#39;predictions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">ewm</span><span class="p">(</span><span class="n">span</span><span class="o">=</span><span class="mi">168</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+    <span class="c1"># Find the index of the maximum value of the rolling mean:</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">subset_df</span><span class="p">[</span><span class="s1">&#39;Rolling_Mean&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="mi">84</span><span class="p">:</span>
+       <span class="n">start</span> <span class="o">=</span> <span class="p">(</span><span class="n">index</span> <span class="o">-</span><span class="mi">84</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+       <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">subset_df</span><span class="p">)</span><span class="o">-</span><span class="mi">84</span><span class="p">):</span>
+       <span class="n">end</span> <span class="o">=</span> <span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">84</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+       <span class="n">end</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">subset_df</span><span class="p">)</span>
+
+    <span class="n">peak_df</span> <span class="o">=</span> <span class="n">subset_df</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+
+    <span class="c1"># Make the plot:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">peak_df</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">],</span> <span class="n">peak_df</span><span class="p">[</span><span class="s1">&#39;ground_truth&#39;</span><span class="p">],</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Observed&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">peak_df</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">],</span> <span class="n">peak_df</span><span class="p">[</span><span class="s1">&#39;predictions&#39;</span><span class="p">],</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Predicted&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">peak_df</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">peak_df</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Demand [MWh]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Peak Demand Week in &#39;</span> <span class="o">+</span> <span class="n">ba_to_plot</span><span class="p">)</span>
+
+    <span class="c1"># If the &quot;save_images&quot; flag is set to true then save the plot to a .png file:</span>
+    <span class="k">if</span> <span class="n">save_images</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">image_output_dir</span><span class="p">,</span> <span class="n">ba_to_plot</span> <span class="o">+</span> <span class="s1">&#39;_Peak_Week.png&#39;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="n">image_resolution</span><span class="p">,</span>
+                    <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plot_state_scaling_factors">
+<a class="viewcode-back" href="../../tell.html#tell.visualization.plot_state_scaling_factors">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_state_scaling_factors</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gcam_target_year</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scenario_to_plot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                               <span class="n">data_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_resolution</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">save_images</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the scaling factor that force TELL annual total state loads to agree with GCAM-USA</span>
+
+<span class="sd">    :param year_to_plot:        Year you want to plot (valid 2039, 2059, 2079, 2099)</span>
+<span class="sd">    :type year_to_plot:         str</span>
+
+<span class="sd">    :param gcam_target_year:    Year to scale against the GCAM-USA annual loads</span>
+<span class="sd">    :type gcam_target_year:     str</span>
+
+<span class="sd">    :param scenario_to_plot:    Scenario you want to plot</span>
+<span class="sd">    :type scenario_to_plot:     str</span>
+
+<span class="sd">    :param data_input_dir:      Top-level data directory for TELL</span>
+<span class="sd">    :type data_input_dir:       str</span>
+
+<span class="sd">    :param image_output_dir:    Directory to store the images</span>
+<span class="sd">    :type image_output_dir:     str</span>
+
+<span class="sd">    :param image_resolution:    Resolution at which you want to save the images in DPI</span>
+<span class="sd">    :type image_resolution:     int</span>
+
+<span class="sd">    :param save_images:         Set to True if you want to save the images after they&#39;re generated</span>
+<span class="sd">    :type save_images:          bool</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Set the data input directories for the various variables you need:</span>
+    <span class="n">tell_data_input_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_quickstarter_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_output&#39;</span><span class="p">,</span> <span class="n">scenario_to_plot</span><span class="p">,</span> <span class="n">year_to_plot</span><span class="p">)</span>
+
+    <span class="c1"># Read in the states shapefile and change the geolocation variable name to state FIPS code:</span>
+    <span class="n">states_df</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_raw_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;State_Shapefiles&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tl_2020_us_state.shp&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;GEOID&#39;</span><span class="p">:</span> <span class="s1">&#39;State_FIPS&#39;</span><span class="p">})</span>
+
+    <span class="c1"># Convert the state FIPS code to an integer and multiply it by 1000:</span>
+    <span class="n">states_df</span><span class="p">[</span><span class="s1">&#39;State_FIPS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">states_df</span><span class="p">[</span><span class="s1">&#39;State_FIPS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+
+    <span class="c1"># Read in the &#39;TELL_State_Summary_Data&#39; .csv file and reassign the &#39;State_FIPS&#39; code as an integer:</span>
+    <span class="n">state_summary_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">((</span><span class="n">tell_data_input_dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="s1">&#39;TELL_State_Summary_Data_&#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span>
+                                    <span class="o">+</span> <span class="s1">&#39;_Scaled_&#39;</span> <span class="o">+</span> <span class="n">gcam_target_year</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;State_FIPS&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">})</span>
+
+    <span class="c1"># Merge the two dataframes together using state FIPS codes to join them:</span>
+    <span class="n">states_df</span> <span class="o">=</span> <span class="n">states_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">state_summary_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;State_FIPS&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Make the plot:</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="n">divider</span> <span class="o">=</span> <span class="n">make_axes_locatable</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+    <span class="n">cax</span> <span class="o">=</span> <span class="n">divider</span><span class="o">.</span><span class="n">append_axes</span><span class="p">(</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="s2">&quot;3%&quot;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">ax1</span> <span class="o">=</span> <span class="n">states_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s1">&#39;Scaling_Factor&#39;</span><span class="p">,</span>
+                         <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;RdBu_r&#39;</span><span class="p">,</span>
+                         <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+                         <span class="n">cax</span><span class="o">=</span><span class="n">cax</span><span class="p">,</span>
+                         <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span>
+                         <span class="n">vmin</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                         <span class="n">vmax</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+                         <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                         <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                         <span class="n">legend_kwds</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;TELL Scaling Factor&#39;</span><span class="p">,</span> <span class="s1">&#39;orientation&#39;</span><span class="p">:</span> <span class="s1">&#39;vertical&#39;</span><span class="p">})</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">((</span><span class="s1">&#39;State-Level Scaling Factors in &#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span><span class="p">))</span>
+
+    <span class="c1"># If the &quot;save_images&quot; flag is set to true then save the plot to a .png file:</span>
+    <span class="k">if</span> <span class="n">save_images</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;TELL_State_Scaling_Factors_&#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">image_output_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="n">image_resolution</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plot_state_annual_total_loads">
+<a class="viewcode-back" href="../../tell.html#tell.visualization.plot_state_annual_total_loads">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_state_annual_total_loads</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gcam_target_year</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scenario_to_plot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                  <span class="n">image_output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_resolution</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">save_images</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot annual total loads from both GCAM-USA and TELL</span>
+
+<span class="sd">    :param year_to_plot:        Year you want to plot (valid 2039, 2059, 2079, 2099)</span>
+<span class="sd">    :type year_to_plot:         str</span>
+
+<span class="sd">    :param gcam_target_year:    Year to scale against the GCAM-USA annual loads</span>
+<span class="sd">    :type gcam_target_year:     str</span>
+
+<span class="sd">    :param scenario_to_plot:    Scenario you want to plot</span>
+<span class="sd">    :type scenario_to_plot:     str</span>
+
+<span class="sd">    :param data_input_dir:      Top-level data directory for TELL</span>
+<span class="sd">    :type data_input_dir:       str</span>
+
+<span class="sd">    :param image_output_dir:    Directory to store the images</span>
+<span class="sd">    :type image_output_dir:     str</span>
+
+<span class="sd">    :param image_resolution:    Resolution at which you want to save the images in DPI</span>
+<span class="sd">    :type image_resolution:     int</span>
+
+<span class="sd">    :param save_images:         Set to True if you want to save the images after they&#39;re generated</span>
+<span class="sd">    :type save_images:          bool</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Set the data input directories for the various variables you need:</span>
+    <span class="n">tell_data_input_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_quickstarter_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_output&#39;</span><span class="p">,</span> <span class="n">scenario_to_plot</span><span class="p">,</span> <span class="n">year_to_plot</span><span class="p">)</span>
+
+    <span class="c1"># Read in the &#39;TELL_State_Summary_Data&#39; .csv file and reassign the &#39;State_FIPS&#39; code as an integer:</span>
+    <span class="n">state_summary_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">((</span><span class="n">tell_data_input_dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="s1">&#39;TELL_State_Summary_Data_&#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span>
+                                    <span class="o">+</span> <span class="s1">&#39;_Scaled_&#39;</span> <span class="o">+</span> <span class="n">gcam_target_year</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;State_FIPS&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">})</span>
+
+    <span class="c1"># Create an x-axis the length of the dataframe to be used in plotting:</span>
+    <span class="n">x_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">state_summary_df</span><span class="p">))</span>
+
+    <span class="c1"># Make the plot:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x_axis</span> <span class="o">-</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">state_summary_df</span><span class="p">[</span><span class="s1">&#39;GCAM_USA_Load_TWh&#39;</span><span class="p">],</span> <span class="mf">0.4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;GCAM-USA Loads: Year = &#39;</span> <span class="o">+</span> <span class="n">gcam_target_year</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x_axis</span> <span class="o">+</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">state_summary_df</span><span class="p">[</span><span class="s1">&#39;Raw_TELL_Load_TWh&#39;</span><span class="p">],</span> <span class="mf">0.4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Unscaled TELL Loads: Year = &#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">state_summary_df</span><span class="p">[</span><span class="s1">&#39;State_Name&#39;</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Annual Total Load [TWh]&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">((</span><span class="s1">&#39;Annual Total Loads from GCAM-USA and TELL in &#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span><span class="p">))</span>
+
+    <span class="c1"># If the &quot;save_images&quot; flag is set to true then save the plot to a .png file:</span>
+    <span class="k">if</span> <span class="n">save_images</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;TELL_State_Annual_Total_Loads_&#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">image_output_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="n">image_resolution</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plot_state_load_time_series">
+<a class="viewcode-back" href="../../tell.html#tell.visualization.plot_state_load_time_series">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_state_load_time_series</span><span class="p">(</span><span class="n">state_to_plot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year_to_plot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gcam_target_year</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scenario_to_plot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                <span class="n">data_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_resolution</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">save_images</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the time series of load for a given state</span>
+
+<span class="sd">    :param state_to_plot:       State you want to plot</span>
+<span class="sd">    :type state_to_plot:        str</span>
+
+<span class="sd">    :param year_to_plot:        Year you want to plot (valid 2039, 2059, 2079, 2099)</span>
+<span class="sd">    :type year_to_plot:         str</span>
+
+<span class="sd">    :param gcam_target_year:    Year to scale against the GCAM-USA annual loads</span>
+<span class="sd">    :type gcam_target_year:     str</span>
+
+<span class="sd">    :param scenario_to_plot:    Scenario you want to plot</span>
+<span class="sd">    :type scenario_to_plot:     str</span>
+
+<span class="sd">    :param data_input_dir:      Top-level data directory for TELL</span>
+<span class="sd">    :type data_input_dir:       str</span>
+
+<span class="sd">    :param image_output_dir:    Directory to store the images</span>
+<span class="sd">    :type image_output_dir:     str</span>
+
+<span class="sd">    :param image_resolution:    Resolution at which you want to save the images in DPI</span>
+<span class="sd">    :type image_resolution:     int</span>
+
+<span class="sd">    :param save_images:         Set to True if you want to save the images after they&#39;re generated</span>
+<span class="sd">    :type save_images:          bool</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Set the data input directories for the various variables you need:</span>
+    <span class="n">tell_data_input_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_quickstarter_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_output&#39;</span><span class="p">,</span>
+                                       <span class="n">scenario_to_plot</span><span class="p">,</span> <span class="n">year_to_plot</span><span class="p">)</span>
+
+    <span class="c1"># Read in the &#39;TELL_State_Summary_Data&#39; .csv file parse the time variable:</span>
+    <span class="n">state_hourly_load_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">((</span><span class="n">tell_data_input_dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="s1">&#39;TELL_State_Hourly_Load_Data_&#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span>
+                                        <span class="o">+</span> <span class="s1">&#39;_Scaled_&#39;</span> <span class="o">+</span> <span class="n">gcam_target_year</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">),</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Time_UTC&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Subset the dataframe to only the state you want to plot:</span>
+    <span class="n">state_subset_df</span> <span class="o">=</span> <span class="n">state_hourly_load_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">state_hourly_load_df</span><span class="p">[</span><span class="s1">&#39;State_Name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">state_to_plot</span><span class="p">]</span>
+
+    <span class="c1"># Make the plot:</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">state_subset_df</span><span class="p">[</span><span class="s1">&#39;Time_UTC&#39;</span><span class="p">],</span> <span class="n">state_subset_df</span><span class="p">[</span><span class="s1">&#39;Raw_TELL_State_Load_MWh&#39;</span><span class="p">],</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Raw Load&#39;</span><span class="p">,</span>
+               <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">state_subset_df</span><span class="p">[</span><span class="s1">&#39;Time_UTC&#39;</span><span class="p">],</span> <span class="n">state_subset_df</span><span class="p">[</span><span class="s1">&#39;Scaled_TELL_State_Load_MWh&#39;</span><span class="p">],</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Scaled Load&#39;</span><span class="p">,</span>
+               <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">((</span><span class="n">state_subset_df</span><span class="p">[</span><span class="s1">&#39;State_Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; Raw TELL Loads in &#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span><span class="p">))</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">((</span><span class="n">state_subset_df</span><span class="p">[</span><span class="s1">&#39;State_Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; Scaled TELL Loads in &#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span><span class="p">))</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Hourly Load [MWh]&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Hourly Load [MWh]&#39;</span><span class="p">)</span>
+
+    <span class="c1"># If the &quot;save_images&quot; flag is set to true then save the plot to a .png file:</span>
+    <span class="k">if</span> <span class="n">save_images</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">state_name</span> <span class="o">=</span> <span class="n">state_subset_df</span><span class="p">[</span><span class="s1">&#39;State_Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">state_name</span> <span class="o">=</span> <span class="n">state_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;TELL_State_Hourly_Loads_&#39;</span> <span class="o">+</span> <span class="n">state_name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">image_output_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="n">image_resolution</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plot_state_load_duration_curve">
+<a class="viewcode-back" href="../../tell.html#tell.visualization.plot_state_load_duration_curve">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_state_load_duration_curve</span><span class="p">(</span><span class="n">state_to_plot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year_to_plot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gcam_target_year</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scenario_to_plot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                   <span class="n">data_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_resolution</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                   <span class="n">save_images</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the load duration curve for a given state</span>
+
+<span class="sd">    :param state_to_plot:       State you want to plot</span>
+<span class="sd">    :type state_to_plot:        str</span>
+
+<span class="sd">    :param year_to_plot:        Year you want to plot (valid 2039, 2059, 2079, 2099)</span>
+<span class="sd">    :type year_to_plot:         str</span>
+
+<span class="sd">    :param gcam_target_year:    Year to scale against the GCAM-USA annual loads</span>
+<span class="sd">    :type gcam_target_year:     str</span>
+
+<span class="sd">    :param scenario_to_plot:    Scenario you want to plot</span>
+<span class="sd">    :type scenario_to_plot:     str</span>
+
+<span class="sd">    :param data_input_dir:      Top-level data directory for TELL</span>
+<span class="sd">    :type data_input_dir:       str</span>
+
+<span class="sd">    :param image_output_dir:    Directory to store the images</span>
+<span class="sd">    :type image_output_dir:     str</span>
+
+<span class="sd">    :param image_resolution:    Resolution at which you want to save the images in DPI</span>
+<span class="sd">    :type image_resolution:     int</span>
+
+<span class="sd">    :param save_images:         Set to True if you want to save the images after they&#39;re generated</span>
+<span class="sd">    :type save_images:          bool</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Set the data input directories for the various variables you need:</span>
+    <span class="n">tell_data_input_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_quickstarter_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_output&#39;</span><span class="p">,</span> <span class="n">scenario_to_plot</span><span class="p">,</span> <span class="n">year_to_plot</span><span class="p">)</span>
+
+    <span class="c1"># Read in the &#39;TELL_State_Summary_Data&#39; .csv file and parse the time variable:</span>
+    <span class="n">state_hourly_load_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">((</span><span class="n">tell_data_input_dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="s1">&#39;TELL_State_Hourly_Load_Data_&#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span>
+                                        <span class="o">+</span> <span class="s1">&#39;_Scaled_&#39;</span> <span class="o">+</span> <span class="n">gcam_target_year</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">),</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Time_UTC&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Subset the dataframe to only the state you want to plot:</span>
+    <span class="n">state_subset_df</span> <span class="o">=</span> <span class="n">state_hourly_load_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">state_hourly_load_df</span><span class="p">[</span><span class="s1">&#39;State_Name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">state_to_plot</span><span class="p">]</span>
+
+    <span class="c1"># Sort the hourly load values from largest to smallest and compute the hourly duration for each value:</span>
+    <span class="n">load_df_sorted</span> <span class="o">=</span> <span class="n">state_subset_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Scaled_TELL_State_Load_MWh&#39;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">load_df_sorted</span><span class="p">[</span><span class="s1">&#39;Interval&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">load_df_sorted</span><span class="p">[</span><span class="s1">&#39;Duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_df_sorted</span><span class="p">[</span><span class="s1">&#39;Interval&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+
+    <span class="c1"># Make the plot:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">load_df_sorted</span><span class="p">[</span><span class="s1">&#39;Duration&#39;</span><span class="p">],</span> <span class="n">load_df_sorted</span><span class="p">[</span><span class="s1">&#39;Raw_TELL_State_Load_MWh&#39;</span><span class="p">],</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Raw Load&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Duration [h]&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Scaled State Hourly Load [MWh]&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">((</span><span class="n">state_subset_df</span><span class="p">[</span><span class="s1">&#39;State_Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; Load Duration Curve in &#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span><span class="p">))</span>
+
+    <span class="c1"># If the &quot;save_images&quot; flag is set to true then save the plot to a .png file:</span>
+    <span class="k">if</span> <span class="n">save_images</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">state_name</span> <span class="o">=</span> <span class="n">state_subset_df</span><span class="p">[</span><span class="s1">&#39;State_Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">state_name</span> <span class="o">=</span> <span class="n">state_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;TELL_State_Load_Duration_Curve_&#39;</span> <span class="o">+</span> <span class="n">state_name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">image_output_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="n">image_resolution</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plot_ba_load_time_series">
+<a class="viewcode-back" href="../../tell.html#tell.visualization.plot_ba_load_time_series">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_ba_load_time_series</span><span class="p">(</span><span class="n">ba_to_plot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year_to_plot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gcam_target_year</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scenario_to_plot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                             <span class="n">data_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_resolution</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">save_images</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the time series of load for a given Balancing Authority</span>
+
+<span class="sd">    :param ba_to_plot:          Balancing Authority code for the BA you want to plot</span>
+<span class="sd">    :type ba_to_plot:           str</span>
+
+<span class="sd">    :param year_to_plot:        Year you want to plot (valid 2039, 2059, 2079, 2099)</span>
+<span class="sd">    :type year_to_plot:         str</span>
+
+<span class="sd">    :param gcam_target_year:    Year to scale against the GCAM-USA annual loads</span>
+<span class="sd">    :type gcam_target_year:     str</span>
+
+<span class="sd">    :param scenario_to_plot:    Scenario you want to plot</span>
+<span class="sd">    :type scenario_to_plot:     str</span>
+
+<span class="sd">    :param data_input_dir:      Top-level data directory for TELL</span>
+<span class="sd">    :type data_input_dir:       str</span>
+
+<span class="sd">    :param image_output_dir:    Directory to store the images</span>
+<span class="sd">    :type image_output_dir:     str</span>
+
+<span class="sd">    :param image_resolution:    Resolution at which you want to save the images in DPI</span>
+<span class="sd">    :type image_resolution:     int</span>
+
+<span class="sd">    :param save_images:         Set to True if you want to save the images after they&#39;re generated</span>
+<span class="sd">    :type save_images:          bool</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Set the data input directories for the various variables you need:</span>
+    <span class="n">tell_data_input_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_quickstarter_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_output&#39;</span><span class="p">,</span>
+                                       <span class="n">scenario_to_plot</span><span class="p">,</span> <span class="n">year_to_plot</span><span class="p">)</span>
+
+    <span class="c1"># Read in the &#39;TELL_Balancing_Authority_Hourly_Load_Data&#39; .csv file and parse the time variable:</span>
+    <span class="n">ba_hourly_load_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">((</span><span class="n">tell_data_input_dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="s1">&#39;TELL_Balancing_Authority_Hourly_Load_Data_&#39;</span>
+                                     <span class="o">+</span> <span class="n">year_to_plot</span> <span class="o">+</span> <span class="s1">&#39;_Scaled_&#39;</span> <span class="o">+</span> <span class="n">gcam_target_year</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">),</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Time_UTC&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Subset the dataframe to only the BA you want to plot:</span>
+    <span class="n">ba_subset_df</span> <span class="o">=</span> <span class="n">ba_hourly_load_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ba_hourly_load_df</span><span class="p">[</span><span class="s1">&#39;BA_Code&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ba_to_plot</span><span class="p">]</span>
+
+    <span class="c1"># Make the plot:</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ba_subset_df</span><span class="p">[</span><span class="s1">&#39;Time_UTC&#39;</span><span class="p">],</span> <span class="n">ba_subset_df</span><span class="p">[</span><span class="s1">&#39;Raw_TELL_BA_Load_MWh&#39;</span><span class="p">],</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Raw Load&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ba_subset_df</span><span class="p">[</span><span class="s1">&#39;Time_UTC&#39;</span><span class="p">],</span> <span class="n">ba_subset_df</span><span class="p">[</span><span class="s1">&#39;Scaled_TELL_BA_Load_MWh&#39;</span><span class="p">],</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Scaled Load&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">((</span><span class="n">ba_to_plot</span> <span class="o">+</span> <span class="s1">&#39; Raw TELL Loads in &#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span><span class="p">))</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">((</span><span class="n">ba_to_plot</span> <span class="o">+</span> <span class="s1">&#39; Scaled TELL Loads in &#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span><span class="p">))</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Hourly Load [MWh]&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Hourly Load [MWh]&#39;</span><span class="p">)</span>
+
+    <span class="c1"># If the &quot;save_images&quot; flag is set to true then save the plot to a .png file:</span>
+    <span class="k">if</span> <span class="n">save_images</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;TELL_BA_Hourly_Loads_&#39;</span> <span class="o">+</span> <span class="n">ba_to_plot</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">year_to_plot</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">image_output_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="n">image_resolution</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plot_ba_variable_correlations">
+<a class="viewcode-back" href="../../tell.html#tell.visualization.plot_ba_variable_correlations">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_ba_variable_correlations</span><span class="p">(</span><span class="n">ba_to_plot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_resolution</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                  <span class="n">save_images</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the correlation matrix between predictive variables and observed demand for individual or all BAs.</span>
+
+<span class="sd">    :param ba_to_plot:          BA code for the BA you want to plot. Set to &quot;All&quot; to plot the average</span>
+<span class="sd">                                correlation across all BAs.</span>
+<span class="sd">    :type ba_to_plot:           str</span>
+
+<span class="sd">    :param data_input_dir:      Top-level data directory for TELL</span>
+<span class="sd">    :type data_input_dir:       str</span>
+
+<span class="sd">    :param image_output_dir:    Directory to store the images</span>
+<span class="sd">    :type image_output_dir:     str</span>
+
+<span class="sd">    :param image_resolution:    Resolution at which you want to save the images in DPI</span>
+<span class="sd">    :type image_resolution:     int</span>
+
+<span class="sd">    :param save_images:         Set to True if you want to save the images after they&#39;re generated</span>
+<span class="sd">    :type save_images:          bool</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Set the input directory based on the &#39;data_input_dir&#39; variable:</span>
+    <span class="n">compiled_data_input_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_input_dir</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;tell_quickstarter_data&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;compiled_historical_data&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ba_to_plot</span> <span class="o">!=</span> <span class="s1">&#39;All&#39;</span><span class="p">:</span>
+        <span class="c1"># Read in compiled historical data file for the BA you want to plot:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">compiled_data_input_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ba_to_plot</span><span class="si">}</span><span class="s1">_historical_data.csv&#39;</span><span class="p">))</span>
+
+        <span class="c1"># Rename the a few columns for simplicity:</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Adjusted_Demand_MWh&quot;</span><span class="p">:</span> <span class="s2">&quot;Demand&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Total_Population&quot;</span><span class="p">:</span> <span class="s2">&quot;Population&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Drop out the columns we don&#39;t need anymore:</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;Forecast_Demand_MWh&#39;</span><span class="p">,</span> <span class="s1">&#39;Adjusted_Generation_MWh&#39;</span><span class="p">,</span> <span class="s1">&#39;Adjusted_Interchange_MWh&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Calculate the correlation matrix of the dataframe:</span>
+        <span class="n">corr</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Loop over the compiled historical data files in the input directory:</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">compiled_data_input_dir</span><span class="si">}</span><span class="s1">/*.csv&#39;</span><span class="p">)):</span>
+
+            <span class="c1"># Read in the .csv file:</span>
+            <span class="n">dfx</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">compiled_data_input_dir</span><span class="p">,</span> <span class="n">file</span><span class="p">))</span>
+
+            <span class="c1"># Rename the a few columns for simplicity:</span>
+            <span class="n">dfx</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Adjusted_Demand_MWh&quot;</span><span class="p">:</span> <span class="s2">&quot;Demand&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">dfx</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Total_Population&quot;</span><span class="p">:</span> <span class="s2">&quot;Population&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="c1"># Drop out the columns we don&#39;t need anymore:</span>
+            <span class="n">dfx</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;Forecast_Demand_MWh&#39;</span><span class="p">,</span> <span class="s1">&#39;Adjusted_Generation_MWh&#39;</span><span class="p">,</span> <span class="s1">&#39;Adjusted_Interchange_MWh&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                     <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="c1"># Calculate the correlation matrix of the dataframe:</span>
+            <span class="n">corrx</span> <span class="o">=</span> <span class="n">dfx</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+
+            <span class="c1"># Concatenate the correlation matrix across BAs:</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">corrall</span> <span class="o">=</span> <span class="n">corrx</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">corrall</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">corrall</span><span class="p">,</span> <span class="n">corrx</span><span class="p">))</span>
+
+            <span class="k">del</span> <span class="n">dfx</span><span class="p">,</span> <span class="n">corrx</span>
+
+        <span class="c1"># Calculate the average correlation matrix across all BAs and convert that value to a pd dataframe for plotting:</span>
+        <span class="n">corr</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">corrall</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+                            <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">,</span> <span class="s1">&#39;Month&#39;</span><span class="p">,</span> <span class="s1">&#39;Day&#39;</span><span class="p">,</span> <span class="s1">&#39;Hour&#39;</span><span class="p">,</span> <span class="s1">&#39;Demand&#39;</span><span class="p">,</span> <span class="s1">&#39;Population&#39;</span><span class="p">,</span> <span class="s1">&#39;T2&#39;</span><span class="p">,</span> <span class="s1">&#39;Q2&#39;</span><span class="p">,</span> <span class="s1">&#39;SWDOWN&#39;</span><span class="p">,</span>
+                                     <span class="s1">&#39;GLW&#39;</span><span class="p">,</span> <span class="s1">&#39;WSPD&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Fill diagonal and upper half with NaNs</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">corr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">mask</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">triu_indices_from</span><span class="p">(</span><span class="n">mask</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">corr</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="n">f</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">corr</span><span class="p">,</span>
+                <span class="n">fignum</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;RdBu_r&#39;</span><span class="p">,</span>
+                <span class="n">vmin</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cb</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+    <span class="n">cb</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ba_to_plot</span> <span class="o">!=</span> <span class="s1">&#39;All&#39;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Correlation Matrix in the &#39;</span> <span class="o">+</span> <span class="n">ba_to_plot</span> <span class="o">+</span> <span class="s1">&#39; Balancing Authority&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">);</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Average Correlation Matrix Across All Balancing Authorities in TELL&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">);</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">corr</span><span class="o">.</span><span class="n">columns</span><span class="p">)),</span> <span class="n">corr</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="s1">&#39;vertical&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">corr</span><span class="o">.</span><span class="n">columns</span><span class="p">)),</span> <span class="n">corr</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+    <span class="c1"># If the &quot;save_images&quot; flag is set to true then save the plot to a .png file:</span>
+    <span class="k">if</span> <span class="n">save_images</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="p">(</span><span class="n">ba_to_plot</span> <span class="o">+</span> <span class="s1">&#39;_Correlation_Matrix.png&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">image_output_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="n">image_resolution</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Batelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

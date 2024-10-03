@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tell.data_process_compile module &mdash; TELL  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+      <link rel="stylesheet" type="text/css" href="_static/style.css?v=cf4e22e0" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contributing to tell" href="contributing.html" />
+    <link rel="prev" title="API Reference" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            TELL
+          </a>
+              <div class="version">
+                1.3.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tell_quickstarter.html">Quickstarter Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">tell.data_process_compile module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tell.data_process_eia_930">tell.data_process_eia_930 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tell.data_process_population">tell.data_process_population module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tell.data_spatial_mapping">tell.data_spatial_mapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tell.execute_forward">tell.execute_forward module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tell.install_forcing_data">tell.install_forcing_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tell.install_quickstarter_data">tell.install_quickstarter_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tell.install_raw_data">tell.install_raw_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tell.metadata_eia">tell.metadata_eia module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tell.mlp_predict">tell.mlp_predict module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tell.mlp_prepare_data">tell.mlp_prepare_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tell.mlp_train">tell.mlp_train module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tell.mlp_utils">tell.mlp_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tell.package_data">tell.package_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tell.states_fips_function">tell.states_fips_function module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tell.visualization">tell.visualization module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgement.html">Acknowledgement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">TELL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">API Reference</a></li>
+      <li class="breadcrumb-item active">tell.data_process_compile module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tell.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tell.data_process_compile">
+<span id="tell-data-process-compile-module"></span><h1>tell.data_process_compile module<a class="headerlink" href="#module-tell.data_process_compile" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.data_process_compile.compile_data">
+<span class="sig-prename descclassname"><span class="pre">tell.data_process_compile.</span></span><span class="sig-name descname"><span class="pre">compile_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/data_process_compile.html#compile_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.data_process_compile.compile_data" title="Link to this definition"></a></dt>
+<dd><p>Merge the load, population, and climate data into a single .csv file for each BA</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_year</strong> (<em>int</em>) – Year to start process; four digit year (e.g., 1990)</p></li>
+<li><p><strong>end_year</strong> (<em>int</em>) – Year to end process; four digit year (e.g., 1990)</p></li>
+<li><p><strong>data_input_dir</strong> (<em>str</em>) – Top-level data directory for TELL</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tell.data_process_eia_930">
+<span id="tell-data-process-eia-930-module"></span><h1>tell.data_process_eia_930 module<a class="headerlink" href="#module-tell.data_process_eia_930" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.data_process_eia_930.eia_data_subset">
+<span class="sig-prename descclassname"><span class="pre">tell.data_process_eia_930.</span></span><span class="sig-name descname"><span class="pre">eia_data_subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/data_process_eia_930.html#eia_data_subset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.data_process_eia_930.eia_data_subset" title="Link to this definition"></a></dt>
+<dd><p>Extract only the columns TELL needs from the EIA-930 Excel files</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_string</strong> (<em>str</em>) – File name of EIA-930 hourly load data by BA</p></li>
+<li><p><strong>data_input_dir</strong> (<em>str</em>) – Top-level data directory for TELL</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.data_process_eia_930.list_EIA_930_files">
+<span class="sig-prename descclassname"><span class="pre">tell.data_process_eia_930.</span></span><span class="sig-name descname"><span class="pre">list_EIA_930_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/tell/data_process_eia_930.html#list_EIA_930_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.data_process_eia_930.list_EIA_930_files" title="Link to this definition"></a></dt>
+<dd><p>Make a list of all the file names for the EIA-930 hourly load dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_input_dir</strong> (<em>str</em>) – Top-level data directory for TELL</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.data_process_eia_930.process_eia_930_data">
+<span class="sig-prename descclassname"><span class="pre">tell.data_process_eia_930.</span></span><span class="sig-name descname"><span class="pre">process_eia_930_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/data_process_eia_930.html#process_eia_930_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.data_process_eia_930.process_eia_930_data" title="Link to this definition"></a></dt>
+<dd><p>Read in list of EIA 930 files, subset the data, and save the output as a .csv file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_input_dir</strong> (<em>str</em>) – Top-level data directory for TELL</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – The maximum number of concurrently running jobs, such as the number of Python
+worker processes when backend=”multiprocessing” or the size of the thread-pool
+when backend=”threading”. If -1 all CPUs are used. If 1 is given, no parallel
+computing code is used at all, which is useful for debugging. For n_jobs
+below -1, (n_cpus + 1 + n_jobs) are used. Thus for n_jobs = -2, all CPUs
+but one are used. None is a marker for ‘unset’ that will be interpreted as
+n_jobs=1 (sequential execution) unless the call is performed under a
+parallel_backend context manager that sets another value for n_jobs.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tell.data_process_population">
+<span id="tell-data-process-population-module"></span><h1>tell.data_process_population module<a class="headerlink" href="#module-tell.data_process_population" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.data_process_population.ba_pop_sum">
+<span class="sig-prename descclassname"><span class="pre">tell.data_process_population.</span></span><span class="sig-name descname"><span class="pre">ba_pop_sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/data_process_population.html#ba_pop_sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.data_process_population.ba_pop_sum" title="Link to this definition"></a></dt>
+<dd><p>Sum the total population within a BA’s service territory in a given year</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>map_input_dir</strong> (<em>str</em>) – Directory where the BA-to-county mapping is stored</p></li>
+<li><p><strong>pop_input_dir</strong> (<em>str</em>) – Directory where raw county population data is stored</p></li>
+<li><p><strong>start_year</strong> (<em>int</em>) – Year to start process; four digit year (e.g., 1990)</p></li>
+<li><p><strong>end_year</strong> (<em>int</em>) – Year to end process; four digit year (e.g., 1990)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.data_process_population.extract_future_ba_population">
+<span class="sig-prename descclassname"><span class="pre">tell.data_process_population.</span></span><span class="sig-name descname"><span class="pre">extract_future_ba_population</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ba_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenario</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/data_process_population.html#extract_future_ba_population"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.data_process_population.extract_future_ba_population" title="Link to this definition"></a></dt>
+<dd><p>Calculate the total population living within a BA’s service territory in a given year under
+a given SSP scenario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>year</strong> (<em>int</em>) – Year to process; four digit year (e.g., 1990)</p></li>
+<li><p><strong>ba_code</strong> (<em>str</em>) – Code for the BA you want to process (e.g., ‘PJM’ or ‘CISO’)</p></li>
+<li><p><strong>scenario</strong> (<em>str</em>) – Code for the SSP scenario you want to process (either ‘ssp3’ or ‘ssp5’)</p></li>
+<li><p><strong>data_input_dir</strong> (<em>str</em>) – Top-level data directory for TELL</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Hourly total population living within the BA’s service territory</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.data_process_population.fips_pop_yearly">
+<span class="sig-prename descclassname"><span class="pre">tell.data_process_population.</span></span><span class="sig-name descname"><span class="pre">fips_pop_yearly</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pop_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/data_process_population.html#fips_pop_yearly"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.data_process_population.fips_pop_yearly" title="Link to this definition"></a></dt>
+<dd><p>Read in the raw population data, format columns, and return single dataframe for all years</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pop_input_dir</strong> (<em>str</em>) – Directory where raw county population data is stored</p></li>
+<li><p><strong>start_year</strong> (<em>int</em>) – Year to start process; four digit year (e.g., 1990)</p></li>
+<li><p><strong>end_year</strong> (<em>int</em>) – Year to end process; four digit year (e.g., 1990)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.data_process_population.merge_mapping_data">
+<span class="sig-prename descclassname"><span class="pre">tell.data_process_population.</span></span><span class="sig-name descname"><span class="pre">merge_mapping_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/data_process_population.html#merge_mapping_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.data_process_population.merge_mapping_data" title="Link to this definition"></a></dt>
+<dd><p>Merge the BA mapping files and historical population data based on FIPS codes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>map_input_dir</strong> (<em>str</em>) – Directory where the BA-to-county mapping is stored</p></li>
+<li><p><strong>pop_input_dir</strong> (<em>str</em>) – Directory where raw county population data is stored</p></li>
+<li><p><strong>start_year</strong> (<em>int</em>) – Year to start process; four digit year (e.g., 1990)</p></li>
+<li><p><strong>end_year</strong> (<em>int</em>) – Year to end process; four digit year (e.g., 1990)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.data_process_population.process_ba_population_data">
+<span class="sig-prename descclassname"><span class="pre">tell.data_process_population.</span></span><span class="sig-name descname"><span class="pre">process_ba_population_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/data_process_population.html#process_ba_population_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.data_process_population.process_ba_population_data" title="Link to this definition"></a></dt>
+<dd><p>Calculate a time-series of the total population living with a BAs service territory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_year</strong> (<em>int</em>) – Year to start process; four digit year (e.g., 1990)</p></li>
+<li><p><strong>end_year</strong> (<em>int</em>) – Year to end process; four digit year (e.g., 1990)</p></li>
+<li><p><strong>data_input_dir</strong> (<em>str</em>) – Top-level data directory for TELL</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tell.data_spatial_mapping">
+<span id="tell-data-spatial-mapping-module"></span><h1>tell.data_spatial_mapping module<a class="headerlink" href="#module-tell.data_spatial_mapping" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.data_spatial_mapping.map_ba_service_territory">
+<span class="sig-prename descclassname"><span class="pre">tell.data_spatial_mapping.</span></span><span class="sig-name descname"><span class="pre">map_ba_service_territory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/data_spatial_mapping.html#map_ba_service_territory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.data_spatial_mapping.map_ba_service_territory" title="Link to this definition"></a></dt>
+<dd><p>Workflow function to run the “process_spatial_mapping” function to map BAs to counties</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_year</strong> (<em>int</em>) – Year to start process; four digit year (e.g., 1990)</p></li>
+<li><p><strong>end_year</strong> (<em>int</em>) – Year to end process; four digit year (e.g., 1990)</p></li>
+<li><p><strong>data_input_dir</strong> (<em>str</em>) – Top-level data directory for TELL</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.data_spatial_mapping.process_spatial_mapping">
+<span class="sig-prename descclassname"><span class="pre">tell.data_spatial_mapping.</span></span><span class="sig-name descname"><span class="pre">process_spatial_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fips_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_area_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sales_ult_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bal_auth_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/data_spatial_mapping.html#process_spatial_mapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.data_spatial_mapping.process_spatial_mapping" title="Link to this definition"></a></dt>
+<dd><p>Workflow function to execute the mapping of BAs to counties for a given year</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target_year</strong> (<em>int</em>) – Year to process; four digit year (e.g., 1990)</p></li>
+<li><p><strong>fips_file</strong> (<em>str</em>) – County FIPS code .csv file</p></li>
+<li><p><strong>service_area_file</strong> (<em>str</em>) – Balancing authority service area Excel file</p></li>
+<li><p><strong>sales_ult_file</strong> (<em>str</em>) – Balancing authority sales to ultimate customer Excel file</p></li>
+<li><p><strong>bal_auth_file</strong> (<em>str</em>) – Balancing authority and ID codes Excel file</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – Directory to store the output .csv file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tell.execute_forward">
+<span id="tell-execute-forward-module"></span><h1>tell.execute_forward module<a class="headerlink" href="#module-tell.execute_forward" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.execute_forward.aggregate_mlp_output_files">
+<span class="sig-prename descclassname"><span class="pre">tell.execute_forward.</span></span><span class="sig-name descname"><span class="pre">aggregate_mlp_output_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/execute_forward.html#aggregate_mlp_output_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.execute_forward.aggregate_mlp_output_files" title="Link to this definition"></a></dt>
+<dd><p>Aggregates a list of MLP output files into a dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>list_of_files</strong> (<em>list</em>) – List of MLP output files</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame of all MLP output concatenated together</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.execute_forward.execute_forward">
+<span class="sig-prename descclassname"><span class="pre">tell.execute_forward.</span></span><span class="sig-name descname"><span class="pre">execute_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year_to_process</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcam_target_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenario_to_process</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcam_usa_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlp_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_county_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/execute_forward.html#execute_forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.execute_forward.execute_forward" title="Link to this definition"></a></dt>
+<dd><p>Takes the .csv files produced by the TELL MLP model and distributes
+the predicted load to the counties that each balancing authority (BA) operates
+in. The county-level hourly loads are then summed to the state-level and scaled
+to match the state-level annual loads produced by GCAM-USA. Three sets of output
+files are generated: county-level hourly loads, state-level hourly loads, and
+hourly loads for each BA. There is one additional summary output file that includes
+state-level annual loads from TELL and GCAM-USA as well as the scaling factors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>year_to_process</strong> (<em>str</em>) – Year to process</p></li>
+<li><p><strong>gcam_target_year</strong> (<em>str</em>) – Year to scale against the GCAM-USA annual loads</p></li>
+<li><p><strong>scenario_to_process</strong> (<em>str</em>) – Scenario to process</p></li>
+<li><p><strong>data_output_dir</strong> (<em>str</em>) – Top-level data directory for TELL output</p></li>
+<li><p><strong>gcam_usa_input_dir</strong> (<em>str</em>) – Path to where the GCAM-USA data is stored</p></li>
+<li><p><strong>map_input_dir</strong> (<em>str</em>) – Path to where the BA-to-county mapping data are stored</p></li>
+<li><p><strong>mlp_input_dir</strong> (<em>str</em>) – Path to where the TELL MLP output data are stored</p></li>
+<li><p><strong>pop_input_dir</strong> (<em>str</em>) – Path to where the population projection data are stored</p></li>
+<li><p><strong>save_county_data</strong> (<em>bool</em>) – Set to True if you want to save the time-series of load for each county</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>[0] DataFrame of summary statistics
+[1] DataFrame of BA-level total load time-series
+[2] DataFrame of state-level total load time-series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.execute_forward.extract_gcam_usa_loads">
+<span class="sig-prename descclassname"><span class="pre">tell.execute_forward.</span></span><span class="sig-name descname"><span class="pre">extract_gcam_usa_loads</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario_to_process</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcam_usa_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/execute_forward.html#extract_gcam_usa_loads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.execute_forward.extract_gcam_usa_loads" title="Link to this definition"></a></dt>
+<dd><p>Extracts the state-level annual loads from a GCAM-USA output file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scenario_to_process</strong> (<em>str</em>) – Scenario to process</p></li>
+<li><p><strong>gcam_usa_input_dir</strong> (<em>str</em>) – Path to where the GCAM-USA data are stored</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame of state-level annual total electricity loads</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.execute_forward.output_tell_ba_data">
+<span class="sig-prename descclassname"><span class="pre">tell.execute_forward.</span></span><span class="sig-name descname"><span class="pre">output_tell_ba_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">joint_mlp_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year_to_process</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcam_target_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/execute_forward.html#output_tell_ba_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.execute_forward.output_tell_ba_data" title="Link to this definition"></a></dt>
+<dd><p>Writes a file of the time-series of hourly loads for each BA.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>joint_mlp_df</strong> (<em>DataFrame</em>) – DataFrame of processed TELL loads</p></li>
+<li><p><strong>year_to_process</strong> (<em>str</em>) – Year to process</p></li>
+<li><p><strong>gcam_target_year</strong> (<em>str</em>) – Year to scale against the GCAM-USA annual loads</p></li>
+<li><p><strong>data_output_dir</strong> (<em>str</em>) – Data output directory</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame of BA-level total load time-series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.execute_forward.output_tell_county_data">
+<span class="sig-prename descclassname"><span class="pre">tell.execute_forward.</span></span><span class="sig-name descname"><span class="pre">output_tell_county_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">joint_mlp_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year_to_process</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcam_target_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/execute_forward.html#output_tell_county_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.execute_forward.output_tell_county_data" title="Link to this definition"></a></dt>
+<dd><p>Writes a file of the time-series of hourly loads for each county.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>joint_mlp_df</strong> (<em>DataFrame</em>) – DataFrame of processed TELL loads</p></li>
+<li><p><strong>year_to_process</strong> (<em>str</em>) – Year to process</p></li>
+<li><p><strong>gcam_target_year</strong> (<em>str</em>) – Year to scale against the GCAM-USA annual loads</p></li>
+<li><p><strong>data_output_dir</strong> (<em>str</em>) – Data output directory</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.execute_forward.output_tell_state_data">
+<span class="sig-prename descclassname"><span class="pre">tell.execute_forward.</span></span><span class="sig-name descname"><span class="pre">output_tell_state_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">joint_mlp_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year_to_process</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcam_target_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/execute_forward.html#output_tell_state_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.execute_forward.output_tell_state_data" title="Link to this definition"></a></dt>
+<dd><p>Writes a file of the time-series of hourly loads for each state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>joint_mlp_df</strong> (<em>DataFrame</em>) – DataFrame of processed TELL loads</p></li>
+<li><p><strong>year_to_process</strong> (<em>str</em>) – Year to process</p></li>
+<li><p><strong>gcam_target_year</strong> (<em>str</em>) – Year to scale against the GCAM-USA annual loads</p></li>
+<li><p><strong>data_output_dir</strong> (<em>str</em>) – Data output directory</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame of state-level total load time-series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.execute_forward.output_tell_summary_data">
+<span class="sig-prename descclassname"><span class="pre">tell.execute_forward.</span></span><span class="sig-name descname"><span class="pre">output_tell_summary_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">joint_mlp_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year_to_process</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcam_target_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/execute_forward.html#output_tell_summary_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.execute_forward.output_tell_summary_data" title="Link to this definition"></a></dt>
+<dd><p>Writes a summary file describing state-level annual total loads from TELL and GCAM-USA.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>joint_mlp_df</strong> (<em>DataFrame</em>) – DataFrame of processed TELL loads</p></li>
+<li><p><strong>year_to_process</strong> (<em>str</em>) – Year to process</p></li>
+<li><p><strong>gcam_target_year</strong> (<em>str</em>) – Year to scale against the GCAM-USA annual loads</p></li>
+<li><p><strong>data_output_dir</strong> (<em>str</em>) – Data output directory</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame of summary statistics</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.execute_forward.process_population_scenario">
+<span class="sig-prename descclassname"><span class="pre">tell.execute_forward.</span></span><span class="sig-name descname"><span class="pre">process_population_scenario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario_to_process</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population_data_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/execute_forward.html#process_population_scenario"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.execute_forward.process_population_scenario" title="Link to this definition"></a></dt>
+<dd><p>Read in a future population file and interpolate the data to an annual resolution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scenario_to_process</strong> (<em>str</em>) – Scenario to process</p></li>
+<li><p><strong>population_data_input_dir</strong> (<em>str</em>) – Path to where the sample population projections are stored</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame of population projections at an annual resolution</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tell.install_forcing_data">
+<span id="tell-install-forcing-data-module"></span><h1>tell.install_forcing_data module<a class="headerlink" href="#module-tell.install_forcing_data" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="tell.install_forcing_data.InstallForcingSample">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tell.install_forcing_data.</span></span><span class="sig-name descname"><span class="pre">InstallForcingSample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/install_forcing_data.html#InstallForcingSample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.install_forcing_data.InstallForcingSample" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Download the TELL sample forcing data package from Zenodo that matches the current installed tell distribution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_dir</strong> (<em>str</em>) – Optional. Full path to the directory you wish to store the data in. Default is
+to install it in data directory of the package.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tell.install_forcing_data.InstallForcingSample.DATA_VERSION_URLS">
+<span class="sig-name descname"><span class="pre">DATA_VERSION_URLS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'0.0.1':</span> <span class="pre">'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',</span> <span class="pre">'0.1.0':</span> <span class="pre">'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',</span> <span class="pre">'0.1.1':</span> <span class="pre">'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',</span> <span class="pre">'0.1.2':</span> <span class="pre">'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',</span> <span class="pre">'0.1.3':</span> <span class="pre">'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',</span> <span class="pre">'0.1.4':</span> <span class="pre">'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',</span> <span class="pre">'0.1.5':</span> <span class="pre">'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',</span> <span class="pre">'1.0.0':</span> <span class="pre">'https://zenodo.org/record/6354665/files/sample_forcing_data.zip?download=1',</span> <span class="pre">'1.1.0':</span> <span class="pre">'https://zenodo.org/records/13344803/files/sample_forcing_data.zip?download=1',</span> <span class="pre">'1.2.0':</span> <span class="pre">'https://zenodo.org/records/13344803/files/sample_forcing_data.zip?download=1',</span> <span class="pre">'1.2.1':</span> <span class="pre">'https://zenodo.org/records/13344803/files/sample_forcing_data.zip?download=1',</span> <span class="pre">'1.3.0':</span> <span class="pre">'https://zenodo.org/records/13344803/files/sample_forcing_data.zip?download=1'}</span></em><a class="headerlink" href="#tell.install_forcing_data.InstallForcingSample.DATA_VERSION_URLS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tell.install_forcing_data.InstallForcingSample.DEFAULT_VERSION">
+<span class="sig-name descname"><span class="pre">DEFAULT_VERSION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://zenodo.org/records/13344803/files/sample_forcing_data.zip?download=1'</span></em><a class="headerlink" href="#tell.install_forcing_data.InstallForcingSample.DEFAULT_VERSION" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.install_forcing_data.InstallForcingSample.fetch_zenodo">
+<span class="sig-name descname"><span class="pre">fetch_zenodo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/install_forcing_data.html#InstallForcingSample.fetch_zenodo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.install_forcing_data.InstallForcingSample.fetch_zenodo" title="Link to this definition"></a></dt>
+<dd><p>Download the tell sample forcing data package from Zenodo that matches the current tell distribution</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.install_forcing_data.install_sample_forcing_data">
+<span class="sig-prename descclassname"><span class="pre">tell.install_forcing_data.</span></span><span class="sig-name descname"><span class="pre">install_sample_forcing_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/install_forcing_data.html#install_sample_forcing_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.install_forcing_data.install_sample_forcing_data" title="Link to this definition"></a></dt>
+<dd><p>Download the tell sample forcing data package from Zenodo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_dir</strong> (<em>str</em>) – Optional. Full path to the directory you wish to store the data in. Default is
+to install it in data directory of the package.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tell.install_quickstarter_data">
+<span id="tell-install-quickstarter-data-module"></span><h1>tell.install_quickstarter_data module<a class="headerlink" href="#module-tell.install_quickstarter_data" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="tell.install_quickstarter_data.InstallQuickstarterData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tell.install_quickstarter_data.</span></span><span class="sig-name descname"><span class="pre">InstallQuickstarterData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/install_quickstarter_data.html#InstallQuickstarterData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.install_quickstarter_data.InstallQuickstarterData" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Download the TELL sample output data package from Zenodo that matches the current installed tell distribution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_dir</strong> (<em>str</em>) – Optional. Full path to the directory you wish to store the data in. Default is
+to install it in data directory of the package.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tell.install_quickstarter_data.InstallQuickstarterData.DATA_VERSION_URLS">
+<span class="sig-name descname"><span class="pre">DATA_VERSION_URLS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'0.0.1':</span> <span class="pre">'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1',</span> <span class="pre">'0.1.0':</span> <span class="pre">'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1',</span> <span class="pre">'0.1.1':</span> <span class="pre">'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1',</span> <span class="pre">'0.1.2':</span> <span class="pre">'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1',</span> <span class="pre">'0.1.3':</span> <span class="pre">'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1',</span> <span class="pre">'0.1.4':</span> <span class="pre">'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1',</span> <span class="pre">'0.1.5':</span> <span class="pre">'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1',</span> <span class="pre">'1.0.0':</span> <span class="pre">'https://zenodo.org/record/6804242/files/tell_quickstarter_data.zip?download=1',</span> <span class="pre">'1.1.0':</span> <span class="pre">'https://zenodo.org/records/13344957/files/tell_quickstarter_data.zip?download=1',</span> <span class="pre">'1.2.0':</span> <span class="pre">'https://zenodo.org/records/13344957/files/tell_quickstarter_data.zip?download=1',</span> <span class="pre">'1.2.1':</span> <span class="pre">'https://zenodo.org/records/13344957/files/tell_quickstarter_data.zip?download=1',</span> <span class="pre">'1.3.0':</span> <span class="pre">'https://zenodo.org/records/13344957/files/tell_quickstarter_data.zip?download=1'}</span></em><a class="headerlink" href="#tell.install_quickstarter_data.InstallQuickstarterData.DATA_VERSION_URLS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tell.install_quickstarter_data.InstallQuickstarterData.DEFAULT_VERSION">
+<span class="sig-name descname"><span class="pre">DEFAULT_VERSION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://zenodo.org/records/13344957/files/tell_quickstarter_data.zip?download=1'</span></em><a class="headerlink" href="#tell.install_quickstarter_data.InstallQuickstarterData.DEFAULT_VERSION" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.install_quickstarter_data.InstallQuickstarterData.fetch_zenodo">
+<span class="sig-name descname"><span class="pre">fetch_zenodo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/install_quickstarter_data.html#InstallQuickstarterData.fetch_zenodo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.install_quickstarter_data.InstallQuickstarterData.fetch_zenodo" title="Link to this definition"></a></dt>
+<dd><p>Download the TELL quickstarter data package from Zenodo that matches the current installed tell distribution</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.install_quickstarter_data.install_quickstarter_data">
+<span class="sig-prename descclassname"><span class="pre">tell.install_quickstarter_data.</span></span><span class="sig-name descname"><span class="pre">install_quickstarter_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/install_quickstarter_data.html#install_quickstarter_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.install_quickstarter_data.install_quickstarter_data" title="Link to this definition"></a></dt>
+<dd><p>Download the TELL quickstarter data package from Zenodo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_dir</strong> (<em>str</em>) – Optional. Full path to the directory you wish to store the data in. Default is
+to install it in data directory of the package.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tell.install_raw_data">
+<span id="tell-install-raw-data-module"></span><h1>tell.install_raw_data module<a class="headerlink" href="#module-tell.install_raw_data" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="tell.install_raw_data.InstallRawData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tell.install_raw_data.</span></span><span class="sig-name descname"><span class="pre">InstallRawData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/install_raw_data.html#InstallRawData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.install_raw_data.InstallRawData" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Download the TELL raw data package from Zenodo that matches the current installed tell distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_dir</strong> (<em>str</em>) – Optional. Full path to the directory you wish to store the data in. Default is
+to install it in data directory of the package.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tell.install_raw_data.InstallRawData.DATA_VERSION_URLS">
+<span class="sig-name descname"><span class="pre">DATA_VERSION_URLS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'0.0.1':</span> <span class="pre">'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',</span> <span class="pre">'0.1.0':</span> <span class="pre">'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',</span> <span class="pre">'0.1.1':</span> <span class="pre">'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',</span> <span class="pre">'0.1.2':</span> <span class="pre">'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',</span> <span class="pre">'0.1.3':</span> <span class="pre">'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',</span> <span class="pre">'0.1.4':</span> <span class="pre">'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',</span> <span class="pre">'0.1.5':</span> <span class="pre">'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',</span> <span class="pre">'1.0.0':</span> <span class="pre">'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',</span> <span class="pre">'1.1.0':</span> <span class="pre">'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',</span> <span class="pre">'1.1.1':</span> <span class="pre">'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',</span> <span class="pre">'1.2.0':</span> <span class="pre">'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',</span> <span class="pre">'1.2.1':</span> <span class="pre">'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1',</span> <span class="pre">'1.3.0':</span> <span class="pre">'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1'}</span></em><a class="headerlink" href="#tell.install_raw_data.InstallRawData.DATA_VERSION_URLS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tell.install_raw_data.InstallRawData.DEFAULT_VERSION">
+<span class="sig-name descname"><span class="pre">DEFAULT_VERSION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://zenodo.org/record/6378036/files/tell_raw_data.zip?download=1'</span></em><a class="headerlink" href="#tell.install_raw_data.InstallRawData.DEFAULT_VERSION" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.install_raw_data.InstallRawData.fetch_zenodo">
+<span class="sig-name descname"><span class="pre">fetch_zenodo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/install_raw_data.html#InstallRawData.fetch_zenodo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.install_raw_data.InstallRawData.fetch_zenodo" title="Link to this definition"></a></dt>
+<dd><p>Download and unpack the Zenodo raw data package for the current TELL distribution.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.install_raw_data.install_tell_raw_data">
+<span class="sig-prename descclassname"><span class="pre">tell.install_raw_data.</span></span><span class="sig-name descname"><span class="pre">install_tell_raw_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/install_raw_data.html#install_tell_raw_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.install_raw_data.install_tell_raw_data" title="Link to this definition"></a></dt>
+<dd><p>Download and unpack the raw TELL data package from Zenodo that matches the current installed
+tell distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_dir</strong> (<em>str</em>) – Optional. Full path to the directory you wish to store the data in. Default is
+to install it in data directory of the package.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tell.metadata_eia">
+<span id="tell-metadata-eia-module"></span><h1>tell.metadata_eia module<a class="headerlink" href="#module-tell.metadata_eia" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.metadata_eia.metadata_eia">
+<span class="sig-prename descclassname"><span class="pre">tell.metadata_eia.</span></span><span class="sig-name descname"><span class="pre">metadata_eia</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">numbers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/metadata_eia.html#metadata_eia"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.metadata_eia.metadata_eia" title="Link to this definition"></a></dt>
+<dd><p>Define the state FIPS code and state name from a given state abbreviation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>numbers</strong> (<em>int</em>) – EIA 930 BA number</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame with BA short and long name</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tell.mlp_predict">
+<span id="tell-mlp-predict-module"></span><h1>tell.mlp_predict module<a class="headerlink" href="#module-tell.mlp_predict" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.mlp_predict.predict">
+<span class="sig-prename descclassname"><span class="pre">tell.mlp_predict.</span></span><span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime_field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Time_UTC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_prediction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_output_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/mlp_predict.html#predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_predict.predict" title="Link to this definition"></a></dt>
+<dd><p>Generate predictions for MLP model for a target region from an input CSV file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> (<em>str</em>) – Indicating region / balancing authority we want to train and test on.
+Must match with string in CSV files.</p></li>
+<li><p><strong>year</strong> (<em>int</em>) – Target year to use in YYYY format.</p></li>
+<li><p><strong>data_dir</strong> (<em>str</em>) – Full path to the directory that houses the input CSV files.</p></li>
+<li><p><strong>save_prediction</strong> (<em>bool</em>) – Choice to write predictions to a .csv file</p></li>
+<li><p><strong>prediction_output_directory</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>None</em><em>]</em>) – Full path to output directory where prediction files will be written.</p></li>
+<li><p><strong>datetime_field_name</strong> (<em>str</em>) – Name of the datetime field.</p></li>
+<li><p><strong>data_column_rename_dict</strong> (<em>Optional</em><em>[</em><em>dict</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Dictionary for the field names present in the input CSV file (keys) to what the
+code expects them to be (values).</p></li>
+<li><p><strong>expected_datetime_columns</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Expected names of the date time columns in the input CSV file.</p></li>
+<li><p><strong>hour_field_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Field name of the hour field in the input CSV file.</p></li>
+<li><p><strong>month_field_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Field name of the month field in the input CSV file.</p></li>
+<li><p><strong>x_variables</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Target variable list.</p></li>
+<li><p><strong>add_dayofweek_xvars</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>) – True if the user wishes to add weekday and holiday targets to the x variables.</p></li>
+<li><p><strong>y_variables</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Feature variable list.</p></li>
+<li><p><strong>day_list</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – List of day abbreviations and their order.</p></li>
+<li><p><strong>seed_value</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – Seed value to reproduce randomization.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Choice to see logged outputs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Prediction data frame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.mlp_predict.predict_batch">
+<span class="sig-prename descclassname"><span class="pre">tell.mlp_predict.</span></span><span class="sig-name descname"><span class="pre">predict_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_region_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime_field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Time_UTC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_prediction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_output_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/mlp_predict.html#predict_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_predict.predict_batch" title="Link to this definition"></a></dt>
+<dd><p>Generate predictions for MLP model for a target region from an input CSV file for all regions
+in input list in parallel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target_region_list</strong> (<em>list</em>) – List of names indicating region / balancing authority we want to train and test
+on. Must match with string in CSV files.</p></li>
+<li><p><strong>year</strong> (<em>int</em>) – Target year to use in YYYY format.</p></li>
+<li><p><strong>data_dir</strong> (<em>str</em>) – Full path to the directory that houses the input CSV files.</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – The maximum number of concurrently running jobs, such as the number of Python
+worker processes when backend=”multiprocessing” or the size of the thread-pool
+when backend=”threading”. If -1 all CPUs are used. If 1 is given, no parallel
+computing code is used at all, which is useful for debugging. For n_jobs
+below -1, (n_cpus + 1 + n_jobs) are used. Thus for n_jobs = -2, all CPUs
+but one are used. None is a marker for ‘unset’ that will be interpreted as
+n_jobs=1 (sequential execution) unless the call is performed under a
+parallel_backend context manager that sets another value for n_jobs.</p></li>
+<li><p><strong>datetime_field_name</strong> (<em>str</em>) – Name of the datetime field.</p></li>
+<li><p><strong>save_prediction</strong> (<em>bool</em>) – Choice to write predictions to a .csv file</p></li>
+<li><p><strong>prediction_output_directory</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>None</em><em>]</em>) – Full path to output directory where prediction files will be written.</p></li>
+<li><p><strong>data_column_rename_dict</strong> (<em>Optional</em><em>[</em><em>dict</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Dictionary for the field names present in the input CSV file (keys) to what the
+code expects them to be (values).</p></li>
+<li><p><strong>expected_datetime_columns</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Expected names of the date time columns in the input CSV file.</p></li>
+<li><p><strong>hour_field_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Field name of the hour field in the input CSV file.</p></li>
+<li><p><strong>month_field_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Field name of the month field in the input CSV file.</p></li>
+<li><p><strong>x_variables</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Target variable list.</p></li>
+<li><p><strong>add_dayofweek_xvars</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>) – True if the user wishes to add weekday and holiday targets to the x variables.</p></li>
+<li><p><strong>y_variables</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Feature variable list.</p></li>
+<li><p><strong>day_list</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – List of day abbreviations and their order.</p></li>
+<li><p><strong>seed_value</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – Seed value to reproduce randomization.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Choice to see logged outputs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Prediction data frame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tell.mlp_prepare_data">
+<span id="tell-mlp-prepare-data-module"></span><h1>tell.mlp_prepare_data module<a class="headerlink" href="#module-tell.mlp_prepare_data" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetPredict">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tell.mlp_prepare_data.</span></span><span class="sig-name descname"><span class="pre">DatasetPredict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime_field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Time_UTC'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DatasetPredict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DatasetPredict" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#tell.mlp_prepare_data.DefaultSettings" title="tell.mlp_prepare_data.DefaultSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultSettings</span></code></a></p>
+<p>Clean and format input weather data for use in predictive models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> (<em>str</em>) – Indicating region / balancing authority we want to train and test on.
+Must match with string in CSV files.</p></li>
+<li><p><strong>year</strong> (<em>int</em>) – Target year to use in YYYY format.</p></li>
+<li><p><strong>data_dir</strong> (<em>str</em>) – Full path to the directory that houses the input CSV files.</p></li>
+<li><p><strong>datetime_field_name</strong> (<em>str</em>) – Name of the datetime field.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetPredict.DATETIME_FIELD">
+<span class="sig-name descname"><span class="pre">DATETIME_FIELD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Datetime'</span></em><a class="headerlink" href="#tell.mlp_prepare_data.DatasetPredict.DATETIME_FIELD" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetPredict.HOLIDAY_FIELD">
+<span class="sig-name descname"><span class="pre">HOLIDAY_FIELD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Holidays'</span></em><a class="headerlink" href="#tell.mlp_prepare_data.DatasetPredict.HOLIDAY_FIELD" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetPredict.NODATA_VALUE">
+<span class="sig-name descname"><span class="pre">NODATA_VALUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">nan</span></em><a class="headerlink" href="#tell.mlp_prepare_data.DatasetPredict.NODATA_VALUE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetPredict.WEEKDAY_FIELD">
+<span class="sig-name descname"><span class="pre">WEEKDAY_FIELD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Weekday'</span></em><a class="headerlink" href="#tell.mlp_prepare_data.DatasetPredict.WEEKDAY_FIELD" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetPredict.breakout_day_designation">
+<span class="sig-name descname"><span class="pre">breakout_day_designation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DatasetPredict.breakout_day_designation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DatasetPredict.breakout_day_designation" title="Link to this definition"></a></dt>
+<dd><p>Add a field for weekday, each day of the week, and holidays to the data frame.</p>
+<p>Weekdays are designated as 1 for weekdays (Mon through Fri) and weekends are designated as 0 (Sat and Sun).
+Each day of the week is given its own field which has a 1 if the record is in that day and a 0 if not.
+Holidays are set to 1 to indicate a US Federal holiday and 0 if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>pd.DataFrame</em>) – Data frame for the target region.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>[0] Formatted data frame
+[1] List of extended x_variables</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetPredict.clean_data">
+<span class="sig-name descname"><span class="pre">clean_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_records</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DatasetPredict.clean_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DatasetPredict.clean_data" title="Link to this definition"></a></dt>
+<dd><p>Clean data based on criteria for handling NoData and extreme values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – Input data frame for the target region.</p></li>
+<li><p><strong>drop_records</strong> (<em>bool</em>) – If True, drop records; else, alter records</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Processed data frame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetPredict.extract_targets_features">
+<span class="sig-name descname"><span class="pre">extract_targets_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DatasetPredict.extract_targets_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DatasetPredict.extract_targets_features" title="Link to this definition"></a></dt>
+<dd><p>Keep datetime, target, and feature fields.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>pd.DataFrame</em>) – Input data frame for the target region.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetPredict.fetch_read_file">
+<span class="sig-name descname"><span class="pre">fetch_read_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DatasetPredict.fetch_read_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DatasetPredict.fetch_read_file" title="Link to this definition"></a></dt>
+<dd><p>Get the input file from the data directory matching the region name and year
+and read it into a pandas data frame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetPredict.format_filter_data">
+<span class="sig-name descname"><span class="pre">format_filter_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DatasetPredict.format_filter_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DatasetPredict.format_filter_data" title="Link to this definition"></a></dt>
+<dd><p>Format the input data file.  Filter data by user provided date range and sort in
+ascending order by the timestamp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>pd.DataFrame</em>) – Data frame for the target region</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Formatted data frame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetPredict.generate_data">
+<span class="sig-name descname"><span class="pre">generate_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DatasetPredict.generate_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DatasetPredict.generate_data" title="Link to this definition"></a></dt>
+<dd><p>Workhorse function to clean and format input data for use in the predictive model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetPredict.update_default_settings">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_default_settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#tell.mlp_prepare_data.DatasetPredict.update_default_settings" title="Link to this definition"></a></dt>
+<dd><p>Read the default settings YAML file into a dictionary.  Updates any settings passed in from via kwargs
+from the user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<em>dict</em>) – Keyword argument dictionary from user.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary of updated default settings.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetPredict.update_hyperparameters">
+<span class="sig-name descname"><span class="pre">update_hyperparameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tell.mlp_prepare_data.DatasetPredict.update_hyperparameters" title="Link to this definition"></a></dt>
+<dd><p>Update hyperparameter values from defaults if the user does not provide them.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetTrain">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tell.mlp_prepare_data.</span></span><span class="sig-name descname"><span class="pre">DatasetTrain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DatasetTrain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DatasetTrain" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#tell.mlp_prepare_data.DefaultSettings" title="tell.mlp_prepare_data.DefaultSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultSettings</span></code></a></p>
+<p>Clean and format input data for use in training predictive models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> (<em>str</em>) – Indicating region / balancing authority we want to train and test on.
+Must match with string in CSV files.</p></li>
+<li><p><strong>data_dir</strong> (<em>str</em>) – Full path to the directory that houses the input CSV files.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetTrain.DATETIME_FIELD">
+<span class="sig-name descname"><span class="pre">DATETIME_FIELD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Datetime'</span></em><a class="headerlink" href="#tell.mlp_prepare_data.DatasetTrain.DATETIME_FIELD" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetTrain.HOLIDAY_FIELD">
+<span class="sig-name descname"><span class="pre">HOLIDAY_FIELD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Holidays'</span></em><a class="headerlink" href="#tell.mlp_prepare_data.DatasetTrain.HOLIDAY_FIELD" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetTrain.NODATA_VALUE">
+<span class="sig-name descname"><span class="pre">NODATA_VALUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">nan</span></em><a class="headerlink" href="#tell.mlp_prepare_data.DatasetTrain.NODATA_VALUE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetTrain.WEEKDAY_FIELD">
+<span class="sig-name descname"><span class="pre">WEEKDAY_FIELD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Weekday'</span></em><a class="headerlink" href="#tell.mlp_prepare_data.DatasetTrain.WEEKDAY_FIELD" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetTrain.breakout_day_designation">
+<span class="sig-name descname"><span class="pre">breakout_day_designation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DatasetTrain.breakout_day_designation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DatasetTrain.breakout_day_designation" title="Link to this definition"></a></dt>
+<dd><p>Add a field for weekday, each day of the week, and holidays to the data frame.</p>
+<p>Weekdays are designated as 1 for weekdays (Mon through Fri) and weekends are designated as 0 (Sat and Sun).
+Each day of the week is given its own field which has a 1 if the record is in that day and a 0 if not.
+Holidays are set to 1 to indicate a US Federal holiday and 0 if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>pd.DataFrame</em>) – Data frame for the target region.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>[0] Formatted data frame
+[1] List of extended x_variables</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetTrain.clean_data">
+<span class="sig-name descname"><span class="pre">clean_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_records</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iqr_scale_constant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3.5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DatasetTrain.clean_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DatasetTrain.clean_data" title="Link to this definition"></a></dt>
+<dd><p>Clean data based on criteria for handling NoData and extreme values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – Input data frame for the target region.</p></li>
+<li><p><strong>drop_records</strong> (<em>bool</em>) – If True, drop records; else, alter records</p></li>
+<li><p><strong>iqr_scale_constant</strong> (<em>float</em>) – Scale factor controlling the sensitivity of the IQR to outliers</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Processed data frame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetTrain.extract_targets_features">
+<span class="sig-name descname"><span class="pre">extract_targets_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DatasetTrain.extract_targets_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DatasetTrain.extract_targets_features" title="Link to this definition"></a></dt>
+<dd><p>Keep datetime, target, and feature fields.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>pd.DataFrame</em>) – Input data frame for the target region.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetTrain.fetch_read_file">
+<span class="sig-name descname"><span class="pre">fetch_read_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DatasetTrain.fetch_read_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DatasetTrain.fetch_read_file" title="Link to this definition"></a></dt>
+<dd><p>Get the input file from the data directory matching the region name and read it into a pandas data frame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetTrain.format_filter_data">
+<span class="sig-name descname"><span class="pre">format_filter_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DatasetTrain.format_filter_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DatasetTrain.format_filter_data" title="Link to this definition"></a></dt>
+<dd><p>Format the input data file.  Filter data by user provided date range and sort in
+ascending order by the timestamp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>pd.DataFrame</em>) – Data frame for the target region</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Formatted data frame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetTrain.generate_data">
+<span class="sig-name descname"><span class="pre">generate_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DatasetTrain.generate_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DatasetTrain.generate_data" title="Link to this definition"></a></dt>
+<dd><p>Workhorse function to clean and format input data for use in the predictive model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetTrain.iqr_outlier_detection">
+<span class="sig-name descname"><span class="pre">iqr_outlier_detection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_records</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_constant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3.5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DatasetTrain.iqr_outlier_detection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DatasetTrain.iqr_outlier_detection" title="Link to this definition"></a></dt>
+<dd><p>Outlier detection using interquartile range (IQR).  Drops or adjusts outliers that are outside
+the acceptable range, NaN, or at or below 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – Input data frame for the target region.</p></li>
+<li><p><strong>drop_records</strong> (<em>bool</em>) – If True, drop records; else, alter records</p></li>
+<li><p><strong>scale_constant</strong> (<em>float</em>) – Scale factor controlling the sensitivity of the IQR to outliers</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Processed data frame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetTrain.split_train_test">
+<span class="sig-name descname"><span class="pre">split_train_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DatasetTrain.split_train_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DatasetTrain.split_train_test" title="Link to this definition"></a></dt>
+<dd><p>Split the data frame into test and training data based on a datetime.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>pd.DataFrame</em>) – Input data frame for the target region.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>[0] training data frame
+[1] testing data frame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetTrain.update_default_settings">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_default_settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#tell.mlp_prepare_data.DatasetTrain.update_default_settings" title="Link to this definition"></a></dt>
+<dd><p>Read the default settings YAML file into a dictionary.  Updates any settings passed in from via kwargs
+from the user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<em>dict</em>) – Keyword argument dictionary from user.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary of updated default settings.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DatasetTrain.update_hyperparameters">
+<span class="sig-name descname"><span class="pre">update_hyperparameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tell.mlp_prepare_data.DatasetTrain.update_hyperparameters" title="Link to this definition"></a></dt>
+<dd><p>Update hyperparameter values from defaults if the user does not provide them.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DefaultSettings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tell.mlp_prepare_data.</span></span><span class="sig-name descname"><span class="pre">DefaultSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DefaultSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DefaultSettings" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Default settings for the MLP model. Updates any settings passed in from via kwargs from the user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> (<em>str</em>) – Indicating region / balancing authority we want to train and test on.
+Must match with string in CSV files.</p></li>
+<li><p><strong>data_dir</strong> (<em>str</em>) – Full path to the directory that houses the input CSV files.</p></li>
+<li><p><strong>mlp_hidden_layer_sizes</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The ith element represents the number of neurons in the ith hidden layer.</p></li>
+<li><p><strong>mlp_max_iter</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – Maximum number of iterations. The solver iterates until convergence
+(determined by ‘tol’) or this number of iterations. For stochastic solvers
+(‘sgd’, ‘adam’), note that this determines the number of epochs (how many
+times each data point will be used), not the number of gradient steps.</p></li>
+<li><p><strong>mlp_validation_fraction</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – The proportion of training data to set aside as validation set for early
+stopping. Must be between 0 and 1.</p></li>
+<li><p><strong>data_column_rename_dict</strong> (<em>Optional</em><em>[</em><em>dict</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Dictionary for the field names present in the input CSV file (keys) to what the
+code expects them to be (values).</p></li>
+<li><p><strong>expected_datetime_columns</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Expected names of the date time columns in the input CSV file.</p></li>
+<li><p><strong>hour_field_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Field name of the hour field in the input CSV file.</p></li>
+<li><p><strong>month_field_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Field name of the month field in the input CSV file.</p></li>
+<li><p><strong>year_field_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Field name of the year field in the input CSV file.</p></li>
+<li><p><strong>x_variables</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Target variable list.</p></li>
+<li><p><strong>add_dayofweek_xvars</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>) – True if the user wishes to add weekday and holiday targets to the x variables.</p></li>
+<li><p><strong>y_variables</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Feature variable list.</p></li>
+<li><p><strong>day_list</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – List of day abbreviations and their order.</p></li>
+<li><p><strong>start_time</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Timestamp showing the datetime of for the run to start
+(e.g., 2016-01-01 00:00:00).</p></li>
+<li><p><strong>end_time</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Timestamp showing the datetime of for the run to end
+(e.g., 2019-12-31 23:00:00).</p></li>
+<li><p><strong>split_datetime</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Timestamp showing the datetime to split the train and test data by
+(e.g., 2018-12-31 23:00:00).</p></li>
+<li><p><strong>seed_value</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – Seed value to reproduce randomization.</p></li>
+<li><p><strong>save_model</strong> (<em>bool</em>) – Choice to write ML models to a pickled file via joblib.</p></li>
+<li><p><strong>model_output_directory</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>None</em><em>]</em>) – Full path to output directory where model file will be written.</p></li>
+<li><p><strong>save_prediction</strong> (<em>bool</em>) – Choice to write predictions to a .csv file</p></li>
+<li><p><strong>prediction_output_directory</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>None</em><em>]</em>) – Full path to output directory where prediction files will be written.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Choice to see logged outputs.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DefaultSettings.DATETIME_FIELD">
+<span class="sig-name descname"><span class="pre">DATETIME_FIELD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Datetime'</span></em><a class="headerlink" href="#tell.mlp_prepare_data.DefaultSettings.DATETIME_FIELD" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DefaultSettings.HOLIDAY_FIELD">
+<span class="sig-name descname"><span class="pre">HOLIDAY_FIELD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Holidays'</span></em><a class="headerlink" href="#tell.mlp_prepare_data.DefaultSettings.HOLIDAY_FIELD" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DefaultSettings.NODATA_VALUE">
+<span class="sig-name descname"><span class="pre">NODATA_VALUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">nan</span></em><a class="headerlink" href="#tell.mlp_prepare_data.DefaultSettings.NODATA_VALUE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DefaultSettings.WEEKDAY_FIELD">
+<span class="sig-name descname"><span class="pre">WEEKDAY_FIELD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Weekday'</span></em><a class="headerlink" href="#tell.mlp_prepare_data.DefaultSettings.WEEKDAY_FIELD" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DefaultSettings.update_default_settings">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_default_settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DefaultSettings.update_default_settings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DefaultSettings.update_default_settings" title="Link to this definition"></a></dt>
+<dd><p>Read the default settings YAML file into a dictionary.  Updates any settings passed in from via kwargs
+from the user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<em>dict</em>) – Keyword argument dictionary from user.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary of updated default settings.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tell.mlp_prepare_data.DefaultSettings.update_hyperparameters">
+<span class="sig-name descname"><span class="pre">update_hyperparameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/mlp_prepare_data.html#DefaultSettings.update_hyperparameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_prepare_data.DefaultSettings.update_hyperparameters" title="Link to this definition"></a></dt>
+<dd><p>Update hyperparameter values from defaults if the user does not provide them.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-tell.mlp_train">
+<span id="tell-mlp-train-module"></span><h1>tell.mlp_train module<a class="headerlink" href="#module-tell.mlp_train" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.mlp_train.train">
+<span class="sig-prename descclassname"><span class="pre">tell.mlp_train.</span></span><span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/mlp_train.html#train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_train.train" title="Link to this definition"></a></dt>
+<dd><p>Generate predictions for MLP model for a target region from an input CSV file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> (<em>str</em>) – Indicating region / balancing authority we want to train and test on.
+Must match with string in CSV files.</p></li>
+<li><p><strong>data_dir</strong> (<em>str</em>) – Full path to the directory that houses the input CSV files.</p></li>
+<li><p><strong>mlp_hidden_layer_sizes</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The ith element represents the number of neurons in the ith hidden layer.</p></li>
+<li><p><strong>mlp_max_iter</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – Maximum number of iterations. The solver iterates until convergence
+(determined by ‘tol’) or this number of iterations. For stochastic solvers
+(‘sgd’, ‘adam’), note that this determines the number of epochs (how many
+times each data point will be used), not the number of gradient steps.</p></li>
+<li><p><strong>mlp_validation_fraction</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – The proportion of training data to set aside as validation set for early
+stopping. Must be between 0 and 1.</p></li>
+<li><p><strong>data_column_rename_dict</strong> (<em>Optional</em><em>[</em><em>dict</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Dictionary for the field names present in the input CSV file (keys) to what the
+code expects them to be (values).</p></li>
+<li><p><strong>expected_datetime_columns</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Expected names of the date time columns in the input CSV file.</p></li>
+<li><p><strong>hour_field_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Field name of the hour field in the input CSV file.</p></li>
+<li><p><strong>month_field_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Field name of the month field in the input CSV file.</p></li>
+<li><p><strong>x_variables</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Target variable list.</p></li>
+<li><p><strong>add_dayofweek_xvars</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>) – True if the user wishes to add weekday and holiday targets to the x variables.</p></li>
+<li><p><strong>y_variables</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Feature variable list.</p></li>
+<li><p><strong>day_list</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – List of day abbreviations and their order.</p></li>
+<li><p><strong>start_time</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Timestamp showing the datetime of for the run to start
+(e.g., 2016-01-01 00:00:00).</p></li>
+<li><p><strong>end_time</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Timestamp showing the datetime of for the run to end
+(e.g., 2019-12-31 23:00:00).</p></li>
+<li><p><strong>split_datetime</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Timestamp showing the datetime to split the train and test data by
+(e.g., 2018-12-31 23:00:00).</p></li>
+<li><p><strong>nodata_value</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – No data value in the input CSV file.</p></li>
+<li><p><strong>seed_value</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – Seed value to reproduce randomization.</p></li>
+<li><p><strong>save_model</strong> (<em>bool</em>) – Choice to write ML models to a pickled file via joblib.</p></li>
+<li><p><strong>model_output_directory</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>None</em><em>]</em>) – Full path to output directory where model file will be written.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Choice to see logged outputs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>[0] Predictions as a dataframe
+[1] Summary statistics as a dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.mlp_train.train_batch">
+<span class="sig-prename descclassname"><span class="pre">tell.mlp_train.</span></span><span class="sig-name descname"><span class="pre">train_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_region_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/mlp_train.html#train_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_train.train_batch" title="Link to this definition"></a></dt>
+<dd><p>Generate predictions for MLP model for a target region from an input CSV file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target_region_list</strong> (<em>list</em>) – List of names indicating region / balancing authority we want to train and test
+on. Must match with string in CSV files.</p></li>
+<li><p><strong>data_dir</strong> (<em>str</em>) – Full path to the directory that houses the input CSV files.</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – The maximum number of concurrently running jobs, such as the number of Python
+worker processes when backend=”multiprocessing” or the size of the thread-pool
+when backend=”threading”. If -1 all CPUs are used. If 1 is given, no parallel
+computing code is used at all, which is useful for debugging. For n_jobs
+below -1, (n_cpus + 1 + n_jobs) are used. Thus for n_jobs = -2, all CPUs
+but one are used. None is a marker for ‘unset’ that will be interpreted as
+n_jobs=1 (sequential execution) unless the call is performed under a
+parallel_backend context manager that sets another value for n_jobs.</p></li>
+<li><p><strong>mlp_hidden_layer_sizes</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The ith element represents the number of neurons in the ith hidden layer.</p></li>
+<li><p><strong>mlp_max_iter</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – Maximum number of iterations. The solver iterates until convergence
+(determined by ‘tol’) or this number of iterations. For stochastic solvers
+(‘sgd’, ‘adam’), note that this determines the number of epochs (how many
+times each data point will be used), not the number of gradient steps.</p></li>
+<li><p><strong>mlp_validation_fraction</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – The proportion of training data to set aside as validation set for early
+stopping. Must be between 0 and 1.</p></li>
+<li><p><strong>data_column_rename_dict</strong> (<em>Optional</em><em>[</em><em>dict</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Dictionary for the field names present in the input CSV file (keys) to what the
+code expects them to be (values).</p></li>
+<li><p><strong>expected_datetime_columns</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Expected names of the date time columns in the input CSV file.</p></li>
+<li><p><strong>hour_field_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Field name of the hour field in the input CSV file.</p></li>
+<li><p><strong>month_field_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Field name of the month field in the input CSV file.</p></li>
+<li><p><strong>x_variables</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Target variable list.</p></li>
+<li><p><strong>add_dayofweek_xvars</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>) – True if the user wishes to add weekday and holiday targets to the x variables.</p></li>
+<li><p><strong>y_variables</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Feature variable list.</p></li>
+<li><p><strong>day_list</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – List of day abbreviations and their order.</p></li>
+<li><p><strong>start_time</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Timestamp showing the datetime of for the run to start
+(e.g., 2016-01-01 00:00:00).</p></li>
+<li><p><strong>end_time</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Timestamp showing the datetime of for the run to end
+(e.g., 2019-12-31 23:00:00).</p></li>
+<li><p><strong>split_datetime</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Timestamp showing the datetime to split the train and test data by
+(e.g., 2018-12-31 23:00:00).</p></li>
+<li><p><strong>nodata_value</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – No data value in the input CSV file.</p></li>
+<li><p><strong>seed_value</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – Seed value to reproduce randomization.</p></li>
+<li><p><strong>save_model</strong> (<em>bool</em>) – Choice to write ML models to a pickled file via joblib.</p></li>
+<li><p><strong>model_output_directory</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>None</em><em>]</em>) – Full path to output directory where model file will be written.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Choice to see logged outputs.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.mlp_train.train_mlp_model">
+<span class="sig-prename descclassname"><span class="pre">tell.mlp_train.</span></span><span class="sig-name descname"><span class="pre">train_mlp_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlp_hidden_layer_sizes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlp_max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlp_validation_fraction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_output_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/tell/mlp_train.html#train_mlp_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_train.train_mlp_model" title="Link to this definition"></a></dt>
+<dd><p>Trains the MLP model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> (<em>str</em>) – Indicating region / balancing authority we want to train and test on.
+Must match with string in CSV files.</p></li>
+<li><p><strong>x_train</strong> (<em>np.ndarray</em>) – Training features</p></li>
+<li><p><strong>y_train</strong> (<em>np.ndarray</em>) – Training targets</p></li>
+<li><p><strong>x_test</strong> (<em>np.ndarray</em>) – Test features</p></li>
+<li><p><strong>mlp_hidden_layer_sizes</strong> (<em>int</em>) – The ith element represents the number of neurons in the ith hidden layer.</p></li>
+<li><p><strong>mlp_max_iter</strong> (<em>int</em>) – Maximum number of iterations. The solver iterates until convergence
+(determined by ‘tol’) or this number of iterations. For stochastic solvers
+(‘sgd’, ‘adam’), note that this determines the number of epochs (how many
+times each data point will be used), not the number of gradient steps.</p></li>
+<li><p><strong>mlp_validation_fraction</strong> (<em>float</em>) – The proportion of training data to set aside as validation set for early
+stopping. Must be between 0 and 1.</p></li>
+<li><p><strong>save_model</strong> (<em>bool</em>) – Choice to write ML models to a pickled file via joblib.</p></li>
+<li><p><strong>model_output_directory</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>None</em><em>]</em>) – Full path to output directory where model file will be written.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>y_p: np.ndarray -&gt; predictions over test set</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tell.mlp_utils">
+<span id="tell-mlp-utils-module"></span><h1>tell.mlp_utils module<a class="headerlink" href="#module-tell.mlp_utils" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.mlp_utils.denormalize_features">
+<span class="sig-prename descclassname"><span class="pre">tell.mlp_utils.</span></span><span class="sig-name descname"><span class="pre">denormalize_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalized_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_predicted_normalized</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_comparison</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime_arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/mlp_utils.html#denormalize_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_utils.denormalize_features" title="Link to this definition"></a></dt>
+<dd><p>Function to denormalize the predictions of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> (<em>str</em>) – Indicating region / balancing authority we want to train and test on.
+Must match with string in CSV files.</p></li>
+<li><p><strong>normalized_dict</strong> (<em>dict</em>) – Dictionary output from normalization function.</p></li>
+<li><p><strong>y_predicted_normalized</strong> (<em>np.ndarray</em>) – Normalized predictions over the test set.</p></li>
+<li><p><strong>y_comparison</strong> (<em>np.ndarray</em>) – Testing data to compare predictions to.</p></li>
+<li><p><strong>datetime_arr</strong> (<em>np.ndarray</em>) – Array of datetimes corresponding to the predictions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Denormalized predictions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.mlp_utils.evaluate">
+<span class="sig-prename descclassname"><span class="pre">tell.mlp_utils.</span></span><span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_predicted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_comparison</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/tell/mlp_utils.html#evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_utils.evaluate" title="Link to this definition"></a></dt>
+<dd><p>Evaluation of model performance using the predicted compared to the test data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> (<em>str</em>) – Indicating region / balancing authority we want to train and test on.
+Must match with string in CSV files.</p></li>
+<li><p><strong>y_predicted</strong> (<em>np.ndarray</em>) – Predicted Y result array.</p></li>
+<li><p><strong>y_comparison</strong> (<em>np.ndarray</em>) – Comparison test data for Y array.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Data frame of stats.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.mlp_utils.get_balancing_authority_to_model_dict">
+<span class="sig-prename descclassname"><span class="pre">tell.mlp_utils.</span></span><span class="sig-name descname"><span class="pre">get_balancing_authority_to_model_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/mlp_utils.html#get_balancing_authority_to_model_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_utils.get_balancing_authority_to_model_dict" title="Link to this definition"></a></dt>
+<dd><p>Return a list of balancing authority abbreviations.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.mlp_utils.load_model">
+<span class="sig-prename descclassname"><span class="pre">tell.mlp_utils.</span></span><span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">object</span></span></span><a class="reference internal" href="_modules/tell/mlp_utils.html#load_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_utils.load_model" title="Link to this definition"></a></dt>
+<dd><p>Load pickled model from file using joblib.  Version of scikit-learn is included in the file name as a compatible
+version is required to reload the data safely.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_file</strong> (<em>str</em>) – Full path with filename an extension to the joblib pickled model file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Model as an object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.mlp_utils.load_normalization_dict">
+<span class="sig-prename descclassname"><span class="pre">tell.mlp_utils.</span></span><span class="sig-name descname"><span class="pre">load_normalization_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/tell/mlp_utils.html#load_normalization_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_utils.load_normalization_dict" title="Link to this definition"></a></dt>
+<dd><p>Load pickled model from file using joblib.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file</strong> (<em>str</em>) – Full path with file name and extension to the pickled normalization
+dictionary</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Normalization dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.mlp_utils.load_predictive_models">
+<span class="sig-prename descclassname"><span class="pre">tell.mlp_utils.</span></span><span class="sig-name descname"><span class="pre">load_predictive_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_output_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/mlp_utils.html#load_predictive_models"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_utils.load_predictive_models" title="Link to this definition"></a></dt>
+<dd><p>Load predictive models and the normalization dictionary based off of what is stored in the package or from a
+user provided directory. The scikit-learn version being used must match the one the model was generated with.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> (<em>str</em>) – Indicating region / balancing authority we want to train and test on.
+Must match with string in CSV files.</p></li>
+<li><p><strong>model_output_directory</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>None</em><em>]</em>) – Full path to output directory where model file will be written.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>[0] MLP model
+[1] normalization dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.mlp_utils.normalize_features">
+<span class="sig-prename descclassname"><span class="pre">tell.mlp_utils.</span></span><span class="sig-name descname"><span class="pre">normalize_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/tell/mlp_utils.html#normalize_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_utils.normalize_features" title="Link to this definition"></a></dt>
+<dd><p>Normalize the features and targets of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_train</strong> (<em>np.ndarray</em>) – Training features</p></li>
+<li><p><strong>x_test</strong> (<em>np.ndarray</em>) – Test features</p></li>
+<li><p><strong>y_train</strong> (<em>np.ndarray</em>) – Training targets</p></li>
+<li><p><strong>y_test</strong> (<em>np.ndarray</em>) – Training targets</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary of scaled features</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.mlp_utils.normalize_prediction_data">
+<span class="sig-prename descclassname"><span class="pre">tell.mlp_utils.</span></span><span class="sig-name descname"><span class="pre">normalize_prediction_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_train_arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_train_arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/tell/mlp_utils.html#normalize_prediction_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_utils.normalize_prediction_data" title="Link to this definition"></a></dt>
+<dd><p>Normalize target data using exising min, max for training data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_arr</strong> (<em>np.ndarray</em>) – Array of target data</p></li>
+<li><p><strong>min_train_arr</strong> (<em>np.ndarray</em>) – Array of previously trained minimum target data</p></li>
+<li><p><strong>max_train_arr</strong> (<em>np.ndarray</em>) – Array of previously trained minimum target data</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.mlp_utils.pickle_model">
+<span class="sig-prename descclassname"><span class="pre">tell.mlp_utils.</span></span><span class="sig-name descname"><span class="pre">pickle_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_output_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/mlp_utils.html#pickle_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_utils.pickle_model" title="Link to this definition"></a></dt>
+<dd><p>Pickle model to file using joblib.  Version of scikit-learn is included in the file name as a compatible
+version is required to reload the data safely.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> (<em>str</em>) – Indicating region / balancing authority we want to train and test on.
+Must match with string in CSV files.</p></li>
+<li><p><strong>model_object</strong> (<em>object</em>) – scikit-learn model object.</p></li>
+<li><p><strong>model_name</strong> (<em>str</em>) – Name of sklearn model.</p></li>
+<li><p><strong>model_output_directory</strong> (<em>str</em>) – Full path to output directory where model file will be written.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.mlp_utils.pickle_normalization_dict">
+<span class="sig-prename descclassname"><span class="pre">tell.mlp_utils.</span></span><span class="sig-name descname"><span class="pre">pickle_normalization_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_output_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/mlp_utils.html#pickle_normalization_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.mlp_utils.pickle_normalization_dict" title="Link to this definition"></a></dt>
+<dd><p>Pickle model to file using joblib.  Version of scikit-learn is included in the file name as a compatible
+version is required to reload the data safely.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> (<em>str</em>) – Indicating region / balancing authority we want to train and test on.
+Must match with string in CSV files.</p></li>
+<li><p><strong>normalization_dict</strong> (<em>dict</em>) – Dictionary of normalization data</p></li>
+<li><p><strong>model_output_directory</strong> (<em>str</em>) – Full path to output directory where model file will be written.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tell.package_data">
+<span id="tell-package-data-module"></span><h1>tell.package_data module<a class="headerlink" href="#module-tell.package_data" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.package_data.get_ba_abbreviations">
+<span class="sig-prename descclassname"><span class="pre">tell.package_data.</span></span><span class="sig-name descname"><span class="pre">get_ba_abbreviations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/tell/package_data.html#get_ba_abbreviations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.package_data.get_ba_abbreviations" title="Link to this definition"></a></dt>
+<dd><p>Get balancing authority abbreviations from the reference YAML file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of BA abbreviations</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.package_data.read_yaml">
+<span class="sig-prename descclassname"><span class="pre">tell.package_data.</span></span><span class="sig-name descname"><span class="pre">read_yaml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/tell/package_data.html#read_yaml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.package_data.read_yaml" title="Link to this definition"></a></dt>
+<dd><p>Read a YAML file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>yaml_file</strong> (<em>str</em>) – Full path with file name and extension to the input YAML file</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tell.states_fips_function">
+<span id="tell-states-fips-function-module"></span><h1>tell.states_fips_function module<a class="headerlink" href="#module-tell.states_fips_function" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.states_fips_function.state_metadata_from_state_abbreviation">
+<span class="sig-prename descclassname"><span class="pre">tell.states_fips_function.</span></span><span class="sig-name descname"><span class="pre">state_metadata_from_state_abbreviation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_abbreviation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tell/states_fips_function.html#state_metadata_from_state_abbreviation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.states_fips_function.state_metadata_from_state_abbreviation" title="Link to this definition"></a></dt>
+<dd><p>Define the state FIPS code and state name from a given state abbreviation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state_abbreviation</strong> (<em>str</em>) – state abbreviation</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>[0] state FIPS code
+[1] state name</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tell.visualization">
+<span id="tell-visualization-module"></span><h1>tell.visualization module<a class="headerlink" href="#module-tell.visualization" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.visualization.plot_ba_load_time_series">
+<span class="sig-prename descclassname"><span class="pre">tell.visualization.</span></span><span class="sig-name descname"><span class="pre">plot_ba_load_time_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ba_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcam_target_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenario_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/visualization.html#plot_ba_load_time_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.visualization.plot_ba_load_time_series" title="Link to this definition"></a></dt>
+<dd><p>Plot the time series of load for a given Balancing Authority</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ba_to_plot</strong> (<em>str</em>) – Balancing Authority code for the BA you want to plot</p></li>
+<li><p><strong>year_to_plot</strong> (<em>str</em>) – Year you want to plot (valid 2039, 2059, 2079, 2099)</p></li>
+<li><p><strong>gcam_target_year</strong> (<em>str</em>) – Year to scale against the GCAM-USA annual loads</p></li>
+<li><p><strong>scenario_to_plot</strong> (<em>str</em>) – Scenario you want to plot</p></li>
+<li><p><strong>data_input_dir</strong> (<em>str</em>) – Top-level data directory for TELL</p></li>
+<li><p><strong>image_output_dir</strong> (<em>str</em>) – Directory to store the images</p></li>
+<li><p><strong>image_resolution</strong> (<em>int</em>) – Resolution at which you want to save the images in DPI</p></li>
+<li><p><strong>save_images</strong> (<em>bool</em>) – Set to True if you want to save the images after they’re generated</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.visualization.plot_ba_service_territory">
+<span class="sig-prename descclassname"><span class="pre">tell.visualization.</span></span><span class="sig-name descname"><span class="pre">plot_ba_service_territory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ba_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/visualization.html#plot_ba_service_territory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.visualization.plot_ba_service_territory" title="Link to this definition"></a></dt>
+<dd><p>Plot maps of the service territory for a given BA in a given year</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ba_to_plot</strong> (<em>str</em>) – Code for the BA you want to plot</p></li>
+<li><p><strong>year_to_plot</strong> (<em>str</em>) – Year you want to plot (valid 2015-2019)</p></li>
+<li><p><strong>data_input_dir</strong> (<em>str</em>) – Top-level data directory for TELL</p></li>
+<li><p><strong>image_output_dir</strong> (<em>str</em>) – Directory to store the images</p></li>
+<li><p><strong>image_resolution</strong> (<em>int</em>) – Resolution at which you want to save the images in DPI</p></li>
+<li><p><strong>save_images</strong> (<em>bool</em>) – Set to True if you want to save the images after they’re generated</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.visualization.plot_ba_variable_correlations">
+<span class="sig-prename descclassname"><span class="pre">tell.visualization.</span></span><span class="sig-name descname"><span class="pre">plot_ba_variable_correlations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ba_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/visualization.html#plot_ba_variable_correlations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.visualization.plot_ba_variable_correlations" title="Link to this definition"></a></dt>
+<dd><p>Plot the correlation matrix between predictive variables and observed demand for individual or all BAs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ba_to_plot</strong> (<em>str</em>) – BA code for the BA you want to plot. Set to “All” to plot the average
+correlation across all BAs.</p></li>
+<li><p><strong>data_input_dir</strong> (<em>str</em>) – Top-level data directory for TELL</p></li>
+<li><p><strong>image_output_dir</strong> (<em>str</em>) – Directory to store the images</p></li>
+<li><p><strong>image_resolution</strong> (<em>int</em>) – Resolution at which you want to save the images in DPI</p></li>
+<li><p><strong>save_images</strong> (<em>bool</em>) – Set to True if you want to save the images after they’re generated</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.visualization.plot_mlp_ba_peak_week">
+<span class="sig-prename descclassname"><span class="pre">tell.visualization.</span></span><span class="sig-name descname"><span class="pre">plot_mlp_ba_peak_week</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ba_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/visualization.html#plot_mlp_ba_peak_week"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.visualization.plot_mlp_ba_peak_week" title="Link to this definition"></a></dt>
+<dd><p>Plot the time-series of load during the peak week of the year for a given BA.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prediction_df</strong> (<em>df</em>) – Prediction dataframe produced by the batch training of MLP models for all BAs</p></li>
+<li><p><strong>ba_to_plot</strong> (<em>str</em>) – Code for the BA you want to plot</p></li>
+<li><p><strong>image_output_dir</strong> (<em>str</em>) – Directory to store the images</p></li>
+<li><p><strong>image_resolution</strong> (<em>int</em>) – Resolution at which you want to save the images in DPI</p></li>
+<li><p><strong>save_images</strong> (<em>bool</em>) – Set to True if you want to save the images after they’re generated</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.visualization.plot_mlp_ba_time_series">
+<span class="sig-prename descclassname"><span class="pre">tell.visualization.</span></span><span class="sig-name descname"><span class="pre">plot_mlp_ba_time_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ba_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/visualization.html#plot_mlp_ba_time_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.visualization.plot_mlp_ba_time_series" title="Link to this definition"></a></dt>
+<dd><p>Plot the performance metrics for an individual BA</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prediction_df</strong> (<em>df</em>) – Prediction dataframe produced by the batch training of MLP models for all BAs</p></li>
+<li><p><strong>ba_to_plot</strong> (<em>str</em>) – Code for the BA you want to plot</p></li>
+<li><p><strong>image_output_dir</strong> (<em>str</em>) – Directory to store the images</p></li>
+<li><p><strong>image_resolution</strong> (<em>int</em>) – Resolution at which you want to save the images in DPI</p></li>
+<li><p><strong>save_images</strong> (<em>bool</em>) – Set to True if you want to save the images after they’re generated</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.visualization.plot_mlp_errors_vs_load">
+<span class="sig-prename descclassname"><span class="pre">tell.visualization.</span></span><span class="sig-name descname"><span class="pre">plot_mlp_errors_vs_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/visualization.html#plot_mlp_errors_vs_load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.visualization.plot_mlp_errors_vs_load" title="Link to this definition"></a></dt>
+<dd><p>Plot the summary statistics of the MLP evaluation data as a function of mean load</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prediction_df</strong> (<em>df</em>) – Prediction dataframe produced by the batch training of MLP models for all BAs</p></li>
+<li><p><strong>validation_df</strong> (<em>df</em>) – Validation dataframe produced by the batch training of MLP models for all BAs</p></li>
+<li><p><strong>image_output_dir</strong> (<em>str</em>) – Directory to store the images</p></li>
+<li><p><strong>image_resolution</strong> (<em>int</em>) – Resolution at which you want to save the images in DPI</p></li>
+<li><p><strong>save_images</strong> (<em>bool</em>) – Set to True if you want to save the images after they’re generated</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.visualization.plot_mlp_summary_statistics">
+<span class="sig-prename descclassname"><span class="pre">tell.visualization.</span></span><span class="sig-name descname"><span class="pre">plot_mlp_summary_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">validation_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/visualization.html#plot_mlp_summary_statistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.visualization.plot_mlp_summary_statistics" title="Link to this definition"></a></dt>
+<dd><p>Plot the summary statistics of the MLP evaluation data across BAs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>validation_df</strong> – Validation dataframe produced by the batch training of MLP models for all BAs</p></li>
+<li><p><strong>image_output_dir</strong> (<em>str</em>) – Directory to store the images</p></li>
+<li><p><strong>image_resolution</strong> (<em>int</em>) – Resolution at which you want to save the images in DPI</p></li>
+<li><p><strong>save_images</strong> (<em>bool</em>) – Set to True if you want to save the images after they’re generated</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.visualization.plot_state_annual_total_loads">
+<span class="sig-prename descclassname"><span class="pre">tell.visualization.</span></span><span class="sig-name descname"><span class="pre">plot_state_annual_total_loads</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcam_target_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenario_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/visualization.html#plot_state_annual_total_loads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.visualization.plot_state_annual_total_loads" title="Link to this definition"></a></dt>
+<dd><p>Plot annual total loads from both GCAM-USA and TELL</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>year_to_plot</strong> (<em>str</em>) – Year you want to plot (valid 2039, 2059, 2079, 2099)</p></li>
+<li><p><strong>gcam_target_year</strong> (<em>str</em>) – Year to scale against the GCAM-USA annual loads</p></li>
+<li><p><strong>scenario_to_plot</strong> (<em>str</em>) – Scenario you want to plot</p></li>
+<li><p><strong>data_input_dir</strong> (<em>str</em>) – Top-level data directory for TELL</p></li>
+<li><p><strong>image_output_dir</strong> (<em>str</em>) – Directory to store the images</p></li>
+<li><p><strong>image_resolution</strong> (<em>int</em>) – Resolution at which you want to save the images in DPI</p></li>
+<li><p><strong>save_images</strong> (<em>bool</em>) – Set to True if you want to save the images after they’re generated</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.visualization.plot_state_load_duration_curve">
+<span class="sig-prename descclassname"><span class="pre">tell.visualization.</span></span><span class="sig-name descname"><span class="pre">plot_state_load_duration_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcam_target_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenario_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/visualization.html#plot_state_load_duration_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.visualization.plot_state_load_duration_curve" title="Link to this definition"></a></dt>
+<dd><p>Plot the load duration curve for a given state</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state_to_plot</strong> (<em>str</em>) – State you want to plot</p></li>
+<li><p><strong>year_to_plot</strong> (<em>str</em>) – Year you want to plot (valid 2039, 2059, 2079, 2099)</p></li>
+<li><p><strong>gcam_target_year</strong> (<em>str</em>) – Year to scale against the GCAM-USA annual loads</p></li>
+<li><p><strong>scenario_to_plot</strong> (<em>str</em>) – Scenario you want to plot</p></li>
+<li><p><strong>data_input_dir</strong> (<em>str</em>) – Top-level data directory for TELL</p></li>
+<li><p><strong>image_output_dir</strong> (<em>str</em>) – Directory to store the images</p></li>
+<li><p><strong>image_resolution</strong> (<em>int</em>) – Resolution at which you want to save the images in DPI</p></li>
+<li><p><strong>save_images</strong> (<em>bool</em>) – Set to True if you want to save the images after they’re generated</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.visualization.plot_state_load_time_series">
+<span class="sig-prename descclassname"><span class="pre">tell.visualization.</span></span><span class="sig-name descname"><span class="pre">plot_state_load_time_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcam_target_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenario_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/visualization.html#plot_state_load_time_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.visualization.plot_state_load_time_series" title="Link to this definition"></a></dt>
+<dd><p>Plot the time series of load for a given state</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state_to_plot</strong> (<em>str</em>) – State you want to plot</p></li>
+<li><p><strong>year_to_plot</strong> (<em>str</em>) – Year you want to plot (valid 2039, 2059, 2079, 2099)</p></li>
+<li><p><strong>gcam_target_year</strong> (<em>str</em>) – Year to scale against the GCAM-USA annual loads</p></li>
+<li><p><strong>scenario_to_plot</strong> (<em>str</em>) – Scenario you want to plot</p></li>
+<li><p><strong>data_input_dir</strong> (<em>str</em>) – Top-level data directory for TELL</p></li>
+<li><p><strong>image_output_dir</strong> (<em>str</em>) – Directory to store the images</p></li>
+<li><p><strong>image_resolution</strong> (<em>int</em>) – Resolution at which you want to save the images in DPI</p></li>
+<li><p><strong>save_images</strong> (<em>bool</em>) – Set to True if you want to save the images after they’re generated</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tell.visualization.plot_state_scaling_factors">
+<span class="sig-prename descclassname"><span class="pre">tell.visualization.</span></span><span class="sig-name descname"><span class="pre">plot_state_scaling_factors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcam_target_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenario_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tell/visualization.html#plot_state_scaling_factors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tell.visualization.plot_state_scaling_factors" title="Link to this definition"></a></dt>
+<dd><p>Plot the scaling factor that force TELL annual total state loads to agree with GCAM-USA</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>year_to_plot</strong> (<em>str</em>) – Year you want to plot (valid 2039, 2059, 2079, 2099)</p></li>
+<li><p><strong>gcam_target_year</strong> (<em>str</em>) – Year to scale against the GCAM-USA annual loads</p></li>
+<li><p><strong>scenario_to_plot</strong> (<em>str</em>) – Scenario you want to plot</p></li>
+<li><p><strong>data_input_dir</strong> (<em>str</em>) – Top-level data directory for TELL</p></li>
+<li><p><strong>image_output_dir</strong> (<em>str</em>) – Directory to store the images</p></li>
+<li><p><strong>image_resolution</strong> (<em>int</em>) – Resolution at which you want to save the images in DPI</p></li>
+<li><p><strong>save_images</strong> (<em>bool</em>) – Set to True if you want to save the images after they’re generated</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing to tell" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Batelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
