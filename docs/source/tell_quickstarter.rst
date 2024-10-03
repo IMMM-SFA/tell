@@ -254,9 +254,14 @@ output is optional. To output county-level load projections just set the
 
     # Run the TELL model forward in time for a given year:
     summary_df, ba_time_series_df, state_time_series_df = tell.execute_forward(year_to_process = '2039',
-                                                                               scenario_to_process = 'rcp85hotter_ssp5',
-                                                                               data_input_dir = tell_data_dir,
-                                                                               save_county_data = False)
+                                                                           gcam_target_year = '2039', 
+                                                                           scenario_to_process = 'rcp85hotter_ssp5',
+                                                                           data_output_dir = os.path.join(tell_data_dir, r'tell_quickstarter_data', r'outputs', r'tell_output'),
+                                                                           gcam_usa_input_dir = os.path.join(tell_data_dir, r'sample_forcing_data', r'sample_gcam_usa_data'),
+                                                                           map_input_dir = os.path.join(tell_data_dir, r'tell_quickstarter_data', r'outputs', r'ba_service_territory'),
+                                                                           mlp_input_dir = os.path.join(tell_data_dir, r'tell_quickstarter_data', r'outputs', r'mlp_output'),
+                                                                           pop_input_dir = os.path.join(tell_data_dir, r'sample_forcing_data', r'sample_population_projections'),
+                                                                           save_county_data = False)
 
 
 5. Model visualization
@@ -280,6 +285,7 @@ by definition equal to those from GCAM-USA.
 
     # Plot the annual total loads from both GCAM-USA and TELL:
     tell.plot_state_annual_total_loads(year_to_plot = '2039',
+                                       gcam_target_year = '2039',
                                        scenario_to_plot = 'rcp85hotter_ssp5',  
                                        data_input_dir = tell_data_dir,
                                        image_output_dir = tell_image_dir,
@@ -299,6 +305,7 @@ want to plot using the \`state_to_plot” variable in the function call.
     # Plot the time-series of raw and scaled loads from TELL at the state level for a user-specified state:
     tell.plot_state_load_time_series(state_to_plot = 'Connecticut', 
                                      year_to_plot = '2039',
+                                     gcam_target_year = '2039',
                                      scenario_to_plot = 'rcp85hotter_ssp5', 
                                      data_input_dir = tell_data_dir,
                                      image_output_dir = tell_image_dir,
@@ -319,6 +326,7 @@ variable in the function call.
     # Plot the load duration curve at the state level for a user-specified state:
     tell.plot_state_load_duration_curve(state_to_plot = 'North Carolina', 
                                         year_to_plot = '2039',
+                                        gcam_target_year = '2039',
                                         scenario_to_plot = 'rcp85hotter_ssp5', 
                                         data_input_dir = tell_data_dir,
                                         image_output_dir = tell_image_dir,
@@ -339,10 +347,9 @@ function call.
     # Plot the time-series of raw and scaled loads from TELL at the BA level for a user-specified BA (e.g., PJM, CISO, ERCO, etc.):
     tell.plot_ba_load_time_series(ba_to_plot = 'NYIS', 
                                   year_to_plot = '2039',
+                                  gcam_target_year = '2039',
                                   scenario_to_plot = 'rcp85hotter_ssp5', 
                                   data_input_dir = tell_data_dir,
                                   image_output_dir = tell_image_dir,
                                   image_resolution = 150,
                                   save_images = True)
-
-
