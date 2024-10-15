@@ -15,25 +15,19 @@ ______________________________________
 
 1. I found a bug!
 
-   * Check if the bug has already been reported by searching the existing GitHub
-`Issues <https://github.com/IMMM-SFA/tell/issues>`_. If you find a match, consider adding additional details to the
-existing ticket.
+   * Check if the bug has already been reported by searching the existing GitHub `Issues <https://github.com/IMMM-SFA/tell/issues>`_. If you find a match, consider adding additional details to the existing ticket.
 
-   * Open a `new Issue <https://github.com/IMMM-SFA/tell/issues/new/choose>`_, being sure to include a clear title and
-description along with as much detail as possible; code samples or log messages demonstrating the bug are quite helpful.
+   * Open a `new Issue <https://github.com/IMMM-SFA/tell/issues/new/choose>`_, being sure to include a clear title and description along with as much detail as possible; code samples or log messages demonstrating the bug are quite helpful.
 
 2. I fixed a bug!
 
-   * Open a `new Pull Request <https://github.com/IMMM-SFA/tell/compare>`_ with the fix. Ensure the description clearly
-outlines the bug and the solution. Include the Issue number if applicable.
+   * Open a `new Pull Request <https://github.com/IMMM-SFA/tell/compare>`_ with the fix. Ensure the description clearly outlines the bug and the solution. Include the Issue number if applicable.
 
 3. I created a new feature!
 
-   * Consider opening a `new Issue <https://github.com/IMMM-SFA/tell/issues/new/choose>`_ to describe use cases for the
-new feature. This will offer a platform for discussion and critique.
+   * Consider opening a `new Issue <https://github.com/IMMM-SFA/tell/issues/new/choose>`_ to describe use cases for the new feature. This will offer a platform for discussion and critique.
 
-   * Then, open a `new Pull Request <https://github.com/IMMM-SFA/tell/compare>`_ with clear documentation of the
-methodology. Be sure to include new unit tests if appropriate.
+   * Then, open a `new Pull Request <https://github.com/IMMM-SFA/tell/compare>`_ with clear documentation of the methodology. Be sure to include new unit tests if appropriate.
 
 
 Contribution workflow (pull request)
@@ -48,7 +42,15 @@ The following is the recommended workflow for contributing to **tell**:
     git clone https://github.com/<your-user-name>/tell
 
 
-2. Create a branch for your changes
+2. Install **tell** in development mode and set up `pre-commit`.
+
+  .. code-block:: bash
+
+   pip install -e ".[dev]"
+   pre-commit install
+
+
+3. Create a branch for your changes
 
   .. code-block:: bash
 
@@ -58,11 +60,13 @@ The following is the recommended workflow for contributing to **tell**:
 
     git checkout -b feature/some-feature
 
-3. Add your recommended changes and ensure all tests pass, then commit your changes
+
+1. Add your recommended changes and ensure all tests pass, then commit your changes
 
   .. code-block:: bash
 
-    git commit -m '<my short message>'
+    git commit -m "<my short message>""
+
 
 4. Push your changes to the remote
 
@@ -70,7 +74,9 @@ The following is the recommended workflow for contributing to **tell**:
 
     git push origin <my-branch-name>
 
+
 5. Submit a pull request with the following information:
 
   - **Purpose**:  The reason for your pull request in short
   - **Summary**:  A description of the environment you are using (OS, Python version, etc.), logic, any caveats, and a summary of changes that were made.
+  -
