@@ -61,22 +61,21 @@ The following is the recommended workflow for contributing to **tell**:
     git checkout -b feature/some-feature
 
 
-1. Add your recommended changes and ensure all tests pass, then commit your changes
+4. Add your recommended changes and ensure all tests pass, then commit your changes
 
   .. code-block:: bash
 
     git commit -m "<my short message>""
 
 
-4. Push your changes to the remote
+5. Push your changes to the remote
 
   .. code-block:: bash
 
     git push origin <my-branch-name>
 
 
-5. Submit a pull request with the following information:
+6. Submit a pull request with the following information:
 
   - **Purpose**:  The reason for your pull request in short
   - **Summary**:  A description of the environment you are using (OS, Python version, etc.), logic, any caveats, and a summary of changes that were made.
-  -
