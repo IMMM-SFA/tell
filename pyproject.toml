@@ -71,9 +71,11 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-test = [
-    "pytest>=6.2.4",
-    "pytest-cov>=2.12.1"
+deploy = [
+    "twine>=3.4.1",
+]
+dev = [
+    "pre-commit>=4.0.1",
 ]
 docs = [
     "build>=0.5.1",
@@ -84,8 +86,9 @@ docs = [
     "sphinx-design>=0.6.1",
     "sphinx-rtd-theme>=2.0.0",
 ]
-deploy = [
-    "twine>=3.4.1",
+test = [
+    "pytest>=6.2.4",
+    "pytest-cov>=2.12.1",
 ]
 
 [project.urls]
