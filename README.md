@@ -1,4 +1,7 @@
-[![build](https://github.com/IMMM-SFA/tell/actions/workflows/build.yml/badge.svg)](https://github.com/IMMM-SFA/tell/actions/workflows/build.yml) [![DOI](https://zenodo.org/badge/305802399.svg)](https://zenodo.org/badge/latestdoi/305802399)
+[![test](https://github.com/IMMM-SFA/tell/actions/workflows/test.yml/badge.svg)](https://github.com/IMMM-SFA/tell/actions/workflows/test.yml)
+[![DOI](https://zenodo.org/badge/305802399.svg)](https://zenodo.org/badge/latestdoi/305802399)
+[![codecov](https://codecov.io/gh/IMMM-SFA/tell/graph/badge.svg?token=URP1KWRI6U)](https://codecov.io/gh/IMMM-SFA/tell)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/tell?pypiBaseUrl=https%3A%2F%2Fpypi.org&logo=python&logoColor=yellow)
 
 
 ## tell
@@ -17,7 +20,7 @@
 ### Install `tell`
 
 `tell` is available via GitHub repository by using the pip install functionality. `tell` requires a Python version between 3.8 and 4.0 as well as a pip install to import the package. `tell` has been tested on
-Windows and Mac platforms. (Note: For those installing on Windows, `tell`  is supported by GeoPandas functionality.  Please see suggestions for installing GeoPandas on Windows here:  
+Windows and Mac platforms. (Note: For those installing on Windows, `tell`  is supported by GeoPandas functionality.  Please see suggestions for installing GeoPandas on Windows here:
 https://geopandas.org/en/stable/getting_started/install.html)
 
 ```bash
@@ -34,7 +37,7 @@ New to `tell`?  Get familiar with what `tell` is all about in our [Getting Start
 
 ### User guide
 
-Our [User Guide](https://immm-sfa.github.io/tell/user_guide.html) provides in-depth information on the key concepts of `tell` and how the model works. 
+Our [User Guide](https://immm-sfa.github.io/tell/user_guide.html) provides in-depth information on the key concepts of `tell` and how the model works.
 
 ### Contributing to `tell`
 
@@ -44,4 +47,4 @@ Whether you find a typo in the documentation, find a bug, or want to develop fun
 The [API Reference](https://immm-sfa.github.io/tell/modules.html) contains a detailed description of the `tell` API. The reference describes how the methods work and which parameters can be used. It assumes that you have an understanding of the key concepts.
 
 ### Contact/Help
-Need help with `tell` or have a comment? Please open a [new Issue](https://github.com/IMMM-SFA/tell/issues/new/choose) with your question/comments. 
+Need help with `tell` or have a comment? Please open a [new Issue](https://github.com/IMMM-SFA/tell/issues/new/choose) with your question/comments.
