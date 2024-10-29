@@ -1,7 +1,7 @@
 [![test](https://github.com/IMMM-SFA/tell/actions/workflows/test.yml/badge.svg)](https://github.com/IMMM-SFA/tell/actions/workflows/test.yml)
 [![DOI](https://zenodo.org/badge/305802399.svg)](https://zenodo.org/badge/latestdoi/305802399)
 [![codecov](https://codecov.io/gh/IMMM-SFA/tell/graph/badge.svg?token=URP1KWRI6U)](https://codecov.io/gh/IMMM-SFA/tell)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/tell?pypiBaseUrl=https%3A%2F%2Fpypi.org&logo=python&logoColor=yellow)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/tell?pypiBaseUrl=https%3A%2F%2Fpypi.org&logo=python&logoColor=yellow)](https://pypi.org/project/tell/)
 
 
 ## tell
