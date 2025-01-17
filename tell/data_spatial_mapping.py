@@ -7,7 +7,7 @@ from pandas import DataFrame
 
 
 def process_spatial_mapping(target_year: int, fips_file: str, service_area_file: str, sales_ult_file: str,
-                            bal_auth_file: str, output_dir: str):
+                            bal_auth_file: str, data_output_dir: str):
     """Workflow function to execute the mapping of BAs to counties for a given year
 
     :param target_year:                         Year to process; four digit year (e.g., 1990)
@@ -25,8 +25,8 @@ def process_spatial_mapping(target_year: int, fips_file: str, service_area_file:
     :param bal_auth_file:                       Balancing authority and ID codes Excel file
     :type bal_auth_file:                        str
 
-    :param output_dir:                          Directory to store the output .csv file
-    :type output_dir:                           str
+    :param data_output_dir:                     Directory to store the output .csv file
+    :type data_output_dir:                      str
 
     """
 
@@ -147,11 +147,11 @@ def process_spatial_mapping(target_year: int, fips_file: str, service_area_file:
     df_output = df_output.sort_values(by=["BA_Number", "County_FIPS"])
 
     # Write the spatial mapping output to a .csv file:
-    output_file = os.path.join(output_dir, f'ba_service_territory_{target_year}.csv')
+    output_file = os.path.join(data_output_dir, f'ba_service_territory_{target_year}.csv')
     df_output.to_csv(output_file, sep=',', index=False)
 
 
-def map_ba_service_territory(start_year: int, end_year: int, data_input_dir: str):
+def map_ba_service_territory(start_year: int, end_year: int, fips_codes_data_input_dir: str, eia_861_data_input_dir: str, data_output_dir: str):
     """Workflow function to run the "process_spatial_mapping" function to map BAs to counties
 
     :param start_year:                         Year to start process; four digit year (e.g., 1990)
@@ -160,17 +160,20 @@ def map_ba_service_territory(start_year: int, end_year: int, data_input_dir: str
     :param end_year:                           Year to end process; four digit year (e.g., 1990)
     :type end_year:                            int
 
-    :param data_input_dir:                     Top-level data directory for TELL
-    :type data_input_dir:                      str
+    :param fips_codes_data_input_dir:          Path to where the state and county fips code files are located
+    :type fips_codes_data_input_dir:           str
+
+    :param eia_861_data_input_dir:             Path to where the raw EIA-861 data are stored
+    :type eia_861_data_input_dir:              str
+
+    :param data_output_dir:                    Top-level data directory for TELL output
+    :type data_output_dir:                     str
 
     """
 
-    # Set the output directory based on the "raw_data_dir" variable:
-    output_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'ba_service_territory')
-
     # If the output directory doesn't exist then create it:
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    if not os.path.exists(data_output_dir):
+        os.makedirs(data_output_dir)
 
     # Create a vector of years to process:
     years_to_process = range(start_year, end_year + 1)
@@ -178,10 +181,10 @@ def map_ba_service_territory(start_year: int, end_year: int, data_input_dir: str
     # Loop over the range of years to process:
     for target_year in years_to_process:
         # Set paths to files:
-        fips_file = os.path.join(data_input_dir, r'tell_raw_data', 'state_and_county_fips_codes.csv')
-        service_area_file = os.path.join(data_input_dir, r'tell_raw_data', r'EIA_861', f'{target_year}', f'Service_Territory_{target_year}.xlsx')
-        sales_ult_file = os.path.join(data_input_dir, r'tell_raw_data', r'EIA_861', f'{target_year}', f'Sales_Ult_Cust_{target_year}.xlsx')
-        bal_auth_file = os.path.join(data_input_dir, r'tell_raw_data', r'EIA_861', f'{target_year}', f'Balancing_Authority_{target_year}.xlsx')
+        fips_file = os.path.join(fips_codes_data_input_dir, 'state_and_county_fips_codes.csv')
+        service_area_file = os.path.join(eia_861_data_input_dir, f'{target_year}', f'Service_Territory_{target_year}.xlsx')
+        sales_ult_file = os.path.join(eia_861_data_input_dir, f'{target_year}', f'Sales_Ult_Cust_{target_year}.xlsx')
+        bal_auth_file = os.path.join(eia_861_data_input_dir, f'{target_year}', f'Balancing_Authority_{target_year}.xlsx')
 
         # Run the "process_spatial_mapping" function for that year:
-        process_spatial_mapping(target_year, fips_file, service_area_file, sales_ult_file, bal_auth_file, output_dir)
+        process_spatial_mapping(target_year, fips_file, service_area_file, sales_ult_file, bal_auth_file, data_output_dir)
