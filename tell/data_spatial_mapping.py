@@ -166,7 +166,7 @@ def map_ba_service_territory(start_year: int, end_year: int, fips_codes_data_inp
     :param eia_861_data_input_dir:             Path to where the raw EIA-861 data are stored
     :type eia_861_data_input_dir:              str
 
-    :param data_output_dir:                    Top-level data directory for TELL output
+    :param data_output_dir:                    Place to store the output files
     :type data_output_dir:                     str
 
     """

@@ -6,7 +6,8 @@ import numpy as np
 from .package_data import get_ba_abbreviations
 
 
-def compile_data(start_year: int, end_year: int, data_input_dir: str):
+def compile_data(start_year: int, end_year: int, load_input_dir: str, ba_weather_input_dir: str,
+                 population_input_dir: str, data_output_dir: str):
     """Merge the load, population, and climate data into a single .csv file for each BA
 
     :param start_year:                         Year to start process; four digit year (e.g., 1990)
@@ -15,43 +16,46 @@ def compile_data(start_year: int, end_year: int, data_input_dir: str):
     :param end_year:                           Year to end process; four digit year (e.g., 1990)
     :type end_year:                            int
 
-    :param data_input_dir:                     Top-level data directory for TELL
-    :type data_input_dir:                      str
+    :param load_input_dir:                     Path to where the pre-processed BA hourly loads are located
+    :type load_input_dir:                      str
+
+    :param ba_weather_input_dir:               Path to where the pre-processed BA weather data is located
+    :type ba_weather_input_dir:                str
+
+    :param population_input_dir:               Path to where the pre-processed BA population data is located
+    :type population_input_dir:                str
+
+    :param data_output_dir:                    Place to store the output files
+    :type data_output_dir:                     str
 
     """
 
     # Get a list of BA abbreviations to process:
     ba_name = get_ba_abbreviations()
 
-    # Set the input directories for each variable:
-    load_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'historical_ba_load')
-    population_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'historical_population')
-    weather_dir = os.path.join(data_input_dir, r'sample_forcing_data', r'historical_weather')
-
     # Set the output directory based on the "data_input_dir" variable:
-    output_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'compiled_historical_data')
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    if not os.path.exists(data_output_dir):
+        os.makedirs(data_output_dir)
 
     # Loop over the list of BAs to process:
     for i in ba_name:
 
         # Check to make sure all of the requisite data exist for that BA:
         all_data_present = False
-        if os.path.isfile(os.path.join(load_dir, f"{i}_hourly_load_data.csv")) is True:
-            if os.path.isfile(os.path.join(population_dir, f"{i}_hourly_population_data.csv")) is True:
-                if os.path.isfile(os.path.join(weather_dir, f"{i}_WRF_Hourly_Mean_Meteorology_2019.csv")) is True:
+        if os.path.isfile(os.path.join(load_input_dir, f"{i}_hourly_load_data.csv")) is True:
+            if os.path.isfile(os.path.join(population_input_dir, f"{i}_hourly_population_data.csv")) is True:
+                if os.path.isfile(os.path.join(ba_weather_input_dir, f"{i}_WRF_Hourly_Mean_Meteorology_2019.csv")) is True:
                     all_data_present = True
 
         if all_data_present is True:
             # Read in the historical load and population data for that BA:
-            load_df = pd.read_csv(os.path.join(load_dir, f"{i}_hourly_load_data.csv"))
-            population_df = pd.read_csv(os.path.join(population_dir, f"{i}_hourly_population_data.csv"))
+            load_df = pd.read_csv(os.path.join(load_input_dir, f"{i}_hourly_load_data.csv"))
+            population_df = pd.read_csv(os.path.join(population_input_dir, f"{i}_hourly_population_data.csv"))
 
             # Loop over the range of years defined by the 'start_year' and 'end_year' variables:
             for year in range(start_year, end_year + 1):
                 # Read in the annual historical weather for that BA:
-                temp_weather_df = pd.read_csv(os.path.join(weather_dir, f"{i}_WRF_Hourly_Mean_Meteorology_{year}.csv"))
+                temp_weather_df = pd.read_csv(os.path.join(ba_weather_input_dir, f"{i}_WRF_Hourly_Mean_Meteorology_{year}.csv"))
 
                 # Convert the time stamp to a datetime variable and then extract the year, month, day, and hour variables:
                 temp_weather_df['Time_UTC'] = pd.to_datetime(temp_weather_df['Time_UTC'])
@@ -79,7 +83,7 @@ def compile_data(start_year: int, end_year: int, data_input_dir: str):
             merged_second['Total_Population'] = merged_second['Total_Population'].round(2)
 
             # Write the merged dataframe to a .csv file
-            merged_second.to_csv(os.path.join(output_dir, f"{i}_historical_data.csv"), index=False, header=True)
+            merged_second.to_csv(os.path.join(data_output_dir, f"{i}_historical_data.csv"), index=False, header=True)
 
             # Clean up the variables and move to the next BA in the loop:
             del temp_weather_df, weather_df, load_df, population_df, merged_first, merged_second, all_data_present

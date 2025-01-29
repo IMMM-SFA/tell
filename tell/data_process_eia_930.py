@@ -6,11 +6,11 @@ from joblib import Parallel, delayed
 from .package_data import get_ba_abbreviations
 
 
-def list_EIA_930_files(data_input_dir: str) -> list:
+def list_EIA_930_files(eia_930_data_input_dir: str) -> list:
     """Make a list of all the file names for the EIA-930 hourly load dataset
 
-    :param data_input_dir:         Top-level data directory for TELL
-    :type data_input_dir:          str
+    :param eia_930_data_input_dir: Path to where the raw EIA-930 data are stored
+    :type eia_930_data_input_dir:  str
 
     :return:                       list
 
@@ -24,30 +24,27 @@ def list_EIA_930_files(data_input_dir: str) -> list:
 
     # Loop over the list and find the path for each BA in the list:
     for i in ba_name:
-        path_to_check = os.path.join(data_input_dir, r'tell_raw_data', r'EIA_930', r'Balancing_Authority', f'{i}.xlsx')
+        path_to_check = os.path.join(eia_930_data_input_dir, f'{i}.xlsx')
         path_list.append(path_to_check)
 
     # Return the list:
     return path_list
 
 
-def eia_data_subset(file_string: str, data_input_dir: str):
+def eia_data_subset(file_string: str, data_output_dir: str):
     """Extract only the columns TELL needs from the EIA-930 Excel files
 
     :param file_string:            File name of EIA-930 hourly load data by BA
     :type file_string:             str
 
-    :param data_input_dir:         Top-level data directory for TELL
-    :type data_input_dir:          str
+    :param data_output_dir:        Place to store the output files
+    :type data_output_dir:         str
 
     """
 
-    # Set the output directory based on the "data_input_dir" variable:
-    output_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'historical_ba_load')
-
     # If the output directory doesn't exist then create it:
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    if not os.path.exists(data_output_dir):
+        os.makedirs(data_output_dir)
 
     # Read in the data from the "Published Hourly Data" sheet:
     df = pd.read_excel(file_string, sheet_name='Published Hourly Data')
@@ -59,27 +56,30 @@ def eia_data_subset(file_string: str, data_input_dir: str):
     df['Hour'] = df['UTC time'].dt.strftime('%H')
 
     # Only keep the columns that are needed:
-    col_names = ['Year', 'Month', 'Day', 'Hour', 'DF', 'Adjusted D', 'Adjusted NG', 'Adjusted TI']
+    col_names = ['Year', 'Month', 'Day', 'Hour', 'Demand forecast', 'Adjusted demand', 'Adjusted net generation', 'Adjusted total interchange']
     df = df[col_names].copy()
 
     # Rename the columns to add the units to each variable:
-    df.rename(columns={"DF": "Forecast_Demand_MWh",
-                       "Adjusted D": "Adjusted_Demand_MWh",
-                       "Adjusted NG": "Adjusted_Generation_MWh",
-                       "Adjusted TI": "Adjusted_Interchange_MWh"}, inplace=True)
+    df.rename(columns={"Demand forecast": "Forecast_Demand_MWh",
+                       "Adjusted demand": "Adjusted_Demand_MWh",
+                       "Adjusted net generation": "Adjusted_Generation_MWh",
+                       "Adjusted total interchange": "Adjusted_Interchange_MWh"}, inplace=True)
 
     # Extract the BA name from the "file_string" variable:
     BA_name = os.path.splitext(os.path.basename(file_string))[0]
 
     # Write the output to a .csv file:
-    df.to_csv(os.path.join(output_dir, f'{BA_name}_hourly_load_data.csv'), index=False, header=True)
+    df.to_csv(os.path.join(data_output_dir, f'{BA_name}_hourly_load_data.csv'), index=False, header=True)
 
 
-def process_eia_930_data(data_input_dir: str, n_jobs: int):
+def process_eia_930_data(eia_930_data_input_dir: str, data_output_dir: str, n_jobs: int):
     """Read in list of EIA 930 files, subset the data, and save the output as a .csv file
 
-    :param data_input_dir:         Top-level data directory for TELL
-    :type data_input_dir:          str
+    :param eia_930_data_input_dir: Path to where the raw EIA-930 data are stored
+    :type eia_930_data_input_dir:  str
+
+    :param data_output_dir:       Place to store the output files
+    :type data_output_dir:         str
 
     :param n_jobs:                 The maximum number of concurrently running jobs, such as the number of Python
                                    worker processes when backend=”multiprocessing” or the size of the thread-pool
@@ -94,12 +94,12 @@ def process_eia_930_data(data_input_dir: str, n_jobs: int):
     """
 
     # Create the list of EIA-930 Excel files:
-    list_of_files = list_EIA_930_files(data_input_dir)
+    list_of_files = list_EIA_930_files(eia_930_data_input_dir)
 
     # Process each file in the list in parallel:
     Parallel(n_jobs=n_jobs)(
         delayed(eia_data_subset)(
             file_string=i,
-            data_input_dir=data_input_dir
+            data_output_dir=data_output_dir
         ) for i in list_of_files
     )

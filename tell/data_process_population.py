@@ -9,11 +9,11 @@ from datetime import datetime
 from .metadata_eia import metadata_eia
 
 
-def fips_pop_yearly(pop_input_dir: str, start_year: int, end_year: int) -> DataFrame:
+def fips_pop_yearly(population_input_dir: str, start_year: int, end_year: int) -> DataFrame:
     """Read in the raw population data, format columns, and return single dataframe for all years
 
-    :param pop_input_dir:               Directory where raw county population data is stored
-    :type pop_input_dir:                str
+    :param population_input_dir:        Path to where county-level population data is located
+    :type population_input_dir:         str
 
     :param start_year:                  Year to start process; four digit year (e.g., 1990)
     :type start_year:                   int
@@ -26,7 +26,7 @@ def fips_pop_yearly(pop_input_dir: str, start_year: int, end_year: int) -> DataF
     """
 
     # Read in the raw county-level population .csv file from the U.S. Census Bureau:
-    df_pop = pd.read_csv(pop_input_dir + '/county_populations_2000_to_2020.csv')
+    df_pop = pd.read_csv(population_input_dir + '/county_populations_2000_to_2023.csv')
 
     # Loop over the range of years defined by the 'start_year' and 'end_year' variables:
     for y in range(start_year, end_year + 1):
@@ -52,14 +52,14 @@ def fips_pop_yearly(pop_input_dir: str, start_year: int, end_year: int) -> DataF
     return df
 
 
-def merge_mapping_data(map_input_dir: str, pop_input_dir: str, start_year: int, end_year: int) -> DataFrame:
+def merge_mapping_data(ba_mapping_input_dir: str, population_input_dir: str, start_year: int, end_year: int) -> DataFrame:
     """Merge the BA mapping files and historical population data based on FIPS codes
 
-    :param map_input_dir:               Directory where the BA-to-county mapping is stored
-    :type map_input_dir:                str
+    :param ba_mapping_input_dir:        Path to where the BA mapping files are located
+    :type ba_mapping_input_dir:         str
 
-    :param pop_input_dir:               Directory where raw county population data is stored
-    :type pop_input_dir:                str
+    :param population_input_dir:        Path to where county-level population data is located
+    :type population_input_dir:         str
 
     :param start_year:                  Year to start process; four digit year (e.g., 1990)
     :type start_year:                   int
@@ -72,10 +72,10 @@ def merge_mapping_data(map_input_dir: str, pop_input_dir: str, start_year: int, 
     """
 
     # Load in the BA-to-county mapping files produced by the 'spatial_mapping.py' functions:
-    for idx, file in enumerate(glob(f'{map_input_dir}/*.csv')):
+    for idx, file in enumerate(glob(f'{ba_mapping_input_dir}/*.csv')):
 
         # Read in the .csv file:
-        dfx = pd.read_csv(os.path.join(map_input_dir, file))
+        dfx = pd.read_csv(os.path.join(ba_mapping_input_dir, file))
 
         # Concatenate the BA-to-county mapping files across years:
         if idx == 0:
@@ -103,7 +103,7 @@ def merge_mapping_data(map_input_dir: str, pop_input_dir: str, start_year: int, 
     df_map.rename(columns={"Year": "year"}, inplace=True)
 
     # Get sum of population by FIPS code (e.g., counties) using the 'fips_pop_yearly' function:
-    df_pop = fips_pop_yearly(pop_input_dir, start_year, end_year)
+    df_pop = fips_pop_yearly(population_input_dir, start_year, end_year)
 
     # Merge the dataframes based on county FIPS code and year:
     df_combine = pd.merge(df_pop, df_map, how='left', left_on=['county_FIPS', 'year'], right_on=['county_FIPS', 'year'])
@@ -111,14 +111,14 @@ def merge_mapping_data(map_input_dir: str, pop_input_dir: str, start_year: int, 
     return df_combine
 
 
-def ba_pop_sum(map_input_dir: str, pop_input_dir: str, start_year: int, end_year: int) -> DataFrame:
+def ba_pop_sum(ba_mapping_input_dir: str, population_input_dir: str, start_year: int, end_year: int) -> DataFrame:
     """Sum the total population within a BA's service territory in a given year
 
-    :param map_input_dir:               Directory where the BA-to-county mapping is stored
-    :type map_input_dir:                str
+    :param ba_mapping_input_dir:        Path to where the BA mapping files are located
+    :type ba_mapping_input_dir:         str
 
-    :param pop_input_dir:               Directory where raw county population data is stored
-    :type pop_input_dir:                str
+    :param population_input_dir:        Path to where county-level population data is located
+    :type population_input_dir:         str
 
     :param start_year:                  Year to start process; four digit year (e.g., 1990)
     :type start_year:                   int
@@ -131,7 +131,7 @@ def ba_pop_sum(map_input_dir: str, pop_input_dir: str, start_year: int, end_year
     """
 
     # Get population from the 'merge_mapping_data' function:
-    df_pop = merge_mapping_data(map_input_dir, pop_input_dir, start_year, end_year)
+    df_pop = merge_mapping_data(ba_mapping_input_dir, population_input_dir, start_year, end_year)
 
     # Sum the population for each BA by year:
     df = df_pop.groupby(['BA_Name', 'year'])['population'].sum().reset_index()
@@ -139,7 +139,8 @@ def ba_pop_sum(map_input_dir: str, pop_input_dir: str, start_year: int, end_year
     return df
 
 
-def process_ba_population_data(start_year: int, end_year: int, data_input_dir: str):
+def process_ba_population_data(start_year: int, end_year: int, ba_mapping_input_dir: str, population_input_dir: str,
+                               data_output_dir: str):
     """Calculate a time-series of the total population living with a BAs service territory
 
     :param start_year:                         Year to start process; four digit year (e.g., 1990)
@@ -148,24 +149,23 @@ def process_ba_population_data(start_year: int, end_year: int, data_input_dir: s
     :param end_year:                           Year to end process; four digit year (e.g., 1990)
     :type end_year:                            int
 
-    :param data_input_dir:                     Top-level data directory for TELL
-    :type data_input_dir:                      str
+    :param ba_mapping_input_dir:               Path to where the BA mapping files are located
+    :type ba_mapping_input_dir:                str
+
+    :param population_input_dir:               Path to where county-level population data is located
+    :type population_input_dir:                str
+
+    :param data_output_dir:                    Place to store the output files
+    :type data_output_dir:                     str
 
     """
 
-    # Set the output directory based on the "data_input_dir" variable:
-    output_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'historical_population')
-
     # If the output directory doesn't exist then create it:
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
-    # Set the input directories based on the "data_input_dir" variable:
-    map_input_dir = os.path.join(data_input_dir, r'tell_quickstarter_data', r'outputs', r'ba_service_territory')
-    pop_input_dir = os.path.join(data_input_dir, r'tell_raw_data', r'Population')
+    if not os.path.exists(data_output_dir):
+        os.makedirs(data_output_dir)
 
     # Sum the populations using the 'ba_pop_sum' function:
-    df = ba_pop_sum(map_input_dir, pop_input_dir, start_year, end_year)
+    df = ba_pop_sum(ba_mapping_input_dir, population_input_dir, start_year, end_year)
 
     # Convert the year to a datetime variable:
     df['year'] = pd.to_datetime(df['year'], format='%Y')
@@ -184,7 +184,7 @@ def process_ba_population_data(start_year: int, end_year: int, data_input_dir: s
     datetime.strptime(rng_end, "%Y-%m-%d %H:%M:%S")
 
     # Get a range of dates to interpolate to:
-    rng = pd.date_range(rng_start, rng_end, freq='H')
+    rng = pd.date_range(rng_start, rng_end, freq='h')
 
     # Reindex the dataframe and linearly interpolate from an annual to an hourly resolution:
     df_interp = df.reindex(rng, axis=1).interpolate(axis=1)
@@ -220,7 +220,7 @@ def process_ba_population_data(start_year: int, end_year: int, data_input_dir: s
 
     # Loop over BA names to write each BA's population time-series to a .csv file:
     for name in BA_name:
-        df_interp.to_csv(os.path.join(output_dir, f'{name}_hourly_population_data.csv'),
+        df_interp.to_csv(os.path.join(data_output_dir, f'{name}_hourly_population_data.csv'),
                          index=False,
                          columns=['Year', 'Month', 'Day', 'Hour', f'{name}'],
                          header=['Year', 'Month', 'Day', 'Hour', 'Total_Population'])
