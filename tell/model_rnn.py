@@ -88,15 +88,9 @@ class Seq2Seq(nn.Module):
 
         for t in range(1, seq_len):
             Y, hidden, cell = self.decoder(Y0, hidden, cell) #initializing with Y0
-            outputs[]
-
-
-
-
-
-
-
-
+            outputs[t, :, :] =  Y
+            return outputs
+    
 
 class Encoder(nn.Module):
 
