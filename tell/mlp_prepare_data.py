@@ -316,7 +316,10 @@ class DatasetTrain(DefaultSettings):
         df.rename(columns=self.data_column_rename_dict, inplace=True)
 
         # generate datetime timestamp field
-        df[self.DATETIME_FIELD] = pd.to_datetime(df[self.expected_datetime_columns])
+        if self.expected_datetime_columns == ["Time_UTC"]:
+            df[self.DATETIME_FIELD] = df[self.expected_datetime_columns]
+        else:
+            df[self.DATETIME_FIELD] = pd.to_datetime(df[self.expected_datetime_columns])
 
         # filter by date range
         df = df.loc[(df[self.DATETIME_FIELD] >= self.start_time) & (df[self.DATETIME_FIELD] <= self.end_time)].copy()
@@ -343,6 +346,8 @@ class DatasetTrain(DefaultSettings):
                                             [1] List of extended x_variables
 
         """
+
+        print(df)
 
         # create an array of day of the week values from the timestamp; 0 = Monday ... 6 = Sunday
         day_of_week_arr = df[self.DATETIME_FIELD].dt.dayofweek.values
@@ -518,7 +523,6 @@ class DatasetPredict(DefaultSettings):
 
     :param datetime_field_name:         Name of the datetime field.
     :type datetime_field_name:          str
-
     """
 
     def __init__(self,
@@ -698,3 +702,8 @@ class DatasetPredict(DefaultSettings):
 
         # extract desired fields
         return df[keep_fields]
+
+
+
+
+

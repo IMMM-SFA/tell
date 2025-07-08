@@ -31,84 +31,103 @@ class RNN:
 
 
 class Seq2Seq(nn.Module):
+    """
+    Method to build the sequence to sequence model
+    Replicating the implementation in https://www.kaggle.com/code/omershect/learning-pytorch-seq2seq-with-m5-data-set
+    """
 
     def __init__(
             self,
-            input_dim: int,
+            n_features: int,
+            seq_len: int = 24,
             device: str = 'cuda',
-            encoder_embedding_dim: int = 16,
-            decoder_embedding_dim: int = 16,
-            hidden_dim: int= 32,
+            embedding_dim: int = 16,
             n_layers: int = 1,
-            encoder_dropout: float = 0.2,
-            decoder_dropout: float = 0.2,
-            out_dim: int = 1,
-            activation: str = "LSTM"
+            dropout_rate: float = 0.2,
+            n_output: int = 1,
+            activation: str = "GRU"
     ):
 
         super().__init__()
 
         self.device = device
 
+
         #Initialize encoder
         self.encoder = Encoder(
-            input_dim=input_dim,
-            embedding_dim=encoder_embedding_dim,
-            hidden_dim=hidden_dim,
+            seq_len=seq_len,
+            n_features=n_features,
+            embedding_dim=embedding_dim,
             n_layers=n_layers,
             rnn_activation=activation,
-            dropout_rate=encoder_dropout
-        )
+            dropout_rate=dropout_rate
+        ).to(self.device)
+
 
         #initialize decoder
         self.decoder = Decoder(
-            embedding_dim=decoder_embedding_dim,
-            output_dim=out_dim,
-            hidden_dim=hidden_dim,
-            n_layers = n_layers,
+            n_features=n_features,
+            seq_len=seq_len,
+            embedding_dim=embedding_dim,
+            n_output=n_output,
+            n_layers=n_layers,
             rnn_activation=activation,
-            dropout_rate=decoder_dropout
+            dropout_rate=dropout_rate,
+            device=self.device
 
-        )
+        ).to(self.device)
 
-    def forward(self, X, Y):
+        #define optimizer and loss
+        self.optimizer = torch.optim.Adam(self.parameters())
+        # The best loss function to use depends on the problem.
+        # We will see a different loss function later for probabilistic
+        # forecasting
+        self.loss_function = nn.MSELoss()
 
-        batch_size = X.shape[1]
-        seq_len = Y.shape[0]
-        out_dim = self.decoder.output_dim
+    def forward(self, X):
 
-        #initialize outputs
-        outputs = torch.zeros(seq_len, batch_size, out_dim).to(self.device)
+        #get encoder outputs
+        Y_enc, hidden = self.encoder(X)
 
-        #feed the data to the encoder and get the hidden cells and state
-        hidden, cell = self.encoder(X)
+        #get the decoder outputs
+        print("Troubleshoot")
+        X_t = X[-1, :]
+        X_t = X_t[None, :]
+        Y_p = self.decoder(X_t, Y_enc, hidden)
 
-        #loop over all the outputs. Notice that there might be one extra input to kickastart the sequence
-        Y0 = Y[0, :]
+        return Y_p
 
-        for t in range(1, seq_len):
-            Y, hidden, cell = self.decoder(Y0, hidden, cell) #initializing with Y0
-            outputs[t, :, :] =  Y
-            return outputs
-    
+    def compute_loss(self, Y_p, Y):
+        return self.loss_function(Y, Y_p)
+
+    def optimize(self, Y_p, Y):
+        self.optimizer.zero_grad()
+        loss = self.compute_loss(Y_p, Y)
+        loss.backward()
+        self.optimizer.step()
+
 
 class Encoder(nn.Module):
+    """
+    Class to build the encoder.
+    Taken from https://www.kaggle.com/code/omershect/learning-pytorch-seq2seq-with-m5-data-set
+    """
 
     def __init__(
             self,
-            input_dim: int,
+            seq_len: int,
+            n_features: int,
             embedding_dim: int = 16,
-            hidden_dim: int = 32,
             n_layers: int = 1,
-            rnn_activation: str = "LSTM",
+            rnn_activation: str = "GRU",
             dropout_rate: float = 0.2
     ):
 
         super().__init__()
 
-        self.input_dim = input_dim
+        self.seq_len = seq_len
+        self.n_features = n_features
         self.embedding_dim = embedding_dim
-        self.hidden_dim = hidden_dim #hidden dim is the dimension of the c vector
         self.n_layers = n_layers
         self.dropout_rate = dropout_rate
 
@@ -117,32 +136,29 @@ class Encoder(nn.Module):
 
         self.activation = rnn_activation
 
-        #create embedding
-        self.embedding = nn.Embedding(self.input_dim, self.embedding_dim) #linear embedding
-
         #create rnnfunction
         self.rnn = self.activation(
-            self.embedding_dim,
-            self.hidden_dim,
-            num_layers = self.n_layers,
-            dropout = self.dropout_rate
+            input_size=self.n_features,
+            hidden_size=self.embedding_dim,
+            num_layers=self.n_layers,
+            batch_first=True,
+            dropout=self.dropout_rate
         )
 
+        #Note that input to RNN is [batch_size, seq_length, n_features)
+
         #Create the dropout function
-        self.dropout = nn.Dropout(self.dropout_rate)
+        #self.dropout = nn.Dropout(self.dropout_rate)
 
 
-    def forward(self, input_data):
+    def forward(self, X):
 
-        #input_data: [sequence_length, batch_size]
-        embedded = self.dropout(self.embedding(input_data)) #embedded: [input_dim, batch_size, embded_dim]
-        output, (hidden, cell) = self.rnn(embedded)
+        outputs, hidden = self.rnn(X)
 
-        #output: [sequence_length, batch_size, hidden_dim]
-        #hidden: [n_layers, batch_size, hidden_dim]
-        #cell:  [n_layers, batch_size, hidden_dim]
+        #outputs: encoder outputs of length: (batch_size, seq_length, embedding_dim)
+        #hidden: [n_layers, batch_size, embedding_size]
 
-        return hidden, cell
+        return outputs,hidden
 
     @property
     def activation(self):
@@ -159,57 +175,70 @@ class Encoder(nn.Module):
 
 
 class Decoder(nn.Module):
+    """
+    Class for decoder
+
+    :param seq_len: (int) - sequence length of output (i.e. 24 hour sequences)
+    :param embedding_dim: (int) - input dimension of latent vector c
+    :param hidden_dim: (int) - size of hidden layer in RNN
+    :param n_output: (int) - number of output variables (=1 for only energy consumption)
+    :param n_layers: (int) - number of hidden layers in RNN
+    :param rnn_activation
+    """
 
     def __init__(
             self,
-            embedding_dim: int,
-            output_dim: int,
-            hidden_dim: int = 32,
+            n_features: int,
+            seq_len: int = 24,
+            embedding_dim: int = 16,
+            n_output: int = 1,
             n_layers: int = 1,
-            rnn_activation: str = "LSTM",
-            dropout_rate: int = 0.2
+            rnn_activation: str = "GRU",
+            dropout_rate: int = 0.2,
+            device : str = 'cuda'
     ):
+        super().__init__()
 
-        self.embedding_dim = embedding_dim
-        self.output_dim = output_dim
-        self.hidden_dim = hidden_dim
+        self.seq_len = seq_len
+        self.embedding_dim = embedding_dim #embedding dim is the input dim for the decoder
+        self.n_features = n_features
+        self.n_output = n_output
         self.n_layers = n_layers
         self.dropout_rate = dropout_rate
 
         self.activation = rnn_activation
-
-        #create linear embedding
-        self.embedding = nn.Embedding(output_dim, embedding_dim)
+        self.device = device
 
         #create the RNN
         self.rnn = self.activation(
-            self.embedding_dim,
-            self.hidden_dim,
+            input_size=self.n_features,
+            hidden_size=self.embedding_dim,
             num_layers=self.n_layers,
             dropout=self.dropout_rate
         )
 
-        #create the linear map to the output
-        self.linear_map = nmn.Linear(self.hidden_dim, self.output_dim)
-
         #create the dropout function
         self.dropout = nn.Dropout(self.dropout_rate)
 
-    def forward(self, input_data, hidden, cell):
+        #create the linear map to the output
+        self.linear_map = nn.Linear(self.embedding_dim, self.n_output)
 
-        #input_data = [batch_size] (this is the sos prompt)
-        input = input_data.unsqueece #[batch_size] -> [1, batch_size]
-        embedded = self.dropout(self.embedding(input)) #embedded: [1, embedding_size, batch_size]
+    def forward(self, X_t, encoder_outputs, hidden):
 
-        #define the RNN. takes in embedding as input
-        output, (hidden, cell) = self.rnn(embedded, (hidden, cell))
+        #identify decoder_seq_length. This should be the same as seq_len
+        decoder_seq_len = self.seq_len
 
-        #hidden: [n_layers, batch_size, hidden_dim]
-        #cell:  [n_layers, batch_size, hidden_dim]
+        #initialize decoder_seq_len
 
-        #finally compute the output map
-        y = self.linear_map(output.squeece(0))
-        return y, hidden, cell
+        #outputs = [None for _ in range(decoder_seq_len)]
+        outputs = torch.empty(size=(decoder_seq_len, 1), dtype=torch.float32).to(self.device)
+
+        for t in range(decoder_seq_len):
+            output, hidden = self.rnn(X_t, hidden)
+            output = self.dropout(output)
+            outputs[t, :] = self.linear_map(output)
+
+        return outputs
 
 
     @property
@@ -223,4 +252,6 @@ class Decoder(nn.Module):
             "LSTM": nn.LSTM,
             "GRU": nn.GRU
         }[rnn_activation]
+
+
 
